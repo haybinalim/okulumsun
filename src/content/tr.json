@@ -1,0 +1,119 @@
+{
+  "$aciklama": [
+    "Uygulamadaki TÜM konuşulan metinlerin tek kaynağı.",
+    "scripts/generate-audio.ts bu dosyayı okur, ses klipleri üretir ve",
+    "src/audio/audioManifest.generated.ts dosyasını (SpeechKey tipi dahil) yazar.",
+    "",
+    "Kurallar:",
+    "  - Talimatlar 6-8 kelime, tek yönerge. Çocuk okuyamıyor, dinleyerek anlıyor.",
+    "  - 'sayi.*' ve 'op.*' klipleri dizi hâlinde birleştirilir (bkz. plan §4.3).",
+    "    Bu sayede ~140 klip sonsuz matematik sorusunu seslendirir.",
+    "  - Cümleleri parçadan birleştirmeyin — prozodi bozulur ve okuma öğrenen",
+    "    çocuğa yanlış dil modeli verir. Tam cümleler tek klip olarak durur.",
+    "  - 'core' listesindekiler service worker tarafından önden önbelleğe alınır."
+  ],
+
+  "sayi": {
+    "$not": "0-100. Ritmik sayma kazanımı (MAT.1.1.5) 100'e kadar ileri sayma istiyor.",
+    "$uret": "sayilar"
+  },
+
+  "op": {
+    "arti": "artı",
+    "eksi": "eksi",
+    "esit": "eşittir",
+    "kadar": "kadar"
+  },
+
+  "soru": {
+    "kac-tane": "Kaç tane var?",
+    "kac-eder": "Kaç eder?",
+    "hangisi-cok": "Hangisinde daha çok var?",
+    "hangisi-az": "Hangisinde daha az var?",
+    "esit-mi": "Eşit mi?",
+    "eksik-sayi": "Eksik sayıyı bul.",
+    "hangisi-gelir": "Sırada hangisi gelir?",
+    "dokunarak-say": "Nesnelere dokunarak say.",
+    "sayiyi-sec": "Şimdi doğru sayıyı seç.",
+    "kacinci": "Kaçıncı sırada?",
+    "hangi-sekil": "Hangisi bu şekil?",
+    "yuvarlak-mi-koseli-mi": "Yuvarlak mı, köşeli mi?",
+    "ne-kadar-tahmin": "Sence kaç tane var?",
+    "hangi-para": "Hangisi daha değerli?"
+  },
+
+  "geri": {
+    "$not": "Doğru cevap onayı 6 varyantlı — tek varyant 8 soruda robotik oluyor.",
+    "dogru-1": "Aferin!",
+    "dogru-2": "Doğru!",
+    "dogru-3": "Buldun!",
+    "dogru-4": "Çok güzel!",
+    "dogru-5": "Harika!",
+    "dogru-6": "Evet, doğru!",
+    "$not-tekrar": "'Yanlış' kelimesi HİÇBİR YERDE geçmez. Ceza yok, davet var.",
+    "tekrar-1": "Hmm, bir daha bakalım.",
+    "tekrar-2": "Tekrar deneyelim.",
+    "tekrar-3": "Yaklaştın, bir daha dene."
+  },
+
+  "yardim": {
+    "$not": "Üç kademeli artan destek. Çocuk yardım istediği için bedel ödemez.",
+    "k1-dinle": "Dikkatle dinle, soruyu tekrar söylüyorum.",
+    "k2-eleme": "Bunlardan biri değil. Kalanlara bak.",
+    "k2-birlikte-sayalim": "Haydi birlikte sayalım.",
+    "k3-birlikte": "Birlikte yapalım. Şuraya bak.",
+    "k3-simdi-sen": "Şimdi sen dene.",
+    "ustune-sayma": "Büyük sayıyı aklında tut, üstüne say."
+  },
+
+  "ui": {
+    "hosgeldin": "Merhaba! Başlamak için dokun.",
+    "onayla": "Onayla",
+    "devam": "Devam",
+    "once-cevap-sec": "Önce bir cevap seç.",
+    "tekrar-dinle": "Tekrar dinle",
+    "geri": "Geri",
+    "eve-don": "Başa dön",
+    "avatar-sec": "Kendine bir arkadaş seç.",
+    "renk-sec": "Şimdi bir renk seç.",
+    "mod-tahta": "Tahtada birlikte çalışalım.",
+    "mod-kisisel": "Kendi başıma çalışacağım.",
+    "yarim-yol": "Yarı yoldasın!",
+    "oturum-bitti": "Bugünlük bu kadar. Çok iyiydin!",
+    "cikartma-kazandin": "Bir çıkartma kazandın!"
+  },
+
+  "tema": {
+    "$not": "MEB 2024 programındaki resmî öğretim sırasıyla. Yıl geometriyle başlıyor.",
+    "geometri-1": "Yön ve Yerler",
+    "sayilar-1": "Sayılar",
+    "sayilar-2": "Ölçme",
+    "islemler": "Toplama ve Çıkarma",
+    "sayilar-3": "Paralarımız",
+    "geometri-2": "Şekiller",
+    "veri": "Sayalım ve Gösterelim"
+  },
+
+  "renk": {
+    "mor": "mor",
+    "turuncu": "turuncu",
+    "yesil": "yeşil",
+    "mavi": "mavi",
+    "pembe": "pembe",
+    "sari": "sarı"
+  },
+
+  "nesne": {
+    "$not": "Sayılabilir nesnelerin adları. Soru kalıbında tekil kullanılır.",
+    "elma": "elma",
+    "top": "top",
+    "balon": "balon",
+    "araba": "araba",
+    "kalem": "kalem",
+    "kus": "kuş",
+    "cicek": "çiçek",
+    "yildiz": "yıldız",
+    "balik": "balık",
+    "kelebek": "kelebek"
+  }
+}

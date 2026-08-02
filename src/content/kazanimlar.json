@@ -1,0 +1,804 @@
+{
+  "$aciklama": {
+    "nedir": "MEB 2024 Türkiye Yüzyılı Maarif Modeli İlkokul Matematik Dersi Öğretim Programı'nın 1. SINIF düzeyine ait 19 resmî öğrenme çıktısının (kazanımın) makine-okunur temsili. Uygulamadaki tüm alıştırma jeneratörleri, ilerleme haritası ve rapor ekranları müfredat referansı olarak BU dosyayı kullanır; kazanım metni kod içine gömülmez.",
+    "kaynak": {
+      "belge": "İlkokul Matematik Dersi Öğretim Programı (1, 2, 3 ve 4. Sınıflar)",
+      "kurum": "T.C. Millî Eğitim Bakanlığı, Talim ve Terbiye Kurulu Başkanlığı",
+      "model": "Türkiye Yüzyılı Maarif Modeli",
+      "yil": 2024,
+      "pdf": "docs/meb-ilkokul-matematik-2024.pdf",
+      "cikarilmisMetin": "docs/meb-matematik-2024-metin.txt",
+      "metinBolumlemesi": "Dosya '===== SAYFA n =====' satırlarıyla bölümlenmiştir. Her kazanımın 'kaynakSayfa' alanı bu numarayı gösterir.",
+      "birinciSinifBolumu": "SAYFA 19-48 (tema/ders saati tablosu: SAYFA 10)"
+    },
+    "elleDuzenlemeyin": "Bu dosya KAYNAKTAN TÜRETİLMİŞTİR. 'resmiMetin', 'surecBilesenleri' ve 'icerikCercevesi' alanları programdaki ifadelerin BİREBİR kopyasıdır; sadeleştirme, kısaltma veya yeniden yazma YAPILMAZ. Bir metin yanlış görünüyorsa önce docs/meb-matematik-2024-metin.txt içindeki ilgili sayfayı okuyun; hata gerçekten bu dosyadaysa kaynağa göre düzeltin, kendi yorumunuza göre değil.",
+    "metinNormalizasyonu": "PDF'ten metin çıkarımında satır sonlarına düşen tireler (örn. 'çözümleyebil-me') birleştirilmiş, kırık satırlar tek satıra toplanmıştır. Sözcükler, sözcük sırası, tırnaklı terimler ve parantez içi açıklamalar DEĞİŞTİRİLMEMİŞTİR. Programdaki eğik ÇİFT tırnaklar (“ ”) aynen korunmuştur. Kesme işareti ise kaynaktaki eğik biçimden (’) düz biçime (') çevrilmiştir; bu tek normalizasyon, metin karşılaştırmalarını kolaylaştırmak içindir ve anlamı etkilemez.",
+    "guncellemeYontemi": [
+      "1. MEB yeni bir program sürümü yayımlarsa docs/ altındaki PDF'i değiştirin.",
+      "2. PDF'ten metni yeniden çıkarın; çıktının '===== SAYFA n =====' bölümlemesini koruyun.",
+      "3. Bu dosyadaki her kazanımın 'kaynakSayfa' değerine gidip 'resmiMetin' + 'surecBilesenleri' + 'icerikCercevesi' alanlarını birebir doğrulayın.",
+      "4. 'ozdenetim' bloğundaki sağlama değerlerini yeniden hesaplayın (kazanım sayısı, tema başına çıktı sayısı, ders saati toplamı).",
+      "5. npm run build ve npm test çalıştırın."
+    ],
+    "temaSirasiHakkinda": "DİKKAT — kaynakta iki farklı tema sırası vardır. (1) SAYFA 10'daki 'temaların işleniş sırası' tablosu: yıl NESNELERİN GEOMETRİSİ (1) ile başlar. (2) Programın gövdesinde temalar öğrenme alanına göre gruplanmış olarak basılmıştır (SAYFA 19'da 'SAYILAR VE NİCELİKLER (1)' başlığı '1. TEMA' diye numaralanır). Bu dosyada 'tema.no' ve 'ogretimSirasi' alanları SAYFA 10 tablosunu (işleniş sırası) esas alır; gövdedeki basım numarası ayrıca 'temalar[].sunumSirasiNo' alanında tutulur. İkisi karıştırılmamalıdır.",
+    "alanSozlugu": {
+      "kod": "Programdaki resmî kazanım kodu (MAT.<sınıf>.<öğrenme alanı>.<sıra>).",
+      "resmiMetin": "Kazanımın programdaki tam metni. Kısaltılmaz.",
+      "ogretimSirasi": "1-19. SAYFA 10'daki 'temaların işleniş sırası' tablosuna göre yıl içindeki öğretim sırası. DİKKAT: bu, kod sırası DEĞİLDİR; yıl geometriyle (MAT.1.3.1) başlar, sayılarla değil.",
+      "tema.no": "Öğretim (işleniş) sırasına göre tema numarası — SAYFA 10 tablosu.",
+      "tema.sunumSirasiNo": "Programın gövdesinde temanın basıldığı sıra numarası (öğrenme alanına göre gruplanmış). İşleniş sırasından FARKLIDIR; sadece kaynağa geri izlenebilirlik için tutulur.",
+      "surecBilesenleri": "Programdaki a) b) c) ç) ... alt maddeleri, tam metinleriyle. Bazı kazanımların süreç bileşeni YOKTUR; bu durumda dizi boştur (kaynakta da yoktur).",
+      "icerikCercevesi": "Kazanımın ait olduğu temanın içerik çerçevesi: konu alanı, genellemeler, anahtar kavramlar, sembol ve gösterimler.",
+      "uygulamaNotlari": "Programın öğrenme-öğretme uygulamaları bölümünde geçen ve SORU ÜRETİMİNİ SINIRLAYAN somut kısıtlar (sayı aralığı, kapsam dışı konular). Jeneratör yazarken bunlara uyulması zorunludur.",
+      "kaynakSayfa": "docs/meb-matematik-2024-metin.txt içindeki '===== SAYFA n =====' numarası."
+    },
+    "kapsamUyarilari": [
+      "1. sınıfta SAAT OKUMA YOKTUR. Zaman ölçü birimleri 2. sınıf programındadır.",
+      "Para kazanımı yalnızca TANIMAdır ve BANKNOTlarla ilgilidir (1, 5, 10, 20, 50, 100, 200 TL). Para ile toplama/çıkarma işlemi 1. sınıf kazanımı değildir.",
+      "Ritmik sayma 100'e kadar İLERİYE, 20'den GERİYE doğrudur.",
+      "Ölçme kazanımı hem UZUNLUK hem KÜTLE içerir, standart olmayan araçlarla ve TAHMİN odaklıdır.",
+      "Geometrik şekiller: üçgen, kare, dikdörtgen ve ÇEMBER (daire değil)."
+    ]
+  },
+
+  "sinif": 1,
+  "toplamKazanimSayisi": 19,
+  "haftalikDersSaati": 5,
+  "toplamDersSaati": 180,
+
+  "temalar": [
+    {
+      "no": 1,
+      "ad": "Nesnelerin Geometrisi (1)",
+      "ogrenmeAlani": "MAT.1.3. Nesnelerin Geometrisi",
+      "dersSaati": 15,
+      "yuzde": 8,
+      "ogrenmeCiktisiSayisi": 2,
+      "sunumSirasiNo": 5,
+      "kaynakSayfa": 38,
+      "temaAciklamasi": "Bu temada öğrencilerin yer, yön ve konum bildiren kavramları belirleyebilmesi; yönergeleri kullanarak başlangıç noktası ve hedef arasında ilişki kurabilmesi ve yönergeleri uygulayarak hedefe ulaşabilmesi amaçlanmaktadır. Ayrıca bu temada öğrencilerin çevresinde gördüğü nesnelerin eşini bulmak için rengi, boyu, şekli gibi görsel özelliklerini ölçüt olarak belirleyebilmesi; belirlediği ölçütü kullanarak eş olabilecek nesnelerin bilgilerine ulaşması ve ulaştığı bilgiler doğrultusunda nesnelerin eşliği hakkında yargıda bulunabilmesi amaçlanmaktadır."
+    },
+    {
+      "no": 2,
+      "ad": "Sayılar ve Nicelikler (1)",
+      "ogrenmeAlani": "MAT.1.1. Sayılar ve Nicelikler",
+      "dersSaati": 57,
+      "yuzde": 31,
+      "ogrenmeCiktisiSayisi": 7,
+      "sunumSirasiNo": 1,
+      "kaynakSayfa": 19,
+      "temaAciklamasi": "Bu temada öğrencilerin rakam ve sayıları, niceliklerin büyüklüklerini temsil edebilmek için kullanabilmeleri, 20'ye kadar olan nesne grubunu sayarken (20 dâhil) parçalar arasındaki ilişkileri ve sayıların sırasını belirleyebilmeleri, iki niceliğin büyüklüğünü karşılaştırabilmeleri, 100'e kadar (100 dâhil) ileriye ve 20'den geriye ritmik sayabilmeleri, artan ve azalan sayı örüntüleri ile tekrar eden şekil örüntülerini çözümleyebilmeleri ve 20'ye kadar olan nesnelerin sayısını tahmin edebilmeleri amaçlanmaktadır."
+    },
+    {
+      "no": 3,
+      "ad": "Sayılar ve Nicelikler (2)",
+      "ogrenmeAlani": "MAT.1.1. Sayılar ve Nicelikler",
+      "dersSaati": 18,
+      "yuzde": 10,
+      "ogrenmeCiktisiSayisi": 1,
+      "sunumSirasiNo": 2,
+      "kaynakSayfa": 25,
+      "temaAciklamasi": "Bu temada öğrencilerin standart olmayan uygun ölçme araçları ile nesnelerin uzunluğunu ve tartacağı kütlenin ölçüm sonuçlarını tahmin edebilmeleri amaçlanmaktadır."
+    },
+    {
+      "no": 4,
+      "ad": "İşlemlerden Cebirsel Düşünmeye",
+      "ogrenmeAlani": "MAT.1.2. İşlemlerden Cebirsel Düşünmeye",
+      "dersSaati": 50,
+      "yuzde": 28,
+      "ogrenmeCiktisiSayisi": 4,
+      "sunumSirasiNo": 4,
+      "kaynakSayfa": 33,
+      "temaAciklamasi": "Bu temada öğrencilerin günlük yaşamın içerdiği toplama ve çıkarma işlemlerini çözümleyebilmesi; 20'den küçük sayılarla toplamları 20'ye kadar (20 dâhil) olan eldesiz toplama işlemi ve onluk bozma gerektirmeyen 20'den (20 dâhil) küçük sayılarla çıkarma işlemi yapabilmesi; toplama ve çıkarma işlemi bağlamında eşitliği yorumlayabilmesi; toplama ve çıkarma işlemlerinin sonuçlarını tahminde bulunarak ve zihinden işlem yaparak muhakeme edebilmesi; toplama ve çıkarma işlemi arasındaki ilişkiyi yorumlayabilmesi; toplama işleminde değişme özelliğini ve işlemlerde verilmeyen terimi belirleyebilmesi; problem durumunu toplama ve çıkarma işlemi ile çözümleyebilmesi amaçlanmaktadır."
+    },
+    {
+      "no": 5,
+      "ad": "Sayılar ve Nicelikler (3)",
+      "ogrenmeAlani": "MAT.1.1. Sayılar ve Nicelikler",
+      "dersSaati": 7,
+      "yuzde": 4,
+      "ogrenmeCiktisiSayisi": 1,
+      "sunumSirasiNo": 3,
+      "kaynakSayfa": 30,
+      "temaAciklamasi": "Bu temada öğrencilerin paraları (1 TL, 5 TL, 10 TL, 20 TL, 50 TL, 100 TL ve 200 TL) temsil ettiği büyüklükleri tanıyabilmeleri amaçlanmaktadır."
+    },
+    {
+      "no": 6,
+      "ad": "Nesnelerin Geometrisi (2)",
+      "ogrenmeAlani": "MAT.1.3. Nesnelerin Geometrisi",
+      "dersSaati": 15,
+      "yuzde": 9,
+      "ogrenmeCiktisiSayisi": 3,
+      "sunumSirasiNo": 6,
+      "kaynakSayfa": 42,
+      "temaAciklamasi": "Bu temada öğrencilerin günlük yaşamda karşılaştığı farklı geometrik cisim modellerine uygun nesneleri yuvarlak ve köşeli olarak ifade edebilmeleri; günlük yaşamdaki geometrik yapıları inceleyerek geometrik yapılarda yer alan geometrik şekilleri, köşe (üç köşeli, dört köşeli, köşesi olmayan vb.) ve kenar sayılarını (üç kenarlı, dört kenarlı ve kenarı olmayan vb.) dikkate alarak belirleyebilmeleri; üçgen, kare, dikdörtgen ve çemberi biçimsel özelliklerine göre sınıflandırabilmesi amaçlanmaktadır."
+    },
+    {
+      "no": 7,
+      "ad": "Veriye Dayalı Araştırma",
+      "ogrenmeAlani": "MAT.1.4. Veriye Dayalı Araştırma",
+      "dersSaati": 10,
+      "yuzde": 6,
+      "ogrenmeCiktisiSayisi": 1,
+      "sunumSirasiNo": 7,
+      "kaynakSayfa": 46,
+      "temaAciklamasi": "Bu temada, öğrencilerin istatistiksel araştırma sürecinin adımlarını kategorik veriye dayalı tek veri grubuna yönelik yürütebilmeleri amaçlanmaktadır."
+    }
+  ],
+
+  "okulTemelliPlanlama": {
+    "dersSaati": 8,
+    "yuzde": 4,
+    "aciklama": "SAYFA 10 tablosunda temaların dışında ayrı satır olarak verilir. Temalara dağıtılmaz; öğretmenin okul temelli planlamasına bırakılmıştır.",
+    "kaynakSayfa": 10
+  },
+
+  "kazanimlar": [
+    {
+      "kod": "MAT.1.3.1",
+      "ogretimSirasi": 1,
+      "resmiMetin": "Hedefe ulaşmak için mesafeleri ve yönleri içeren yönergeleri çözümleyebilme",
+      "tema": {
+        "no": 1,
+        "ad": "Nesnelerin Geometrisi (1)",
+        "dersSaati": 15,
+        "ogrenmeCiktisiSayisi": 2
+      },
+      "surecBilesenleri": [
+        { "harf": "a", "metin": "Yönergede yer alan mesafe ve yönleri içeren kavramları belirler." },
+        { "harf": "b", "metin": "Yönergeleri kullanarak başlangıç noktası ve hedef arasında ilişki kurar." }
+      ],
+      "icerikCercevesi": {
+        "konuAlani": "Uzamsal İlişkiler",
+        "genellemeler": [
+          "Yer, yön ve konum birbiriyle ilişkilidir.",
+          "Eş nesneler birbiri ile aynıdır."
+        ],
+        "anahtarKavramlar": [
+          "yer", "yön", "konum", "hareket", "referans noktası", "altında", "üstünde",
+          "etrafında", "arasında", "önünde", "arkasında", "yüksekte", "alçakta",
+          "uzakta", "yakında", "içinde", "dışında", "sağında", "solunda", "çukurda",
+          "tümsekte", "ileri", "geri", "eş", "eşlik", "aynı"
+        ],
+        "sembolVeGosterimler": []
+      },
+      "uygulamaNotlari": [
+        "Yön kavramı 1. sınıfta 'ileri' ve 'geri' ile sınırlıdır (SAYFA 40).",
+        "Konum bildiren ifadeler: altında, üstünde, etrafında, önünde, arkasında, arasında, yüksekte, alçakta, uzakta, yakında, içinde, dışında, sağında, solunda, çukurda, tümsekte."
+      ],
+      "kaynakSayfa": 39
+    },
+    {
+      "kod": "MAT.1.3.2",
+      "ogretimSirasi": 2,
+      "resmiMetin": "Nesnelerin eşliğini değerlendirebilme",
+      "tema": {
+        "no": 1,
+        "ad": "Nesnelerin Geometrisi (1)",
+        "dersSaati": 15,
+        "ogrenmeCiktisiSayisi": 2
+      },
+      "surecBilesenleri": [
+        { "harf": "a", "metin": "Nesnelerin eşliği için bir ölçüt belirler." },
+        { "harf": "b", "metin": "Ölçüte uygun bilgileri kullanarak ölçme yapar." },
+        { "harf": "c", "metin": "Yapılan ölçmeye dayalı olarak elde ettiği sonuçları ölçüt ile karşılaştırır." },
+        { "harf": "ç", "metin": "Karşılaştırmalarına ilişkin olarak yargıda bulunur." }
+      ],
+      "icerikCercevesi": {
+        "konuAlani": "Uzamsal İlişkiler",
+        "genellemeler": [
+          "Yer, yön ve konum birbiriyle ilişkilidir.",
+          "Eş nesneler birbiri ile aynıdır."
+        ],
+        "anahtarKavramlar": [
+          "yer", "yön", "konum", "hareket", "referans noktası", "altında", "üstünde",
+          "etrafında", "arasında", "önünde", "arkasında", "yüksekte", "alçakta",
+          "uzakta", "yakında", "içinde", "dışında", "sağında", "solunda", "çukurda",
+          "tümsekte", "ileri", "geri", "eş", "eşlik", "aynı"
+        ],
+        "sembolVeGosterimler": []
+      },
+      "uygulamaNotlari": [
+        "Eşlik ölçütü görsel özelliklerdir: renk, boy, şekil (SAYFA 38).",
+        "Öğrencilerin eşlik kavramı için gerekli renk, şekil ve büyüklük gibi görsel özellikleri bildiği kabul edilir (SAYFA 39)."
+      ],
+      "kaynakSayfa": 39
+    },
+    {
+      "kod": "MAT.1.1.1",
+      "ogretimSirasi": 3,
+      "resmiMetin": "Rakamları ve 20'ye kadar olan sayıları (20 dâhil), niceliklerin büyüklüklerini temsil etmek için kullanabilme",
+      "tema": {
+        "no": 2,
+        "ad": "Sayılar ve Nicelikler (1)",
+        "dersSaati": 57,
+        "ogrenmeCiktisiSayisi": 7
+      },
+      "surecBilesenleri": [
+        { "harf": "a", "metin": "Niceliklerin büyüklüklerinin farklı temsillerini tanır." },
+        { "harf": "b", "metin": "Karşılaştığı niceliklerin büyüklüklerini, farklı temsilleri bağlamında belirler." },
+        { "harf": "c", "metin": "Karşılaştığı niceliklerin büyüklüklerini rakam ve sayılarla okur ve yazar." }
+      ],
+      "icerikCercevesi": {
+        "konuAlani": "Sayılar",
+        "genellemeler": [
+          "Sayılar çoklukları temsil eder.",
+          "Sıra sayıları bir örüntü oluşturur."
+        ],
+        "anahtarKavramlar": [
+          "rakamlar", "sayılar", "sıra sayısı", "çözümleme", "ritmik sayma",
+          "karşılaştırma", "sayı ve şekil örüntüleri"
+        ],
+        "sembolVeGosterimler": []
+      },
+      "uygulamaNotlari": [
+        "Sayı aralığı 0-20 (20 dâhil).",
+        "Farklı temsiller kullanılır; program örnek olarak beş nesnelik bir çokluğun \"IIIII\" veya \"IIII\" (çetele) şeklinde de temsil edilmesini verir (SAYFA 21).",
+        "SIFIR kapsamdadır: \"Bu süreçte sıfırın hiçliği temsil ettiğine vurgu yapılır.\" (SAYFA 21).",
+        "Öğrenciden sayıyı OKUMASI ve YAZMASI beklenir (c bendi); ancak bu uygulamada talimatlar sesle verildiği için okuma yükü rakam düzeyinde tutulmalıdır."
+      ],
+      "kaynakSayfa": 20
+    },
+    {
+      "kod": "MAT.1.1.2",
+      "ogretimSirasi": 4,
+      "resmiMetin": "Ögeleri dağınık veya düzenli bir şekilde bulunan bir nesne grubunu sayarken parçalar arasında ilişkileri çözümleyebilme",
+      "tema": {
+        "no": 2,
+        "ad": "Sayılar ve Nicelikler (1)",
+        "dersSaati": 57,
+        "ogrenmeCiktisiSayisi": 7
+      },
+      "surecBilesenleri": [
+        { "harf": "a", "metin": "Ögeleri dağınık veya düzenli bir şekilde bulunan bir nesne grubunun parçalarını belirler." },
+        { "harf": "b", "metin": "Ögeleri dağınık veya düzenli bir şekilde bulunan bir nesne grubunu sayarken parçalar arasındaki ilişkileri belirler." }
+      ],
+      "icerikCercevesi": {
+        "konuAlani": "Sayılar",
+        "genellemeler": [
+          "Sayılar çoklukları temsil eder.",
+          "Sıra sayıları bir örüntü oluşturur."
+        ],
+        "anahtarKavramlar": [
+          "rakamlar", "sayılar", "sıra sayısı", "çözümleme", "ritmik sayma",
+          "karşılaştırma", "sayı ve şekil örüntüleri"
+        ],
+        "sembolVeGosterimler": []
+      },
+      "uygulamaNotlari": [
+        "Nesne grubu en fazla 20 ögedir.",
+        "Ögelerin DAĞINIK ve DÜZENLİ yerleşimi ayrı ayrı ele alınır; ikisi de kapsamdadır.",
+        "Kardinal değer vurgulanır: bir gruptaki nesneler sayılırken SON SÖYLENEN SAYI nesnelerin miktarını temsil eder (SAYFA 22).",
+        "Aşamalandırma: önce miktarı 10'DAN AZ olan gruplarda parça-bütün ilişkisi; sonra miktarı 10 İLE 20 ARASINDA olan gruplarda onluk ve birliklere göre çözümleme (SAYFA 22).",
+        "KRİTİK: İlk aşamada 'onluk' ve 'birlik' KAVRAM ADLARI KULLANILMADAN, sezgisel olarak çalışılır; adlandırma sonra gelir (SAYFA 22)."
+      ],
+      "kaynakSayfa": 20
+    },
+    {
+      "kod": "MAT.1.1.3",
+      "ogretimSirasi": 5,
+      "resmiMetin": "Nesnelerin sıra sayısını gösterebilme",
+      "tema": {
+        "no": 2,
+        "ad": "Sayılar ve Nicelikler (1)",
+        "dersSaati": 57,
+        "ogrenmeCiktisiSayisi": 7
+      },
+      "surecBilesenleri": [],
+      "surecBilesenleriNotu": "Programda bu öğrenme çıktısı için alt madde verilmemiştir (SAYFA 20).",
+      "icerikCercevesi": {
+        "konuAlani": "Sayılar",
+        "genellemeler": [
+          "Sayılar çoklukları temsil eder.",
+          "Sıra sayıları bir örüntü oluşturur."
+        ],
+        "anahtarKavramlar": [
+          "rakamlar", "sayılar", "sıra sayısı", "çözümleme", "ritmik sayma",
+          "karşılaştırma", "sayı ve şekil örüntüleri"
+        ],
+        "sembolVeGosterimler": []
+      },
+      "uygulamaNotlari": [
+        "Sıra bildiren durumlar günlük yaşamdan (yarış, sıra, spor müsabakası) örneklerle ele alınır (SAYFA 21).",
+        "SIRA SAYISI ARALIĞI: 20'ye kadar olan sayıların sırası (SAYFA 22).",
+        "Önce sayıların ÖNCELİK / SONRALIK / ARASINDA OLMA durumları ifade ettirilir, ardından sıra bildiren ifadeler GÖSTERTİLİR (SAYFA 22)."
+      ],
+      "kaynakSayfa": 20
+    },
+    {
+      "kod": "MAT.1.1.4",
+      "ogretimSirasi": 6,
+      "resmiMetin": "İki niceliğin büyüklüğünü “çok”, “daha çok”, “az”, “daha az” veya “eşit” terimleriyle karşılaştırabilme",
+      "tema": {
+        "no": 2,
+        "ad": "Sayılar ve Nicelikler (1)",
+        "dersSaati": 57,
+        "ogrenmeCiktisiSayisi": 7
+      },
+      "surecBilesenleri": [
+        { "harf": "a", "metin": "İki niceliğin büyüklüğünü “çok”, “daha çok”, “az”, “daha az” veya “eşit” terimleriyle ifade eder." },
+        { "harf": "b", "metin": "İfade edilen büyüklüklere ilişkin benzerlikleri listeler." },
+        { "harf": "c", "metin": "İfade edilen büyüklüklere ilişkin farklılıkları listeler." }
+      ],
+      "icerikCercevesi": {
+        "konuAlani": "Sayılar",
+        "genellemeler": [
+          "Sayılar çoklukları temsil eder.",
+          "Sıra sayıları bir örüntü oluşturur."
+        ],
+        "anahtarKavramlar": [
+          "rakamlar", "sayılar", "sıra sayısı", "çözümleme", "ritmik sayma",
+          "karşılaştırma", "sayı ve şekil örüntüleri"
+        ],
+        "sembolVeGosterimler": []
+      },
+      "uygulamaNotlari": [
+        "Karşılaştırma DİL ile yapılır: çok, daha çok, az, daha az, eşit. 1. sınıfta <, >, = sembolleriyle karşılaştırma bu kazanımda YOKTUR; içerik çerçevesinde sembol verilmemiştir.",
+        "Karşılaştırılan nicelikler İKİ tanedir.",
+        "Program örneği: bir tarafta 6, diğer tarafta 10 elma bulunan sepetler (SAYFA 22).",
+        "10 SAYISI REFERANS ALINIR: 10'dan az, 10'dan çok ve 10'a eşit cevabını gerektiren etkinlikler yapılır (SAYFA 22).",
+        "Strateji sırası: önce SEZGİYE DAYALI karşılaştırma, sonra BİRE BİR EŞLEMEYE dayalı karşılaştırma (SAYFA 22)."
+      ],
+      "kaynakSayfa": 20
+    },
+    {
+      "kod": "MAT.1.1.5",
+      "ogretimSirasi": 7,
+      "resmiMetin": "100'e kadar ileriye ve 20'den geriye doğru ritmik sayabilme",
+      "tema": {
+        "no": 2,
+        "ad": "Sayılar ve Nicelikler (1)",
+        "dersSaati": 57,
+        "ogrenmeCiktisiSayisi": 7
+      },
+      "surecBilesenleri": [],
+      "surecBilesenleriNotu": "Programda bu öğrenme çıktısı için alt madde verilmemiştir (SAYFA 20).",
+      "icerikCercevesi": {
+        "konuAlani": "Sayılar",
+        "genellemeler": [
+          "Sayılar çoklukları temsil eder.",
+          "Sıra sayıları bir örüntü oluşturur."
+        ],
+        "anahtarKavramlar": [
+          "rakamlar", "sayılar", "sıra sayısı", "çözümleme", "ritmik sayma",
+          "karşılaştırma", "sayı ve şekil örüntüleri"
+        ],
+        "sembolVeGosterimler": []
+      },
+      "uygulamaNotlari": [
+        "İzin verilen ritmik sayma biçimleri, programda TEK TEK sayılmıştır (SAYFA 23): 100'e kadar (100 dâhil) ileriye doğru BİRER, BEŞER ve ONAR; 20'ye kadar ileriye doğru İKİŞER; 20'den geriye doğru BİRER ve İKİŞER.",
+        "Bu liste bir üst sınırdır: 'ileriye ikişer' 20'yi, 'geriye birer/ikişer' 20'den başlamayı aşmaz; beşer ve onar sayma yalnızca İLERİYE yönde tanımlıdır.",
+        "Geriye sayma 100'den değil, 20'den başlar. Bu sınır aşılmamalıdır (SAYFA 23, 31).",
+        "Üçer, dörder vb. ritmik saymalar 1. sınıf kapsamı DIŞINDADIR."
+      ],
+      "kaynakSayfa": 20
+    },
+    {
+      "kod": "MAT.1.1.6",
+      "ogretimSirasi": 8,
+      "resmiMetin": "Artan veya azalan sayı ve şekil örüntülerini çözümleyebilme",
+      "tema": {
+        "no": 2,
+        "ad": "Sayılar ve Nicelikler (1)",
+        "dersSaati": 57,
+        "ogrenmeCiktisiSayisi": 7
+      },
+      "surecBilesenleri": [
+        { "harf": "a", "metin": "Sayı ve şekil örüntülerinin ardışık ögelerini belirler." },
+        { "harf": "b", "metin": "Sayı ve şekil örüntülerinin ardışık ögeleri arasındaki ilişkiyi belirler." }
+      ],
+      "icerikCercevesi": {
+        "konuAlani": "Sayılar",
+        "genellemeler": [
+          "Sayılar çoklukları temsil eder.",
+          "Sıra sayıları bir örüntü oluşturur."
+        ],
+        "anahtarKavramlar": [
+          "rakamlar", "sayılar", "sıra sayısı", "çözümleme", "ritmik sayma",
+          "karşılaştırma", "sayı ve şekil örüntüleri"
+        ],
+        "sembolVeGosterimler": []
+      },
+      "uygulamaNotlari": [
+        "Tema açıklamasında kapsam şöyle netleştirilir: ARTAN ve AZALAN sayı örüntüleri ile TEKRAR EDEN şekil örüntüleri (SAYFA 19).",
+        "Aşamalandırma: İLK AŞAMADA tekrar eden sayı ve şekil örüntülerine yer verilir; artan/azalan örüntüler sonra gelir (SAYFA 23).",
+        "KRİTİK — sayı örüntüsü adımları MAT.1.1.5'in ritmik sayma sınırlarını aşamaz: 100'e kadar birer, beşer, onar; 20'ye kadar ileriye/geriye birer ve ikişer (SAYFA 23).",
+        "KRİTİK: Bir örüntüde artış ve azalış BİR ARADA VERİLMEZ; artış ya da azalış miktarı SABİT olmalıdır (SAYFA 23).",
+        "Varsayılan soru biçimi: İLK ÜÇ ADIM verilir, öğrenciden DÖRDÜNCÜ adımı bulması istenir. Adım sayısı öğrencinin düzeyine göre değiştirilebilir (SAYFA 23).",
+        "Bir örüntü EN FAZLA ALTINCI ADIMA kadar sürdürülür (SAYFA 23).",
+        "Örüntüler somut nesneler, modeller, resimli kartlar vb. ile ÇİZİM YAPTIRILMADAN oluşturulur (SAYFA 23).",
+        "Örüntüde verilmeyen terimi bulma da kapsamdadır (SAYFA 23).",
+        "Zenginleştirme düzeyinde 1-20 aralığındaki sayılarla, öğrencinin kendi belirlediği farka göre artan/azalan örüntü kurdurulabilir (SAYFA 24)."
+      ],
+      "kaynakSayfa": 20
+    },
+    {
+      "kod": "MAT.1.1.7",
+      "ogretimSirasi": 9,
+      "resmiMetin": "Verilen bir çokluktaki ilişkilerden yararlanarak 20'ye kadar (20 dâhil) olan nesnelerin sayısını tahmin edebilme",
+      "tema": {
+        "no": 2,
+        "ad": "Sayılar ve Nicelikler (1)",
+        "dersSaati": 57,
+        "ogrenmeCiktisiSayisi": 7
+      },
+      "surecBilesenleri": [
+        { "harf": "a", "metin": "Verilen bir çokluktaki ilişkileri gözlem ve deneyimleri ile ilişkilendirir." },
+        { "harf": "b", "metin": "Bir çokluğun büyüklüğünü stratejiye dayanarak tahmin eder." },
+        { "harf": "c", "metin": "Tahmin edilen sonuç ile gerçek sonucu karşılaştırarak kendi tahminîne yönelik bir yargıda bulunur." }
+      ],
+      "icerikCercevesi": {
+        "konuAlani": "Sayılar",
+        "genellemeler": [
+          "Sayılar çoklukları temsil eder.",
+          "Sıra sayıları bir örüntü oluşturur."
+        ],
+        "anahtarKavramlar": [
+          "rakamlar", "sayılar", "sıra sayısı", "çözümleme", "ritmik sayma",
+          "karşılaştırma", "sayı ve şekil örüntüleri"
+        ],
+        "sembolVeGosterimler": []
+      },
+      "uygulamaNotlari": [
+        "Tahmin edilen çokluk en fazla 20 nesnedir.",
+        "Tahmin RASTGELE DEĞİL, stratejiye dayanmalıdır (c bendi: tahmin ile gerçek sonucun karşılaştırılması kazanımın parçasıdır). Uygulamada tahmin sonrası SAYARAK DOĞRULAMA adımı bulunmalıdır (SAYFA 24).",
+        "Programın adıyla andığı strateji: 5 ve 10 sayılarını REFERANS alarak azlık-çokluk kıyaslaması yapmak (SAYFA 23).",
+        "Beşi geçmeyen çokluklarda ŞIPŞAK SAYILAMA (subitizing) etkinliklerinden yararlanılır (SAYFA 23).",
+        "Zenginleştirmede tek bir nesne türü değil, DAĞINIK biçimde verilen birden fazla nesnenin sayısı tahmin ettirilir (SAYFA 24)."
+      ],
+      "kaynakSayfa": 20
+    },
+    {
+      "kod": "MAT.1.1.8",
+      "ogretimSirasi": 10,
+      "resmiMetin": "Standart olmayan uygun ölçme araçları ile nesnelerin uzunluğunu ve tartacağı kütlenin ölçüm sonuçlarını tahmin edebilme",
+      "tema": {
+        "no": 3,
+        "ad": "Sayılar ve Nicelikler (2)",
+        "dersSaati": 18,
+        "ogrenmeCiktisiSayisi": 1
+      },
+      "surecBilesenleri": [
+        { "harf": "a", "metin": "Ölçeceği uzunluğa ve kütleye uygun standart olmayan ölçme aracını belirler." },
+        { "harf": "b", "metin": "Ölçeceği uzunluğun ve tartacağı kütlenin ölçüm sonuçlarını belirlenen standart olmayan ölçü birimi cinsinden tahmin eder." },
+        { "harf": "c", "metin": "Tahmininin doğruluğuna ilişkin yargıda bulunur." }
+      ],
+      "icerikCercevesi": {
+        "konuAlani": "Nicelikler (Uzunluk-Kütle Ölçme)",
+        "genellemeler": [
+          "Nesneler, kendilerine sayısal değerler atanmadan da karşılaştırılabilir."
+        ],
+        "anahtarKavramlar": [
+          "uzunluk", "uzun", "daha uzun", "en uzun", "kısa", "daha kısa", "en kısa",
+          "ağır", "daha ağır", "en ağır", "hafif", "daha hafif", "en hafif", "denge", "eşit"
+        ],
+        "sembolVeGosterimler": []
+      },
+      "uygulamaNotlari": [
+        "Standart olmayan uzunluk ölçme araçları: parmak, karış, ayak, adım, kulaç (SAYFA 26).",
+        "Kütle karşılaştırmasında eşit kollu terazi kullanılır (SAYFA 27).",
+        "STANDART birimler (cm, m, kg, g) 1. sınıf kapsamı DIŞINDADIR.",
+        "Karşılaştırmalı sıralama en fazla beş nesne ile yapılır; aşamalı olarak iki, üç ve dört nesne ile başlanır (SAYFA 27)."
+      ],
+      "kaynakSayfa": 26
+    },
+    {
+      "kod": "MAT.1.2.1",
+      "ogretimSirasi": 11,
+      "resmiMetin": "Günlük yaşamın içerdiği toplama ve çıkarma işlemlerini çözümleyebilme",
+      "tema": {
+        "no": 4,
+        "ad": "İşlemlerden Cebirsel Düşünmeye",
+        "dersSaati": 50,
+        "ogrenmeCiktisiSayisi": 4
+      },
+      "surecBilesenleri": [
+        { "harf": "a", "metin": "Günlük yaşam durumunun toplama ve çıkarma işlemlerinden hangisini gerektirdiğini fark eder." },
+        { "harf": "b", "metin": "Günlük yaşam durumuna karşılık gelen toplama ve çıkarma işlemlerini birbiri ile ilişkilendirir." }
+      ],
+      "icerikCercevesi": {
+        "konuAlani": "Toplama ve Çıkarma",
+        "genellemeler": [
+          "Toplama ve çıkarma matematikte temel aritmetik işlemlerdendir."
+        ],
+        "anahtarKavramlar": [
+          "toplama", "toplanan", "toplam", "artma", "çoğalma", "artı",
+          "çıkarma", "eksilen", "çıkan", "fark", "azalma", "eksilme", "eksi", "eşittir"
+        ],
+        "sembolVeGosterimler": ["+", "−", "="]
+      },
+      "uygulamaNotlari": [
+        "TOPLAMA: 20'den küçük sayılarla, toplamları 20'ye kadar (20 dâhil), ELDESİZ. İki sayı ile sınırlı kalınır (SAYFA 35).",
+        "ÇIKARMA: 20'den (20 dâhil) küçük sayılarla, ONLUK BOZMA GEREKTİRMEYEN (SAYFA 33).",
+        "İki basamaklı sayı ile tek basamaklı sayı toplanır (eldesiz); iki basamaklıdan tek basamaklı çıkarılır (onluk bozma yok) (SAYFA 35).",
+        "Toplamada büyük sayıdan başlanması (üzerine sayma) ve değişme özelliği vurgulanır (SAYFA 36).",
+        "Sıfırın toplamada etkisiz eleman olduğu vurgulanır (SAYFA 36)."
+      ],
+      "kaynakSayfa": 34
+    },
+    {
+      "kod": "MAT.1.2.2",
+      "ogretimSirasi": 12,
+      "resmiMetin": "Toplama ve çıkarma işlemlerinin sonuçlarını tahminde bulunarak ve zihinden işlem yaparak muhakeme edebilme",
+      "tema": {
+        "no": 4,
+        "ad": "İşlemlerden Cebirsel Düşünmeye",
+        "dersSaati": 50,
+        "ogrenmeCiktisiSayisi": 4
+      },
+      "surecBilesenleri": [
+        { "harf": "a", "metin": "Toplama ve çıkarma işlemlerine ilişkin ögeleri belirler." },
+        { "harf": "b", "metin": "Toplama ve çıkarma işlemlerine ilişkin ögeler arasındaki ilişkileri belirler." },
+        { "harf": "c", "metin": "Toplama ve çıkarma işlemlerine yönelik tahmin ve zihinden işlem sonuçları arasında ilişki kurar." },
+        { "harf": "ç", "metin": "Tahmin ve zihinden işlem sonuçlarının tutarlılığını ifade eder." }
+      ],
+      "icerikCercevesi": {
+        "konuAlani": "Toplama ve Çıkarma",
+        "genellemeler": [
+          "Toplama ve çıkarma matematikte temel aritmetik işlemlerdendir."
+        ],
+        "anahtarKavramlar": [
+          "toplama", "toplanan", "toplam", "artma", "çoğalma", "artı",
+          "çıkarma", "eksilen", "çıkan", "fark", "azalma", "eksilme", "eksi", "eşittir"
+        ],
+        "sembolVeGosterimler": ["+", "−", "="]
+      },
+      "uygulamaNotlari": [
+        "Vurgu işlem yapmakta değil MUHAKEMEDEDİR: tahmin ile zihinden işlem sonucunun tutarlılığı sorgulanır.",
+        "Programın adıyla andığı zihinden işlem stratejileri: BÜYÜK SAYININ ÜZERİNE SAYMA, 10'A TAMAMLAMA ve TOPLAMI AYNI OLAN SAYILAR (SAYFA 36).",
+        "İşlemin ögeleri ve adları (toplanan, toplam, eksilen, çıkan, fark) işlem üzerinde ifade edilir; öğrenci ilişkileri KENDİ CÜMLELERİYLE anlatır (SAYFA 36).",
+        "Sonuç aralığı 20'ye kadar (20 dâhil)."
+      ],
+      "kaynakSayfa": 34
+    },
+    {
+      "kod": "MAT.1.2.3",
+      "ogretimSirasi": 13,
+      "resmiMetin": "Eşit işaretinin anlamını toplama ve çıkarma işlemi bağlamında yorumlayabilme",
+      "tema": {
+        "no": 4,
+        "ad": "İşlemlerden Cebirsel Düşünmeye",
+        "dersSaati": 50,
+        "ogrenmeCiktisiSayisi": 4
+      },
+      "surecBilesenleri": [
+        { "harf": "a", "metin": "Toplama ve çıkarma işlemlerinde eşit işaretinin kullanımını inceler." },
+        { "harf": "b", "metin": "Eşit işaretinin anlamını kullanarak bir toplama ya da çıkarma işlemini dönüştürür." },
+        { "harf": "c", "metin": "Dönüştürdüğü toplama ve çıkarma işlemlerini kendi cümleleriyle ifade eder." }
+      ],
+      "icerikCercevesi": {
+        "konuAlani": "Toplama ve Çıkarma",
+        "genellemeler": [
+          "Toplama ve çıkarma matematikte temel aritmetik işlemlerdendir."
+        ],
+        "anahtarKavramlar": [
+          "toplama", "toplanan", "toplam", "artma", "çoğalma", "artı",
+          "çıkarma", "eksilen", "çıkan", "fark", "azalma", "eksilme", "eksi", "eşittir"
+        ],
+        "sembolVeGosterimler": ["+", "−", "="]
+      },
+      "uygulamaNotlari": [
+        "Eşit işareti bir 'sonucu yaz' komutu DEĞİL, denklik bildirir. Bu nedenle 7 = 3 + 4 ve 3 + 4 = 2 + 5 biçimindeki yazımlar da kapsamdadır (b bendi: işlemi DÖNÜŞTÜRME).",
+        "Eşit işareti, eşitliğin HER İKİ TARAFINDA da eşit sayıda nesne olduğunu gösterir; bu, denge modelleriyle (tahterevalli, eşit kollu terazi) inceletilir (SAYFA 36).",
+        "KRİTİK: Denge görselleri kullanılırken KÜTLE KAVRAMINA DEĞİNİLMEZ — program bunu açıkça yazar (SAYFA 36).",
+        "Sonuç aralığı 20'ye kadar (20 dâhil)."
+      ],
+      "kaynakSayfa": 34
+    },
+    {
+      "kod": "MAT.1.2.4",
+      "ogretimSirasi": 14,
+      "resmiMetin": "Toplama ve çıkarma işlemlerinin ilişkisini yorumlayabilme",
+      "tema": {
+        "no": 4,
+        "ad": "İşlemlerden Cebirsel Düşünmeye",
+        "dersSaati": 50,
+        "ogrenmeCiktisiSayisi": 4
+      },
+      "surecBilesenleri": [
+        { "harf": "a", "metin": "Toplama ve çıkarma işlemlerinin ilişkisini inceler." },
+        { "harf": "b", "metin": "Toplama ve çıkarma işlemlerini tersine dönüştürür." },
+        { "harf": "c", "metin": "Toplama ve çıkarma işlemlerinin ilişkisini yeniden ifade eder." }
+      ],
+      "icerikCercevesi": {
+        "konuAlani": "Toplama ve Çıkarma",
+        "genellemeler": [
+          "Toplama ve çıkarma matematikte temel aritmetik işlemlerdendir."
+        ],
+        "anahtarKavramlar": [
+          "toplama", "toplanan", "toplam", "artma", "çoğalma", "artı",
+          "çıkarma", "eksilen", "çıkan", "fark", "azalma", "eksilme", "eksi", "eşittir"
+        ],
+        "sembolVeGosterimler": ["+", "−", "="]
+      },
+      "uygulamaNotlari": [
+        "Ters işlem ilişkisi: a + b = c ise c − b = a ve c − a = b.",
+        "VERİLMEYENİ BULMA bu kazanımın parçasıdır: bir işlemde verilmeyeni bulmak için diğer işlemden yararlanılabileceği gösterilir (SAYFA 37).",
+        "Aşamalandırma: önce iki işlem arasındaki ilişki incelenir, SONRA işlemleri birbirine dönüştürme etkinlikleri yapılır (SAYFA 37).",
+        "Sonuç aralığı 20'ye kadar (20 dâhil); çıkarmada onluk bozma yok."
+      ],
+      "kaynakSayfa": 34
+    },
+    {
+      "kod": "MAT.1.1.9",
+      "ogretimSirasi": 15,
+      "resmiMetin": "Paraların (1 TL, 5 TL, 10 TL, 20 TL, 50 TL, 100 TL ve 200 TL) temsil ettiği büyüklükleri tanıyabilme",
+      "tema": {
+        "no": 5,
+        "ad": "Sayılar ve Nicelikler (3)",
+        "dersSaati": 7,
+        "ogrenmeCiktisiSayisi": 1
+      },
+      "surecBilesenleri": [],
+      "surecBilesenleriNotu": "Programda bu öğrenme çıktısı için alt madde verilmemiştir (SAYFA 31).",
+      "icerikCercevesi": {
+        "konuAlani": "Nicelikler (Paralarımız)",
+        "genellemeler": [
+          "Para değişim aracıdır."
+        ],
+        "anahtarKavramlar": ["Türk lirası", "lira", "para", "değişim", "takas"],
+        "sembolVeGosterimler": ["TL", "₺"]
+      },
+      "uygulamaNotlari": [
+        "Kazanım TANIMA ve BÜYÜKLÜĞE GÖRE SIRALAMA düzeyindedir; para ile toplama/çıkarma işlemi bu kazanımın parçası değildir.",
+        "KRİTİK: Sıralama yapılırken 200 TL sıralamaya DÂHİL EDİLMEZ; 200 TL yalnızca görsel olarak tanıtılır (SAYFA 31).",
+        "Bir ürünün farklı değerlerdeki paralarla değişik şekillerde alınabileceği gösterilir (örn. 10 TL'lik ürün iki adet 5 TL ya da bir adet 10 TL ile) (SAYFA 31-32).",
+        "Kuruş 1. sınıf kapsamı dışındadır; program banknot değerlerini listeler."
+      ],
+      "kaynakSayfa": 31
+    },
+    {
+      "kod": "MAT.1.3.3",
+      "ogretimSirasi": 16,
+      "resmiMetin": "Günlük yaşamdaki nesneleri biçimsel özelliklerine göre ayırt edebilme",
+      "tema": {
+        "no": 6,
+        "ad": "Nesnelerin Geometrisi (2)",
+        "dersSaati": 15,
+        "ogrenmeCiktisiSayisi": 3
+      },
+      "surecBilesenleri": [],
+      "surecBilesenleriNotu": "Programda bu öğrenme çıktısı için alt madde verilmemiştir (SAYFA 43).",
+      "icerikCercevesi": {
+        "konuAlani": "Nesneler ve Geometrik Şekiller",
+        "genellemeler": [
+          "Nesneler ile geometrik yapılar ilişkilidir.",
+          "Geometrik yapılar ile geometrik şekiller ilişkilidir."
+        ],
+        "anahtarKavramlar": ["nesne", "köşe", "kenar", "üçgen", "kare", "dikdörtgen", "çember"],
+        "sembolVeGosterimler": []
+      },
+      "uygulamaNotlari": [
+        "Ayırt etme ölçütü YUVARLAK / KÖŞELİ ikilisidir (SAYFA 42).",
+        "Nesne örnekleri günlük yaşamdan verilir: bina çatısı, kamp çadırı, futbol topu, meyve suyu kutusu vb. (SAYFA 43).",
+        "Bu kazanımda geometrik cisim ADLARI (küp, küre, silindir vb.) kullanılmaz; nesneler biçimsel özelliğine değinmeden yuvarlak/köşeli olarak eşleştirilir (SAYFA 43)."
+      ],
+      "kaynakSayfa": 43
+    },
+    {
+      "kod": "MAT.1.3.4",
+      "ogretimSirasi": 17,
+      "resmiMetin": "Günlük yaşamda karşılaşılan geometrik yapılardaki geometrik şekilleri çözümleyebilme",
+      "tema": {
+        "no": 6,
+        "ad": "Nesnelerin Geometrisi (2)",
+        "dersSaati": 15,
+        "ogrenmeCiktisiSayisi": 3
+      },
+      "surecBilesenleri": [
+        { "harf": "a", "metin": "Geometrik yapılardaki şekilleri belirler." },
+        { "harf": "b", "metin": "Şekiller arasında ilişki kurar." }
+      ],
+      "icerikCercevesi": {
+        "konuAlani": "Nesneler ve Geometrik Şekiller",
+        "genellemeler": [
+          "Nesneler ile geometrik yapılar ilişkilidir.",
+          "Geometrik yapılar ile geometrik şekiller ilişkilidir."
+        ],
+        "anahtarKavramlar": ["nesne", "köşe", "kenar", "üçgen", "kare", "dikdörtgen", "çember"],
+        "sembolVeGosterimler": []
+      },
+      "uygulamaNotlari": [
+        "Şekiller köşe sayısı (üç köşeli, dört köşeli, köşesi olmayan vb.) ve kenar sayısı (üç kenarlı, dört kenarlı, kenarı olmayan vb.) dikkate alınarak belirlenir (SAYFA 42).",
+        "Bağlam günlük yaşamdaki geometrik yapılardır (örn. mimari) (SAYFA 43)."
+      ],
+      "kaynakSayfa": 43
+    },
+    {
+      "kod": "MAT.1.3.5",
+      "ogretimSirasi": 18,
+      "resmiMetin": "Biçimsel özelliklerine göre geometrik şekilleri sınıflandırabilme",
+      "tema": {
+        "no": 6,
+        "ad": "Nesnelerin Geometrisi (2)",
+        "dersSaati": 15,
+        "ogrenmeCiktisiSayisi": 3
+      },
+      "surecBilesenleri": [
+        { "harf": "a", "metin": "Geometrik şekillerin biçimsel özelliklerini belirler." },
+        { "harf": "b", "metin": "Geometrik şekilleri biçimsel özelliklerine göre ayırır." },
+        { "harf": "c", "metin": "Geometrik şekilleri tasnif eder." },
+        { "harf": "ç", "metin": "Geometrik şekilleri adlandırır." }
+      ],
+      "icerikCercevesi": {
+        "konuAlani": "Nesneler ve Geometrik Şekiller",
+        "genellemeler": [
+          "Nesneler ile geometrik yapılar ilişkilidir.",
+          "Geometrik yapılar ile geometrik şekiller ilişkilidir."
+        ],
+        "anahtarKavramlar": ["nesne", "köşe", "kenar", "üçgen", "kare", "dikdörtgen", "çember"],
+        "sembolVeGosterimler": []
+      },
+      "uygulamaNotlari": [
+        "Sınıflandırılan dört şekil: ÜÇGEN, KARE, DİKDÖRTGEN, ÇEMBER (SAYFA 42). 'Daire' terimi programda geçmez.",
+        "Şekillerin ADLANDIRILMASI (ç bendi) bu kazanımın son basamağıdır; MAT.1.3.3 ve MAT.1.3.4'te şekiller henüz adlandırılmaz.",
+        "Öğrencilerin bu dört şekli adlandırmadan biçimsel olarak tanıdığı kabul edilir (SAYFA 43)."
+      ],
+      "kaynakSayfa": 43
+    },
+    {
+      "kod": "MAT.1.4.1",
+      "ogretimSirasi": 19,
+      "resmiMetin": "Kategorik veriye dayalı temel veri grubu ile çalışabilme ve veriye dayalı karar verebilme",
+      "tema": {
+        "no": 7,
+        "ad": "Veriye Dayalı Araştırma",
+        "dersSaati": 10,
+        "ogrenmeCiktisiSayisi": 1
+      },
+      "surecBilesenleri": [
+        { "harf": "a", "metin": "Kategorik veriye dayalı istatiksel araştırma gerektiren günlük yaşam durumu belirler." },
+        { "harf": "b", "metin": "Kategorik veriye dayalı betimleme gerektirebilecek araştırma soruları oluşturur." },
+        { "harf": "c", "metin": "Kategorik verileri toplamak için plan yapar." },
+        { "harf": "ç", "metin": "Kategorik verileri toplar." },
+        { "harf": "d", "metin": "Toplanan verileri analiz etmek için görselleştirme araçlarından çetele, sıklık tablosu ve nesne grafini seçer." },
+        { "harf": "e", "metin": "Seçtiği araçlarla verileri görselleştirerek analiz eder." },
+        { "harf": "f", "metin": "Araştırma sonuçlarını yorumlar." },
+        { "harf": "g", "metin": "Araştırma sonuçlarını araştırma sorularına göre değerlendirir." }
+      ],
+      "icerikCercevesi": {
+        "konuAlani": "Kategorik Veri",
+        "genellemeler": [
+          "Grafikler verilerin görsel temsilidir."
+        ],
+        "anahtarKavramlar": ["kategorik veri", "çetele tablosu", "sıklık tablosu", "nesne grafiği", "değişebilirlik"],
+        "sembolVeGosterimler": []
+      },
+      "uygulamaNotlari": [
+        "Görselleştirme araçları: ÇETELE, SIKLIK TABLOSU, NESNE GRAFİĞİ. Sütun grafiği 1. sınıf kapsamı dışındadır.",
+        "Tek veri grubu ile çalışılır; veri KATEGORİKtir (renk, şekil, tür vb.).",
+        "KAYNAK DİZGİ HATALARI KORUNMUŞTUR: a) bendindeki 'istatiksel' ve d) bendindeki 'nesne grafini' ifadeleri resmî PDF'te bu şekilde basılmıştır; kastedilenler 'istatistiksel' ve 'nesne grafiğini'dir. Bu iki sözcük düzeltilmeden bırakılmıştır ki dosya kaynakla birebir karşılaştırılabilsin.",
+        "Bu kazanım bir ARAŞTIRMA SÜRECİDİR (soru kurma, veri toplama, görselleştirme, yorumlama). Tek soruluk alıştırmaya indirgenemez; en fazla 'çeteleyi/nesne grafiğini oku' basamağı tekil alıştırmaya uygundur."
+      ],
+      "kaynakSayfa": 47
+    }
+  ],
+
+  "ozdenetim": {
+    "aciklama": "Bu dosyanın kaynağa uygunluğunu doğrulayan sağlama değerleri. Dosya değiştirildiğinde yeniden hesaplanmalıdır.",
+    "kazanimSayisi": 19,
+    "temaSayisi": 7,
+    "temaBasinaKazanimSayisi": [2, 7, 1, 4, 1, 3, 1],
+    "temaDersSaatleri": [15, 57, 18, 50, 7, 15, 10],
+    "temaDersSaatiToplami": 172,
+    "okulTemelliPlanlamaSaati": 8,
+    "genelToplamDersSaati": 180,
+    "ogretimSirasiAraligi": [1, 19],
+    "ogrenmeAlaniDagilimi": {
+      "MAT.1.1": 9,
+      "MAT.1.2": 4,
+      "MAT.1.3": 5,
+      "MAT.1.4": 1
+    },
+    "surecBileseniOlmayanKazanimlar": ["MAT.1.1.3", "MAT.1.1.5", "MAT.1.1.9", "MAT.1.3.3"],
+    "kapsamDisi": [
+      "saat okuma / zaman ölçü birimleri (2. sınıf)",
+      "standart uzunluk ve kütle birimleri (cm, m, kg, g)",
+      "kuruş",
+      "sütun grafiği",
+      "çarpma ve bölme",
+      "eldeli toplama, onluk bozmalı çıkarma",
+      "20'den büyük sonuçlu toplama/çıkarma"
+    ]
+  }
+}

@@ -1,0 +1,1996 @@
+{
+  "$aciklama": {
+    "nedir": "KAVRAM YANILGISI TAKSONOMİSİ. Bir çocuk yanlış bir şıkka dokunduğunda sistemin 'yanlış' demekle yetinmemesi, NEDEN yanlış yaptığını adlandırıp hedefli bir müdahale başlatması için gereken bilgi burada tutulur. Her kayıt bir tanı etiketini; o etiketin nasıl TESPİT edileceğini (sinyal + eşik), tespit edilince NE YAPILACAĞINI (hangi şablon, hangi parametreyle, kaç madde) ve NE ZAMAN KAPANACAĞINI (çıkış kriteri) tanımlar.",
+    "kimlikSozlesmesi": "Kayıtların 'id' alanı src/exercises/distractors.ts içindeki HATA_ETIKETLERI sabitleriyle BİREBİR AYNIDIR (15 etiket, ne eksik ne fazla). Yeni bir etiket önce distractors.ts'te tanımlanır, sonra buraya eklenir; tersi değil. 'ozdenetim.hataEtiketleri' listesi bu eşleşmenin testle doğrulanması içindir.",
+    "tekGercekKaynagiDegildir": "Bu dosya çeldirici ÜRETMEZ. Üretim src/exercises/distractors.ts'in işidir; buradaki 'distractorsAynasi' alanı yalnızca o dosyadaki HataTanimi ile tutarlılık denetimi (test) içindir ve elle değiştirilmez.",
+    "mimariKural_GOREV_ANLASILMADI": "GOREV_ANLASILMADI bir BİLGİ EKSİKLİĞİ DEĞİLDİR; bir ÖLÇÜM GEÇERSİZLİĞİDİR. Çocuk soruyu duymamış, ekrana rastgele dokunmuş ya da dikkati dağılmış olabilir. Bu etiket tetiklendiğinde: (1) ustalık skoru GÜNCELLENMEZ ('skorlamaYokSay': true), (2) denemeler sayacı ARTMAZ ('denemeSayilirMi': false), (3) madde hiçbir beceriye kanıt olarak yazılmaz ('etkilenenBeceriler': []), (4) rapor ekranlarında 'sayılmadı' olarak gösterilir, doğru/yanlış istatistiğine girmez. Bu kural ihlal edilirse ustalık modeli gürültüyle zehirlenir ve çocuğa bilmediği için değil duymadığı için tekrar çalıştırılır.",
+    "alanSozlugu": {
+      "id": "Tanı etiketi. distractors.ts'teki HataEtiketi birleşim tipinin bir üyesi.",
+      "etiket": "Yetişkin ekranında (öğretmen/veli raporu) görünecek kısa Türkçe ad. Çocuğa GÖSTERİLMEZ.",
+      "tur": "'kavramYanilgisi' = yanlış zihinsel model, düzeltilmesi gerekir. 'gelisimselDarbogaz' = yanlış değil, henüz olgunlaşmamış strateji; acele ettirilmez, desteklenir. 'olcumGecersizligi' = veri güvenilmez, öğrenme hakkında hiçbir çıkarım yapılamaz.",
+      "cozumSirasi": "1-15, benzersiz. Aynı anda birden çok bayrak açıksa BU SIRADAKİ İLK hata hedeflenir. Sıra pedagojik ön koşulu izler: önce ölçüm geçerliliği, sonra sayma ilkeleri, sonra işlem, en sonda alan bilgisi (geometri/para).",
+      "onKosulHatalar": "Bu hata çalışılmadan ÖNCE kapatılması gereken hatalar. Açık bir ön koşul varken bu hataya müdahale ETME — üstüne inşa edilecek zemin yok.",
+      "skorlamaYokSay": "true ise madde ustalık skorunu güncellemez.",
+      "denemeSayilirMi": "false ise madde deneme (attempts) sayacını artırmaz.",
+      "ustalikTavani": "null değilse, bu bayrak açıkken ilgili becerilerin ustalık skoru bu değeri AŞAMAZ. Doğru cevaplar doğru sayılır ama 'ustalaştı' denmez.",
+      "etkilenenBeceriler": "src/content/skills.json düğüm id'leri (SkillId: /^mat\\.[a-z0-9-]+\\.[a-z0-9-]+$/).",
+      "yayginlik": "Soğuk başlangıç önceliği. Ölçülmüş istatistik DEĞİLDİR — sınıf gözlemine ve sayma/işlem literatürünün bilinen bulgularına dayanan niteliksel bir öndeğerdir. Yeterli gerçek veri biriktiğinde ölçülen oran bu değerin yerini alır.",
+      "tespit": "Sinyal + eşik. Tek bir yanlış şık tanı DEĞİLDİR; çocuk yanlışlıkla da dokunabilir. Bayrak ancak eşik aşılınca açılır.",
+      "ayirtEtme": "Bu hata hangi hatayla karıştırılır ve ayrımı hangi kanıt kurar. Yanlış tanı, tanı koymamaktan daha zararlıdır: çocuk bilmediği şeyi değil bildiği şeyi tekrar çalışır.",
+      "mudahale": "Strateji + somut şablon reçetesi. 'basamaklar' sırayla uygulanır: destekli koşuldan asıl koşula geçiş.",
+      "cikisKriteri": "Bayrağın kapanma koşulu. Tek bir doğru cevap yeterli değildir (şans faktörü); farklı oturum ve farklı şablon şartı transferi kanıtlar.",
+      "veliNotu": "Veli ekranında görünecek metin. KAYGI YARATMAZ: bu yaşta normal olan açıkça söylenir, tanı dili ('bozukluk', 'gerilik', 'sorun') kullanılmaz, evde yapılabilecek somut bir şey verilir.",
+      "gerekenYeniSesler": "Müdahalenin ihtiyaç duyduğu ama audioManifest.generated.ts'te BULUNMAYAN ses önerileri. Bunlar HENÜZ GEÇERLİ SpeechKey DEĞİLDİR — koda yazılırsa hem tip hem çalışma zamanı hatası verir. src/content/tr.json'a ekleme bu dosyanın işi değildir (paralel ajanlar var); ses üretim ajanı bu listeyi toplu olarak işler."
+    },
+    "sinyalTurleri": {
+      "celdiriciEtiketi": "Çocuğun seçtiği yanlış şıkkın diagnosticTag'i. En doğrudan sinyal. 'agirlik' alanı sadece 'birincil' çeldiricilerin mi (distractors.ts SayisalCeldirici.birincil === true) yoksa yedek strateji ile üretilenlerin de mi sayılacağını belirler.",
+      "kosulKarsitligi": "En güçlü tanı sinyali. Çocuk A koşulunda başarısız, B koşulunda başarılı: hata bilgi eksikliği değil, o KOŞULA özgü. Örn. dağınık düzende hata + sıralı düzende doğru = birebir eşleşme takibi sorunu, sayı bilgisi sorunu değil.",
+      "sureAsimi": "Cevap DOĞRU ama çözüm süresi eşiği aşıyor. Yanlışın değil, verimsiz stratejinin işareti (bkz. HEPSINI_SAYMA).",
+      "davranis": "Cevaptan bağımsız etkileşim örüntüsü: çok kısa yanıt süresi, aynı maddede çok sayıda farklı dokunuş, ipucu kullanım örüntüsü."
+    },
+    "maddeUstverisiSozlesmesi": "tespit.sinyaller[].filtre içindeki anahtarlar, oturum kayıt katmanının HER madde için tutması gereken üstveridir. Şablonlar bu alanları üretmezse ilgili sinyal ölçülemez (bayrak sessizce hiç açılmaz). Anahtarlar: templateId, kind, skillId, layout, adet, aralikUst, sonuc, islem, terimA, terimB, sonucOnlukGecti, yaziliBicim, sekilDurusu, nesneBoyutuFarkli, banknotCifti, adim, oruntuTuru, cevapSuresiSn, dokunusSayisi, ipucuKademesi, celdiriciBirincil.",
+    "esikGerekcesi": "Pencereler oturum uzunluğuna göre seçildi (SESSION_LENGTH = 8, bkz. src/design/tokens.ts). 'son 6 madde' bir oturumun içinde kalır; 'son 10 madde' iki oturuma yayılır ve daha kararlı ama daha yavaş tepki verir. Eşikler bilerek TEMKİNLİDİR: yanlış tanı, tanı koymamaktan daha pahalıdır."
+  },
+
+  "surum": 1,
+  "sinif": 1,
+  "etiketKaynagi": "src/exercises/distractors.ts — HATA_ETIKETLERI",
+
+  "hatalar": [
+    {
+      "id": "GOREV_ANLASILMADI",
+      "etiket": "Görev anlaşılmamış (ölçüm geçersiz)",
+      "aciklama": "Cevap soruyla ilgisiz: doğru cevaba uzak, hiçbir tanılı çeldiriciyle örtüşmüyor ya da soru bitmeden dokunulmuş. Bu bir matematik hatası değildir; çocuk yönergeyi duymamış, dikkati dağılmış ya da ekrana keşif amaçlı dokunmuş olabilir. Bu maddeden çocuğun matematiği hakkında HİÇBİR ŞEY öğrenilemez.",
+      "tur": "olcumGecersizligi",
+      "cozumSirasi": 1,
+      "distractorsAynasi": { "sayisal": true, "baglamGerekir": false },
+      "skorlamaYokSay": true,
+      "denemeSayilirMi": false,
+      "ustalikTavani": null,
+      "kazanimKodlari": [],
+      "etkilenenBeceriler": [],
+      "onKosulHatalar": [],
+      "yayginlik": {
+        "duzey": "yaygin",
+        "tipikDonem": "Uygulamanın ilk oturumları; ayrıca gürültülü ortam ve gün sonu yorgunluğunda.",
+        "gerekce": "Okuma bilmeyen çocukta yönerge tamamen sese bağlıdır. Cihaz sessizdeyse, kulaklık takılı değilse veya sınıf gürültülüyse hiçbir matematik becerisi ölçülemez.",
+        "baslangicOnceligi": 1
+      },
+      "tespit": {
+        "aciklama": "Tek bir olay bile bayrağı açar — çünkü amaç bir eksiği gidermek değil, geçersiz ölçümü veri havuzuna sokmamaktır. Yanlış pozitif maliyeti düşüktür: madde sayılmaz, çocuk soruyu bir kez daha dinler.",
+        "sinyaller": [
+          {
+            "tur": "celdiriciEtiketi",
+            "etiket": "GOREV_ANLASILMADI",
+            "kapsam": "tumMaddeler",
+            "pencere": { "birim": "madde", "n": 1 },
+            "esik": { "iliski": ">=", "deger": 1 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "davranis",
+            "olay": "cokKisaYanitSuresi",
+            "aciklama": "Talimat sesi bitmeden ya da bitiminden hemen sonra dokunma: çocuk soruyu işlememiş.",
+            "filtre": { "cevapSuresiSn": "< 2" },
+            "kapsam": "tumMaddeler",
+            "pencere": { "birim": "madde", "n": 1 },
+            "esik": { "iliski": ">=", "deger": 1 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "davranis",
+            "olay": "rastgeleDokunma",
+            "aciklama": "Aynı maddede üç veya daha fazla farklı şıkka dokunma — deneme yanılma değil, keşif davranışı.",
+            "filtre": { "dokunusSayisi": ">= 3" },
+            "kapsam": "tumMaddeler",
+            "pencere": { "birim": "madde", "n": 1 },
+            "esik": { "iliski": ">=", "deger": 1 },
+            "agirlik": "destekleyici"
+          },
+          {
+            "tur": "kosulKarsitligi",
+            "aciklama": "Aynı becerideki geçmiş doğruluk yüksekken ani ve açıklanamayan düşüş: bilgi kaybolmaz, koşul bozulmuştur (ses, dikkat, ortam).",
+            "kosulA": { "ad": "son 2 madde", "filtre": { "pencere": "son2" }, "enAzMadde": 2, "dogrulukUst": 0.0 },
+            "kosulB": { "ad": "aynı becerideki önceki maddeler", "filtre": { "pencere": "oncekiTumu" }, "enAzMadde": 6, "dogrulukAlt": 0.8 },
+            "agirlik": "destekleyici"
+          }
+        ],
+        "enAzKanitMaddesi": 1,
+        "birincilOlmayanCeldiriciAgirligi": 0,
+        "yanlisPozitifKorumasi": "Yok — bilerek. Bu bayrak ceza üretmez, yalnızca ölçümü iptal eder ve yönergeyi tekrarlatır. Fazladan tetiklenmesi zararsızdır; kaçırılması ustalık modelini bozar."
+      },
+      "ayirtEtme": {
+        "karistirilan": ["FAZLA_SAYMA", "EKSIK_SAYMA"],
+        "nasil": "Sayma hataları doğru cevaba KOMŞUDUR (±1, ±2) ve yönleri tutarlıdır. Görev anlaşılmadığında cevap doğrudan en az 3 uzaktır ve yön tutarlılığı yoktur (distractors.ts GOREV_ANLASILMADI adayları da tam bunu üretir: |v - dogru| >= 3)."
+      },
+      "mudahale": {
+        "strateji": "Ölçümü onarmak, öğretmek değil. Önce yönergenin duyulduğundan emin ol, sonra aynı beceride devam et.",
+        "gerekce": "Bu bayrağa 'tekrar çalıştırma' ile karşılık vermek yanlıştır: çocuk konuyu bilmiyor olmayabilir. Zorluk düşürülmez, yönerge güçlendirilir.",
+        "basamaklar": [
+          {
+            "sira": 1,
+            "amac": "Yönergeyi yeniden duyurmak; ses yolunun çalıştığını doğrulamak.",
+            "templateId": "AYNI_MADDE",
+            "parametreler": { "talimatiTekrarla": true, "ipucuBaslangicKademesi": 1, "otomatikK1": true },
+            "maddeSayisi": 1,
+            "not": "Aynı madde, aynı seed. Yeni soru üretilmez; ölçülemeyen madde tekrar ölçülür."
+          },
+          {
+            "sira": 2,
+            "amac": "Kısa yönergeli, tek adımlı bir maddeyle görev anlaşılırlığını sınamak.",
+            "templateId": "sayma.dokun-say",
+            "parametreler": { "difficulty": 1, "layout": "sira", "maxAdet": 5, "yonergeUzunlugu": "kisa" },
+            "maddeSayisi": 1,
+            "not": "Bu madde de geçersiz gelirse sorun matematikte değil ortamdadır."
+          },
+          {
+            "sira": 3,
+            "amac": "Ortam uyarısı.",
+            "templateId": "YOK",
+            "parametreler": { "yetiskinUyarisi": "sesKontrolu" },
+            "maddeSayisi": 0,
+            "not": "Arka arkaya 2 geçersiz madde → yetişkin ekranında sessiz bir not: 'Cihazın sesi açık mı? Ortam sakin mi?'. Çocuğa hiçbir şey gösterilmez."
+          }
+        ],
+        "sesIpuclari": ["ui.tekrar-dinle", "yardim.k1-dinle"],
+        "oturumBasinaEnFazlaMadde": 2,
+        "artArdaEnFazlaMadde": 1,
+        "kacinilacak": [
+          "Zorluk düşürmek — bilgi eksikliği kanıtlanmadı.",
+          "Maddeyi yanlış olarak kaydetmek.",
+          "Çocuğa 'dikkatini ver' türü bir geri bildirim vermek."
+        ]
+      },
+      "cikisKriteri": {
+        "ardisikDogru": 0,
+        "enAzFarkliOturum": 0,
+        "enAzFarkliSablon": 0,
+        "yardimsiz": false,
+        "sureSiniriSn": null,
+        "aciklama": "Bir sonraki maddede GÖREV İÇİ tepki görülmesi yeterlidir: yanıt süresi 2-45 sn arasında ve seçilen şık tanılı bir çeldirici ya da doğru cevap. Ardışık doğru şartı ARANMAZ — kapatılan şey bir eksik değil, bir ölçüm arızasıdır."
+      },
+      "veliNotu": {
+        "baslik": "Bu soru sayılmadı",
+        "neOluyor": "Çocuğunuz bu soruda soruyla ilgisiz bir yere dokundu ya da soru bitmeden cevap verdi. Bu yüzden soruyu değerlendirmeye almadık.",
+        "buYastaNormalMi": "Tamamen normal. Uygulamadaki tüm yönergeler sesle veriliyor; ses duyulmadıysa ya da o an dikkat başka yere kaydıysa çocuk soruyu bilmediği için değil, duymadığı için yanıtlayamaz. Bu maddeler başarı oranına HİÇ katılmaz.",
+        "evdeDeneyin": [
+          "Cihazın sesini açın; mümkünse kulaklık kullanın.",
+          "Oturumu sakin bir odada ve çocuk yorgun değilken başlatın.",
+          "Sorunun sesi bitmeden dokunuyorsa, 'önce dinleyelim, sonra dokunalım' deyip bir kez birlikte yapın."
+        ],
+        "neZamanKonusalim": "Sessiz ortamda ve dinlenmiş hâldeyken de sık sık oluyorsa, bu bir matematik konusu değil dikkat/işitme konusu olabilir; sınıf öğretmenine bundan söz etmeniz yeterlidir."
+      },
+      "gerekenYeniSesler": []
+    },
+
+    {
+      "id": "BIREBIR_ESLESME",
+      "etiket": "Birebir eşleşme kurulamıyor",
+      "aciklama": "Çocuk sayı sözcüklerini biliyor ve sırayla söyleyebiliyor, ama her nesneye TAM BİR sayı sözcüğü düşürmeyi beceremiyor: parmağı ilerlerken sayısı geride kalıyor, bir nesneyi iki kez sayıyor ya da atlıyor. Ayırt edici imza şudur: SIRALI dizilişte doğru sayar, DAĞINIK dizilişte şaşırır. Çünkü sıralı dizilişte takibi düzenin kendisi yapar; dağınıkta 'sayılanı sayılmayandan ayırma' işini çocuğun yapması gerekir ve asıl eksik budur.",
+      "tur": "kavramYanilgisi",
+      "cozumSirasi": 2,
+      "distractorsAynasi": { "sayisal": true, "baglamGerekir": false },
+      "skorlamaYokSay": false,
+      "denemeSayilirMi": true,
+      "ustalikTavani": null,
+      "kazanimKodlari": ["MAT.1.1.1", "MAT.1.1.2"],
+      "etkilenenBeceriler": [
+        "mat.sayma.birebir-esleme",
+        "mat.sayma.daginik-dizilim",
+        "mat.sayma.20-ye-kadar"
+      ],
+      "onKosulHatalar": [],
+      "yayginlik": {
+        "duzey": "cok-yaygin",
+        "tipikDonem": "1. dönem, sayı temasının başı (Ekim-Aralık). Nesne sayısı 8'i geçtiğinde belirginleşir.",
+        "gerekce": "Sayma ilkelerinin en temeli ve en erken kırılanı. 6 yaşındaki çocukların önemli bir bölümü 5'e kadar sorunsuz sayarken 9-12 arası dağınık nesnede takibi kaybeder; bu, sayı bilgisi değil dikkat-takip becerisidir.",
+        "baslangicOnceligi": 1
+      },
+      "tespit": {
+        "aciklama": "Etiket sayımı tek başına yeterli değildir; asıl kanıt DÜZEN KARŞITLIĞIDIR. Aynı adet, iki farklı yerleşimde farklı sonuç veriyorsa tanı nettir.",
+        "sinyaller": [
+          {
+            "tur": "celdiriciEtiketi",
+            "etiket": "BIREBIR_ESLESME",
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "kosulKarsitligi",
+            "aciklama": "Dağınık düzende düşük, sıralı düzende yüksek doğruluk. Bu karşıtlık tek başına bayrağı açar.",
+            "kosulA": { "ad": "dağınık yerleşim", "filtre": { "layout": "dagınık" }, "enAzMadde": 3, "dogrulukUst": 0.5 },
+            "kosulB": { "ad": "sıralı yerleşim", "filtre": { "layout": "sira" }, "enAzMadde": 3, "dogrulukAlt": 0.8 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "kosulKarsitligi",
+            "aciklama": "Adet büyüdükçe bozulma: küçük kümelerde doğru, büyük kümelerde hatalı. Takip yükü sinyali.",
+            "kosulA": { "ad": "adet 8 ve üzeri", "filtre": { "adet": ">= 8" }, "enAzMadde": 3, "dogrulukUst": 0.5 },
+            "kosulB": { "ad": "adet 5 ve altı", "filtre": { "adet": "<= 5" }, "enAzMadde": 3, "dogrulukAlt": 0.8 },
+            "agirlik": "destekleyici"
+          }
+        ],
+        "enAzKanitMaddesi": 4,
+        "birincilOlmayanCeldiriciAgirligi": 0,
+        "yanlisPozitifKorumasi": "Yalnız ±1/±2 sapmalar sayılır; uzak cevaplar GOREV_ANLASILMADI'ya gider. TAP_COUNT maddelerinde 'herNesneBirKez' ihlali (aynı nesneye iki kez dokunma) doğrudan kanıttır ve şık seçiminden daha güvenilirdir."
+      },
+      "ayirtEtme": {
+        "karistirilan": ["KARDINALITE", "FAZLA_SAYMA", "EKSIK_SAYMA"],
+        "nasil": "TAP_COUNT maddesinde dokunuş kaydına bakılır. Dokunuşlar hatalıysa (aynı nesne iki kez / bir nesne hiç) → BIREBIR_ESLESME. Dokunuşlar KUSURSUZ ama 'kaç tane?' cevabı yanlışsa → KARDINALITE. FAZLA/EKSIK_SAYMA yön olarak tutarlıdır (hep fazla ya da hep eksik); birebir eşleşme sorununda yön RASTGELEDİR, iki yöne de sapar."
+      },
+      "mudahale": {
+        "strateji": "Takibi önce ekran yapsın, sonra çocuk devralsın. Düzenli yerleşimden dağınığa kademeli geçiş; dokunulan nesnenin görsel olarak işaretlenmesi (dış bellek), sonra bu desteğin kaldırılması.",
+        "gerekce": "Çocuktan eksik olan sayı bilgisi değil, 'sayılanı sayılmayandan ayırma' işidir. Bu işi önce arayüz üstlenir; çocuk ritmi kurunca destek çekilir.",
+        "basamaklar": [
+          {
+            "sira": 1,
+            "amac": "Küçük ve sıralı kümede dokunarak sayma ritmini kurmak.",
+            "templateId": "sayma.dokun-say",
+            "parametreler": { "difficulty": 1, "layout": "sira", "maxAdet": 6, "herNesneBirKez": true, "dokunulaniIsaretle": true },
+            "maddeSayisi": 3,
+            "not": "Dokunulan nesne solar ve küçülür: çocuk 'sayılmışı' görebilir."
+          },
+          {
+            "sira": 2,
+            "amac": "Gruplu yerleşimde aynı ritmi sürdürmek; parça-bütün ilişkisine geçiş (MAT.1.1.2).",
+            "templateId": "sayma.dokun-say",
+            "parametreler": { "difficulty": 2, "layout": "gruplu", "maxAdet": 10, "herNesneBirKez": true, "dokunulaniIsaretle": true },
+            "maddeSayisi": 3,
+            "not": null
+          },
+          {
+            "sira": 3,
+            "amac": "Asıl koşul: dağınık yerleşim, işaretleme desteği KALDIRILMIŞ.",
+            "templateId": "sayma.dokun-say",
+            "parametreler": { "difficulty": 2, "layout": "dagınık", "maxAdet": 10, "herNesneBirKez": true, "dokunulaniIsaretle": false },
+            "maddeSayisi": 4,
+            "not": "Çıkış kriteri yalnız BU basamakta ölçülür; desteğe rağmen doğru olan cevap transferi kanıtlamaz."
+          }
+        ],
+        "sesIpuclari": ["soru.dokunarak-say", "yardim.k2-birlikte-sayalim", "yardim.k3-birlikte"],
+        "oturumBasinaEnFazlaMadde": 4,
+        "artArdaEnFazlaMadde": 2,
+        "kacinilacak": [
+          "Adedi artırmak — yük zaten takipte, sayı büyütmek yalnız başarısızlığı çoğaltır.",
+          "Hızlandırmak: 'çabuk say' yönergesi birebir eşleşmeyi doğrudan bozar.",
+          "Parmakla dokunmayı engellemek."
+        ]
+      },
+      "cikisKriteri": {
+        "ardisikDogru": 3,
+        "enAzFarkliOturum": 2,
+        "enAzFarkliSablon": 2,
+        "yardimsiz": true,
+        "sureSiniriSn": null,
+        "aciklama": "Üç ardışık doğru, en az ikisi 'dagınık' yerleşimde ve işaretleme desteği kapalıyken; en az iki farklı oturuma yayılmış olmalı. Aynı oturumdaki üç doğru kısa süreli dikkat toplamayı ölçer, öğrenmeyi değil."
+      },
+      "veliNotu": {
+        "baslik": "Sayarken yerini kaybediyor",
+        "neOluyor": "Çocuğunuz sayıları sırayla biliyor. Zorlandığı yer, nesneleri dağınık dururken takip etmek: hangisini saydığını, hangisini saymadığını aklında tutmak. Bu yüzden düzgün sıralı nesnelerde doğru sayarken, masaya saçılmış nesnelerde bir eksik ya da bir fazla söylüyor.",
+        "buYastaNormalMi": "Evet, 6 yaşında çok yaygın. Saymak aslında iki ayrı iştir: sayıları sırayla söylemek ve her nesneye tam bir sayı düşürmek. İkincisi bir hafıza-takip becerisidir ve daha geç oturur. Sayıları bilmiyor değil.",
+        "evdeDeneyin": [
+          "Fasulye, düğme ya da çorap gibi nesneleri masaya dağıtın; saydığınız her nesneyi kenara AYIRARAK sayın. Ayırmak, 'saydım' demenin en kolay yoludur.",
+          "Sofrayı kurarken 'her tabağa bir çatal' oyunu oynayın: birebir eşleşmenin en doğal hâli budur.",
+          "Acele ettirmeyin. Yavaş ve dokunarak sayması, hızlı ve yanlış saymasından daha değerlidir."
+        ],
+        "neZamanKonusalim": "Şu an bir şey yapmanıza gerek yok; uygulama bu beceriyi kademeli olarak çalıştırıyor. Merak ederseniz öğretmenine 'dağınık nesneleri sayarken nasıl?' diye sorabilirsiniz."
+      },
+      "gerekenYeniSesler": [
+        {
+          "onerilenAnahtar": "yardim.dokundugunu-isaretle",
+          "metin": "Dokunduğun elmayı kenara ayır. Böylece onu iki kez saymazsın.",
+          "gerekce": "Basamak 1-2'de dış bellek stratejisini sesle anlatmak için. Mevcut yardım klipleri bu stratejiyi söylemiyor."
+        }
+      ]
+    },
+
+    {
+      "id": "KARDINALITE",
+      "etiket": "Son sayı bütünü temsil etmiyor",
+      "aciklama": "Çocuk kümeyi kusursuz sayar — her nesneye bir sayı, doğru sırayla — ama 'kaç tane var?' sorusuna cevap veremez ya da baştan saymaya başlar. Sayma sırasının SON sözcüğünün tüm kümenin miktarını temsil ettiği fikri henüz kurulmamıştır. Çocuk için sayma bir sayı ÜRETME işi değil, bir ŞARKI söyleme işidir.",
+      "tur": "kavramYanilgisi",
+      "cozumSirasi": 3,
+      "distractorsAynasi": { "sayisal": true, "baglamGerekir": false },
+      "skorlamaYokSay": false,
+      "denemeSayilirMi": true,
+      "ustalikTavani": null,
+      "kazanimKodlari": ["MAT.1.1.1", "MAT.1.1.2"],
+      "etkilenenBeceriler": [
+        "mat.sayma.kardinalite",
+        "mat.sayma.20-ye-kadar",
+        "mat.sayilar.rakam-tanima"
+      ],
+      "onKosulHatalar": [],
+      "yayginlik": {
+        "duzey": "cok-yaygin",
+        "tipikDonem": "1. dönem başı (Eylül-Kasım); okul öncesi deneyimi sınırlı çocuklarda daha uzun sürer.",
+        "gerekce": "Sayma ilkeleri arasında en geç oturan ilkedir: birebir eşleşme ve sıra kararlılığı kurulduktan sonra gelir. Uygulamada 'saydırınca doğru, sorunca yanlış' örüntüsü açık bir imzadır.",
+        "baslangicOnceligi": 1
+      },
+      "tespit": {
+        "aciklama": "En güçlü kanıt tek bir maddenin içindedir: sayım doğru, cevap yanlış.",
+        "sinyaller": [
+          {
+            "tur": "kosulKarsitligi",
+            "aciklama": "TAP_COUNT maddesinde dokunuş sayımı KUSURSUZ (beklenenAdet tutuyor, her nesneye bir kez) ama ardından gelen 'kaç tane?' seçiminde yanlış şık. Bu, kardinallik eksikliğinin doğrudan gözlemidir.",
+            "kosulA": { "ad": "sayım sonrası 'kaç tane' seçimi", "filtre": { "kind": "TAP_COUNT", "cevapSecimi": "secenek", "sayimDogru": true }, "enAzMadde": 3, "dogrulukUst": 0.5 },
+            "kosulB": { "ad": "sayım aşaması", "filtre": { "kind": "TAP_COUNT", "olcut": "sayimDogrulugu" }, "enAzMadde": 3, "dogrulukAlt": 0.85 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "celdiriciEtiketi",
+            "etiket": "KARDINALITE",
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "davranis",
+            "olay": "sayimiYenidenBaslatma",
+            "aciklama": "'Kaç tane?' sorusundan sonra çocuğun nesnelere yeniden baştan dokunması: son sayıyı hatırlamıyor değil, onun cevap olduğunu bilmiyor.",
+            "filtre": { "dokunusSayisi": ">= adet", "asama": "soruSonrasi" },
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "destekleyici"
+          }
+        ],
+        "enAzKanitMaddesi": 4,
+        "birincilOlmayanCeldiriciAgirligi": 0,
+        "yanlisPozitifKorumasi": "Sayım aşamasında hata varsa bu bayrak AÇILMAZ — o durumda sorun birebir eşleşmededir (bkz. ayirtEtme). Kardinallik ancak temiz bir sayımın üstüne teşhis edilir."
+      },
+      "ayirtEtme": {
+        "karistirilan": ["BIREBIR_ESLESME", "GOREV_ANLASILMADI"],
+        "nasil": "Ayrım tek soruda çözülür: sayım doğru mu? Sayım hatalıysa BIREBIR_ESLESME. Sayım doğru, cevap yanlışsa KARDINALITE. Cevap sayımla hiç ilişkisizse (uzak değer) GOREV_ANLASILMADI."
+      },
+      "mudahale": {
+        "strateji": "Sayma ile cevabı BİTİŞİK hâle getirmek: sayım biter bitmez soruyu tekrarlamak, nesneleri örtüp son sayıyı hatırlatmak, küçük adetlerde (2-4) tek bakışta miktar görmeyi kullanmak.",
+        "gerekce": "Kardinallik, sayma eyleminin sonucu olduğunu FARK ETMEKLE kurulur. Bunun için sayma ile soru arasındaki boşluk kapatılır ve son sayı vurgulanır.",
+        "basamaklar": [
+          {
+            "sira": 1,
+            "amac": "Tek bakışta görülen küçük miktarlarda 'kaç tane' cevabını saymadan kurmak.",
+            "templateId": "sayma.kac-tane",
+            "parametreler": { "difficulty": 1, "layout": "gruplu", "maxAdet": 4, "aralikUst": 5 },
+            "maddeSayisi": 3,
+            "not": "2-4 arası miktarlar tek bakışta görülür; çocuk 'sayının bir miktarı adlandırdığını' burada yaşar."
+          },
+          {
+            "sira": 2,
+            "amac": "Sayımın hemen ardından soruyu tekrarlamak; son sayıyı sesle ve görsel olarak vurgulamak.",
+            "templateId": "sayma.dokun-say",
+            "parametreler": { "difficulty": 1, "layout": "sira", "maxAdet": 8, "cevapSecimi": "secenek", "sonSayiyiVurgula": true },
+            "maddeSayisi": 3,
+            "not": "Son dokunuşta söylenen sayı büyür ve ekranda kalır; 'kaç tane?' sorusu hemen üstüne gelir."
+          },
+          {
+            "sira": 3,
+            "amac": "Örtme testi: nesneler kapanır, cevap yalnız son sayıdan verilebilir.",
+            "templateId": "sayma.kac-tane",
+            "parametreler": { "difficulty": 2, "layout": "dagınık", "maxAdet": 10, "sayimSonrasiOrt": true },
+            "maddeSayisi": 3,
+            "not": "Nesneler örtülünce yeniden saymak mümkün değildir; doğru cevap ancak kardinallik kurulduysa gelir."
+          }
+        ],
+        "sesIpuclari": ["soru.kac-tane", "yardim.k2-birlikte-sayalim", "yardim.k3-birlikte"],
+        "oturumBasinaEnFazlaMadde": 4,
+        "artArdaEnFazlaMadde": 2,
+        "kacinilacak": [
+          "Daha büyük sayılara geçmek — sorun sayı büyüklüğünde değil.",
+          "Çocuğa tekrar saydırmak: aynı boşluk yeniden üretilir.",
+          "'Az önce saydın ya' demek; çocuk için son sayı henüz cevap değildir."
+        ]
+      },
+      "cikisKriteri": {
+        "ardisikDogru": 3,
+        "enAzFarkliOturum": 2,
+        "enAzFarkliSablon": 2,
+        "yardimsiz": true,
+        "sureSiniriSn": null,
+        "aciklama": "Üç ardışık doğru; en az biri 'sayimSonrasiOrt: true' koşulunda (yeniden sayma imkânsızken). İki farklı oturum ve iki farklı şablon şartı, cevabın ezberle değil kavrayışla geldiğini gösterir."
+      },
+      "veliNotu": {
+        "baslik": "Sayıyor ama 'kaç tane' deyince yeniden sayıyor",
+        "neOluyor": "Çocuğunuz nesneleri doğru sayıyor: bir, iki, üç, dört, beş. Ama 'kaç tane var?' diye sorduğunuzda başa dönüp yeniden sayıyor ya da farklı bir sayı söylüyor. Son söylediği sayının 'hepsi' demek olduğunu henüz fark etmemiş.",
+        "buYastaNormalMi": "Evet, bu yaşta çok yaygın ve saymanın gelişiminde bilinen bir aşamadır. Çocuk için sayma önce bir şarkıdır; o şarkının sonundaki sayının aynı zamanda bir CEVAP olduğu keşfi biraz sonra gelir. Unutkanlık ya da dikkatsizlik değildir.",
+        "evdeDeneyin": [
+          "Birlikte sayın, sonra elinizle nesnelerin üstünü kapatıp 'kaç tane vardı?' diye sorun. Kapatmak, cevabı son sayıdan vermeyi gerektirir.",
+          "Saydıktan sonra son sayıyı siz tekrarlayın: 'Bir, iki, üç... üç tane elma.' Vurgu son sayıda olsun.",
+          "Küçük miktarlarla çalışın: 2, 3, 4 tane. Bu miktarlar sayılmadan da görülebildiği için bağlantıyı kurmak kolaylaşır."
+        ],
+        "neZamanKonusalim": "Bir şey yapmanıza gerek yok, bu aşama kendiliğinden geçer; uygulama da bunu hedefleyen sorular veriyor."
+      },
+      "gerekenYeniSesler": [
+        {
+          "onerilenAnahtar": "yardim.son-sayi-hepsidir",
+          "metin": "En son söylediğin sayı, hepsinin kaç tane olduğunu söyler.",
+          "gerekce": "Kardinallik ilkesinin tek cümlelik ifadesi; K2 ipucunda kullanılacak. Mevcut kliplerde karşılığı yok."
+        }
+      ]
+    },
+
+    {
+      "id": "FAZLA_SAYMA",
+      "etiket": "Fazla sayma",
+      "aciklama": "Sayım sonucu doğrudan bir-iki fazla çıkıyor: bir nesne iki kez sayılıyor ya da sayı sözcükleri parmaktan hızlı gidiyor. Yön TUTARLIDIR — çocuk neredeyse her zaman fazla söyler, eksik değil.",
+      "tur": "kavramYanilgisi",
+      "cozumSirasi": 4,
+      "distractorsAynasi": { "sayisal": true, "baglamGerekir": false },
+      "skorlamaYokSay": false,
+      "denemeSayilirMi": true,
+      "ustalikTavani": null,
+      "kazanimKodlari": ["MAT.1.1.1", "MAT.1.1.2", "MAT.1.2.1"],
+      "etkilenenBeceriler": [
+        "mat.sayma.birebir-esleme",
+        "mat.sayma.20-ye-kadar",
+        "mat.sayma.daginik-dizilim"
+      ],
+      "onKosulHatalar": [],
+      "yayginlik": {
+        "duzey": "cok-yaygin",
+        "tipikDonem": "1. dönem boyunca; hız baskısı olan (yarışmalı) etkinliklerde artar.",
+        "gerekce": "Sayma hatalarının en sık görülen yönü. Çocuk hızlı saymayı 'iyi sayma' sanır ve dokunuş ile sözcük arasındaki eşleşme kopar.",
+        "baslangicOnceligi": 2
+      },
+      "tespit": {
+        "aciklama": "Tek başına +1 hatası tanı değildir; TUTARLI YÖN tanıdır.",
+        "sinyaller": [
+          {
+            "tur": "celdiriciEtiketi",
+            "etiket": "FAZLA_SAYMA",
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "birincilVeYedek"
+          },
+          {
+            "tur": "davranis",
+            "olay": "yonTutarliligi",
+            "aciklama": "Son 8 maddedeki sayısal sapmaların en az %75'i POZİTİF yönde. Yön tutarlılığı, hatanın rastlantı değil strateji kaynaklı olduğunu gösterir.",
+            "filtre": { "sapmaYonu": "pozitif" },
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 8 },
+            "esik": { "iliski": ">=", "deger": 0.75 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "davranis",
+            "olay": "cifteDokunma",
+            "aciklama": "TAP_COUNT maddelerinde aynı nesneye iki kez dokunma (herNesneBirKez ihlali).",
+            "filtre": { "kind": "TAP_COUNT", "olay": "tekrarDokunus" },
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "destekleyici"
+          }
+        ],
+        "enAzKanitMaddesi": 4,
+        "birincilOlmayanCeldiriciAgirligi": 0.5,
+        "yanlisPozitifKorumasi": "distractors.ts'in yedek stratejisi (SayisalCeldirici.birincil === false) yön bazlı etiket ürettiği için bu etiket 'kazara' da atanabilir. O yüzden yedek çeldiricilerden gelen seçimler YARIM ağırlıkla sayılır: eşik 2, ağırlıklı toplamdır (iki yedek seçim = 1.0, bayrağı tek başına açmaz)."
+      },
+      "ayirtEtme": {
+        "karistirilan": ["BIREBIR_ESLESME", "HEPSINI_SAYMA", "SAYI_DOGRUSU_ARALIK"],
+        "nasil": "BIREBIR_ESLESME'de sapma yönü rastgeledir, burada tutarlı pozitiftir. HEPSINI_SAYMA'da cevap DOĞRUDUR (yalnız yavaştır). SAYI_DOGRUSU_ARALIK yalnız NUMBER_LINE maddelerinde görülür; nesne sayma maddelerinde görülmez."
+      },
+      "mudahale": {
+        "strateji": "Tempoyu yavaşlatmak ve dokunuş-sözcük eşleşmesini görünür kılmak. Sayılan nesnenin işaretlenmesi ve onluk çerçeveyle yapıyı sabitlemek.",
+        "gerekce": "Fazla sayma bir bilgi eksikliği değil, hız/kontrol dengesizliğidir. Çözüm daha kolay soru değil, daha yavaş ve izlenebilir bir sayma ritmidir.",
+        "basamaklar": [
+          {
+            "sira": 1,
+            "amac": "İşaretlemeli sayma: dokunulan nesne solar, iki kez sayılamaz.",
+            "templateId": "sayma.dokun-say",
+            "parametreler": { "difficulty": 1, "layout": "sira", "maxAdet": 8, "herNesneBirKez": true, "dokunulaniIsaretle": true, "tempo": "yavas" },
+            "maddeSayisi": 3,
+            "not": null
+          },
+          {
+            "sira": 2,
+            "amac": "Onluk çerçevede sabit yapı: dolu göz sayısı sayımı denetler.",
+            "templateId": "sayma.onluk-cerceve",
+            "parametreler": { "difficulty": 2, "aralikUst": 10, "gruplar": [10] },
+            "maddeSayisi": 3,
+            "not": "Çerçeve, fazla saymayı fiziksel olarak imkânsız kılar: on gözden fazlası yok."
+          },
+          {
+            "sira": 3,
+            "amac": "Desteksiz sayıma dönüş.",
+            "templateId": "sayma.dokun-say",
+            "parametreler": { "difficulty": 2, "layout": "dagınık", "maxAdet": 12, "dokunulaniIsaretle": false },
+            "maddeSayisi": 3,
+            "not": null
+          }
+        ],
+        "sesIpuclari": ["soru.dokunarak-say", "yardim.k2-birlikte-sayalim"],
+        "oturumBasinaEnFazlaMadde": 4,
+        "artArdaEnFazlaMadde": 2,
+        "kacinilacak": [
+          "Süre baskısı, geri sayım, hız rozeti gibi hızlandırıcı ögeler.",
+          "Cevabı 'bir fazla söyledin' diye düzeltmek — çocuk hatasının yerini göremez; birlikte yeniden saymak gerekir."
+        ]
+      },
+      "cikisKriteri": {
+        "ardisikDogru": 3,
+        "enAzFarkliOturum": 2,
+        "enAzFarkliSablon": 2,
+        "yardimsiz": true,
+        "sureSiniriSn": null,
+        "aciklama": "Üç ardışık doğru, en az ikisi işaretleme desteği kapalıyken; iki farklı oturum. Ayrıca son 8 maddedeki pozitif sapma oranı %40'ın altına inmelidir (yön tutarlılığının kırıldığının kanıtı)."
+      },
+      "veliNotu": {
+        "baslik": "Genellikle bir fazla sayıyor",
+        "neOluyor": "Çocuğunuz sayarken sonucu çoğunlukla bir-iki fazla söylüyor. Sebebi genellikle şu: eli bir nesnedeyken ağzı iki sayı söylüyor ya da aynı nesneyi ikinci kez sayıyor.",
+        "buYastaNormalMi": "Evet, 6 yaşında çok yaygın. Çocuklar hızlı saymayı doğru sayma sanırlar; hız arttıkça el ile ses birbirinden ayrılır. Bu, sayıları bilmemek değildir.",
+        "evdeDeneyin": [
+          "Yavaş sayın ve her sayıda nesneye birlikte dokunun. Ritim yavaş olsun.",
+          "Saydıklarınızı kenara ayırın ya da bir kaba koyun; ayrılan nesne bir daha sayılamaz.",
+          "'Kim daha hızlı sayacak' oyunlarından bir süre uzak durun."
+        ],
+        "neZamanKonusalim": "Ek bir şey yapmanız gerekmiyor; uygulama yavaş tempolu ve işaretlemeli sorularla bunu çalışıyor."
+      },
+      "gerekenYeniSesler": []
+    },
+
+    {
+      "id": "EKSIK_SAYMA",
+      "etiket": "Eksik sayma",
+      "aciklama": "Sayım sonucu tutarlı biçimde bir-iki eksik çıkıyor: nesne atlanıyor ya da sayım son nesneye ulaşmadan bitiyor. Sıklıkla kümenin kenarındaki ya da diğerlerinden uzakta duran nesne gözden kaçar.",
+      "tur": "kavramYanilgisi",
+      "cozumSirasi": 5,
+      "distractorsAynasi": { "sayisal": true, "baglamGerekir": false },
+      "skorlamaYokSay": false,
+      "denemeSayilirMi": true,
+      "ustalikTavani": null,
+      "kazanimKodlari": ["MAT.1.1.1", "MAT.1.1.2", "MAT.1.2.1"],
+      "etkilenenBeceriler": [
+        "mat.sayma.birebir-esleme",
+        "mat.sayma.daginik-dizilim",
+        "mat.sayma.20-ye-kadar"
+      ],
+      "onKosulHatalar": [],
+      "yayginlik": {
+        "duzey": "yaygin",
+        "tipikDonem": "1. dönem; dağınık yerleşimli ve 10'dan çok ögeli kümelerde belirginleşir.",
+        "gerekce": "Fazla saymanın aynadaki eşi; tarama düzeni kurulmadığında kenardaki ögeler atlanır.",
+        "baslangicOnceligi": 2
+      },
+      "tespit": {
+        "aciklama": "Yön tutarlılığı negatif tarafta.",
+        "sinyaller": [
+          {
+            "tur": "celdiriciEtiketi",
+            "etiket": "EKSIK_SAYMA",
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "birincilVeYedek"
+          },
+          {
+            "tur": "davranis",
+            "olay": "yonTutarliligi",
+            "aciklama": "Son 8 maddedeki sapmaların en az %75'i NEGATİF yönde.",
+            "filtre": { "sapmaYonu": "negatif" },
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 8 },
+            "esik": { "iliski": ">=", "deger": 0.75 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "davranis",
+            "olay": "atlananNesne",
+            "aciklama": "TAP_COUNT maddesinde hiç dokunulmayan nesne kalması; özellikle kümenin kenarında duran öge.",
+            "filtre": { "kind": "TAP_COUNT", "olay": "dokunulmayanNesne" },
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "destekleyici"
+          }
+        ],
+        "enAzKanitMaddesi": 4,
+        "birincilOlmayanCeldiriciAgirligi": 0.5,
+        "yanlisPozitifKorumasi": "FAZLA_SAYMA ile aynı gerekçe: yedek strateji bu etiketi yön bazlı üretebilir, o yüzden yedek kaynaklı seçimler yarım ağırlıkla sayılır. Ayrıca doğru cevabın 0 ya da aralık alt sınırında olduğu maddelerde bu etiket ölçüme alınmaz (çeldirici zaten üretilemez)."
+      },
+      "ayirtEtme": {
+        "karistirilan": ["FAZLA_SAYMA", "BIREBIR_ESLESME", "HEPSINI_SAYMA"],
+        "nasil": "Sapma yönüne bakılır: tutarlı negatif → EKSIK_SAYMA, tutarlı pozitif → FAZLA_SAYMA, karışık → BIREBIR_ESLESME. Toplama maddelerinde tek başına '-1' hatası HEPSINI_SAYMA'nın da imzasıdır; orada süreye bakılır (yavaş ve doğru → HEPSINI_SAYMA)."
+      },
+      "mudahale": {
+        "strateji": "Tarama düzeni kurmak: soldan sağa, yukarıdan aşağıya. Önce sıralı yerleşimle yön alışkanlığı, sonra dağınıkta aynı düzeni uygulama.",
+        "gerekce": "Atlama, düzensiz taramanın sonucudur. Sabit bir tarama yönü kazanan çocuk kenardaki ögeyi kaçırmaz.",
+        "basamaklar": [
+          {
+            "sira": 1,
+            "amac": "Soldan sağa tarama alışkanlığı.",
+            "templateId": "sayma.dokun-say",
+            "parametreler": { "difficulty": 1, "layout": "sira", "maxAdet": 8, "yonRehberi": true },
+            "maddeSayisi": 3,
+            "not": "Bir işaret parmağı animasyonu soldan sağa ilerler (Hint.hareket: 'sirayaSay')."
+          },
+          {
+            "sira": 2,
+            "amac": "Gruplu yerleşimde grup grup tarama.",
+            "templateId": "sayma.dokun-say",
+            "parametreler": { "difficulty": 2, "layout": "gruplu", "maxAdet": 12, "yonRehberi": false },
+            "maddeSayisi": 3,
+            "not": null
+          },
+          {
+            "sira": 3,
+            "amac": "Dağınık yerleşimde kenar ögelerin de sayılması.",
+            "templateId": "sayma.dokun-say",
+            "parametreler": { "difficulty": 2, "layout": "dagınık", "maxAdet": 12, "kenardaUzakOge": true },
+            "maddeSayisi": 3,
+            "not": "Bilerek kümeden uzağa yerleştirilmiş bir öge bulunur; atlanırsa hata tam olarak bu tanının kanıtıdır."
+          }
+        ],
+        "sesIpuclari": ["soru.dokunarak-say", "yardim.k2-birlikte-sayalim", "yardim.k3-birlikte"],
+        "oturumBasinaEnFazlaMadde": 4,
+        "artArdaEnFazlaMadde": 2,
+        "kacinilacak": [
+          "Nesne sayısını artırmak.",
+          "Atlanan nesneyi doğrudan göstermek yerine baştan birlikte saymak daha etkilidir (K3 ipucu)."
+        ]
+      },
+      "cikisKriteri": {
+        "ardisikDogru": 3,
+        "enAzFarkliOturum": 2,
+        "enAzFarkliSablon": 2,
+        "yardimsiz": true,
+        "sureSiniriSn": null,
+        "aciklama": "Üç ardışık doğru; en az biri 'kenardaUzakOge: true' koşulunda. Negatif sapma oranı son 8 maddede %40'ın altına inmeli."
+      },
+      "veliNotu": {
+        "baslik": "Sayarken bazı nesneleri atlıyor",
+        "neOluyor": "Çocuğunuz sayarken sonucu çoğunlukla bir-iki eksik söylüyor. Genellikle kenarda ya da diğerlerinden uzakta duran bir nesne gözünden kaçıyor.",
+        "buYastaNormalMi": "Evet, çok görülür. Bir kümeyi düzenli taramak (nereden başlayıp nerede biteceğini bilmek) öğrenilen bir alışkanlıktır; kendiliğinden gelmez.",
+        "evdeDeneyin": [
+          "Saymadan önce 'nereden başlayacağız?' diye sorun. Her seferinde soldan başlama alışkanlığı kurun.",
+          "Nesneleri önce bir sıraya dizip sayın; sonra dağıtıp aynı sırayla sayın.",
+          "Saydıktan sonra 'başka kaldı mı?' diye birlikte kontrol edin."
+        ],
+        "neZamanKonusalim": "Bir şey yapmanıza gerek yok. Merak ederseniz öğretmenine sayarken bir düzen izleyip izlemediğini sorabilirsiniz."
+      },
+      "gerekenYeniSesler": []
+    },
+
+    {
+      "id": "BUYUKLUK_MIKTAR",
+      "etiket": "Büyük nesne = çok sanma",
+      "aciklama": "Çocuk iki kümeyi karşılaştırırken sayıya değil kapladıkları yere bakıyor: nesneler daha büyük ya da daha geniş yayılmışsa o kümeyi 'daha çok' sanıyor. Algısal görünüm, miktarı bastırıyor. Nesneler aynı boyutta olduğunda doğru karşılaştırma yapar.",
+      "tur": "kavramYanilgisi",
+      "cozumSirasi": 6,
+      "distractorsAynasi": { "sayisal": true, "baglamGerekir": true },
+      "skorlamaYokSay": false,
+      "denemeSayilirMi": true,
+      "ustalikTavani": null,
+      "kazanimKodlari": ["MAT.1.1.4", "MAT.1.1.7"],
+      "etkilenenBeceriler": [
+        "mat.sayilar.karsilastirma",
+        "mat.sayma.birebir-esleme",
+        "mat.sayilar.tahmin"
+      ],
+      "onKosulHatalar": ["BIREBIR_ESLESME"],
+      "yayginlik": {
+        "duzey": "cok-yaygin",
+        "tipikDonem": "Karşılaştırma kazanımı işlenirken (1. dönem, tema 2); ölçme temasında yeniden belirir.",
+        "gerekce": "Algısal baskınlık bu yaşın en bilinen özelliğidir: görünüş, sayının önüne geçer. Çocuk sayarak kontrol etmeyi öğrenene kadar sürer.",
+        "baslangicOnceligi": 2
+      },
+      "tespit": {
+        "aciklama": "Kanıt, boyut karşıtlığındadır: aynı sayı çifti, eşit boyutlu nesnelerle doğru, farklı boyutlu nesnelerle yanlış.",
+        "sinyaller": [
+          {
+            "tur": "kosulKarsitligi",
+            "aciklama": "Nesne boyutları farklıyken düşük, eşitken yüksek doğruluk. Bu karşıtlık tanının kendisidir.",
+            "kosulA": { "ad": "boyutlar farklı", "filtre": { "nesneBoyutuFarkli": true }, "enAzMadde": 3, "dogrulukUst": 0.5 },
+            "kosulB": { "ad": "boyutlar eşit", "filtre": { "nesneBoyutuFarkli": false }, "enAzMadde": 3, "dogrulukAlt": 0.8 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "celdiriciEtiketi",
+            "etiket": "BUYUKLUK_MIKTAR",
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 8 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "davranis",
+            "olay": "saymadanCevap",
+            "aciklama": "Karşılaştırma maddesinde nesnelere hiç dokunmadan ve çok kısa sürede cevap verme: sayarak kontrol etmiyor, bakıp karar veriyor.",
+            "filtre": { "cevapSuresiSn": "< 3", "dokunusSayisi": 0 },
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 8 },
+            "esik": { "iliski": ">=", "deger": 3 },
+            "agirlik": "destekleyici"
+          }
+        ],
+        "enAzKanitMaddesi": 6,
+        "birincilOlmayanCeldiriciAgirligi": 0,
+        "yanlisPozitifKorumasi": "Bu etiket bağlam ister (distractors.ts: baglamGerekir = true, kümeler dizisi zorunlu). Kümelerin adetleri kayıtlı değilse sinyal ölçülmez. Ayrıca kümeler arasındaki fark 1 ise (ör. 6'ya 7) hata sayma güçlüğünden de gelebilir; bu maddeler kanıt sayılmaz, en az 2 fark aranır."
+      },
+      "ayirtEtme": {
+        "karistirilan": ["TEK_KUMEYI_ALMA", "EKSIK_SAYMA"],
+        "nasil": "TEK_KUMEYI_ALMA toplama/birleştirme sorularında görülür ve cevap bir kümenin SAYISIDIR. BUYUKLUK_MIKTAR karşılaştırma sorularında görülür ve cevap 'çok/az' terimidir. Boyut karşıtlığı testi ayrımı kesinleştirir: boyutlar eşitlendiğinde hata kayboluyorsa tanı budur."
+      },
+      "mudahale": {
+        "strateji": "Birebir eşleme ile görsel kanıt: iki kümeyi karşılıklı eşleştirip artanı göstermek. Sonra sayarak doğrulama. Boyut, eşleşmenin yanında etkisiz kalır.",
+        "gerekce": "Çocuğa 'sayı önemli' demek yetmez; büyük nesnelerin çok görünmediğini GÖRMESİ gerekir. Eşleme, artan ögeyi gözle görülür kılar.",
+        "basamaklar": [
+          {
+            "sira": 1,
+            "amac": "Eşit boyutlu nesnelerle terim çalışması (çok / daha çok / az / daha az / eşit).",
+            "templateId": "sayilar.karsilastir",
+            "parametreler": { "difficulty": 1, "nesneBoyutuFarkli": false, "aralikUst": 10, "fark": ">=3" },
+            "maddeSayisi": 3,
+            "not": "1. sınıfta < > = sembolleri YOKTUR; yalnız terimler kullanılır."
+          },
+          {
+            "sira": 2,
+            "amac": "Birebir eşleme ile karşılaştırma: hangi kümede eşleşmeyen öge kalıyor?",
+            "templateId": "sayilar.esle-karsilastir",
+            "parametreler": { "difficulty": 2, "nesneBoyutuFarkli": true, "aralikUst": 10, "eslemeCizgisi": true },
+            "maddeSayisi": 3,
+            "not": "MATCH_PAIRS etkileşimi; artan öge vurgulanır."
+          },
+          {
+            "sira": 3,
+            "amac": "Asıl koşul: boyutlar farklı, eşleme desteği yok, sayarak karar.",
+            "templateId": "sayilar.karsilastir",
+            "parametreler": { "difficulty": 3, "nesneBoyutuFarkli": true, "aralikUst": 15, "fark": ">=2" },
+            "maddeSayisi": 4,
+            "not": "Küçük nesnelerin çok, büyük nesnelerin az olduğu düzenler bilerek seçilir."
+          }
+        ],
+        "sesIpuclari": ["soru.hangisi-cok", "soru.hangisi-az", "yardim.k2-birlikte-sayalim"],
+        "oturumBasinaEnFazlaMadde": 4,
+        "artArdaEnFazlaMadde": 2,
+        "kacinilacak": [
+          "'Büyüklüğe bakma, sayıya bak' demek — kural ezberletir, kavram kurmaz.",
+          "< > = sembollerini kullanmak: 1. sınıf kapsamı dışıdır.",
+          "Farkı 1 olan kümelerle çalışmak: sayma hatası tanıyı bulandırır."
+        ]
+      },
+      "cikisKriteri": {
+        "ardisikDogru": 3,
+        "enAzFarkliOturum": 2,
+        "enAzFarkliSablon": 2,
+        "yardimsiz": true,
+        "sureSiniriSn": null,
+        "aciklama": "Üç ardışık doğru, HEPSİ 'nesneBoyutuFarkli: true' koşulunda ve eşleme desteği kapalıyken. Eşit boyutlu maddelerdeki doğrular bu bayrağı kapatmaz — çünkü hata orada zaten görünmüyordu."
+      },
+      "veliNotu": {
+        "baslik": "Büyük görünen kümeyi 'daha çok' sanıyor",
+        "neOluyor": "İki grup karşılaştırılırken çocuğunuz sayıya değil görüntüye bakıyor. Nesneler daha büyükse ya da daha geniş yayılmışsa o grubu 'daha çok' seçiyor. Nesneler aynı boyuttayken doğru cevap veriyor.",
+        "buYastaNormalMi": "Evet, bu yaşın çok bilinen bir özelliği. Gözle görülen büyüklük, çocuk için sayıdan daha güçlü bir ipucudur. Sayarak kontrol etme alışkanlığı kurulunca kendiliğinden geçer; bir eksiklik değil, bir sıralama meselesidir.",
+        "evdeDeneyin": [
+          "Aynı sayıda iki grup kurun: 5 büyük düğme, 5 küçük düğme. 'Hangisi çok?' diye sorun, sonra birlikte sayın. Şaşırması iyidir, öğrenme oradan başlar.",
+          "Karşılıklı dizerek eşleştirin: her büyük düğmenin karşısına bir küçük düğme. Artan var mı, birlikte bakın.",
+          "Aynı sayıdaki nesneleri sıkışık ve yayvan dizip 'hangisi çok?' diye sorun."
+        ],
+        "neZamanKonusalim": "Şimdilik gerek yok; bu tam olarak 1. sınıfta çalışılan bir konu."
+      },
+      "gerekenYeniSesler": [
+        {
+          "onerilenAnahtar": "yardim.sayarak-kontrol-et",
+          "metin": "Bakmak yetmez. Haydi sayalım, hangisi gerçekten çok görelim.",
+          "gerekce": "Algısal karardan sayısal karara geçişi söyleyen K2 ipucu; mevcut kliplerde yok."
+        }
+      ]
+    },
+
+    {
+      "id": "HEPSINI_SAYMA",
+      "etiket": "Baştan hepsini sayma (üstüne sayamıyor)",
+      "aciklama": "Toplama sorusunda çocuk sonucu doğru bulur ama her seferinde BİRDEN başlayarak hepsini sayar: 7+5 için bir-iki-üç... diye on ikiye kadar gider. Bu bir hata DEĞİLDİR; saymanın gelişiminde beklenen bir aşamadır ve doğru cevap üretir. Sorun şudur: yavaştır, yükü yüksektir ve sayı büyüdükçe kaymaya açıktır. Bir sonraki adım 'üstüne sayma'dır: büyük sayıyı olduğu gibi alıp yalnız küçüğü eklemek.",
+      "tur": "gelisimselDarbogaz",
+      "cozumSirasi": 7,
+      "distractorsAynasi": { "sayisal": true, "baglamGerekir": false },
+      "skorlamaYokSay": false,
+      "denemeSayilirMi": true,
+      "ustalikTavani": 0.7,
+      "kazanimKodlari": ["MAT.1.2.1", "MAT.1.2.2"],
+      "etkilenenBeceriler": [
+        "mat.islem.ustune-sayma",
+        "mat.islem.toplama-20",
+        "mat.islem.zihinden-islem"
+      ],
+      "onKosulHatalar": ["KARDINALITE"],
+      "yayginlik": {
+        "duzey": "cok-yaygin",
+        "tipikDonem": "2. dönem, işlemler teması (tema 4). Yılın sonuna doğru çocukların bir bölümü hâlâ bu aşamadadır ve bu normaldir.",
+        "gerekce": "Toplama stratejilerinin bilinen sırası: hepsini sayma → üstüne sayma → büyükten üstüne sayma → bilinen olgular. Aşama atlanmaz, üzerine inşa edilir. Kardinallik kurulmadan üstüne sayma mümkün değildir; çocuk '7' deyip devam edebilmek için 7'nin bir bütünü temsil ettiğini kabul etmelidir.",
+        "baslangicOnceligi": 3
+      },
+      "tespit": {
+        "aciklama": "Bu bayrak YANLIŞTAN değil, DOĞRUDAN okunur: cevap doğru ama süre uzun ve süre ikinci terimle birlikte büyüyor.",
+        "sinyaller": [
+          {
+            "tur": "sureAsimi",
+            "kosul": "cevapDogru",
+            "aciklama": "Toplama maddelerinde doğru cevap veriyor ama çözüm süresi 8 saniyeyi aşıyor.",
+            "filtre": { "kind": "AUDIO_TO_IMAGE", "islem": "+", "terimB": ">= 2", "cevapSuresiSn": "> 8" },
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 3 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "kosulKarsitligi",
+            "aciklama": "Süre, TOPLAMA bağlı artıyor (hepsini sayma imzası); üstüne sayan çocukta süre yalnız İKİNCİ TERİME bağlı artar. b sabit tutulup a büyütüldüğünde süre uzuyorsa tanı kesindir.",
+            "kosulA": { "ad": "a büyük, b küçük (ör. 9+2)", "filtre": { "terimA": ">= 7", "terimB": "<= 2" }, "enAzMadde": 3, "ortalamaSureAlt": 8 },
+            "kosulB": { "ad": "a küçük, b küçük (ör. 3+2)", "filtre": { "terimA": "<= 4", "terimB": "<= 2" }, "enAzMadde": 3, "ortalamaSureUst": 5 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "celdiriciEtiketi",
+            "etiket": "HEPSINI_SAYMA",
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 8 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "birincil"
+          }
+        ],
+        "enAzKanitMaddesi": 5,
+        "birincilOlmayanCeldiriciAgirligi": 0,
+        "yanlisPozitifKorumasi": "Süre ölçümü yalnız ses bitiminden sonra başlar ve ipucu dinlenen maddelerde ölçülmez. Ayrıca oturumun son iki maddesi (yorgunluk) ve ilk maddesi (ısınma) süre kanıtına dâhil edilmez."
+      },
+      "ayirtEtme": {
+        "karistirilan": ["EKSIK_SAYMA", "BIREBIR_ESLESME"],
+        "nasil": "Ayrım cevabın doğruluğundadır. HEPSINI_SAYMA'da cevap ÇOĞUNLUKLA DOĞRU ama yavaştır; sapma varsa tipik olarak −1'dir (üstüne sayarken başlangıç sayısını da saymak). EKSIK_SAYMA'da cevap sistematik olarak yanlıştır ve süre normaldir."
+      },
+      "mudahale": {
+        "strateji": "Aşamayı yasaklamak değil, bir sonraki basamağı ERİŞİLİR kılmak. Büyük sayıyı gizleyip (rakam olarak kapalı kart) yalnız küçük kümeyi sayılabilir bırakmak; b'yi 1-3 arasında tutup büyükten başlamayı kurmak.",
+        "gerekce": "Program 'üzerine sayma' stratejisini açıkça anıyor (MAT.1.2.1-1.2.2). Ama üstüne sayma zorlanarak öğretilemez: çocuk ilk terimi saymadan kabul edebilmelidir. İlk terimi görünmez, ikinciyi görünür yapmak bu kabulü doğal kılar.",
+        "basamaklar": [
+          {
+            "sira": 1,
+            "amac": "Bir ve iki eklemeyi saymadan yapmak.",
+            "templateId": "islem.ustune-say",
+            "parametreler": { "difficulty": 1, "islem": "+", "terimA": "5..9", "terimB": "1..2", "ilkTerimGizli": true, "buyukOnce": true },
+            "maddeSayisi": 3,
+            "not": "İlk terim rakam kartı olarak kapalı durur; sayılacak nesne yalnız ikinci kümededir."
+          },
+          {
+            "sira": 2,
+            "amac": "Üstüne saymayı üçe kadar genişletmek; büyük sayıyı önce alma alışkanlığı.",
+            "templateId": "islem.ustune-say",
+            "parametreler": { "difficulty": 2, "islem": "+", "terimA": "6..12", "terimB": "2..3", "ilkTerimGizli": true, "buyukOnce": true },
+            "maddeSayisi": 3,
+            "not": "2+7 değil 7+2 sırası kurulur (müfredat notu: büyük sayıyı önce koy)."
+          },
+          {
+            "sira": 3,
+            "amac": "Destek kaldırılmış hâlde üstüne sayma; süre ölçütü burada geçerlidir.",
+            "templateId": "islem.ustune-say",
+            "parametreler": { "difficulty": 3, "islem": "+", "terimA": "5..14", "terimB": "1..4", "ilkTerimGizli": false, "buyukOnce": false, "toplamUst": 20 },
+            "maddeSayisi": 4,
+            "not": "Sonuç 20'yi aşamaz (ISLEM_ARALIGI)."
+          }
+        ],
+        "sesIpuclari": ["yardim.ustune-sayma", "yardim.k2-birlikte-sayalim", "yardim.k3-simdi-sen"],
+        "oturumBasinaEnFazlaMadde": 4,
+        "artArdaEnFazlaMadde": 2,
+        "kacinilacak": [
+          "SÜRE BASKISI. Bu bayrak açıkken kronometre, geri sayım ya da 'çabuk ol' türü hiçbir öge gösterilmez.",
+          "Parmak kullanımını engellemek: parmak bu aşamanın aracıdır, erken alınırsa strateji gelişimi durur.",
+          "Doğru cevabı yavaş diye eksik saymak. Cevap doğrudur ve doğru sayılır; yalnız 'ustalaştı' denmez.",
+          "Ezber toplama tablosu dayatmak."
+        ]
+      },
+      "cikisKriteri": {
+        "ardisikDogru": 3,
+        "enAzFarkliOturum": 2,
+        "enAzFarkliSablon": 1,
+        "yardimsiz": true,
+        "sureSiniriSn": 6,
+        "aciklama": "Üç ardışık DOĞRU ve HIZLI cevap: terimB >= 3 olan maddelerde süre 6 saniyenin altında, ilk terim gizli değilken. İki farklı oturum. Doğruluk zaten vardı; kapanışı sağlayan şey STRATEJİ değişimidir."
+      },
+      "veliNotu": {
+        "baslik": "Doğru buluyor ama her seferinde baştan sayıyor",
+        "neOluyor": "Çocuğunuz toplama sorularını doğru cevaplıyor. Ama örneğin 7+2'yi bulmak için birden başlayıp dokuza kadar sayıyor. Yani cevap doğru, yol uzun.",
+        "buYastaNormalMi": "Evet ve önemlisi: bu bir hata değil. Toplamanın öğrenilmesinde bilinen bir aşamadır ve neredeyse her çocuk buradan geçer. Bir sonraki aşama 'yedi... sekiz, dokuz' diyerek büyük sayının üstüne saymaktır. Uygulama tam olarak bu geçişi çalıştırıyor.",
+        "evdeDeneyin": [
+          "Büyük sayıyı avucunuzun içine 'saklayın': 'Yedi elma torbada, iki tane de elimde. Torbayı sayamayız — yedi diyelim ve devam edelim: sekiz, dokuz.'",
+          "Üstüne 1 ve 2 eklemekle başlayın; 3-4 daha sonra gelsin.",
+          "Parmaklarını kullanmasına izin verin ve hızlandırmayın. Bu yaşta parmak, hesap makinesi değil düşünme aracıdır."
+        ],
+        "neZamanKonusalim": "Endişelenecek bir durum yok. Doğru cevap veriyor; biz yalnızca daha kolay bir yolu kazandırmaya çalışıyoruz."
+      },
+      "gerekenYeniSesler": []
+    },
+
+    {
+      "id": "TEK_KUMEYI_ALMA",
+      "etiket": "Yalnız bir kümeyi sayma",
+      "aciklama": "İki küme birleştirilmesi gerekirken çocuk yalnızca birini (çoğunlukla büyüğü ya da en son gördüğünü) sayıp onu cevap veriyor. 'Toplam' kelimesinin iki kümenin BİRLİKTE ele alınması demek olduğu kurulmamış; çocuk gördüğü tek grubu sayıp işini bitirmiş sayıyor.",
+      "tur": "kavramYanilgisi",
+      "cozumSirasi": 8,
+      "distractorsAynasi": { "sayisal": true, "baglamGerekir": true },
+      "skorlamaYokSay": false,
+      "denemeSayilirMi": true,
+      "ustalikTavani": null,
+      "kazanimKodlari": ["MAT.1.2.1", "MAT.1.1.2"],
+      "etkilenenBeceriler": [
+        "mat.islem.toplama-20",
+        "mat.islem.problem-kurma",
+        "mat.sayma.20-ye-kadar"
+      ],
+      "onKosulHatalar": ["KARDINALITE"],
+      "yayginlik": {
+        "duzey": "yaygin",
+        "tipikDonem": "2. dönem, toplama ilk girildiğinde (tema 4 başı).",
+        "gerekce": "Toplamanın ilk günlerinde sık görülür ve genellikle hızlı kapanır. Kalıcı olduğunda sorun aritmetikte değil, sözel yönergenin anlaşılmasındadır ('toplam', 'hepsi', 'birlikte' soyut sözcüklerdir).",
+        "baslangicOnceligi": 3
+      },
+      "tespit": {
+        "aciklama": "Cevabın kümelerden BİRİNE tam olarak eşit olması imzadır — rastgele bir yakınlık değil, birebir eşitlik.",
+        "sinyaller": [
+          {
+            "tur": "celdiriciEtiketi",
+            "etiket": "TEK_KUMEYI_ALMA",
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "davranis",
+            "olay": "tekKumeyeDokunma",
+            "aciklama": "Sahnedeki iki kümeden yalnız birine dokunuş kaydedilmesi; diğer küme hiç ziyaret edilmemiş.",
+            "filtre": { "kind": "TAP_COUNT", "kumeSayisi": 2, "ziyaretEdilenKume": 1 },
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "kosulKarsitligi",
+            "aciklama": "Tek kümeli sayma maddelerinde yüksek, iki kümeli birleştirme maddelerinde düşük doğruluk: sayma sağlam, birleştirme fikri eksik.",
+            "kosulA": { "ad": "iki kümeli birleştirme", "filtre": { "kumeSayisi": 2 }, "enAzMadde": 3, "dogrulukUst": 0.5 },
+            "kosulB": { "ad": "tek kümeli sayma", "filtre": { "kumeSayisi": 1 }, "enAzMadde": 3, "dogrulukAlt": 0.8 },
+            "agirlik": "destekleyici"
+          }
+        ],
+        "enAzKanitMaddesi": 4,
+        "birincilOlmayanCeldiriciAgirligi": 0,
+        "yanlisPozitifKorumasi": "Bu etiket bağlam ister (baglamGerekir = true): a ve b kayıtlı değilse ölçülmez. Ayrıca a ile b eşitse (3+3) cevabın kümeye eşitliği ayırt edici olmaz; bu maddeler kanıt sayılmaz."
+      },
+      "ayirtEtme": {
+        "karistirilan": ["ISLEM_YONU", "GOREV_ANLASILMADI"],
+        "nasil": "Cevap kümelerden birine TAM eşitse TEK_KUMEYI_ALMA. Cevap a−b ya da b−a ise ISLEM_YONU. Cevap ikisiyle de ilişkisizse GOREV_ANLASILMADI. Bu üçü aynı sahnede farklı sayısal imzalar bırakır, karışmaları gerekmez."
+      },
+      "mudahale": {
+        "strateji": "Birleştirmeyi HAREKET olarak göstermek: iki küme tek bir çerçevenin içine kayar, sonra birlikte sayılır. Fiziksel birleşme, 'toplam' sözcüğünün anlamını taşır.",
+        "gerekce": "Çocuk iki ayrı grubu iki ayrı iş sanıyor. Grupların gözünün önünde tek gruba dönüşmesi, sayılacak şeyin ne olduğunu tartışmasız kılar.",
+        "basamaklar": [
+          {
+            "sira": 1,
+            "amac": "Küçük kümelerle birleştirme hareketini görmek.",
+            "templateId": "islem.iki-kume-birlestir",
+            "parametreler": { "difficulty": 1, "terimA": "2..4", "terimB": "1..3", "birlestirmeAnimasyonu": true, "ortakCerceve": true },
+            "maddeSayisi": 3,
+            "not": "İki küme tek çerçevede toplanır, sonra soru sorulur."
+          },
+          {
+            "sira": 2,
+            "amac": "Animasyon olmadan, tek çerçevede sayma.",
+            "templateId": "islem.iki-kume-birlestir",
+            "parametreler": { "difficulty": 2, "terimA": "3..7", "terimB": "2..5", "birlestirmeAnimasyonu": false, "ortakCerceve": true },
+            "maddeSayisi": 3,
+            "not": null
+          },
+          {
+            "sira": 3,
+            "amac": "Asıl koşul: iki küme ayrı duruyor, birleştirmeyi çocuk düşünüyor.",
+            "templateId": "islem.iki-kume-birlestir",
+            "parametreler": { "difficulty": 3, "terimA": "4..12", "terimB": "2..6", "ortakCerceve": false, "toplamUst": 20 },
+            "maddeSayisi": 3,
+            "not": "a ile b bilerek FARKLI seçilir; eşit olursa tanı ölçülemez."
+          }
+        ],
+        "sesIpuclari": ["soru.kac-eder", "yardim.k2-birlikte-sayalim", "yardim.k3-birlikte"],
+        "oturumBasinaEnFazlaMadde": 4,
+        "artArdaEnFazlaMadde": 2,
+        "kacinilacak": [
+          "Yalnız 'topla' demek; sözcük anlaşılmıyorsa tekrarı işe yaramaz.",
+          "Sayıları büyütmek.",
+          "a = b olan sorular kullanmak (tanı görünmez olur)."
+        ]
+      },
+      "cikisKriteri": {
+        "ardisikDogru": 3,
+        "enAzFarkliOturum": 2,
+        "enAzFarkliSablon": 2,
+        "yardimsiz": true,
+        "sureSiniriSn": null,
+        "aciklama": "Üç ardışık doğru, en az ikisi ortak çerçeve OLMADAN ve a ≠ b iken. İki farklı oturum."
+      },
+      "veliNotu": {
+        "baslik": "İki gruptan yalnız birini sayıyor",
+        "neOluyor": "Ekranda iki grup nesne varken çocuğunuz sadece birini sayıp cevabı veriyor. Örneğin 3 elma ve 4 elma görüp 'dört' diyor. Sayması doğru; eksik olan iki grubu birlikte düşünmek.",
+        "buYastaNormalMi": "Evet, toplama yeni öğrenilirken sık görülür ve genellikle kısa sürede geçer. 'Toplam', 'hepsi', 'birlikte' gibi sözcükler çocuk için henüz soyut; anlamı hareketle görünce oturuyor.",
+        "evdeDeneyin": [
+          "İki grup nesneyi elinizle birbirine doğru itip tek yığın yapın, sonra 'şimdi kaç tane?' diye sorun.",
+          "Bir tabağa iki avuç dolusu koyun: 'Üç tane koydum, iki tane daha koydum, tabakta kaç var?'",
+          "Grupları farklı sayıda tutun (3 ile 5 gibi); eşit olursa hangi grubu saydığı anlaşılmaz."
+        ],
+        "neZamanKonusalim": "Şu an için gerek yok; bu, toplamanın ilk günlerinde beklenen bir durumdur."
+      },
+      "gerekenYeniSesler": []
+    },
+
+    {
+      "id": "ISLEM_YONU",
+      "etiket": "İşlem yönünü karıştırma",
+      "aciklama": "Çocuk toplama ile çıkarmayı ters uyguluyor: eklenmesi gerekirken çıkarıyor ya da tersi. Sayma becerisi sağlam, hesap doğru yapılıyor ama YANLIŞ İŞLEM yapılıyor. Kaynak çoğunlukla hikâyenin yönünün ('geldi' mi 'gitti' mi) çözülememesi ya da +/− sembollerinin henüz ayırt edilememesidir.",
+      "tur": "kavramYanilgisi",
+      "cozumSirasi": 9,
+      "distractorsAynasi": { "sayisal": true, "baglamGerekir": true },
+      "skorlamaYokSay": false,
+      "denemeSayilirMi": true,
+      "ustalikTavani": null,
+      "kazanimKodlari": ["MAT.1.2.1", "MAT.1.2.4"],
+      "etkilenenBeceriler": [
+        "mat.islem.toplama-20",
+        "mat.islem.cikarma-20",
+        "mat.islem.ters-iliski",
+        "mat.islem.problem-kurma"
+      ],
+      "onKosulHatalar": [],
+      "yayginlik": {
+        "duzey": "yaygin",
+        "tipikDonem": "2. dönem; çıkarma toplamanın yanına eklendiğinde (tema 4 ortası) belirgin biçimde artar.",
+        "gerekce": "İki işlem aynı hafta içinde karışık verildiğinde ayrım zorlaşır. Sembolleri karıştırmak, sesli yönergeye dayanan bir uygulamada özellikle 'artı/eksi' seslerinin benzer bağlamda gelmesiyle de olabilir.",
+        "baslangicOnceligi": 3
+      },
+      "tespit": {
+        "aciklama": "İmza nettir: cevap ters işlemin doğru sonucudur (a+b yerine a−b ya da tersi).",
+        "sinyaller": [
+          {
+            "tur": "celdiriciEtiketi",
+            "etiket": "ISLEM_YONU",
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "kosulKarsitligi",
+            "aciklama": "Aynı oturumda iki işlem karışık verildiğinde düşük, tek işlem verildiğinde yüksek doğruluk: hesap değil ayrım sorunu.",
+            "kosulA": { "ad": "karışık işlem bloğu", "filtre": { "blokTuru": "karisik" }, "enAzMadde": 4, "dogrulukUst": 0.6 },
+            "kosulB": { "ad": "tek işlem bloğu", "filtre": { "blokTuru": "tek" }, "enAzMadde": 4, "dogrulukAlt": 0.85 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "kosulKarsitligi",
+            "aciklama": "Çıkarma maddelerindeki hata oranı toplamanınkinin en az iki katı: yön tercihi toplama lehine sabitlenmiş.",
+            "kosulA": { "ad": "çıkarma", "filtre": { "islem": "-" }, "enAzMadde": 4, "dogrulukUst": 0.5 },
+            "kosulB": { "ad": "toplama", "filtre": { "islem": "+" }, "enAzMadde": 4, "dogrulukAlt": 0.8 },
+            "agirlik": "destekleyici"
+          }
+        ],
+        "enAzKanitMaddesi": 5,
+        "birincilOlmayanCeldiriciAgirligi": 0,
+        "yanlisPozitifKorumasi": "Bağlam zorunludur (a, b ve islem kayıtlı olmalı). a−b ile başka bir hatanın sonucu çakışıyorsa (ör. a=b+1 durumları) madde kanıt sayılmaz: aynı sayı iki farklı yanılgıdan gelebiliyorsa tanı koymayız."
+      },
+      "ayirtEtme": {
+        "karistirilan": ["TEK_KUMEYI_ALMA", "ESIT_ISLEM_SONUCU"],
+        "nasil": "Cevap a−b veya b−a ise ISLEM_YONU; cevap a ya da b'nin kendisiyse TEK_KUMEYI_ALMA; cevap eşitliğin diğer yanındaki toplamsa (ör. 7 = 3 + □ sorusunda 7 ya da 10) ESIT_ISLEM_SONUCU."
+      },
+      "mudahale": {
+        "strateji": "İşlemi hikâyeye ve harekete bağlamak: nesnelerin sahneye GİRMESİ toplama, sahneden ÇIKMASI çıkarma. Aynı sayı çiftiyle toplama-çıkarma ikilisini peş peşe vererek ters ilişkiyi görünür kılmak (MAT.1.2.4).",
+        "gerekce": "Sembol ezberi ayrımı kurmaz; yön ancak anlamla sabitlenir. 'Geldi/gitti' ayrımı 6 yaşındaki çocuğun günlük deneyimiyle doğrudan eşleşir.",
+        "basamaklar": [
+          {
+            "sira": 1,
+            "amac": "Yönü hareketle ayırt etmek: gelen mi, giden mi?",
+            "templateId": "islem.hikaye",
+            "parametreler": { "difficulty": 1, "yonAnimasyonu": true, "toplamUst": 10, "blokTuru": "tek" },
+            "maddeSayisi": 3,
+            "not": "Nesneler sahneye girerken/çıkarken görülür; işlem sembolü sonra belirir."
+          },
+          {
+            "sira": 2,
+            "amac": "Aynı sayı çiftiyle toplama ve çıkarmayı yan yana görmek (ters ilişki).",
+            "templateId": "islem.ters-islem",
+            "parametreler": { "difficulty": 2, "terimA": "3..9", "terimB": "1..5", "ciftGoster": true },
+            "maddeSayisi": 3,
+            "not": "5+3=8 ve 8−3=5 aynı sahnede; 'aynı üç sayı, iki farklı yön' fikri."
+          },
+          {
+            "sira": 3,
+            "amac": "Karışık blokta yön ayrımı.",
+            "templateId": "islem.hikaye",
+            "parametreler": { "difficulty": 3, "yonAnimasyonu": false, "toplamUst": 20, "blokTuru": "karisik" },
+            "maddeSayisi": 4,
+            "not": "Asıl koşul budur; çıkış kriteri burada ölçülür."
+          }
+        ],
+        "sesIpuclari": ["op.arti", "op.eksi", "soru.kac-eder", "yardim.k2-eleme"],
+        "oturumBasinaEnFazlaMadde": 4,
+        "artArdaEnFazlaMadde": 2,
+        "kacinilacak": [
+          "Sembolleri ezberletmek ('artı ekle, eksi çıkar' tekerlemesi).",
+          "Sonucu 20'nin üstüne ya da negatife taşıyan sorular üretmek.",
+          "Aynı oturumda hem yön hem büyük sayı zorluğunu birlikte artırmak."
+        ]
+      },
+      "cikisKriteri": {
+        "ardisikDogru": 3,
+        "enAzFarkliOturum": 2,
+        "enAzFarkliSablon": 2,
+        "yardimsiz": true,
+        "sureSiniriSn": null,
+        "aciklama": "Karışık blokta üç ardışık doğru — en az biri çıkarma olmalı — ve yön animasyonu kapalıyken. İki farklı oturum."
+      },
+      "veliNotu": {
+        "baslik": "Toplama ile çıkarmayı karıştırıyor",
+        "neOluyor": "Çocuğunuz sayıları doğru sayıyor ama bazen eklemesi gerekirken çıkarıyor ya da tersini yapıyor. Yani hesabı doğru, yönü yanlış.",
+        "buYastaNormalMi": "Evet, iki işlem yeni yeni bir arada verildiğinde çok görülür. '+' ve '−' işaretleri çocuğa çok benzer görünür; ayrım sembolden değil hikâyeden kurulur.",
+        "evdeDeneyin": [
+          "Sorularınızı hikâyeye çevirin: 'Kutuda 5 araba vardı, 2 tane daha GELDİ' ya da '2 tane GİTTİ'. Vurgu gelmek/gitmek üzerinde olsun.",
+          "Aynı sayılarla iki soru sorun: '5 ile 3 birleşince kaç eder?' ve '8'den 3 gidince kaç kalır?'",
+          "İşlem yaptırırken nesneleri gerçekten elinize alıp koyun/çekin."
+        ],
+        "neZamanKonusalim": "Şu an gerek yok; bu ayrım 1. sınıfın ikinci yarısında yerleşiyor."
+      },
+      "gerekenYeniSesler": []
+    },
+
+    {
+      "id": "ESIT_ISLEM_SONUCU",
+      "etiket": "Eşittir işaretini 'cevap gelir' sanma",
+      "aciklama": "Çocuk '=' işaretini iki tarafın DENK olduğunu söyleyen bir bildirim değil, 'buraya sonucu yaz' komutu sanıyor. Bu yüzden 3 + 4 = 7 doğru okunurken, 7 = 3 + □ ya da 3 + □ = 7 biçimindeki eşitlikler çözülemiyor: çocuk gördüğü sayıları toplayıp yazıyor ya da eşitliğin solundaki sayıyı cevap sanıyor.",
+      "tur": "kavramYanilgisi",
+      "cozumSirasi": 10,
+      "distractorsAynasi": { "sayisal": true, "baglamGerekir": true },
+      "skorlamaYokSay": false,
+      "denemeSayilirMi": true,
+      "ustalikTavani": null,
+      "kazanimKodlari": ["MAT.1.2.3", "MAT.1.2.4"],
+      "etkilenenBeceriler": [
+        "mat.islem.esit-isareti",
+        "mat.islem.ters-iliski",
+        "mat.islem.toplama-20"
+      ],
+      "onKosulHatalar": [],
+      "yayginlik": {
+        "duzey": "cok-yaygin",
+        "tipikDonem": "2. dönem, MAT.1.2.3 işlenirken. Fark edilmezse yıllarca sürer.",
+        "gerekce": "Alanda en iyi belgelenmiş ve en uzun ömürlü yanlış anlamalardan biri. Çocuklar '=' işaretini yıllarca 'işlemi yap' komutu olarak okur; ileride denklem kurmayı doğrudan zorlaştırır. 1. sınıfta düzeltmek en ucuz olduğu andır — program da bu yüzden ayrı bir kazanım ayırmıştır.",
+        "baslangicOnceligi": 2
+      },
+      "tespit": {
+        "aciklama": "Kanıt yazılış biçimi karşıtlığındadır: standart yazımda doğru, ters/boşluklu yazımda yanlış.",
+        "sinyaller": [
+          {
+            "tur": "kosulKarsitligi",
+            "aciklama": "Standart yazım (a + b = □) doğru, ters yazım (□ = a + b) ya da ortada boşluk (a + □ = c) yanlış. Bu karşıtlık tanının tanımıdır.",
+            "kosulA": { "ad": "ters ya da ortada boşluklu eşitlik", "filtre": { "yaziliBicim": ["ters", "ortaBosluk"] }, "enAzMadde": 3, "dogrulukUst": 0.5 },
+            "kosulB": { "ad": "standart eşitlik", "filtre": { "yaziliBicim": "standart" }, "enAzMadde": 3, "dogrulukAlt": 0.85 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "celdiriciEtiketi",
+            "etiket": "ESIT_ISLEM_SONUCU",
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "davranis",
+            "olay": "gorulenSayilariToplama",
+            "aciklama": "Cevap, ekranda görünen iki sayının toplamına eşit (7 = 3 + □ sorusunda 10). Sayıları işleme sokma refleksi, eşitliği okumadan çalışıyor.",
+            "filtre": { "cevap": "toplamHepsi" },
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "destekleyici"
+          }
+        ],
+        "enAzKanitMaddesi": 4,
+        "birincilOlmayanCeldiriciAgirligi": 0,
+        "yanlisPozitifKorumasi": "Bağlam zorunlu (toplam ve/veya a, b kayıtlı olmalı). Standart yazımlı maddelerde bu bayrak hiç ölçülmez — orada yanılgı görünmez, doğru cevap yanıltıcı bir güven verir."
+      },
+      "ayirtEtme": {
+        "karistirilan": ["ISLEM_YONU", "TEK_KUMEYI_ALMA"],
+        "nasil": "Cevap eşitliğin bilinen toplamına ya da görünen sayıların toplamına eşitse ESIT_ISLEM_SONUCU. Cevap ters işlemin sonucuysa ISLEM_YONU. Ayrıca kesin ayrım testi: aynı çocuk standart yazımda başarılıysa sorun işlemde değil eşitlik okumasındadır."
+      },
+      "mudahale": {
+        "strateji": "Terazi modeli: eşitlik iki tarafı DENGEDE tutan bir bildirimdir. Önce her iki tarafı da işlemli eşitlikler (3+2 = 4+1) ile denge fikri kurulur, sonra boşluk sağa/sola gezdirilir.",
+        "gerekce": "Program bu kazanımı ayrı ele alıyor (MAT.1.2.3) ve '7 = 3 + 4' gibi ters yazımların da geçerli cümleler olduğunu söylüyor. Terazi, denkliği görselleştiren en doğrudan modeldir ve okuma gerektirmez.",
+        "basamaklar": [
+          {
+            "sira": 1,
+            "amac": "Denge fikri: iki taraf aynı olduğunda terazi düz durur.",
+            "templateId": "islem.esit-denge",
+            "parametreler": { "difficulty": 1, "yaziliBicim": "standart", "teraziGorseli": true, "toplamUst": 10 },
+            "maddeSayisi": 3,
+            "not": "Doğru şık seçilince terazi dengelenir; yanlışta bir taraf ağır basar (ceza değil, bilgi)."
+          },
+          {
+            "sira": 2,
+            "amac": "Ters yazım: 7 = 3 + □.",
+            "templateId": "islem.esit-denge",
+            "parametreler": { "difficulty": 2, "yaziliBicim": "ters", "teraziGorseli": true, "toplamUst": 15 },
+            "maddeSayisi": 3,
+            "not": null
+          },
+          {
+            "sira": 3,
+            "amac": "Ortada boşluk, terazi desteği kaldırılmış.",
+            "templateId": "islem.esit-denge",
+            "parametreler": { "difficulty": 3, "yaziliBicim": "ortaBosluk", "teraziGorseli": false, "toplamUst": 20 },
+            "maddeSayisi": 4,
+            "not": "Asıl koşul. Çıkış kriteri burada ölçülür."
+          }
+        ],
+        "sesIpuclari": ["op.esit", "soru.esit-mi", "yardim.k2-eleme", "yardim.k3-birlikte"],
+        "oturumBasinaEnFazlaMadde": 4,
+        "artArdaEnFazlaMadde": 2,
+        "kacinilacak": [
+          "'Eşittir sonuç demek' cümlesini kurmak — yanılgıyı bizzat öğretir.",
+          "Yalnız standart yazımlı sorularla ilerlemek: yanılgı görünmez kalır.",
+          "< ve > sembollerini işin içine katmak (1. sınıf kapsamı dışı)."
+        ]
+      },
+      "cikisKriteri": {
+        "ardisikDogru": 3,
+        "enAzFarkliOturum": 2,
+        "enAzFarkliSablon": 2,
+        "yardimsiz": true,
+        "sureSiniriSn": null,
+        "aciklama": "Üç ardışık doğru; en az ikisi 'ters' ya da 'ortaBosluk' yazımında ve terazi görseli kapalıyken. Standart yazımdaki doğrular bu bayrağı KAPATMAZ."
+      },
+      "veliNotu": {
+        "baslik": "'Eşittir' işaretini 'sonuç' sanıyor",
+        "neOluyor": "Çocuğunuz 3 + 4 = 7 sorusunu rahat çözüyor. Ama 7 = 3 + ? gibi tersten yazılmış bir soruda zorlanıyor; çünkü '=' işaretini 'buraya cevap gelir' komutu gibi okuyor. Oysa eşittir, iki tarafın birbirine denk olduğunu söyler.",
+        "buYastaNormalMi": "Evet ve çok yaygın. Çocukların büyük kısmı bu işareti önce bir komut olarak öğrenir. Bunu şimdi fark etmek iyi haber: 1. sınıfta düzeltmesi kolay, ileride matematiğin çok yerinde işe yarar.",
+        "evdeDeneyin": [
+          "Terazi ya da tahterevalli benzetmesi yapın: 'İki taraf aynı ağırlıkta olmalı.'",
+          "Soruyu bazen tersten sorun: 'Yedi... üç ile kaç birleşince yedi olur?'",
+          "'Eşittir' yerine 'aynı kadar' deyin: 'Üç artı dört, yedi ile aynı kadar.'"
+        ],
+        "neZamanKonusalim": "Endişe verici bir durum değil; uygulama bunu ayrı bir konu olarak çalışıyor."
+      },
+      "gerekenYeniSesler": [
+        {
+          "onerilenAnahtar": "yardim.esit-iki-taraf",
+          "metin": "Eşittir demek, iki tarafın aynı kadar olması demek.",
+          "gerekce": "MAT.1.2.3'ün özü tek cümlede; K2 ipucu için gerekli. Mevcut op.esit klibi yalnız 'eşittir' sözcüğünü söylüyor."
+        }
+      ]
+    },
+
+    {
+      "id": "ONLUK_BOZMA",
+      "etiket": "Onluk yapıyı çözememe",
+      "aciklama": "10'a kadar olan işlemler sağlamken 10 sınırı geçildiğinde bozulma başlıyor: onluk düşürülüyor, basamaklar yer değiştiriyor (12 yerine 21) ya da sonuç 10'un içinde kalıyor. Sayı 10'dan sonra 'bir onluk ve birkaç birlik' olarak değil, ezberlenmiş bir sözcük dizisi olarak görülüyor.",
+      "tur": "kavramYanilgisi",
+      "cozumSirasi": 11,
+      "distractorsAynasi": { "sayisal": true, "baglamGerekir": false },
+      "skorlamaYokSay": false,
+      "denemeSayilirMi": true,
+      "ustalikTavani": null,
+      "kazanimKodlari": ["MAT.1.1.2", "MAT.1.2.1", "MAT.1.2.2"],
+      "etkilenenBeceriler": [
+        "mat.sayilar.onluk-birlik",
+        "mat.islem.toplama-20",
+        "mat.sayma.20-ye-kadar"
+      ],
+      "onKosulHatalar": ["KARDINALITE", "BIREBIR_ESLESME"],
+      "yayginlik": {
+        "duzey": "cok-yaygin",
+        "tipikDonem": "1. dönem sonu (11-20 arası sayılar) ve 2. dönem (10'u geçen toplama).",
+        "gerekce": "10-20 arası Türkçe sayı adları düzenlidir (on bir, on iki) ve bu bir avantajdır; ama düzenli ad, yapının anlaşıldığı anlamına gelmez. Onluk eşiği 1. sınıfın en görünür kırılma noktasıdır.",
+        "baslangicOnceligi": 3
+      },
+      "tespit": {
+        "aciklama": "Kanıt eşik karşıtlığındadır: 10 altı sağlam, 10 üstü bozuk.",
+        "sinyaller": [
+          {
+            "tur": "kosulKarsitligi",
+            "aciklama": "Sonucu 10'u geçen maddelerde düşük, 10 ve altında kalan maddelerde yüksek doğruluk.",
+            "kosulA": { "ad": "sonuç 10'u geçiyor", "filtre": { "sonucOnlukGecti": true }, "enAzMadde": 4, "dogrulukUst": 0.5 },
+            "kosulB": { "ad": "sonuç 10 ve altı", "filtre": { "sonucOnlukGecti": false }, "enAzMadde": 4, "dogrulukAlt": 0.85 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "celdiriciEtiketi",
+            "etiket": "ONLUK_BOZMA",
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 8 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "davranis",
+            "olay": "basamakDegistirme",
+            "aciklama": "Cevabın doğru cevabın basamakları yer değiştirmiş hâli olması (12 → 21). Rakam tanıma değil yapı sorunudur.",
+            "filtre": { "cevap": "basamakTersi" },
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 8 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "destekleyici"
+          }
+        ],
+        "enAzKanitMaddesi": 6,
+        "birincilOlmayanCeldiriciAgirligi": 0,
+        "yanlisPozitifKorumasi": "Ön koşul hatalarından biri (KARDINALITE, BIREBIR_ESLESME) açıkken bu bayrak AÇILMAZ. Sayma zemini oynakken onluk yapı tanısı koymak yanlıştır: çocuk onluğu değil saymayı kaçırıyordur."
+      },
+      "ayirtEtme": {
+        "karistirilan": ["HEPSINI_SAYMA", "FAZLA_SAYMA"],
+        "nasil": "HEPSINI_SAYMA'da 10 üstü sorularda cevap DOĞRU ama yavaştır; ONLUK_BOZMA'da cevap yanlıştır ve tipik olarak ±10 ya da basamak tersidir. FAZLA_SAYMA sapması ±1/±2 iken burada sapma onluk büyüklüğündedir."
+      },
+      "mudahale": {
+        "strateji": "Onluk çerçeve: 10'luk bir çerçeve dolar, artan yeni çerçeveye geçer. Önce 11-20 arası sayıların 'bir dolu çerçeve + birkaç' olarak görülmesi, sonra 10'u tamamlayarak toplama (7+5 → 7+3+2).",
+        "gerekce": "MAT.1.1.2 uygulama notu açık: ilk aşamada 'onluk' ve 'birlik' KAVRAM ADLARI KULLANILMADAN, sezgisel olarak çalışılır. Çerçeve tam bunu yapar — yapıyı adlandırmadan gösterir.",
+        "basamaklar": [
+          {
+            "sira": 1,
+            "amac": "11-20 arası sayıyı 'dolu bir çerçeve + artan' olarak görmek.",
+            "templateId": "sayma.onluk-cerceve",
+            "parametreler": { "difficulty": 2, "aralikUst": 20, "gruplar": [10, 5], "adlandirmaYok": true },
+            "maddeSayisi": 3,
+            "not": "'Onluk/birlik' sözcükleri KULLANILMAZ; yalnız 'dolu çerçeve' ve 'artan' görünür."
+          },
+          {
+            "sira": 2,
+            "amac": "10'u tamamlayarak toplama: önce çerçeveyi doldur, sonra kalanı ekle.",
+            "templateId": "islem.onu-tamamla",
+            "parametreler": { "difficulty": 3, "terimA": "6..9", "terimB": "3..6", "toplamUst": 20, "cerceveGorseli": true },
+            "maddeSayisi": 3,
+            "not": "7+5: çerçeveye 3 konur (10 olur), 2 artar → 12."
+          },
+          {
+            "sira": 3,
+            "amac": "Görsel destek kaldırılmış hâlde 10'u geçen toplama.",
+            "templateId": "islem.onu-tamamla",
+            "parametreler": { "difficulty": 4, "terimA": "5..12", "terimB": "3..8", "toplamUst": 20, "cerceveGorseli": false },
+            "maddeSayisi": 4,
+            "not": "Sonuç 20'yi aşamaz."
+          }
+        ],
+        "sesIpuclari": ["yardim.k2-birlikte-sayalim", "yardim.k3-birlikte", "soru.kac-eder"],
+        "oturumBasinaEnFazlaMadde": 4,
+        "artArdaEnFazlaMadde": 2,
+        "kacinilacak": [
+          "'Onluk' ve 'birlik' terimlerini erken kullanmak (program bunu açıkça geciktiriyor).",
+          "20'yi aşan sayılara çıkmak.",
+          "Basamak ezberi ('soldaki onlar, sağdaki birler') dayatmak."
+        ]
+      },
+      "cikisKriteri": {
+        "ardisikDogru": 3,
+        "enAzFarkliOturum": 2,
+        "enAzFarkliSablon": 2,
+        "yardimsiz": true,
+        "sureSiniriSn": null,
+        "aciklama": "Üç ardışık doğru, HEPSİ sonucu 10'u geçen maddelerde ve çerçeve görseli kapalıyken. İki farklı oturum, iki farklı şablon."
+      },
+      "veliNotu": {
+        "baslik": "10'u geçince zorlanıyor",
+        "neOluyor": "Çocuğunuz 10'a kadar olan sorularda rahat. 10'u geçen sayılarda ise zorlanıyor: bazen 12 yerine 21 diyor, bazen sonucu 10'un içinde tutuyor.",
+        "buYastaNormalMi": "Evet, 10 sınırı 1. sınıfın en bilinen eşiğidir. 'On bir', 'on iki' demeyi bilmek ile bu sayıların 'bir dolu onluk ve birkaç tane daha' olduğunu görmek farklı şeylerdir; ikincisi zaman ister.",
+        "evdeDeneyin": [
+          "Yumurta kolisi ya da 10 gözlü bir kutu kullanın: önce 10 gözü doldurun, artanı yanına koyun. 'On ve iki: on iki.'",
+          "Parmakla çalışırken iki elin dolmasını (10) bir durak gibi kullanın.",
+          "Sayarken 10'da durup 'bir elimiz doldu' deyin, sonra devam edin."
+        ],
+        "neZamanKonusalim": "Şimdilik gerek yok; bu tam olarak 1. sınıf boyunca çalışılan bir konu ve uygulama onluk çerçeveyle bunu destekliyor."
+      },
+      "gerekenYeniSesler": [
+        {
+          "onerilenAnahtar": "yardim.cerceveyi-doldur",
+          "metin": "Önce çerçeveyi ona tamamlayalım, kalanı sonra ekleriz.",
+          "gerekce": "10'u tamamlama stratejisinin sesli anlatımı; K2 ipucunda gerekli."
+        }
+      ]
+    },
+
+    {
+      "id": "SAYI_DOGRUSU_ARALIK",
+      "etiket": "Sayı doğrusunda işaret sayma (çit direği hatası)",
+      "aciklama": "Sayı doğrusunda çocuk ATLAMALARI değil İŞARETLERİ sayıyor. 3'ten 7'ye giderken aradaki noktaları sayıp 5 zıplama olduğunu söylüyor ya da bir zıplamayı eksik yapıyor. Sonuç hep tam bir birim kayıyor. Klasik 'çit direği' hatasıdır: direkleri saymakla aralıkları saymak farklı şeylerdir.",
+      "tur": "kavramYanilgisi",
+      "cozumSirasi": 12,
+      "distractorsAynasi": { "sayisal": true, "baglamGerekir": false },
+      "skorlamaYokSay": false,
+      "denemeSayilirMi": true,
+      "ustalikTavani": null,
+      "kazanimKodlari": ["MAT.1.1.5", "MAT.1.1.6", "MAT.1.2.1"],
+      "etkilenenBeceriler": [
+        "mat.sayilar.sayi-dogrusu",
+        "mat.sayma.ritmik-ileri",
+        "mat.islem.ustune-sayma"
+      ],
+      "onKosulHatalar": [],
+      "yayginlik": {
+        "duzey": "orta",
+        "tipikDonem": "Ritmik sayma ve sayı doğrusu etkinlikleri sırasında (1. dönem sonu - 2. dönem).",
+        "gerekce": "Yalnız sayı doğrusu görselinde ortaya çıkar; nesne saymada görünmez. Yetişkinlerde bile kalıcıdır (iki tarih arasındaki gün sayısı, yaş hesabı). Bu yüzden 'çocuğa özgü bir eksik' değil, modelin doğasından gelen bir zorluktur.",
+        "baslangicOnceligi": 4
+      },
+      "tespit": {
+        "aciklama": "Sapma her zaman tam ±1 birim ve NUMBER_LINE maddelerine özgü.",
+        "sinyaller": [
+          {
+            "tur": "celdiriciEtiketi",
+            "etiket": "SAYI_DOGRUSU_ARALIK",
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "kosulKarsitligi",
+            "aciklama": "Sayı doğrusu maddelerinde düşük, aynı sayılarla nesne sayma maddelerinde yüksek doğruluk: sorun sayıda değil modelde.",
+            "kosulA": { "ad": "sayı doğrusu", "filtre": { "kind": "NUMBER_LINE" }, "enAzMadde": 3, "dogrulukUst": 0.5 },
+            "kosulB": { "ad": "nesne sayma", "filtre": { "kind": "TAP_COUNT" }, "enAzMadde": 3, "dogrulukAlt": 0.8 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "davranis",
+            "olay": "birBirimKayma",
+            "aciklama": "Seçilen değerin doğru değerden tam olarak bir ADIM kadar (adim kadar) sapması; tolerans dışında ama komşu işarette.",
+            "filtre": { "sapma": "== adim" },
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "destekleyici"
+          }
+        ],
+        "enAzKanitMaddesi": 4,
+        "birincilOlmayanCeldiriciAgirligi": 0,
+        "yanlisPozitifKorumasi": "Yalnız NUMBER_LINE maddelerinde ölçülür. Dokunma hassasiyeti kaynaklı kaymaları elemek için, seçilen nokta ile doğru nokta arasındaki piksel mesafesi bir işaret aralığının yarısından küçükse madde kanıt sayılmaz (akıllı tahtada parmak kalınlığı gerçek bir gürültü kaynağıdır)."
+      },
+      "ayirtEtme": {
+        "karistirilan": ["FAZLA_SAYMA", "EKSIK_SAYMA", "ORUNTU_FAZ"],
+        "nasil": "Etkileşim türüne bakılır: NUMBER_LINE dışında bu tanı KONULMAZ. ORUNTU_FAZ örüntü maddelerinde görülür ve sapma örüntü adımı kadardır; sayı doğrusunda ise sapma tam bir işaret aralığıdır."
+      },
+      "mudahale": {
+        "strateji": "Zıplama animasyonu: her adım görünür bir yay olarak çizilir ve sayılan şey yay olur, nokta değil. Önce adım 1, sonra 5 ve 10 (müfredatın izin verdiği ritmik biçimler).",
+        "gerekce": "Çocuğun gördüğü şey noktalardır; sayması gereken şey ise hareketlerdir. Hareketi görünür kılmak, sayılacak nesneyi değiştirir.",
+        "basamaklar": [
+          {
+            "sira": 1,
+            "amac": "Birer zıplama, yay animasyonu açık.",
+            "templateId": "sayi-dogrusu.atla",
+            "parametreler": { "difficulty": 1, "adim": 1, "bas": 0, "son": 10, "yayAnimasyonu": true },
+            "maddeSayisi": 3,
+            "not": "Her zıplamada sayı sesi çalar; sayılan şey yaydır."
+          },
+          {
+            "sira": 2,
+            "amac": "Beşer ve onar zıplama (müfredatta geçerli biçimler).",
+            "templateId": "sayi-dogrusu.atla",
+            "parametreler": { "difficulty": 2, "adim": [5, 10], "bas": 0, "son": 100, "yayAnimasyonu": true },
+            "maddeSayisi": 3,
+            "not": "İleri 5 ve 10 için üst sınır 100'dür. İleri 2 yalnız 20'ye kadar, geri sayma yalnız 20'den olur (RITMIK_SAYMA_BICIMLERI)."
+          },
+          {
+            "sira": 3,
+            "amac": "Animasyon kapalı; eksik sayıyı bulma.",
+            "templateId": "sayi-dogrusu.eksik-sayi",
+            "parametreler": { "difficulty": 3, "adim": 1, "bas": 0, "son": 20, "yayAnimasyonu": false },
+            "maddeSayisi": 3,
+            "not": "Asıl koşul."
+          }
+        ],
+        "sesIpuclari": ["soru.eksik-sayi", "yardim.k2-birlikte-sayalim", "yardim.k3-birlikte"],
+        "oturumBasinaEnFazlaMadde": 4,
+        "artArdaEnFazlaMadde": 2,
+        "kacinilacak": [
+          "Müfredat dışı ritmik biçimler üretmek (geriye beşer/onar, 100'e kadar ikişer, üçer/dörder — hiçbiri 1. sınıfta yok).",
+          "İşaretsiz (boş) sayı doğrusu kullanmak: 1. sınıfta işaretli doğru kullanılır.",
+          "Sapmayı 'yakın sayılır' diye geçmek — tolerans dışıysa tanı vardır."
+        ]
+      },
+      "cikisKriteri": {
+        "ardisikDogru": 3,
+        "enAzFarkliOturum": 2,
+        "enAzFarkliSablon": 2,
+        "yardimsiz": true,
+        "sureSiniriSn": null,
+        "aciklama": "Üç ardışık doğru, yay animasyonu kapalıyken ve en az biri adım 1 dışındaki bir biçimde (5 veya 10). İki farklı oturum."
+      },
+      "veliNotu": {
+        "baslik": "Sayı doğrusunda bir kayıyor",
+        "neOluyor": "Sayı doğrusunda çocuğunuz sonucu genellikle bir eksik ya da bir fazla buluyor. Sebebi şu: zıplamaları değil, çizgi üstündeki noktaları sayıyor.",
+        "buYastaNormalMi": "Evet ve bu hata yalnız çocuklara özgü değil. Yetişkinler de aynı hatayı yapar: iki tarih arasındaki gün sayısını hesaplarken ya da 'kaç yaşında olur' derken. Sayı doğrusunda sayılması gereken şey noktalar değil, aralardaki atlamalardır.",
+        "evdeDeneyin": [
+          "Yere kâğıtlarla bir sayı yolu yapın; çocuk üstünde ZIPLAYARAK saysın. Her zıplamada bir sayı söylensin.",
+          "Merdiven çıkarken basamakları sayın: 'kaç basamak çıktık' ile 'kaçıncı basamaktayız' farkını konuşun.",
+          "Parmağınızla yay çizerek gösterin: nokta değil, atlama."
+        ],
+        "neZamanKonusalim": "Gerek yok; sayı doğrusuna alışmak zaman alan normal bir süreçtir."
+      },
+      "gerekenYeniSesler": [
+        {
+          "onerilenAnahtar": "yardim.ziplamalari-say",
+          "metin": "Noktaları değil, zıplamaları sayalım.",
+          "gerekce": "Çit direği hatasının doğrudan karşılığı; K2 ipucu için gerekli."
+        }
+      ]
+    },
+
+    {
+      "id": "ORUNTU_FAZ",
+      "etiket": "Örüntüde faz kayması",
+      "aciklama": "Çocuk örüntünün KURALINI doğru buluyor (ikişer artıyor, kırmızı-mavi tekrar ediyor) ama kuralı yanlış yerden uyguluyor: bir adım ileri ya da geri kayarak devam ediyor. Cevap tipik olarak doğru cevabın bir adım öncesi ya da sonrasıdır. Kural bilgisi vardır; eksik olan, sıradaki BOŞLUĞUN örüntünün neresine düştüğünü izlemektir.",
+      "tur": "kavramYanilgisi",
+      "cozumSirasi": 13,
+      "distractorsAynasi": { "sayisal": true, "baglamGerekir": false },
+      "skorlamaYokSay": false,
+      "denemeSayilirMi": true,
+      "ustalikTavani": null,
+      "kazanimKodlari": ["MAT.1.1.6", "MAT.1.1.5"],
+      "etkilenenBeceriler": [
+        "mat.oruntu.sayi-oruntusu",
+        "mat.oruntu.sekil-oruntusu",
+        "mat.sayma.ritmik-ileri"
+      ],
+      "onKosulHatalar": [],
+      "yayginlik": {
+        "duzey": "orta",
+        "tipikDonem": "Örüntü kazanımı işlenirken (1. dönem sonu).",
+        "gerekce": "Örüntüde tam yanlış cevaplar seyrektir; asıl sık görülen budur: kural doğru, konum yanlış. Uzun örüntülerde ve eksik ögenin ortada olduğu durumlarda artar.",
+        "baslangicOnceligi": 4
+      },
+      "tespit": {
+        "aciklama": "İmza: cevap = doğru ± adım. Yani hata büyüklüğü tam olarak örüntünün adımı kadar.",
+        "sinyaller": [
+          {
+            "tur": "celdiriciEtiketi",
+            "etiket": "ORUNTU_FAZ",
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "kosulKarsitligi",
+            "aciklama": "Eksik öge SONDA iken doğru, ORTADA iken yanlış: kuralı ileri doğru uygulayabiliyor ama araya girmekte zorlanıyor.",
+            "kosulA": { "ad": "eksik öge ortada", "filtre": { "eksikKonum": "orta" }, "enAzMadde": 3, "dogrulukUst": 0.5 },
+            "kosulB": { "ad": "eksik öge sonda", "filtre": { "eksikKonum": "son" }, "enAzMadde": 3, "dogrulukAlt": 0.8 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "davranis",
+            "olay": "adimKadarSapma",
+            "aciklama": "Sapmanın örüntü adımına eşit olması (adim = 2 ise sapma ±2).",
+            "filtre": { "sapma": "== adim" },
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "destekleyici"
+          }
+        ],
+        "enAzKanitMaddesi": 4,
+        "birincilOlmayanCeldiriciAgirligi": 0,
+        "yanlisPozitifKorumasi": "Adım 1 olan örüntülerde ORUNTU_FAZ ile FAZLA/EKSIK_SAYMA sayısal olarak ayırt edilemez (ikisi de ±1). Bu maddeler kanıt sayılmaz; tanı yalnız adım ≥ 2 olan örüntülerde konur."
+      },
+      "ayirtEtme": {
+        "karistirilan": ["FAZLA_SAYMA", "EKSIK_SAYMA", "SAYI_DOGRUSU_ARALIK"],
+        "nasil": "Sapma büyüklüğüne bakılır: sapma = örüntü adımı ise ORUNTU_FAZ; sapma = 1 ve örüntü adımı ≠ 1 ise sayma hatası. Sayı doğrusu maddelerinde bu tanı konmaz."
+      },
+      "mudahale": {
+        "strateji": "Örüntüyü baştan SESLİ okuyup boşluğa kadar birlikte ilerlemek. Parmak takibi (işaret parmağı animasyonu) her ögeye dokunarak ilerler; boşluğa gelince durur.",
+        "gerekce": "Faz kayması bir izleme sorunudur, kural sorunu değil. Baştan okuma, boşluğun örüntünün neresine düştüğünü fiziksel olarak gösterir.",
+        "basamaklar": [
+          {
+            "sira": 1,
+            "amac": "Eksik öge sonda; kısa örüntü, tekrarlı yapı.",
+            "templateId": "oruntu.eksik-oge",
+            "parametreler": { "difficulty": 1, "oruntuTuru": "tekrarli", "uzunluk": 6, "eksikKonum": "son", "bastanOkuma": true },
+            "maddeSayisi": 3,
+            "not": "AB-AB-AB gibi tekrarlı şekil örüntüsü; baştan sesli okuma açık."
+          },
+          {
+            "sira": 2,
+            "amac": "Artan sayı örüntüsü, eksik öge sonda.",
+            "templateId": "oruntu.eksik-oge",
+            "parametreler": { "difficulty": 2, "oruntuTuru": "artan", "adim": 2, "aralikUst": 20, "eksikKonum": "son", "bastanOkuma": true },
+            "maddeSayisi": 3,
+            "not": "İkişer artan örüntüde üst sınır 20'dir (müfredat)."
+          },
+          {
+            "sira": 3,
+            "amac": "Eksik öge ORTADA, baştan okuma desteği kapalı.",
+            "templateId": "oruntu.eksik-oge",
+            "parametreler": { "difficulty": 3, "oruntuTuru": ["artan", "azalan"], "adim": 2, "eksikKonum": "orta", "bastanOkuma": false },
+            "maddeSayisi": 4,
+            "not": "Asıl koşul. Azalan örüntüde başlangıç 20'yi aşmaz."
+          }
+        ],
+        "sesIpuclari": ["soru.hangisi-gelir", "yardim.k2-birlikte-sayalim", "yardim.k3-birlikte"],
+        "oturumBasinaEnFazlaMadde": 4,
+        "artArdaEnFazlaMadde": 2,
+        "kacinilacak": [
+          "Örüntüyü uzatmak: uzunluk arttıkça faz kayması artar, öğrenme değil.",
+          "Müfredat dışı adımlar (üçer, dörder) kullanmak.",
+          "Kuralı söyleyip geçmek — çocuk kuralı zaten biliyor."
+        ]
+      },
+      "cikisKriteri": {
+        "ardisikDogru": 3,
+        "enAzFarkliOturum": 2,
+        "enAzFarkliSablon": 1,
+        "yardimsiz": true,
+        "sureSiniriSn": null,
+        "aciklama": "Üç ardışık doğru, en az ikisi 'eksikKonum: orta' koşulunda ve baştan okuma desteği kapalıyken. İki farklı oturum."
+      },
+      "veliNotu": {
+        "baslik": "Örüntünün kuralını buluyor ama yeri kayıyor",
+        "neOluyor": "Çocuğunuz örüntüdeki kuralı doğru anlıyor (ikişer artıyor gibi) ama devam ederken bir adım kaydırıyor. Bu yüzden cevabı doğru cevabın hemen yanındaki sayı ya da şekil oluyor.",
+        "buYastaNormalMi": "Evet ve aslında iyi bir işaret: kuralı bulmak asıl zor olan kısımdır, çocuğunuz onu yapıyor. Eksik olan, boşluğun örüntünün neresine düştüğünü takip etmek. Bu, dikkat-takip becerisiyle birlikte gelişir.",
+        "evdeDeneyin": [
+          "Örüntüyü baştan birlikte yüksek sesle okuyun ve her ögeye parmakla dokunun; boşluğa gelince durun.",
+          "Boncuk ya da düğmelerle kendi örüntünüzü kurun, siz bir öge saklayın, o bulsun. Sonra roller değişsin.",
+          "Uzun örüntüler yerine kısa olanlarla çalışın."
+        ],
+        "neZamanKonusalim": "Gerek yok; bu, örüntü çalışmalarının normal bir aşaması."
+      },
+      "gerekenYeniSesler": []
+    },
+
+    {
+      "id": "SEKIL_PROTOTIP",
+      "etiket": "Şekli yalnız alışıldık duruşunda tanıma",
+      "aciklama": "Çocuk şekilleri özelliklerine (kenar ve köşe sayısına) göre değil, bütün olarak alışıldık GÖRÜNTÜSÜNE göre tanıyor. Tabanı yere paralel duran üçgeni tanıyor, ters ya da yatık duranı tanımıyor; kareyi 45 derece döndürünce 'baklava' diyor; ince uzun dikdörtgeni dikdörtgen saymıyor. Şekil bir 'resim'dir, bir 'tanım' değil.",
+      "tur": "kavramYanilgisi",
+      "cozumSirasi": 14,
+      "distractorsAynasi": { "sayisal": false, "baglamGerekir": false },
+      "skorlamaYokSay": false,
+      "denemeSayilirMi": true,
+      "ustalikTavani": null,
+      "kazanimKodlari": ["MAT.1.3.3", "MAT.1.3.4", "MAT.1.3.5"],
+      "etkilenenBeceriler": [
+        "mat.geometri.sekil-tanima",
+        "mat.geometri.kenar-kose",
+        "mat.geometri.siniflandirma"
+      ],
+      "onKosulHatalar": [],
+      "yayginlik": {
+        "duzey": "cok-yaygin",
+        "tipikDonem": "Yılın başında (tema 1) ve sonunda (tema 6) — geometri iki kez ele alınır.",
+        "gerekce": "Şekil öğrenimi resimlerden başlar: kitaplarda üçgen hep aynı duruşta çizilir. Prototip etkisi bu yüzden neredeyse evrenseldir ve ancak döndürülmüş/farklı oranlı örneklerle kırılır.",
+        "baslangicOnceligi": 3
+      },
+      "tespit": {
+        "aciklama": "SAYISAL DEĞİLDİR (distractors.ts: sayisal = false). Bu etiketin çeldiricisini şablon kendisi kurar: döndürülmüş doğru şekil ile prototip duruşlu yanlış şekil karşı karşıya getirilir.",
+        "sinyaller": [
+          {
+            "tur": "kosulKarsitligi",
+            "aciklama": "Prototip duruştaki şekilde yüksek, döndürülmüş/ölçeklenmiş şekilde düşük doğruluk. Tanının doğrudan tanımı.",
+            "kosulA": { "ad": "döndürülmüş ya da farklı oranlı şekil", "filtre": { "sekilDurusu": "dondurulmus" }, "enAzMadde": 3, "dogrulukUst": 0.5 },
+            "kosulB": { "ad": "prototip duruş", "filtre": { "sekilDurusu": "prototip" }, "enAzMadde": 3, "dogrulukAlt": 0.85 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "celdiriciEtiketi",
+            "etiket": "SEKIL_PROTOTIP",
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "davranis",
+            "olay": "kenarKoseSaymadanCevap",
+            "aciklama": "Kenar/köşe sayma maddelerinde (HOTSPOT_FIND) hiç köşeye dokunmadan cevap verme: şekli özelliğiyle değil görüntüsüyle yargılıyor.",
+            "filtre": { "kind": "HOTSPOT_FIND", "dokunusSayisi": 0 },
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "destekleyici"
+          }
+        ],
+        "enAzKanitMaddesi": 4,
+        "birincilOlmayanCeldiriciAgirligi": 0,
+        "yanlisPozitifKorumasi": "Şablon prototip ve döndürülmüş koşulların İKİSİNİ de üretmediyse karşıtlık ölçülemez ve bayrak açılmaz. Tek koşullu bir soru dizisi bu tanıyı kuramaz."
+      },
+      "ayirtEtme": {
+        "karistirilan": ["GOREV_ANLASILMADI"],
+        "nasil": "Prototip duruşta doğru cevap veriliyorsa görev anlaşılmıştır; hata yalnız döndürülmüş koşulda çıkıyorsa tanı SEKIL_PROTOTIP'tir. Her iki koşulda da rastgele cevap varsa görev anlaşılmamıştır."
+      },
+      "mudahale": {
+        "strateji": "Aynı şekli döndürerek, farklı boyut ve oranlarda göstermek; tanımı kenar ve köşe SAYARAK kurmak. Önce yuvarlak/köşeli ayrımı (MAT.1.3.3), sonra köşe sayısıyla adlandırma.",
+        "gerekce": "Program şekilleri kenar ve köşe sayısıyla tanımlamayı istiyor. Prototip etkisi ancak sayılabilir bir ölçüt verilince kırılır: 'üç köşesi var, o hâlde üçgen' — nasıl durduğundan bağımsız.",
+        "basamaklar": [
+          {
+            "sira": 1,
+            "amac": "Yuvarlak/köşeli ayrımı (şekil adı olmadan).",
+            "templateId": "geometri.yuvarlak-koseli",
+            "parametreler": { "difficulty": 1, "sekilDurusu": "karisik", "donusDerece": [0, 30, 45, 90] },
+            "maddeSayisi": 3,
+            "not": "Adlandırmadan önce ayrım: MAT.1.3.3 sırası."
+          },
+          {
+            "sira": 2,
+            "amac": "Köşeleri sayarak tanımlama.",
+            "templateId": "geometri.kenar-kose-say",
+            "parametreler": { "difficulty": 2, "sekiller": ["ucgen", "kare", "dikdortgen", "cember"], "koseyeDokun": true },
+            "maddeSayisi": 3,
+            "not": "HOTSPOT_FIND: çocuk köşelere tek tek dokunur, sayı sesle söylenir."
+          },
+          {
+            "sira": 3,
+            "amac": "Döndürülmüş ve farklı oranlı şekilleri tanıma.",
+            "templateId": "geometri.dondurulmus-sekil",
+            "parametreler": { "difficulty": 3, "donusDerece": [15, 45, 135, 200], "olcek": [0.6, 1.4], "sekilDurusu": "dondurulmus" },
+            "maddeSayisi": 4,
+            "not": "Asıl koşul. Çember için döndürme anlamsızdır; ölçek değişimi kullanılır. Şekil adı 'daire' DEĞİL 'çember'dir."
+          }
+        ],
+        "sesIpuclari": ["soru.hangi-sekil", "soru.yuvarlak-mi-koseli-mi", "yardim.k2-eleme"],
+        "oturumBasinaEnFazlaMadde": 4,
+        "artArdaEnFazlaMadde": 2,
+        "kacinilacak": [
+          "Şekilleri hep aynı duruşta göstermek (yanılgıyı besler).",
+          "'Daire' demek: program çember diyor.",
+          "Kare-dikdörtgen ilişkisini tartışmak: 1. sınıf düzeyinde gereksiz ve kafa karıştırıcı."
+        ]
+      },
+      "cikisKriteri": {
+        "ardisikDogru": 3,
+        "enAzFarkliOturum": 2,
+        "enAzFarkliSablon": 2,
+        "yardimsiz": true,
+        "sureSiniriSn": null,
+        "aciklama": "Üç ardışık doğru, HEPSİ döndürülmüş ya da farklı oranlı şekillerde. En az iki farklı şekil türünü kapsamalı; iki farklı oturum."
+      },
+      "veliNotu": {
+        "baslik": "Şekli döndürünce tanıyamıyor",
+        "neOluyor": "Çocuğunuz üçgeni her zamanki duruşunda hemen tanıyor. Ama ters çevrilmiş ya da yan yatmış üçgeni tanımıyor; döndürülmüş kareye 'baklava' diyor.",
+        "buYastaNormalMi": "Evet, neredeyse bütün çocuklarda görülür. Şekiller ilk olarak kitaplardaki hâlleriyle, tek bir duruşta öğrenilir; çocuk şekli bir 'resim' gibi hatırlar. Kenar ve köşe saymayı öğrenince şekli nasıl dururlarsa dursun tanır.",
+        "evdeDeneyin": [
+          "Bir üçgen kesin ve çevirerek gösterin: 'Şimdi de üçgen mi? Köşelerini sayalım: bir, iki, üç. Hâlâ üçgen.'",
+          "Evdeki eşyalarda şekil avı yapın: pencere (dikdörtgen), tabak (çember), dilim peynir (üçgen). Farklı duruşlar kendiliğinden çıkar.",
+          "'Kaç köşesi var?' sorusunu alışkanlık hâline getirin."
+        ],
+        "neZamanKonusalim": "Gerek yok; bu, geometri öğreniminin bilinen ve geçici bir aşaması."
+      },
+      "gerekenYeniSesler": [
+        {
+          "onerilenAnahtar": "yardim.koseleri-sayalim",
+          "metin": "Köşelerine dokunup sayalım. Şekil nasıl durursa dursun köşe sayısı değişmez.",
+          "gerekce": "Prototip etkisini kıran ölçütü söyleyen K2 ipucu; mevcut kliplerde yok."
+        }
+      ]
+    },
+
+    {
+      "id": "PARA_BOYUT_DEGER",
+      "etiket": "Banknot boyutunu değerle karıştırma",
+      "aciklama": "Çocuk banknotun değerini üzerindeki rakamdan değil, fiziksel görünüşünden (boyut, renk, yıpranmışlık) çıkarıyor: daha büyük ya da daha parlak banknotu daha değerli sanıyor. Türk lirası banknotları değer arttıkça boy olarak da büyüdüğü için bu strateji sıklıkla DOĞRU cevap üretir; yanıldığı yer, aynı boya yakın banknotların (ör. 100 ile 200) karşılaştırılmasıdır.",
+      "tur": "kavramYanilgisi",
+      "cozumSirasi": 15,
+      "distractorsAynasi": { "sayisal": false, "baglamGerekir": false },
+      "skorlamaYokSay": false,
+      "denemeSayilirMi": true,
+      "ustalikTavani": null,
+      "kazanimKodlari": ["MAT.1.1.9"],
+      "etkilenenBeceriler": [
+        "mat.para.banknot-tanima",
+        "mat.para.deger-karsilastirma",
+        "mat.sayilar.rakam-tanima"
+      ],
+      "onKosulHatalar": [],
+      "yayginlik": {
+        "duzey": "yaygin",
+        "tipikDonem": "2. dönem, para teması (tema 5, yalnız 7 ders saati).",
+        "gerekce": "Para deneyimi çocuktan çocuğa çok değişir; alışverişe katılmayan çocuk banknotu bir resim gibi görür. Ayrıca renk ve boyut, rakamdan çok daha göze çarpan ipuçlarıdır.",
+        "baslangicOnceligi": 4
+      },
+      "tespit": {
+        "aciklama": "SAYISAL DEĞİLDİR (distractors.ts: sayisal = false); çeldiriciyi şablon banknot görselleriyle kurar. Kanıt, boyut sırası ile değer sırasının ÇELİŞTİĞİ çiftlerde toplanır.",
+        "sinyaller": [
+          {
+            "tur": "kosulKarsitligi",
+            "aciklama": "Boyut ipucu değeri desteklemediğinde (yakın boyutlu banknot çiftleri, ör. 100-200) düşük; desteklediğinde (1-100 gibi uzak çiftler) yüksek doğruluk. Çocuk rakama değil boyuta bakıyor.",
+            "kosulA": { "ad": "boyut ipucu zayıf çiftler", "filtre": { "banknotCifti": "yakinBoyut" }, "enAzMadde": 3, "dogrulukUst": 0.5 },
+            "kosulB": { "ad": "boyut ipucu güçlü çiftler", "filtre": { "banknotCifti": "uzakBoyut" }, "enAzMadde": 3, "dogrulukAlt": 0.85 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "celdiriciEtiketi",
+            "etiket": "PARA_BOYUT_DEGER",
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 2 },
+            "agirlik": "birincil"
+          },
+          {
+            "tur": "davranis",
+            "olay": "rakamaBakmadanCevap",
+            "aciklama": "Banknot maddelerinde çok kısa yanıt süresi ve rakam bölgesine hiç dokunmama/yakınlaşmama.",
+            "filtre": { "cevapSuresiSn": "< 2.5" },
+            "kapsam": "ilgiliBeceriler",
+            "pencere": { "birim": "madde", "n": 6 },
+            "esik": { "iliski": ">=", "deger": 3 },
+            "agirlik": "destekleyici"
+          }
+        ],
+        "enAzKanitMaddesi": 4,
+        "birincilOlmayanCeldiriciAgirligi": 0,
+        "yanlisPozitifKorumasi": "Yalnız boyut-değer çelişkisi kurulabilen çiftlerde ölçülür. Uzak çiftlerde (1 TL - 100 TL) çocuk boyuta bakarak da doğru cevap verir; o maddeler ne kanıt ne de çürütmedir, ölçüme alınmaz."
+      },
+      "ayirtEtme": {
+        "karistirilan": ["BUYUKLUK_MIKTAR", "GOREV_ANLASILMADI"],
+        "nasil": "BUYUKLUK_MIKTAR nesne kümelerinin SAYISI hakkındadır; PARA_BOYUT_DEGER tek bir nesnenin DEĞERİ hakkındadır. İkisi aynı algısal alışkanlıktan beslenir ama farklı becerilere dokunur ve farklı şablonlarla çalışılır."
+      },
+      "mudahale": {
+        "strateji": "Değeri banknotun üzerindeki RAKAMDAN okumak. Rakam bölgesi büyütülüp vurgulanır; sonra vurgu kaldırılır. Ardından banknotları değerine göre sıraya dizme.",
+        "gerekce": "MAT.1.1.9 yalnız TANIMA ve büyüklük ilişkisidir: para ile toplama, üstü hesaplama 1. sınıfta YOKTUR. O yüzden müdahale de tek bir işe odaklanır — rakamı okumak ve değerleri sıralamak.",
+        "basamaklar": [
+          {
+            "sira": 1,
+            "amac": "Banknot üzerindeki rakamı bulup okumak.",
+            "templateId": "para.banknot-tani",
+            "parametreler": { "difficulty": 1, "banknotlar": [1, 5, 10], "rakamVurgusu": true },
+            "maddeSayisi": 3,
+            "not": "Rakam bölgesi büyütülür ve sayı sesle söylenir."
+          },
+          {
+            "sira": 2,
+            "amac": "Yakın boyutlu banknotları rakamdan ayırt etmek.",
+            "templateId": "para.deger-karsilastir",
+            "parametreler": { "difficulty": 2, "banknotCifti": "yakinBoyut", "rakamVurgusu": true },
+            "maddeSayisi": 3,
+            "not": "100-200, 20-50 gibi çiftler: boyut ipucu iş görmez."
+          },
+          {
+            "sira": 3,
+            "amac": "Vurgu kaldırılmış hâlde değere göre sıralama.",
+            "templateId": "para.deger-sirala",
+            "parametreler": { "difficulty": 3, "banknotlar": [1, 5, 10, 20, 50, 100, 200], "rakamVurgusu": false, "adet": 4 },
+            "maddeSayisi": 3,
+            "not": "SEQUENCE_ORDER; yalnız sıralama, toplama YOK."
+          }
+        ],
+        "sesIpuclari": ["soru.hangi-para", "yardim.k2-eleme", "yardim.k3-birlikte"],
+        "oturumBasinaEnFazlaMadde": 3,
+        "artArdaEnFazlaMadde": 2,
+        "kacinilacak": [
+          "Para toplama, para üstü hesaplama (1. sınıf kapsamı DIŞI).",
+          "Madeni para ve kuruş (bu kazanımda geçmiyor).",
+          "Yalnız uzak boyutlu çiftler sormak: yanılgı görünmez kalır."
+        ]
+      },
+      "cikisKriteri": {
+        "ardisikDogru": 3,
+        "enAzFarkliOturum": 2,
+        "enAzFarkliSablon": 2,
+        "yardimsiz": true,
+        "sureSiniriSn": null,
+        "aciklama": "Üç ardışık doğru, HEPSİ 'yakinBoyut' çiftlerinde ve rakam vurgusu kapalıyken. İki farklı oturum."
+      },
+      "veliNotu": {
+        "baslik": "Paranın değerini boyutundan tahmin ediyor",
+        "neOluyor": "Çocuğunuz banknotun değerini üstündeki sayıdan değil, büyüklüğünden ya da renginden çıkarıyor. Boyutu birbirine yakın paralar karşılaştırıldığında bu yöntem yanılıyor.",
+        "buYastaNormalMi": "Evet, çok doğal. Paralarımızda değer arttıkça boy da büyüdüğü için çocuğun bulduğu bu yöntem çoğu zaman işe yarar — bu yüzden ona güvenir. Rakamı okumaya alışınca kendiliğinden değişir. Ayrıca 1. sınıfta amaç yalnızca paraları TANIMAK; hesap yapmak değil.",
+        "evdeDeneyin": [
+          "Elinizdeki banknotları masaya dizip üzerlerindeki sayıları birlikte okuyun.",
+          "'Hangisi daha çok işe yarar?' diye sorup rakamlara bakarak karar verin.",
+          "Market oyununda paraları küçükten büyüğe sıralayın."
+        ],
+        "neZamanKonusalim": "Gerek yok. Para konusu 1. sınıfta kısa bir bölümdür ve yalnızca tanımayı kapsar."
+      },
+      "gerekenYeniSesler": [
+        {
+          "onerilenAnahtar": "yardim.paradaki-sayiya-bak",
+          "metin": "Paranın büyüklüğüne değil, üstündeki sayıya bakalım.",
+          "gerekce": "Boyut-değer karışıklığını doğrudan hedefleyen K2 ipucu; mevcut kliplerde yok."
+        }
+      ]
+    }
+  ],
+
+  "ozdenetim": {
+    "aciklama": "Test tarafından doğrulanacak sağlama değerleri. src/exercises/distractors.ts ile bu dosya arasındaki eşleşmenin bozulması derleme hatası vermez; bu blok o sessiz kaymayı yakalamak içindir.",
+    "hataSayisi": 15,
+    "hataEtiketleri": [
+      "FAZLA_SAYMA",
+      "EKSIK_SAYMA",
+      "TEK_KUMEYI_ALMA",
+      "ISLEM_YONU",
+      "KARDINALITE",
+      "BIREBIR_ESLESME",
+      "ONLUK_BOZMA",
+      "BUYUKLUK_MIKTAR",
+      "SAYI_DOGRUSU_ARALIK",
+      "ESIT_ISLEM_SONUCU",
+      "SEKIL_PROTOTIP",
+      "ORUNTU_FAZ",
+      "HEPSINI_SAYMA",
+      "PARA_BOYUT_DEGER",
+      "GOREV_ANLASILMADI"
+    ],
+    "beklenenTestler": [
+      "hatalar[].id kümesi === TUM_HATA_ETIKETLERI kümesi (eksiksiz ve fazlasız).",
+      "hatalar[].id benzersiz.",
+      "hatalar[].distractorsAynasi.sayisal === HATA_TANIMLARI[id].sayisal (15/15).",
+      "hatalar[].distractorsAynasi.baglamGerekir === HATA_TANIMLARI[id].baglamGerekir (15/15).",
+      "cozumSirasi değerleri 1..15 aralığında ve benzersiz.",
+      "onKosulHatalar[] içindeki her id bu dosyada tanımlı; kendine referans yok; hard döngü yok.",
+      "skorlamaYokSay === true olan TEK kayıt GOREV_ANLASILMADI; aynı kayıtta denemeSayilirMi === false ve etkilenenBeceriler boş.",
+      "etkilenenBeceriler[] içindeki her id skills.json'da var (SkillIdSchema'ya uyuyor).",
+      "mudahale.basamaklar[].templateId, 'AYNI_MADDE' ve 'YOK' dışında, exercises/templates altında kayıtlı bir ExerciseGenerator.templateId ile eşleşiyor.",
+      "sesIpuclari[] içindeki her anahtar AUDIO_MANIFEST'te var (SpeechKeySchema).",
+      "gerekenYeniSesler[].onerilenAnahtar AUDIO_MANIFEST'te YOK (varsa listeden çıkarılmalı, sesIpuclari'na taşınmalı)."
+    ],
+    "sayisalOlmayanEtiketler": ["SEKIL_PROTOTIP", "PARA_BOYUT_DEGER"],
+    "baglamGerekenEtiketler": ["TEK_KUMEYI_ALMA", "ISLEM_YONU", "BUYUKLUK_MIKTAR", "ESIT_ISLEM_SONUCU"],
+    "skorlamaYokSayilanlar": ["GOREV_ANLASILMADI"],
+    "gelisimselDarbogazlar": ["HEPSINI_SAYMA"],
+    "ustalikTavaniOlanlar": ["HEPSINI_SAYMA"],
+    "kullanilanBeceriIdleri": [
+      "mat.geometri.kenar-kose",
+      "mat.geometri.sekil-tanima",
+      "mat.geometri.siniflandirma",
+      "mat.islem.cikarma-20",
+      "mat.islem.esit-isareti",
+      "mat.islem.problem-kurma",
+      "mat.islem.ters-iliski",
+      "mat.islem.toplama-20",
+      "mat.islem.ustune-sayma",
+      "mat.islem.zihinden-islem",
+      "mat.oruntu.sayi-oruntusu",
+      "mat.oruntu.sekil-oruntusu",
+      "mat.para.banknot-tanima",
+      "mat.para.deger-karsilastirma",
+      "mat.sayilar.karsilastirma",
+      "mat.sayilar.onluk-birlik",
+      "mat.sayilar.rakam-tanima",
+      "mat.sayilar.sayi-dogrusu",
+      "mat.sayilar.tahmin",
+      "mat.sayma.20-ye-kadar",
+      "mat.sayma.birebir-esleme",
+      "mat.sayma.daginik-dizilim",
+      "mat.sayma.kardinalite",
+      "mat.sayma.ritmik-ileri"
+    ],
+    "kullanilanSablonIdleri": [
+      "geometri.dondurulmus-sekil",
+      "geometri.kenar-kose-say",
+      "geometri.yuvarlak-koseli",
+      "islem.esit-denge",
+      "islem.hikaye",
+      "islem.iki-kume-birlestir",
+      "islem.onu-tamamla",
+      "islem.ters-islem",
+      "islem.ustune-say",
+      "oruntu.eksik-oge",
+      "para.banknot-tani",
+      "para.deger-karsilastir",
+      "para.deger-sirala",
+      "sayi-dogrusu.atla",
+      "sayi-dogrusu.eksik-sayi",
+      "sayilar.esle-karsilastir",
+      "sayilar.karsilastir",
+      "sayma.dokun-say",
+      "sayma.kac-tane",
+      "sayma.onluk-cerceve"
+    ],
+    "ozelSablonAnahtarlari": {
+      "AYNI_MADDE": "Yeni madde üretilmez; aynı itemId ve aynı seed yeniden sunulur.",
+      "YOK": "Çocuğa madde verilmez; yalnız yetişkin tarafında bir not oluşur."
+    },
+    "dogrulanmamisReferanslar": "etkilenenBeceriler ve mudahale.basamaklar[].templateId değerleri, skills.json ve exercises/templates PARALEL yazıldığı için bu dosya yazılırken diskte doğrulanamadı. İsimlendirme SkillId biçimine (/^mat\\.[a-z0-9-]+\\.[a-z0-9-]+$/) uygundur ve müfredat temalarını izler; yine de birleştirme sırasında 'beklenenTestler' maddeleri çalıştırılıp eşleşmeyen id'ler düzeltilmelidir.",
+    "kapsamDisi": [
+      "Saat okuma / zaman ölçü birimleri (2. sınıf).",
+      "Standart ölçü birimleri (cm, kg).",
+      "Karşılaştırma sembolleri < > =.",
+      "Çarpma, bölme, kesir.",
+      "20'yi aşan işlem sonucu.",
+      "Para ile toplama, para üstü hesaplama.",
+      "Müfredat dışı ritmik sayma biçimleri (geriye beşer/onar, 100'e kadar ikişer, üçer/dörder)."
+    ]
+  }
+}
