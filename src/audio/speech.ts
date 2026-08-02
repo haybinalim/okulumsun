@@ -43,8 +43,13 @@ export type SpeechEngineState = 'kilitli' | 'hazir' | 'calisiyor';
  * Vite'ın çözdüğü temel yol. Düz 'audio/' yazmak, uygulama bir alt dizinden
  * (ör. okul sunucusunda /okulumsun) sonu eğik çizgisiz bir URL ile açıldığında
  * yanlış klasöre çıkar ve TÜM sesler sessizce kaybolur.
+ *
+ * `import.meta.env` yalnızca Vite'ta tanımlıdır; tsx/Node altında (CI betikleri,
+ * testler) modül yüklenirken tanımsız erişimle patlamamak için güvenli varsayılana
+ * düşer. Üretimde (Vite) gerçek BASE_URL kullanılmaya devam eder.
  */
-const AUDIO_BASE = `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}audio/`;
+const BASE_URL = import.meta.env?.BASE_URL ?? '/';
+const AUDIO_BASE = `${BASE_URL.replace(/\/?$/, '/')}audio/`;
 const DEFAULT_GAP_MS = 90;
 /** Kuyruk sınırı: çocuk hızlı hızlı dokununca talimatlar birikmesin. */
 const MAX_QUEUE = 3;

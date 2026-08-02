@@ -11,7 +11,8 @@
     "audio": "tsx scripts/generate-audio.ts",
     "test": "vitest run",
     "e2e": "playwright test",
-    "audio:audit": "tsx scripts/audit-audio.ts"
+    "audio:audit": "tsx scripts/audit-audio.ts",
+    "validate": "tsx scripts/validate-content.ts"
   },
   "dependencies": {
     "dexie": "^4.4.4",
