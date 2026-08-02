@@ -1,0 +1,154 @@
+/**
+ * JENERATÖR ÖZELLİK (PROPERTY-BASED) TESTLERİ
+ *
+ * Plan §15'in istediği şey: "Soru jeneratörleri — Vitest property-based,
+ * 10.000 tohum: cevap doğru mu, sonuç ≤20 mi, negatif var mı, çeldirici cevaba
+ * eşit mi, ritmik sayma ≤100 mü. Bir aritmetik hatası 6 yaşındaki çocuğa
+ * yanlış öğretir."
+ *
+ * Buradaki testler HER jeneratörü binlerce tohumla dener ve dört değişmezi yoklar:
+ *  1. DEĞİŞMEZLİK   — `alistirmaIhlalleri(ex)` boş dönmeli (ürün kısıtları tutuluyor).
+ *  2. DETERMİNİZM   — aynı (tohum, zorluk) → birebir aynı alıştırma.
+ *  3. TEK DOĞRU      — tam olarak bir doğru şık; hiçbir çeldirici doğru cevaba eşit değil.
+ *  4. MÜFREDAT SINIRI — sayısal cevap tavanın altında ve negatif değil
+ *                     (say/topla ≤20, ritmik ≤100).
+ *
+ * `Math.random` YASAK (rng.ts) — tüm rastgelelik `createRng(tohum)`'dan gelir.
+ */
+import { test, expect } from 'vitest';
+import { createRng, rngSozlesmesiniDogrula } from '../../src/exercises/rng';
+import {
+  ISLEM_ARALIGI,
+  RITMIK_UST_SINIR,
+  alistirmaIhlalleri,
+  type Difficulty,
+  type Exercise,
+  type Option,
+} from '../../src/exercises/types';
+import { uretSay } from '../../src/exercises/templates/say';
+import { karsilastirUret } from '../../src/exercises/templates/karsilastir';
+import { ritmikUret } from '../../src/exercises/templates/ritmik';
+import { uretToplaGorsel } from '../../src/exercises/templates/toplaGorsel';
+
+/** Her jeneratörün altından geçirildiği tohum sayısı. Plan 10.000 ister; bu değer
+ *  derleme/hata ayıklama döngüsünü hızlı tutar — CI'da yükseltilebilir. */
+const TOHUM_SAYISI = 2000;
+const ZORLUKLAR: readonly Difficulty[] = [1, 2, 3, 4, 5];
+
+// ----------------------------------------------------------------- yardımcılar
+
+/** Bir şıkkın sayısal değeri; sayı olmayan türlerde undefined. */
+function sayisalDeger(o: Option): number | undefined {
+  return o.deger.tur === 'sayi' ? o.deger.sayi : undefined;
+}
+
+/** Doğru şıkların sayısal değerleri (sayı olmayanlar atlanır). */
+function dogruDegerler(ex: Exercise): number[] {
+  return ex.options
+    .filter((o) => o.correct === true)
+    .map(sayisalDeger)
+    .filter((v): v is number => v !== undefined);
+}
+
+/**
+ * Beklenen doğru şık sayısı. Tek-seçimli alıştırmalarda 1; çok-boşluklu
+ * TAP_TO_PLACE'te (ritmik) her boşluk kendi doğru kartını taşıdığı için
+ * yuva sayısı kadar. (MATCH_PAIRS/SEQUENCE_ORDER bu projede henüz üretilmiyor.)
+ */
+function beklenenDogruSayisi(ex: Exercise): number {
+  if (ex.kind === 'TAP_TO_PLACE') return ex.yuvalar.length;
+  return 1;
+}
+
+/** Yanlış şıkların sayısal değerleri (sayı olmayanlar atlanır). */
+function yanlisDegerler(ex: Exercise): number[] {
+  return ex.options
+    .filter((o) => o.correct !== true)
+    .map(sayisalDeger)
+    .filter((v): v is number => v !== undefined);
+}
+
+/**
+ * Bir jeneratörü birçok (tohum, zorluk) ikilisi için dener ve dört değişmezi
+ * yoklar. İlk ihlallerde, soruyu birebir yeniden kurabilmek için tohum ve
+ * zorluk dahil açıklayıcı bir hata raporu biriktirir.
+ */
+function jeneratoreiYokla(
+  ad: string,
+  uret: (p: { seed: number; difficulty: Difficulty }, rng: ReturnType<typeof createRng>) => Exercise,
+  cevapUstSinir: number,
+): void {
+  const ihlaller: string[] = [];
+
+  for (let s = 0; s < TOHUM_SAYISI; s++) {
+    for (const difficulty of ZORLUKLAR) {
+      const params = { seed: s, difficulty };
+
+      // --- 2) DETERMİNİZM
+      const a = uret(params, createRng(s));
+      const b = uret(params, createRng(s));
+      if (JSON.stringify(a) !== JSON.stringify(b)) {
+        ihlaller.push(`[determinizm] seed=${s} d=${difficulty} — aynı tohum farklı çıktı.`);
+      }
+
+      // --- 1) DEĞİŞMEZLİK (ürün kısıtları)
+      const dz = alistirmaIhlalleri(a);
+      if (dz.length > 0) {
+        ihlaller.push(`[değişmez] seed=${s} d=${difficulty} — ${dz.join(' | ')}`);
+      }
+
+      // --- 3) DOĞRU ŞIK SAYISI + doğru değerler ayrı + çeldirici doğruya eşit değil
+      const dogruAdet = a.options.filter((o) => o.correct === true).length;
+      const beklenen = beklenenDogruSayisi(a);
+      if (dogruAdet !== beklenen) {
+        ihlaller.push(`[dogruSayi] seed=${s} d=${difficulty} — ${dogruAdet} doğru (beklenen ${beklenen}).`);
+      }
+      const dgr = dogruDegerler(a);
+      if (new Set(dgr).size !== dgr.length) {
+        ihlaller.push(`[tekrarDogru] seed=${s} d=${difficulty} — aynı değerde birden fazla doğru şık.`);
+      }
+      const dogruKumesi = new Set(dgr);
+      const esitCeldirici = yanlisDegerler(a).filter((v) => dogruKumesi.has(v));
+      if (esitCeldirici.length > 0) {
+        ihlaller.push(
+          `[çeldirici] seed=${s} d=${difficulty} — doğru cevaba eşit yanlış şık: ${[...new Set(esitCeldirici)].join(',')}.`,
+        );
+      }
+
+      // --- 4) MÜFREDAT SINIRI: her doğru cevap tam sayı, negatif değil, tavanın altında.
+      for (const dv of dgr) {
+        if (!Number.isInteger(dv)) ihlaller.push(`[tamsayı] seed=${s} d=${difficulty} — ${dv}.`);
+        if (dv < 0) ihlaller.push(`[negatif] seed=${s} d=${difficulty} — ${dv}.`);
+        if (dv > cevapUstSinir) ihlaller.push(`[tavan] seed=${s} d=${difficulty} — ${dv} > ${cevapUstSinir}.`);
+      }
+    }
+  }
+
+  if (ihlaller.length > 0) {
+    throw new Error(`${ad}: ${ihlaller.length} ihlal.\n  - ${ihlaller.slice(0, 20).join('\n  - ')}`);
+  }
+}
+
+// -------------------------------------------------------------------- testler
+
+test('RNG sözleşmesi: int her iki ucu dahil, deterministik, girdiyi değiştirmiyor', () => {
+  // rng.ts içindeki kendini doğrulama fonksiyonu — null dönerse sorun yok.
+  const hata = rngSozlesmesiniDogrula();
+  expect(hata, `RNG sözleşme ihlali: ${hata}`).toBeNull();
+});
+
+test('M-SAY: değişmezler, determinizm, tek doğru ve ≤20 korunuyor', () => {
+  jeneratoreiYokla('M-SAY', (p, rng) => uretSay(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-KARSILASTIR: değişmezler, determinizm, tek doğru ve ≤20 korunuyor', () => {
+  jeneratoreiYokla('M-KARSILASTIR', (p, rng) => karsilastirUret(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-RITMIK: değişmezler, determinizm, tek doğru ve ≤100 korunuyor', () => {
+  jeneratoreiYokla('M-RITMIK', (p, rng) => ritmikUret(p, rng), RITMIK_UST_SINIR);
+});
+
+test('M-TOPLA-GORSEL: değişmezler, determinizm, tek doğru ve ≤20 korunuyor', () => {
+  jeneratoreiYokla('M-TOPLA-GORSEL', (p, rng) => uretToplaGorsel(p, rng), ISLEM_ARALIGI.max);
+});
