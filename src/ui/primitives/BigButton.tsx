@@ -1,12 +1,13 @@
 import { useRef, type CSSProperties, type ReactNode } from 'react';
 import { MOTION } from '../../design/tokens';
 
-export type BigButtonSize = 'tapMin' | 'control' | 'primary' | 'mascot' | 'unlock';
+export type BigButtonSize = 'tapMin' | 'control' | 'primary' | 'choice' | 'mascot' | 'unlock';
 
 const SIZE_VAR: Record<BigButtonSize, string> = {
   tapMin: 'var(--size-tap-min)',
   control: 'var(--size-control)',
   primary: 'var(--size-primary)',
+  choice: 'var(--size-choice)',
   mascot: 'var(--size-mascot)',
   unlock: 'var(--size-unlock)',
 };
