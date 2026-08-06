@@ -26,8 +26,8 @@ Sıradaki iş **Adım 2b (CI)**, **Adım 2c (kayıt defteri)** ve **Adım 5 (otu
 | 3 | SVG manipülatifler | ✅/⚠ (4 şablonun ihtiyacı var; Rakam glifleri MEB formuna göre doğrulanmadı) |
 | 4 | Alıştırma ekranı | ✅ (`ExerciseScreen`, `GameShell`, e2e geometri testi) |
 | 5 | Oturum motoru (`src/progress/`) | ✅/⚠ (`mastery.ts`, `scheduler.ts`, `session.ts` yazıldı; 8 senaryo testi geçer; SAF; kova oranı testi gevşek — gerçekçi profil gerektirir) |
-| 6 | 3 kademeli yardım + hata taksonomisi akışı | ⬜ — SIRADAKİ |
-| 7 | Maskot + kutlama + Bahçem | ⬜ |
+| 6 | 3 kademeli yardım + hata taksonomisi akışı | ✅ (`itemLifecycle.ts` saf makine + `useHelpTimer` hook + `TaniTakipcisi`; 23 yeni test) |
+| 7 | Maskot + kutlama + Bahçem | ⬜ — SIRADAKİ |
 | 8 | Kabuk ekranları (ana ekran, mod seçimi, veli paneli, tahta konu seçimi) | ⬜ |
 | 9 | Kalıcılık + PWA + yedekleme | ⬜ |
 | 10 | Kalan 35 şablon + ses kümeleri (§4.5) | ⬜ (4/39 tamam) |
@@ -37,7 +37,7 @@ Sıradaki iş **Adım 2b (CI)**, **Adım 2c (kayıt defteri)** ve **Adım 5 (otu
 
 ## Teknik doğrulama (son çalıştırma: 6 Ağustos 2026)
 
-- `npm test` → ✅ 5/5 (property-based jeneratör testleri)
+- `npm test` → ✅ 49/49 (jeneratör 5 + ustalık 14 + seçici 7 + madde yaşam döngüsü 23)
 - `npm run validate` → ✅ 19 kazanım · 57 beceri · 15/15 hata etiketi · 4 jeneratör
 - `npm run build` → ✅
 - CI → ⬜ yok (Adım 2b)
