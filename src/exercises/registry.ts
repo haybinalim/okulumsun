@@ -42,6 +42,8 @@ import { OLC_UZUNLUK_TEMPLATE_ID, olcUzunlukGenerator } from './templates/olcUzu
 import { OLC_KUTLE_TEMPLATE_ID, olcKutleGenerator } from './templates/olcKutle';
 import { OLC_BIRIM_TEMPLATE_ID, olcBirimGenerator } from './templates/olcBirim';
 import { OLC_TAHMIN_TEMPLATE_ID, olcTahminGenerator } from './templates/olcTahmin';
+import { PARA_TANI_TEMPLATE_ID, paraTaniGenerator } from './templates/paraTani';
+import { PARA_SIRALA_TEMPLATE_ID, paraSiralaGenerator } from './templates/paraSirala';
 
 export const REGISTRY: ReadonlyMap<TemplateId, ExerciseGenerator> = new Map([
   [M_SAY_TEMPLATE_ID, saySablonu],
@@ -71,4 +73,6 @@ export const REGISTRY: ReadonlyMap<TemplateId, ExerciseGenerator> = new Map([
   [OLC_KUTLE_TEMPLATE_ID, olcKutleGenerator],
   [OLC_BIRIM_TEMPLATE_ID, olcBirimGenerator],
   [OLC_TAHMIN_TEMPLATE_ID, olcTahminGenerator],
+  [PARA_TANI_TEMPLATE_ID, paraTaniGenerator],
+  [PARA_SIRALA_TEMPLATE_ID, paraSiralaGenerator],
 ]);

@@ -261,6 +261,10 @@ export const AUDIO_MANIFEST = {
   'soru-olcme.hangisi-hafif': { file: 'soru-olcme/hangisi-hafif.m4a', core: false },
   'soru-olcme.kac-birim': { file: 'soru-olcme/kac-birim.m4a', core: false },
   'soru-olcme.kac-tahmin-uzun': { file: 'soru-olcme/kac-tahmin-uzun.m4a', core: false },
+  'para.lira': { file: 'para/lira.m4a', core: false },
+  'para.deger-kac': { file: 'para/deger-kac.m4a', core: false },
+  'para.sirala-kucukten': { file: 'para/sirala-kucukten.m4a', core: false },
+  'para.sirala-buyukten': { file: 'para/sirala-buyukten.m4a', core: false },
 } as const satisfies Record<string, AudioClip>;
 
 /**

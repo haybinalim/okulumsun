@@ -52,6 +52,8 @@ import { olcUzunlukUret } from '../../src/exercises/templates/olcUzunluk';
 import { olcKutleUret } from '../../src/exercises/templates/olcKutle';
 import { olcBirimUret } from '../../src/exercises/templates/olcBirim';
 import { olcTahminUret } from '../../src/exercises/templates/olcTahmin';
+import { paraTaniUret } from '../../src/exercises/templates/paraTani';
+import { paraSiralaUret } from '../../src/exercises/templates/paraSirala';
 
 /** Her jeneratörün altından geçirildiği tohum sayısı. Plan 10.000 ister; bu değer
  *  derleme/hata ayıklama döngüsünü hızlı tutar — CI'da yükseltilebilir. */
@@ -270,4 +272,12 @@ test('M-OLC-BIRIM: değişmezler, determinizm, tek doğru korunuyor', () => {
 
 test('M-OLC-TAHMIN: değişmezler, determinizm, tek doğru korunuyor', () => {
   jeneratoreiYokla('M-OLC-TAHMIN', (p, rng) => olcTahminUret(p, rng), 15);
+});
+
+test('M-PARA-TANI: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-PARA-TANI', (p, rng) => paraTaniUret(p, rng), 200);
+});
+
+test('M-PARA-SIRALA: değişmezler, determinizm korunuyor', () => {
+  jeneratoreiYokla('M-PARA-SIRALA', (p, rng) => paraSiralaUret(p, rng), 200);
 });

@@ -254,5 +254,13 @@
     "hangisi-hafif": "Hangisi daha hafif?",
     "kac-birim": "Kaç birim uzunluğunda?",
     "kac-tahmin-uzun": "Sence kaç birim uzunluğunda?"
+  },
+
+  "para": {
+    "$not": "Para kavramları — M-PARA-* şablonları.",
+    "lira": "lira",
+    "deger-kac": "Kaç lira?",
+    "sirala-kucukten": "Küçükten büyüğe sırala.",
+    "sirala-buyukten": "Büyükten küçüğe sırala."
   }
 }

@@ -1343,7 +1343,7 @@
     ],
     "estimatedItemsToMastery": 14,
     "isEntryPoint": true,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.para.deger-siralama",
@@ -1377,7 +1377,7 @@
       "BUYUKLUK_MIKTAR"
     ],
     "estimatedItemsToMastery": 14,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.geometri.yuvarlak-koseli",
