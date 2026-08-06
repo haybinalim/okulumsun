@@ -29,6 +29,8 @@ import { uretSay } from '../../src/exercises/templates/say';
 import { karsilastirUret } from '../../src/exercises/templates/karsilastir';
 import { ritmikUret } from '../../src/exercises/templates/ritmik';
 import { uretToplaGorsel } from '../../src/exercises/templates/toplaGorsel';
+import { konumUret } from '../../src/exercises/templates/konum';
+import { eslikUret } from '../../src/exercises/templates/eslik';
 
 /** Her jeneratörün altından geçirildiği tohum sayısı. Plan 10.000 ister; bu değer
  *  derleme/hata ayıklama döngüsünü hızlı tutar — CI'da yükseltilebilir. */
@@ -151,4 +153,14 @@ test('M-RITMIK: değişmezler, determinizm, tek doğru ve ≤100 korunuyor', () 
 
 test('M-TOPLA-GORSEL: değişmezler, determinizm, tek doğru ve ≤20 korunuyor', () => {
   jeneratoreiYokla('M-TOPLA-GORSEL', (p, rng) => uretToplaGorsel(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-KONUM: değişmezler, determinizm, tek doğru korunuyor', () => {
+  // Görsel şıklı — sayısal sınır yok, ama değişmezler ve determinizm kontrolü yapılır.
+  // cevapUstSinir: Infinity çünkü görsel şıkların sayısal değeri yok.
+  jeneratoreiYokla('M-KONUM', (p, rng) => konumUret(p, rng), Infinity);
+});
+
+test('M-ESLIK: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-ESLIK', (p, rng) => eslikUret(p, rng), Infinity);
 });

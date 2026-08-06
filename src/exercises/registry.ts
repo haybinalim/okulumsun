@@ -19,10 +19,14 @@ import { M_SAY_TEMPLATE_ID, saySablonu } from './templates/say';
 import { KARSILASTIR_TEMPLATE_ID, karsilastirGenerator } from './templates/karsilastir';
 import { RITMIK_TEMPLATE_ID, M_RITMIK } from './templates/ritmik';
 import { TOPLA_GORSEL_TEMPLATE_ID, toplaGorselJeneratoru } from './templates/toplaGorsel';
+import { KONUM_TEMPLATE_ID, konumGenerator } from './templates/konum';
+import { ESLIK_TEMPLATE_ID, eslikGenerator } from './templates/eslik';
 
 export const REGISTRY: ReadonlyMap<TemplateId, ExerciseGenerator> = new Map([
   [M_SAY_TEMPLATE_ID, saySablonu],
   [KARSILASTIR_TEMPLATE_ID, karsilastirGenerator],
   [RITMIK_TEMPLATE_ID, M_RITMIK],
   [TOPLA_GORSEL_TEMPLATE_ID, toplaGorselJeneratoru],
+  [KONUM_TEMPLATE_ID, konumGenerator],
+  [ESLIK_TEMPLATE_ID, eslikGenerator],
 ]);

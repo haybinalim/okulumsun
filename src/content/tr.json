@@ -115,5 +115,54 @@
     "yildiz": "yıldız",
     "balik": "balık",
     "kelebek": "kelebek"
+  },
+
+  "konum": {
+    "$not": "Konum bildiren ifadeler — M-KONUM şablonu. Tam kelime klipleri, parçadan birleştirilmez.",
+    "altinda": "altında",
+    "ustunde": "üstünde",
+    "icinde": "içinde",
+    "onunde": "önünde",
+    "arkasinda": "arkasında",
+    "arasinda": "arasında",
+    "yaninda": "yanında",
+    "disinda": "dışında"
+  },
+
+  "yon": {
+    "$not": "Yön klipleri — M-YONERGE şablonu.",
+    "ileri": "ileri",
+    "geri": "geri",
+    "saga": "sağa",
+    "sola": "sola",
+    "yukari": "yukarı",
+    "asagi": "aşağı"
+  },
+
+  "adim": {
+    "$not": "Adım sayıları — M-YONERGE şablonu. Tam kelime klipleri.",
+    "bir-adim": "bir adım",
+    "iki-adim": "iki adım",
+    "uc-adim": "üç adım",
+    "dort-adim": "dört adım",
+    "bes-adim": "beş adım"
+  },
+
+  "eslik": {
+    "$not": "Eşlik kavramı — M-ESLIK şablonu.",
+    "ayni-mi": "Aynı mı?",
+    "farkli-mi": "Farklı mı?",
+    "hangisi-ayni": "Hangisi aynı?",
+    "hangisi-farkli": "Hangisi farklı?"
+  },
+
+  "soru-konum": {
+    "nereye": "Nerede?",
+    "altinda-mi": "Altında mı?",
+    "ustunde-mi": "Üstünde mü?",
+    "icinde-mi": "İçinde mi?",
+    "onunde-mi": "Önünde mi?",
+    "arkasinda-mi": "Arkasında mı?",
+    "yaninda-mi": "Yanında mı?"
   }
 }
