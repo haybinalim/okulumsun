@@ -10,6 +10,9 @@ import type { Exercise } from '../../exercises/types';
 import type { Accent } from '../../design/tokens';
 import { TapCountScreen } from './TapCountScreen';
 import { TapToPlaceScreen } from './TapToPlaceScreen';
+import { SequenceOrderScreen } from './SequenceOrderScreen';
+import { MatchPairsScreen } from './MatchPairsScreen';
+import { HotspotFindScreen } from './HotspotFindScreen';
 
 /**
  * Alıştırma ekranı — bir Exercise'i kind'ına göre ilgili alt ekrana yönlendirir.
@@ -33,6 +36,15 @@ export function ExerciseScreen({
   }
   if (exercise.kind === 'TAP_TO_PLACE') {
     return <TapToPlaceScreen exercise={exercise} accent={accent} onDone={onDone} />;
+  }
+  if (exercise.kind === 'SEQUENCE_ORDER') {
+    return <SequenceOrderScreen exercise={exercise} accent={accent} onDone={onDone} />;
+  }
+  if (exercise.kind === 'MATCH_PAIRS') {
+    return <MatchPairsScreen exercise={exercise} accent={accent} onDone={onDone} />;
+  }
+  if (exercise.kind === 'HOTSPOT_FIND') {
+    return <HotspotFindScreen exercise={exercise} accent={accent} onDone={onDone} />;
   }
   if (exercise.kind === 'AUDIO_TO_IMAGE') {
     return <AudioToImageFlow exercise={exercise} accent={accent} onDone={onDone} />;
