@@ -241,6 +241,13 @@ export const AUDIO_MANIFEST = {
   'oruntu.devam-ettir': { file: 'oruntu/devam-ettir.m4a', core: false },
   'soru-rakam.dinle-sec': { file: 'soru-rakam/dinle-sec.m4a', core: false },
   'soru-sipsak.kac-tane-hizli': { file: 'soru-sipsak/kac-tane-hizli.m4a', core: false },
+  'esit.dengede': { file: 'esit/dengede.m4a', core: false },
+  'esit.dengede-degil': { file: 'esit/dengede-degil.m4a', core: false },
+  'esit.ayni-mi': { file: 'esit/ayni-mi.m4a', core: false },
+  'soru-islem.ona-tumle': { file: 'soru-islem/ona-tumle.m4a', core: false },
+  'soru-islem.eksik-bul': { file: 'soru-islem/eksik-bul.m4a', core: false },
+  'soru-islem.ters-islem': { file: 'soru-islem/ters-islem.m4a', core: false },
+  'soru-islem.hikaye-dinle': { file: 'soru-islem/hikaye-dinle.m4a', core: false },
 } as const satisfies Record<string, AudioClip>;
 
 /**

@@ -39,6 +39,15 @@ import { tahminMiktarUret } from '../../src/exercises/templates/tahminMiktar';
 import { onlukCozumleUret } from '../../src/exercises/templates/onlukCozumle';
 import { oruntuSayiUret } from '../../src/exercises/templates/oruntuSayi';
 import { oruntuSekilUret } from '../../src/exercises/templates/oruntuSekil';
+import { toplaSembolUret } from '../../src/exercises/templates/toplaSembol';
+import { cikarGorselUret } from '../../src/exercises/templates/cikarGorsel';
+import { cikarSembolUret } from '../../src/exercises/templates/cikarSembol';
+import { tahminIslemUret } from '../../src/exercises/templates/tahminIslem';
+import { islemHikayeUret } from '../../src/exercises/templates/islemHikaye';
+import { toplaOnaTumleUret } from '../../src/exercises/templates/toplaOnaTumle';
+import { esitDengeUret } from '../../src/exercises/templates/esitDenge';
+import { eksikToplananUret } from '../../src/exercises/templates/eksikToplanan';
+import { tersIslemUret } from '../../src/exercises/templates/tersIslem';
 
 /** Her jeneratörün altından geçirildiği tohum sayısı. Plan 10.000 ister; bu değer
  *  derleme/hata ayıklama döngüsünü hızlı tutar — CI'da yükseltilebilir. */
@@ -68,6 +77,7 @@ function dogruDegerler(ex: Exercise): number[] {
 function beklenenDogruSayisi(ex: Exercise): number {
   if (ex.kind === 'TAP_TO_PLACE') return ex.yuvalar.length;
   if (ex.kind === 'SEQUENCE_ORDER') return ex.validation.dogruSira.length;
+  if (ex.kind === 'MATCH_PAIRS') return ex.options.filter((o) => o.correct === true).length;
   return 1;
 }
 
@@ -204,4 +214,40 @@ test('M-ORUNTU-SAYI: değişmezler, determinizm, tek doğru korunuyor', () => {
 
 test('M-ORUNTU-SEKIL: değişmezler, determinizm, tek doğru korunuyor', () => {
   jeneratoreiYokla('M-ORUNTU-SEKIL', (p, rng) => oruntuSekilUret(p, rng), Infinity);
+});
+
+test('M-TOPLA-SEMBOL: değişmezler, determinizm, tek doğru ve ≤20 korunuyor', () => {
+  jeneratoreiYokla('M-TOPLA-SEMBOL', (p, rng) => toplaSembolUret(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-CIKAR-GORSEL: değişmezler, determinizm, tek doğru ve ≤20 korunuyor', () => {
+  jeneratoreiYokla('M-CIKAR-GORSEL', (p, rng) => cikarGorselUret(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-CIKAR-SEMBOL: değişmezler, determinizm, tek doğru ve ≤20 korunuyor', () => {
+  jeneratoreiYokla('M-CIKAR-SEMBOL', (p, rng) => cikarSembolUret(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-TAHMIN-ISLEM: değişmezler, determinizm, tek doğru ve ≤20 korunuyor', () => {
+  jeneratoreiYokla('M-TAHMIN-ISLEM', (p, rng) => tahminIslemUret(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-ISLEM-HIKAYE: değişmezler, determinizm, tek doğru ve ≤20 korunuyor', () => {
+  jeneratoreiYokla('M-ISLEM-HIKAYE', (p, rng) => islemHikayeUret(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-TOPLA-ONA-TUMLE: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-TOPLA-ONA-TUMLE', (p, rng) => toplaOnaTumleUret(p, rng), 10);
+});
+
+test('M-ESIT-DENGE: değişmezler, determinizm, tek doğru ve ≤20 korunuyor', () => {
+  jeneratoreiYokla('M-ESIT-DENGE', (p, rng) => esitDengeUret(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-EKSIK-TOPLANAN: değişmezler, determinizm, tek doğru ve ≤20 korunuyor', () => {
+  jeneratoreiYokla('M-EKSIK-TOPLANAN', (p, rng) => eksikToplananUret(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-TERS-ISLEM: değişmezler, determinizm korunuyor', () => {
+  jeneratoreiYokla('M-TERS-ISLEM', (p, rng) => tersIslemUret(p, rng), ISLEM_ARALIGI.max);
 });

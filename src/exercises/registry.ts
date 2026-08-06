@@ -29,6 +29,15 @@ import { TAHMIN_MIKTAR_TEMPLATE_ID, tahminMiktarGenerator } from './templates/ta
 import { ONLUK_COZUMLE_TEMPLATE_ID, onlukCozumleGenerator } from './templates/onlukCozumle';
 import { ORUNTU_SAYI_TEMPLATE_ID, oruntuSayiGenerator } from './templates/oruntuSayi';
 import { ORUNTU_SEKIL_TEMPLATE_ID, oruntuSekilGenerator } from './templates/oruntuSekil';
+import { TOPLA_SEMBOL_TEMPLATE_ID, toplaSembolGenerator } from './templates/toplaSembol';
+import { CIKAR_GORSEL_TEMPLATE_ID, cikarGorselGenerator } from './templates/cikarGorsel';
+import { CIKAR_SEMBOL_TEMPLATE_ID, cikarSembolGenerator } from './templates/cikarSembol';
+import { TAHMIN_ISLEM_TEMPLATE_ID, tahminIslemGenerator } from './templates/tahminIslem';
+import { ISLEM_HIKAYE_TEMPLATE_ID, islemHikayeGenerator } from './templates/islemHikaye';
+import { TOPLA_ONA_TUMLE_TEMPLATE_ID, toplaOnaTumleGenerator } from './templates/toplaOnaTumle';
+import { ESIT_DENGE_TEMPLATE_ID, esitDengeGenerator } from './templates/esitDenge';
+import { EKSIK_TOPLANAN_TEMPLATE_ID, eksikToplananGenerator } from './templates/eksikToplanan';
+import { TERS_ISLEM_TEMPLATE_ID, tersIslemGenerator } from './templates/tersIslem';
 
 export const REGISTRY: ReadonlyMap<TemplateId, ExerciseGenerator> = new Map([
   [M_SAY_TEMPLATE_ID, saySablonu],
@@ -45,4 +54,13 @@ export const REGISTRY: ReadonlyMap<TemplateId, ExerciseGenerator> = new Map([
   [ONLUK_COZUMLE_TEMPLATE_ID, onlukCozumleGenerator],
   [ORUNTU_SAYI_TEMPLATE_ID, oruntuSayiGenerator],
   [ORUNTU_SEKIL_TEMPLATE_ID, oruntuSekilGenerator],
+  [TOPLA_SEMBOL_TEMPLATE_ID, toplaSembolGenerator],
+  [CIKAR_GORSEL_TEMPLATE_ID, cikarGorselGenerator],
+  [CIKAR_SEMBOL_TEMPLATE_ID, cikarSembolGenerator],
+  [TAHMIN_ISLEM_TEMPLATE_ID, tahminIslemGenerator],
+  [ISLEM_HIKAYE_TEMPLATE_ID, islemHikayeGenerator],
+  [TOPLA_ONA_TUMLE_TEMPLATE_ID, toplaOnaTumleGenerator],
+  [ESIT_DENGE_TEMPLATE_ID, esitDengeGenerator],
+  [EKSIK_TOPLANAN_TEMPLATE_ID, eksikToplananGenerator],
+  [TERS_ISLEM_TEMPLATE_ID, tersIslemGenerator],
 ]);

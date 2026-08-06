@@ -988,7 +988,7 @@
       "ESIT_ISLEM_SONUCU"
     ],
     "estimatedItemsToMastery": 20,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.toplama.onu-gecen-20",
@@ -1020,7 +1020,7 @@
       "EKSIK_SAYMA"
     ],
     "estimatedItemsToMastery": 20,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.toplama.tahmin-zihinden",
@@ -1050,7 +1050,7 @@
       "ESIT_ISLEM_SONUCU"
     ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.cikarma.ayirma",
@@ -1080,7 +1080,7 @@
       "TEK_KUMEYI_ALMA"
     ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.cikarma.geriye-sayarak",
@@ -1112,7 +1112,7 @@
       "EKSIK_SAYMA"
     ],
     "estimatedItemsToMastery": 18,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.cikarma.fark-bulma",
@@ -1143,7 +1143,7 @@
       "BUYUKLUK_MIKTAR"
     ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.cikarma.onluk-bozmadan-20",
@@ -1173,7 +1173,7 @@
       "ISLEM_YONU"
     ],
     "estimatedItemsToMastery": 20,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.cebir.esit-isareti",
@@ -1199,7 +1199,7 @@
       "TEK_KUMEYI_ALMA"
     ],
     "estimatedItemsToMastery": 18,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.cebir.esitligi-donusturme",
@@ -1229,7 +1229,7 @@
       "ISLEM_YONU"
     ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.cebir.eksik-toplanan",
@@ -1261,7 +1261,7 @@
       "HEPSINI_SAYMA"
     ],
     "estimatedItemsToMastery": 18,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.cebir.ters-islem",
@@ -1291,7 +1291,7 @@
       "ESIT_ISLEM_SONUCU"
     ],
     "estimatedItemsToMastery": 20,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.cebir.islem-hikayesi",
@@ -1322,7 +1322,7 @@
       "TEK_KUMEYI_ALMA"
     ],
     "estimatedItemsToMastery": 18,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.para.banknot-tanima",

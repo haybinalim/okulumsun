@@ -342,25 +342,25 @@ Hepsi metinsiz çalışır, hepsi **tek dokunma**:
 
 | Şablon | Kazanım | Durum | Not |
 |---|---|---|---|
-| `M-OLC-UZUNLUK` | `MAT.1.1.8` | ⬜ | İki nesnenin boyunu kıyasla (uzun/kısa) |
-| `M-OLC-KUTLE` | `MAT.1.1.8` | ⬜ | Terazi görseliyle ağır/hafif kıyası |
-| `M-OLC-BIRIM` | `MAT.1.1.8` | ⬜ | Standart olmayan birimle ölç: "kalem kaç ataç?" |
-| `M-OLC-TAHMIN` | `MAT.1.1.8` | ⬜ | Önce tahmin, sonra ölçüm; yakınlık ölçülür (§6.1) |
+| `M-OLC-UZUNLUK` | `MAT.1.1.8` | ✅ | İki nesnenin boyunu kıyasla (uzun/kısa) |
+| `M-OLC-KUTLE` | `MAT.1.1.8` | ✅ | Terazi görseliyle ağır/hafif kıyası |
+| `M-OLC-BIRIM` | `MAT.1.1.8` | ✅ | Standart olmayan birimle ölç: "kalem kaç ataç?" |
+| `M-OLC-TAHMIN` | `MAT.1.1.8` | ✅ | Önce tahmin, sonra ölçüm; yakınlık ölçülür (§6.1) |
 
 **Tema 4 — İşlemlerden Cebirsel Düşünmeye:**
 
 | Şablon | Kazanım | Durum | Not |
 |---|---|---|---|
 | `M-TOPLA-GORSEL` | `MAT.1.2.1`, `.2` | ✅ | Onluk çerçeve / küme modelleriyle toplama, sonuç ≤20 |
-| `M-TOPLA-SEMBOL` | `MAT.1.2.1`, `.2` | ⬜ | `7 + 5 = ?` sembolik; görsel destek şıklarda |
-| `M-TOPLA-ONA-TUMLE` | `MAT.1.2.2` | ⬜ | 10'a tümleme: `8 + ? = 10` (onluk çerçeve) |
-| `M-CIKAR-GORSEL` | `MAT.1.2.1`, `.2` | ⬜ | Ayırma/geriye sayma modeliyle çıkarma |
-| `M-CIKAR-SEMBOL` | `MAT.1.2.1` | ⬜ | `9 − 4 = ?` sembolik; fark bulma dahil |
-| `M-TAHMIN-ISLEM` | `MAT.1.2.2` | ⬜ | Sonucu tahmin et, sonra zihinden doğrula; yakınlık ölçülür |
-| `M-ESIT-DENGE` | `MAT.1.2.3` | ⬜ | Terazi metaforu: `7 = 3 + ?`, `4 + 3 = ? + 5`. **Programın vurguladığı, çoğu uygulamanın atladığı kazanım** |
-| `M-EKSIK-TOPLANAN` | `MAT.1.2.3`, `.4` | ⬜ | `3 + ? = 8` eksik toplanan |
-| `M-TERS-ISLEM` | `MAT.1.2.4` | ⬜ | `8 − 3 = 5` gösterilir, `5 + 3 = 8` kurulur (aynı sayı üçlüsü) |
-| `M-ISLEM-HIKAYE` | `MAT.1.2.1` | ⬜ | Sesli günlük yaşam problemi ("5 kuş vardı, 2'si uçtu"). Senaryolar `senaryolar.json`'dan |
+| `M-TOPLA-SEMBOL` | `MAT.1.2.1`, `.2` | ✅ | `7 + 5 = ?` sembolik; görsel destek şıklarda |
+| `M-TOPLA-ONA-TUMLE` | `MAT.1.2.2` | ✅ | 10'a tümleme: `8 + ? = 10` (onluk çerçeve) |
+| `M-CIKAR-GORSEL` | `MAT.1.2.1`, `.2` | ✅ | Ayırma/geriye sayma modeliyle çıkarma |
+| `M-CIKAR-SEMBOL` | `MAT.1.2.1` | ✅ | `9 − 4 = ?` sembolik; fark bulma dahil |
+| `M-TAHMIN-ISLEM` | `MAT.1.2.2` | ✅ | Sonucu tahmin et, sonra zihinden doğrula; yakınlık ölçülür |
+| `M-ESIT-DENGE` | `MAT.1.2.3` | ✅ | Terazi metaforu: `7 = 3 + ?`, `4 + 3 = ? + 5`. **Programın vurguladığı, çoğu uygulamanın atladığı kazanım** |
+| `M-EKSIK-TOPLANAN` | `MAT.1.2.3`, `.4` | ✅ | `3 + ? = 8` eksik toplanan |
+| `M-TERS-ISLEM` | `MAT.1.2.4` | ✅ | `8 − 3 = 5` gösterilir, `5 + 3 = 8` kurulur (aynı sayı üçlüsü) |
+| `M-ISLEM-HIKAYE` | `MAT.1.2.1` | ✅ | Sesli günlük yaşam problemi ("5 kuş vardı, 2'si uçtu"). Senaryolar `senaryolar.json`'dan |
 
 **Tema 5 — Para:**
 
@@ -390,7 +390,7 @@ Hepsi metinsiz çalışır, hepsi **tek dokunma**:
 | `M-VERI-GRAFIK` | `MAT.1.4.1` | ⬜ | Nesne grafiğini oku, soruyu cevapla ("en çok hangisi?") |
 
 **39 şablon, 19 kazanımın tamamını ve 57 beceri düğümünü kapsıyor** (kanıt:
-`npm run validate` müfredat kapsamını doğrular). 14 jeneratör yazıldı, **25 bekliyor**.
+`npm run validate` müfredat kapsamını doğrular). 23 jeneratör yazıldı, **16 bekliyor**.
 Sayı `src/content/skills.json`'daki BENZERSİZ `exerciseTemplates` değerlerinden sayılır;
 değiştiğinde bu cümle ve §14 adım 10 aynı commit'te güncellenir.
 

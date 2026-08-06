@@ -218,5 +218,20 @@
   "soru-sipsak": {
     "$not": "M-SIPSAK şablonu talimatları — şipşak sayılama (subitizing).",
     "kac-tane-hizli": "Hızlıca kaç tane gördün?"
+  },
+
+  "esit": {
+    "$not": "Eşitlik/denge — M-ESIT-DENGE şablonu.",
+    "dengede": "Dengede.",
+    "dengede-degil": "Dengede değil.",
+    "ayni-mi": "Aynı mı?"
+  },
+
+  "soru-islem": {
+    "$not": "İşlem şablonları talimatları.",
+    "ona-tumle": "10'a tamamlamak için kaç gerekir?",
+    "eksik-bul": "Eksik sayıyı bul.",
+    "ters-islem": "Ters işlemi bul.",
+    "hikaye-dinle": "Hikayeyi dinle ve cevapla."
   }
 }

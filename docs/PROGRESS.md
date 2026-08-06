@@ -2,17 +2,17 @@
 
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
-> Tarih: 6 Ağustos 2026 (Adım 10 — T2 partisi güncellemesi)
+> Tarih: 6 Ağustos 2026 (Adım 10 — T4 partisi güncellemesi)
 
 ## Yönetici özeti
 
-Proje, planın **§14 yol haritasında Adım 10 (T1+T2 partisi) sonunda**:
-T1 (3 şablon: M-KONUM, M-ESLIK, M-YONERGE) ve T2 (7 şablon: M-RAKAM-TANI,
-M-SIPSAK, M-SIRA-SAYI, M-TAHMIN-MIKTAR, M-ONLUK-COZUMLE, M-ORUNTU-SAYI,
-M-ORUNTU-SEKIL) tamamlandı. 14/39 şablon yazıldı. Kalıcılık katmanı (Adım 9)
-tamamen çalışıyor. Soru değişince state sıfırlama bug'ı düzeltildi (key prop).
+Proje, planın **§14 yol haritasında Adım 10 (T1+T2+T4 partisi) sonunda**:
+T1 (3), T2 (7) ve T4 (9) partileri tamamlandı. 23/39 şablon yazıldı.
+19 kazanımın 14'ü şimdi en az bir jeneratörle kapsanıyor. MATCH_PAIRS
+ekranı (M-TERS-ISLEM için) henüz ExerciseScreen'e bağlanmadı — jeneratör
+yazıldı ama ekranda oynatılamaz.
 
-Sıradaki iş **T4 partisi (9 şablon)** — işlemlerden cebirsel düşünmeye.
+Sıradaki iş **T3 (4), T5 (2), T6 (6), T7 (4) partileri** — kalan 16 şablon.
 
 ## Yol haritası durumu (plan §14)
 
@@ -30,15 +30,15 @@ Sıradaki iş **T4 partisi (9 şablon)** — işlemlerden cebirsel düşünmeye.
 | 7 | Maskot + kutlama + Bahçem | ✅ (`maskotState.ts` saf makine + `Maskot.tsx` SVG + `Celebration.tsx` + `cikartma.ts` + `Bahcem.tsx` + `OturumSonu.tsx`; 30 yeni test) |
 | 8 | Kabuk ekranları (ana ekran, mod seçimi, veli paneli, tahta konu seçimi) | ✅ (`appStore.ts` Zustand + `okulAyi.ts` §6.5 + 8 ekran: ModSecimi, AvatarSecimi, RenkSecimi, AnaEkran, TemaGirisi, KonuSecimi, VeliKapisi, VeliPaneli; 45 yeni test) |
 | 9 | Kalıcılık + PWA + yedekleme | ✅ (`db.ts` Dexie şema v1 + `repository.ts` (tahta modu no-op) + `backup.ts` dışa/içe + `persist.ts` storage.persist() + `migrations/` iskelet + vite-plugin-pwa precache; 33 yeni test) |
-| 10 | Kalan 35 şablon + ses kümeleri (§4.5) + SVG varlıklar | 🔄 T1 ✅ (3/3) + T2 ✅ (7/7) — 14/39 tamam, T4 partisi sırada |
+| 10 | Kalan 35 şablon + ses kümeleri (§4.5) + SVG varlıklar | 🔄 T1 ✅ (3/3) + T2 ✅ (7/7) + T4 ✅ (9/9) — 23/39 tamam, T3+T5+T6+T7 sırada |
 | 11 | Dağıtım + LICENSES + gizlilik beyanı | ⬜ |
 | 12 | Erişilebilirlik + 5 çocukla tablet testi | ⬜ |
 | 13 | (2. ay) Fiziksel tahta doğrulaması | ⬜ |
 
 ## Teknik doğrulama (son çalıştırma: 6 Ağustos 2026)
 
-- `npm test` → ✅ 167/167 (jeneratör 15 + ustalık 14 + seçici 7 + madde yaşam döngüsü 23 + maskot 17 + çıkartma 13 + okul ayı 15 + app store 30 + kalıcılık 33)
-- `npm run validate` → ✅ 19 kazanım · 57 beceri · 15/15 hata etiketi · 14 jeneratör
+- `npm test` → ✅ 176/176 (jeneratör 24 + ustalık 14 + seçici 7 + madde yaşam döngüsü 23 + maskot 17 + çıkartma 13 + okul ayı 15 + app store 30 + kalıcılık 33)
+- `npm run validate` → ✅ 19 kazanım · 57 beceri · 15/15 hata etiketi · 23 jeneratör
 - `npm run build` → ✅ (PWA service worker üretildi, 12 precache entry)
 - `npm run lint` → ✅ 0 uyarı 0 hata
 - CI → ⬜ yok (Adım 2b)
