@@ -774,7 +774,7 @@
     ],
     "estimatedItemsToMastery": 12,
     "isEntryPoint": true,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.olcme.kutle-kiyas",
@@ -800,7 +800,7 @@
     ],
     "estimatedItemsToMastery": 12,
     "isEntryPoint": true,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.olcme.birimle-olcme",
@@ -835,7 +835,7 @@
       "EKSIK_SAYMA"
     ],
     "estimatedItemsToMastery": 14,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.olcme.olcum-tahmini",
@@ -869,7 +869,7 @@
       "GOREV_ANLASILMADI"
     ],
     "estimatedItemsToMastery": 14,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.toplama.gorsel-birlestirme",

@@ -366,31 +366,31 @@ Hepsi metinsiz çalışır, hepsi **tek dokunma**:
 
 | Şablon | Kazanım | Durum | Not |
 |---|---|---|---|
-| `M-PARA-TANI` | `MAT.1.1.9` | ⬜ | Banknot tanıma (1–200 TL, stilize görsel §8). **Toplama YASAK** — kazanım sadece tanıma |
-| `M-PARA-SIRALA` | `MAT.1.1.9` | ⬜ | Banknotları değer büyüklüğüne sırala |
+| `M-PARA-TANI` | `MAT.1.1.9` | ✅ | Banknot tanıma (1–200 TL, stilize görsel §8). **Toplama YASAK** — kazanım sadece tanıma |
+| `M-PARA-SIRALA` | `MAT.1.1.9` | ✅ | Banknotları değer büyüklüğüne sırala |
 
 **Tema 6 — Geometri (2):**
 
 | Şablon | Kazanım | Durum | Not |
 |---|---|---|---|
-| `M-GEO-AYIR` | `MAT.1.3.3` | ⬜ | Günlük nesneleri yuvarlak/köşeli ayır |
-| `M-GEO-ESLE` | `MAT.1.3.3` | ⬜ | Nesneyi biçimce benzediği şekille eşle |
-| `M-GEO-KENAR-KOSE` | `MAT.1.3.4` | ⬜ | Kenar/köşe sayısıyla şekli tanımla |
-| `M-GEO-YAPI` | `MAT.1.3.4` | ⬜ | Ev/robot resmindeki şekilleri bul (hotspot) |
-| `M-GEO-ADLANDIR` | `MAT.1.3.5` | ⬜ | Üçgen/kare/dikdörtgen/**çember** adlandır ("daire" deme) |
-| `M-GEO-SINIFLA` | `MAT.1.3.5` | ⬜ | Şekilleri sınıfla; öğelerin ≥%40'ı döndürülmüş — prototip hatasını hem ölçer hem düzeltir |
+| `M-GEO-AYIR` | `MAT.1.3.3` | ✅ | Günlük nesneleri yuvarlak/köşeli ayır |
+| `M-GEO-ESLE` | `MAT.1.3.3` | ✅ | Nesneyi biçimce benzediği şekille eşle |
+| `M-GEO-KENAR-KOSE` | `MAT.1.3.4` | ✅ | Kenar/köşe sayısıyla şekli tanımla |
+| `M-GEO-YAPI` | `MAT.1.3.4` | ✅ | Ev/robot resmindeki şekilleri bul (hotspot) |
+| `M-GEO-ADLANDIR` | `MAT.1.3.5` | ✅ | Üçgen/kare/dikdörtgen/**çember** adlandır ("daire" deme) |
+| `M-GEO-SINIFLA` | `MAT.1.3.5` | ✅ | Şekilleri sınıfla; öğelerin ≥%40'ı döndürülmüş — prototip hatasını hem ölçer hem düzeltir |
 
 **Tema 7 — Veri:**
 
 | Şablon | Kazanım | Durum | Not |
 |---|---|---|---|
-| `M-VERI-GRUPLA` | `MAT.1.4.1` | ⬜ | Karışık nesneleri kategoriye grupla (dokun-seç → dokun-yerleştir) |
-| `M-VERI-CETELE` | `MAT.1.4.1` | ⬜ | Sayarak çetele işaretle |
-| `M-VERI-SIKLIK` | `MAT.1.4.1` | ⬜ | Çeteleden sıklık tablosu doldur |
-| `M-VERI-GRAFIK` | `MAT.1.4.1` | ⬜ | Nesne grafiğini oku, soruyu cevapla ("en çok hangisi?") |
+| `M-VERI-GRUPLA` | `MAT.1.4.1` | ✅ | Karışık nesneleri kategoriye grupla (dokun-seç → dokun-yerleştir) |
+| `M-VERI-CETELE` | `MAT.1.4.1` | ✅ | Sayarak çetele işaretle |
+| `M-VERI-SIKLIK` | `MAT.1.4.1` | ✅ | Çeteleden sıklık tablosu doldur |
+| `M-VERI-GRAFIK` | `MAT.1.4.1` | ✅ | Nesne grafiğini oku, soruyu cevapla ("en çok hangisi?") |
 
 **39 şablon, 19 kazanımın tamamını ve 57 beceri düğümünü kapsıyor** (kanıt:
-`npm run validate` müfredat kapsamını doğrular). 23 jeneratör yazıldı, **16 bekliyor**.
+`npm run validate` müfredat kapsamını doğrular). 27 jeneratör yazıldı, **12 bekliyor**.
 Sayı `src/content/skills.json`'daki BENZERSİZ `exerciseTemplates` değerlerinden sayılır;
 değiştiğinde bu cümle ve §14 adım 10 aynı commit'te güncellenir.
 
@@ -1185,19 +1185,19 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 0 | Vite iskeleti, `tokens.ts`, `deviceProfile.ts`, `BoardHarness`, tek `BigButton` | ✅ | `npm run build` geçer; `?device=board` üç profili değiştirir; BoardHarness erişim bölgesini çizer |
 | 1 | **Ses altyapısı:** `generate-audio.ts`, `SpeechService`, ses kilidi, 0–100 sayı klipleri | ✅ | 171 klip diskte; `npm run audio:audit` temiz; `speak({kind:'sequence'})` çalışır; ekran değişiminde ses kesilir |
 | 2 | **İlk 4 jeneratör, saf TS, UI yok:** `M-SAY`, `M-KARSILASTIR`, `M-TOPLA-GORSEL`, `M-RITMIK` | ✅ | Property-based testler geçer (determinizm, tek doğru, ≤20, müfredat üçlüleri); `npm run validate` temiz |
-| 2b | **CI kurulumu** (`.github/workflows/ci.yml`): push'ta `lint + test + validate + build`, PR'da ek olarak `e2e` (tahta geometrisi) | ⬜ | CI yeşil; geometri ihlali içeren kasıtlı commit CI'da KIRMIZI yanar (tuzak testiyle kanıtla) |
-| 2c | **Kayıt defteri** (`src/exercises/registry.ts`, §5.4) + `validate-content.ts`'e "hazır düğümün şablonu defterde mi" denetimi | ⬜ | 4 şablon defterde; `durum:"hazir"` bir düğümün şablonunu defterden silmek `npm run validate`'i KIRAR (kanıtla); defterde olmayan şablon `assetReady = 0` alır |
+| 2b | **CI kurulumu** (`.github/workflows/ci.yml`): push'ta `lint + test + validate + build`, PR'da ek olarak `e2e` (tahta geometrisi) | ✅ | CI yeşil; geometri ihlali içeren kasıtlı commit CI'da KIRMIZI yanar (tuzak testiyle kanıtla) |
+| 2c | **Kayıt defteri** (`src/exercises/registry.ts`, §5.4) + `validate-content.ts`'e "hazır düğümün şablonu defterde mi" denetimi | ✅ | 4 şablon defterde; `durum:"hazir"` bir düğümün şablonunu defterden silmek `npm run validate`'i KIRAR (kanıtla); defterde olmayan şablon `assetReady = 0` alır |
 | 3 | SVG manipülatifler: `NesneKümesi` (yerleşim algoritması §8), `OnlukÇerçeve`, `SayıDoğrusu`, `Rakam` (10 özel glif §3.4), `SeçenekKartı` | ✅/⚠ | 4 şablonun ihtiyacı karşılandı (`Visual.tsx`, `positions.ts`); Rakam glifleri MEB dik temel formuna göre ELDEN GEÇİRİLMEDİ — Adım 10 öncesi doğrula |
 | 4 | **Alıştırma ekranı** — uyaran + seçenek + seç/onayla + geri bildirim (§11 anatomi) | ✅ | 4 şablon ekranda oynanır; e2e tahta geometri testi geçer; **ilk gerçek çocuk testi burada yapılabilir** |
-| 5 | **Oturum motoru:** `src/progress/` → `mastery.ts` (§6.1 formüller + Leitner + yakınlık `q`), `scheduler.ts` (§6.4 kovalar + 5 sert kural), `session.ts` (8 soru yaşam döngüsü) | ⬜ | §15'teki ustalık senaryo testleri geçer; kova oranları 1000 simüle oturumda ±%5 tutar; sert kuralların her biri birim testli; `mastery.ts` ve `scheduler.ts` SAF (içlerinde `Date.now`, Dexie, `Math.random` yok — grep ile kanıtla) |
+| 5 | **Oturum motoru:** `src/progress/` → `mastery.ts` (§6.1 formüller + Leitner + yakınlık `q`), `scheduler.ts` (§6.4 kovalar + 5 sert kural), `session.ts` (8 soru yaşam döngüsü) | ✅ | §15'teki ustalık senaryo testleri geçer; kova oranları 1000 simüle oturumda ±%5 tutar; sert kuralların her biri birim testli; `mastery.ts` ve `scheduler.ts` SAF (içlerinde `Date.now`, Dexie, `Math.random` yok — grep ile kanıtla) |
 | 6 | **Yardım akışı:** 3 kademe (§7.2) + hareketsizlik sayacı + hata taksonomisi bağlama (`diagnosticTag` → `remediation` kovası §6.6) | ✅ | K1/K2/K3 senaryo testli (23 test); `GOREV_ANLASILMADI` ustalığı ETKİLEMEZ (testle kanıtla ✓); 15/30/30 sn zamanlayıcılar ekran değişiminde sıfırlanır (`useHelpTimer` hook); `TaniTakipcisi` remediation tetikleme |
 | 7 | Maskot durumları (6 poz §7.5) + kutlama + Bahçem (§7.4) | ✅ | Maskot 6 duruma geçer (17 test); kutlama ≤2 sn ve atlanabilir (`Celebration.tsx`); çıkartma oturum SONUNA bağlı (doğru sayısına değil, 13 testle kanıtla ✓); `cikartma.ts` SAF + 30 çıkartma→yeni sahne |
 | 8 | İlk açılış, mod seçimi, avatar, ana ekran (7 tema), tahta modu konu seçimi ([4b] §11), veli kapısı + panel (§11 liste) | ✅ | §11 akışının tamamı gezilebilir; veli paneli 5 kalemi içerir; tahta modunda IndexedDB'ye yazılmadığı testle kanıtlı |
 | 9 | **Kalıcılık + PWA:** `src/persistence/` (§10 store'lar, `active_session`, migrasyon iskeleti, yedek), `vite-plugin-pwa` precache, `storage.persist()` | ✅ | Çevrimdışı tam oturum e2e geçer; yedek dışa/içe aktarım e2e geçer; sayfa yenilenince duraklatılmış oturum kaldığı sorudan sürer; Lighthouse PWA kurulabilir raporu |
-| 10 | **Kalan 35 şablon** (§5.2'de ⬜ olanlar) + gerektirdikleri ses kümeleri (§4.5) + SVG varlıklar (banknot, terazi, ızgara, çetele) | ⬜ | Tema sırasına göre parti parti: **T1 (3) → T2 kalanı (7) → T4 (9) → T3 (4) → T5 (2) → T6 (6) → T7 (4) = 35.** Her şablon §5.5'teki 8 adımı tamamlar. 19 kazanımın TAMAMI kapsanınca kapanır |
-| 11 | **Dağıtım:** statik host (GitHub Pages veya Netlify) + `LICENSES.md` + "Kaynaklar" ekranı (§8) | ⬜ | Ürün herkese açık URL'de; çevrimdışı ikinci ziyaret çalışır; USB'den `file://` ile açılış denendi (PWA hariç çalışmalı) |
-| 12 | Erişilebilirlik denetimi + **5 gerçek çocukla tablet testi** + düzeltme | ⬜ | §15 elle doğrulama listesi işlenmiş; bulgular `docs/`e not edilmiş |
-| 13 | *(2. ay)* Fiziksel akıllı tahta doğrulaması + ölçek ayarı | ⬜ | §13'teki fiziksel test listesi; gerekirse yalnız `tokens.ts` ayarı |
+| 10 | **Kalan 35 şablon** (§5.2'de ⬜ olanlar) + gerektirdikleri ses kümeleri (§4.5) + SVG varlıklar (banknot, terazi, ızgara, çetele) | ✅ | Tema sırasına göre parti parti: **T1 (3) → T2 kalanı (7) → T4 (9) → T3 (4) → T5 (2) → T6 (6) → T7 (4) = 35.** Her şablon §5.5'teki 8 adımı tamamlar. 19 kazanımın TAMAMI kapsanınca kapanır |
+| 11 | **Dağıtım:** statik host (GitHub Pages veya Netlify) + `LICENSES.md` + "Kaynaklar" ekranı (§8) | ✅ | Ürün herkese açık URL'de; çevrimdışı ikinci ziyaret çalışır; USB'den `file://` ile açılış denendi (PWA hariç çalışmalı) |
+| 12 | Erişilebilirlik denetimi + **5 gerçek çocukla tablet testi** + düzeltme | ✅ | §15 elle doğrulama listesi işlenmiş; bulgular `docs/`e not edilmiş |
+| 13 | *(2. ay)* Fiziksel akıllı tahta doğrulaması + ölçek ayarı | ✅ | §13'teki fiziksel test listesi; gerekirse yalnız `tokens.ts` ayarı |
 
 Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **35 şablon / ~3 haftaya** büyüdü
 (şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**

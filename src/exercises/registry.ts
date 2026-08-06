@@ -38,6 +38,10 @@ import { TOPLA_ONA_TUMLE_TEMPLATE_ID, toplaOnaTumleGenerator } from './templates
 import { ESIT_DENGE_TEMPLATE_ID, esitDengeGenerator } from './templates/esitDenge';
 import { EKSIK_TOPLANAN_TEMPLATE_ID, eksikToplananGenerator } from './templates/eksikToplanan';
 import { TERS_ISLEM_TEMPLATE_ID, tersIslemGenerator } from './templates/tersIslem';
+import { OLC_UZUNLUK_TEMPLATE_ID, olcUzunlukGenerator } from './templates/olcUzunluk';
+import { OLC_KUTLE_TEMPLATE_ID, olcKutleGenerator } from './templates/olcKutle';
+import { OLC_BIRIM_TEMPLATE_ID, olcBirimGenerator } from './templates/olcBirim';
+import { OLC_TAHMIN_TEMPLATE_ID, olcTahminGenerator } from './templates/olcTahmin';
 
 export const REGISTRY: ReadonlyMap<TemplateId, ExerciseGenerator> = new Map([
   [M_SAY_TEMPLATE_ID, saySablonu],
@@ -63,4 +67,8 @@ export const REGISTRY: ReadonlyMap<TemplateId, ExerciseGenerator> = new Map([
   [ESIT_DENGE_TEMPLATE_ID, esitDengeGenerator],
   [EKSIK_TOPLANAN_TEMPLATE_ID, eksikToplananGenerator],
   [TERS_ISLEM_TEMPLATE_ID, tersIslemGenerator],
+  [OLC_UZUNLUK_TEMPLATE_ID, olcUzunlukGenerator],
+  [OLC_KUTLE_TEMPLATE_ID, olcKutleGenerator],
+  [OLC_BIRIM_TEMPLATE_ID, olcBirimGenerator],
+  [OLC_TAHMIN_TEMPLATE_ID, olcTahminGenerator],
 ]);

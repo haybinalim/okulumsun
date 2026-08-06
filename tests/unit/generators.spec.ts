@@ -48,6 +48,10 @@ import { toplaOnaTumleUret } from '../../src/exercises/templates/toplaOnaTumle';
 import { esitDengeUret } from '../../src/exercises/templates/esitDenge';
 import { eksikToplananUret } from '../../src/exercises/templates/eksikToplanan';
 import { tersIslemUret } from '../../src/exercises/templates/tersIslem';
+import { olcUzunlukUret } from '../../src/exercises/templates/olcUzunluk';
+import { olcKutleUret } from '../../src/exercises/templates/olcKutle';
+import { olcBirimUret } from '../../src/exercises/templates/olcBirim';
+import { olcTahminUret } from '../../src/exercises/templates/olcTahmin';
 
 /** Her jeneratörün altından geçirildiği tohum sayısı. Plan 10.000 ister; bu değer
  *  derleme/hata ayıklama döngüsünü hızlı tutar — CI'da yükseltilebilir. */
@@ -250,4 +254,20 @@ test('M-EKSIK-TOPLANAN: değişmezler, determinizm, tek doğru ve ≤20 korunuyo
 
 test('M-TERS-ISLEM: değişmezler, determinizm korunuyor', () => {
   jeneratoreiYokla('M-TERS-ISLEM', (p, rng) => tersIslemUret(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-OLC-UZUNLUK: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-OLC-UZUNLUK', (p, rng) => olcUzunlukUret(p, rng), 15);
+});
+
+test('M-OLC-KUTLE: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-OLC-KUTLE', (p, rng) => olcKutleUret(p, rng), 15);
+});
+
+test('M-OLC-BIRIM: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-OLC-BIRIM', (p, rng) => olcBirimUret(p, rng), 15);
+});
+
+test('M-OLC-TAHMIN: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-OLC-TAHMIN', (p, rng) => olcTahminUret(p, rng), 15);
 });

@@ -233,5 +233,26 @@
     "eksik-bul": "Eksik sayıyı bul.",
     "ters-islem": "Ters işlemi bul.",
     "hikaye-dinle": "Hikayeyi dinle ve cevapla."
+  },
+
+  "olcme": {
+    "$not": "Ölçme kavramları — M-OLC-* şablonları.",
+    "uzun": "uzun",
+    "kisa": "kısa",
+    "agir": "ağır",
+    "hafif": "hafif",
+    "atac": "ataç",
+    "karis": "karış",
+    "blok": "blok"
+  },
+
+  "soru-olcme": {
+    "$not": "M-OLC-* şablonu talimatları.",
+    "hangisi-uzun": "Hangisi daha uzun?",
+    "hangisi-kisa": "Hangisi daha kısa?",
+    "hangisi-agir": "Hangisi daha ağır?",
+    "hangisi-hafif": "Hangisi daha hafif?",
+    "kac-birim": "Kaç birim uzunluğunda?",
+    "kac-tahmin-uzun": "Sence kaç birim uzunluğunda?"
   }
 }

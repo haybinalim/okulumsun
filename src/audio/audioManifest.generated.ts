@@ -248,6 +248,19 @@ export const AUDIO_MANIFEST = {
   'soru-islem.eksik-bul': { file: 'soru-islem/eksik-bul.m4a', core: false },
   'soru-islem.ters-islem': { file: 'soru-islem/ters-islem.m4a', core: false },
   'soru-islem.hikaye-dinle': { file: 'soru-islem/hikaye-dinle.m4a', core: false },
+  'olcme.uzun': { file: 'olcme/uzun.m4a', core: false },
+  'olcme.kisa': { file: 'olcme/kisa.m4a', core: false },
+  'olcme.agir': { file: 'olcme/agir.m4a', core: false },
+  'olcme.hafif': { file: 'olcme/hafif.m4a', core: false },
+  'olcme.atac': { file: 'olcme/atac.m4a', core: false },
+  'olcme.karis': { file: 'olcme/karis.m4a', core: false },
+  'olcme.blok': { file: 'olcme/blok.m4a', core: false },
+  'soru-olcme.hangisi-uzun': { file: 'soru-olcme/hangisi-uzun.m4a', core: false },
+  'soru-olcme.hangisi-kisa': { file: 'soru-olcme/hangisi-kisa.m4a', core: false },
+  'soru-olcme.hangisi-agir': { file: 'soru-olcme/hangisi-agir.m4a', core: false },
+  'soru-olcme.hangisi-hafif': { file: 'soru-olcme/hangisi-hafif.m4a', core: false },
+  'soru-olcme.kac-birim': { file: 'soru-olcme/kac-birim.m4a', core: false },
+  'soru-olcme.kac-tahmin-uzun': { file: 'soru-olcme/kac-tahmin-uzun.m4a', core: false },
 } as const satisfies Record<string, AudioClip>;
 
 /**
