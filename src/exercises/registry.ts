@@ -21,6 +21,7 @@ import { RITMIK_TEMPLATE_ID, M_RITMIK } from './templates/ritmik';
 import { TOPLA_GORSEL_TEMPLATE_ID, toplaGorselJeneratoru } from './templates/toplaGorsel';
 import { KONUM_TEMPLATE_ID, konumGenerator } from './templates/konum';
 import { ESLIK_TEMPLATE_ID, eslikGenerator } from './templates/eslik';
+import { YONERGE_TEMPLATE_ID, yonergeGenerator } from './templates/yonerge';
 
 export const REGISTRY: ReadonlyMap<TemplateId, ExerciseGenerator> = new Map([
   [M_SAY_TEMPLATE_ID, saySablonu],
@@ -29,4 +30,5 @@ export const REGISTRY: ReadonlyMap<TemplateId, ExerciseGenerator> = new Map([
   [TOPLA_GORSEL_TEMPLATE_ID, toplaGorselJeneratoru],
   [KONUM_TEMPLATE_ID, konumGenerator],
   [ESLIK_TEMPLATE_ID, eslikGenerator],
+  [YONERGE_TEMPLATE_ID, yonergeGenerator],
 ]);

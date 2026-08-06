@@ -30,15 +30,15 @@ Sıradaki iş **T1'in 3. şablonu (M-YONERGE)** ve **T2 partisi (7 şablon)**.
 | 7 | Maskot + kutlama + Bahçem | ✅ (`maskotState.ts` saf makine + `Maskot.tsx` SVG + `Celebration.tsx` + `cikartma.ts` + `Bahcem.tsx` + `OturumSonu.tsx`; 30 yeni test) |
 | 8 | Kabuk ekranları (ana ekran, mod seçimi, veli paneli, tahta konu seçimi) | ✅ (`appStore.ts` Zustand + `okulAyi.ts` §6.5 + 8 ekran: ModSecimi, AvatarSecimi, RenkSecimi, AnaEkran, TemaGirisi, KonuSecimi, VeliKapisi, VeliPaneli; 45 yeni test) |
 | 9 | Kalıcılık + PWA + yedekleme | ✅ (`db.ts` Dexie şema v1 + `repository.ts` (tahta modu no-op) + `backup.ts` dışa/içe + `persist.ts` storage.persist() + `migrations/` iskelet + vite-plugin-pwa precache; 33 yeni test) |
-| 10 | Kalan 35 şablon + ses kümeleri (§4.5) + SVG varlıklar | 🔄 T1: M-KONUM ✅, M-ESLIK ✅, M-YONERGE ⬜ (SEQUENCE_ORDER ekranı gerekli) — 6/39 tamam |
+| 10 | Kalan 35 şablon + ses kümeleri (§4.5) + SVG varlıklar | 🔄 T1: M-KONUM ✅, M-ESLIK ✅, M-YONERGE ✅ — 7/39 tamam, T2 partisi sırada |
 | 11 | Dağıtım + LICENSES + gizlilik beyanı | ⬜ |
 | 12 | Erişilebilirlik + 5 çocukla tablet testi | ⬜ |
 | 13 | (2. ay) Fiziksel tahta doğrulaması | ⬜ |
 
 ## Teknik doğrulama (son çalıştırma: 6 Ağustos 2026)
 
-- `npm test` → ✅ 159/159 (jeneratör 7 + ustalık 14 + seçici 7 + madde yaşam döngüsü 23 + maskot 17 + çıkartma 13 + okul ayı 15 + app store 30 + kalıcılık 33)
-- `npm run validate` → ✅ 19 kazanım · 57 beceri · 15/15 hata etiketi · 6 jeneratör
+- `npm test` → ✅ 160/160 (jeneratör 8 + ustalık 14 + seçici 7 + madde yaşam döngüsü 23 + maskot 17 + çıkartma 13 + okul ayı 15 + app store 30 + kalıcılık 33)
+- `npm run validate` → ✅ 19 kazanım · 57 beceri · 15/15 hata etiketi · 7 jeneratör
 - `npm run build` → ✅ (PWA service worker üretildi, 12 precache entry)
 - `npm run lint` → ✅ 0 uyarı 0 hata
 - CI → ⬜ yok (Adım 2b)

@@ -31,6 +31,7 @@ import { ritmikUret } from '../../src/exercises/templates/ritmik';
 import { uretToplaGorsel } from '../../src/exercises/templates/toplaGorsel';
 import { konumUret } from '../../src/exercises/templates/konum';
 import { eslikUret } from '../../src/exercises/templates/eslik';
+import { yonergeUret } from '../../src/exercises/templates/yonerge';
 
 /** Her jeneratörün altından geçirildiği tohum sayısı. Plan 10.000 ister; bu değer
  *  derleme/hata ayıklama döngüsünü hızlı tutar — CI'da yükseltilebilir. */
@@ -59,6 +60,7 @@ function dogruDegerler(ex: Exercise): number[] {
  */
 function beklenenDogruSayisi(ex: Exercise): number {
   if (ex.kind === 'TAP_TO_PLACE') return ex.yuvalar.length;
+  if (ex.kind === 'SEQUENCE_ORDER') return ex.validation.dogruSira.length;
   return 1;
 }
 
@@ -163,4 +165,8 @@ test('M-KONUM: değişmezler, determinizm, tek doğru korunuyor', () => {
 
 test('M-ESLIK: değişmezler, determinizm, tek doğru korunuyor', () => {
   jeneratoreiYokla('M-ESLIK', (p, rng) => eslikUret(p, rng), Infinity);
+});
+
+test('M-YONERGE: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-YONERGE', (p, rng) => yonergeUret(p, rng), Infinity);
 });

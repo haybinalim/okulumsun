@@ -320,7 +320,7 @@ Hepsi metinsiz çalışır, hepsi **tek dokunma**:
 | Şablon | Kazanım | Durum | Not |
 |---|---|---|---|
 | `M-KONUM` | `MAT.1.3.1` | ✅ | Konum ifadeleri: altında/üstünde/içinde/önünde/arasında; sesi dinle, doğru sahneyi seç |
-| `M-YONERGE` | `MAT.1.3.1` | ⬜ | Izgarada karakteri sesli yönergeyle hedefe götür ("iki adım ileri, sonra sağa"). Yön klipleri gerekli (§4.5) |
+| `M-YONERGE` | `MAT.1.3.1` | ✅ | Izgarada karakteri sesli yönergeyle hedefe götür ("iki adım ileri, sonra sağa"). Yön klipleri gerekli (§4.5) |
 | `M-ESLIK` | `MAT.1.3.2` | ✅ | İki nesne üst üste bindirilerek eş mi değil mi |
 
 **Tema 2 — Sayılar ve Nicelikler (1):**
@@ -390,7 +390,7 @@ Hepsi metinsiz çalışır, hepsi **tek dokunma**:
 | `M-VERI-GRAFIK` | `MAT.1.4.1` | ⬜ | Nesne grafiğini oku, soruyu cevapla ("en çok hangisi?") |
 
 **39 şablon, 19 kazanımın tamamını ve 57 beceri düğümünü kapsıyor** (kanıt:
-`npm run validate` müfredat kapsamını doğrular). 6 jeneratör yazıldı, **33 bekliyor**.
+`npm run validate` müfredat kapsamını doğrular). 7 jeneratör yazıldı, **32 bekliyor**.
 Sayı `src/content/skills.json`'daki BENZERSİZ `exerciseTemplates` değerlerinden sayılır;
 değiştiğinde bu cümle ve §14 adım 10 aynı commit'te güncellenir.
 

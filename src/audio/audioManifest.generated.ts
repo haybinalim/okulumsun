@@ -204,13 +204,15 @@ export const AUDIO_MANIFEST = {
   'eslik.farkli-mi': { file: 'eslik/farkli-mi.m4a', core: false },
   'eslik.hangisi-ayni': { file: 'eslik/hangisi-ayni.m4a', core: false },
   'eslik.hangisi-farkli': { file: 'eslik/hangisi-farkli.m4a', core: false },
-  'soru-konum.nereye': { file: 'soru-konum/nereye.m4a', core: false },
+  'soru-konum.nereede': { file: 'soru-konum/nereede.m4a', core: false },
   'soru-konum.altinda-mi': { file: 'soru-konum/altinda-mi.m4a', core: false },
   'soru-konum.ustunde-mi': { file: 'soru-konum/ustunde-mi.m4a', core: false },
   'soru-konum.icinde-mi': { file: 'soru-konum/icinde-mi.m4a', core: false },
   'soru-konum.onunde-mi': { file: 'soru-konum/onunde-mi.m4a', core: false },
   'soru-konum.arkasinda-mi': { file: 'soru-konum/arkasinda-mi.m4a', core: false },
   'soru-konum.yaninda-mi': { file: 'soru-konum/yaninda-mi.m4a', core: false },
+  'soru-yonerge.hedefe-git': { file: 'soru-yonerge/hedefe-git.m4a', core: false },
+  'soru-yonerge.dinle-ve-uygula': { file: 'soru-yonerge/dinle-ve-uygula.m4a', core: false },
 } as const satisfies Record<string, AudioClip>;
 
 /**

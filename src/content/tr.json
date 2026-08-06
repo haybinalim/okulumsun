@@ -157,12 +157,18 @@
   },
 
   "soru-konum": {
-    "nereye": "Nerede?",
+    "nereede": "Nerede?",
     "altinda-mi": "Altında mı?",
     "ustunde-mi": "Üstünde mü?",
     "icinde-mi": "İçinde mi?",
     "onunde-mi": "Önünde mi?",
     "arkasinda-mi": "Arkasında mı?",
     "yaninda-mi": "Yanında mı?"
+  },
+
+  "soru-yonerge": {
+    "$not": "M-YONERGE şablonu talimatları.",
+    "hedefe-git": "Hedefe ulaşmak için adımları sırayla seç.",
+    "dinle-ve-uygula": "Yönergeyi dinle ve uygula."
   }
 }
