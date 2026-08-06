@@ -1132,16 +1132,16 @@ okulumsun/
 │   │   ├── types.ts rng.ts distractors.ts   # (✓) sözleşme + tohumlu RNG + çeldirici
 │   │   ├── registry.ts             # (⬜) şablon kimliği → jeneratör haritası
 │   │   └── templates/              # 4/39 şablon (✓ say, karsilastir, ritmik, toplaGorsel)
-│   ├── progress/                   # (⬜) mastery.ts scheduler.ts session.ts (§6)
+│   ├── progress/                   # (✓) mastery.ts scheduler.ts session.ts itemLifecycle.ts cikartma.ts (§6, §7)
 │   ├── persistence/                # (⬜) db.ts repository.ts backup.ts migrations/ (§10)
 │   ├── audio/                      # (✓) speech.ts useSpeak.ts audioManifest.generated.ts
 │   ├── design/                     # (✓) tokens.ts deviceProfile.ts useDeviceProfile.ts
 │   ├── ui/
 │   │   ├── primitives/             # (✓) BigButton SpeakButton ChoiceCard
 │   │   ├── svg/                    # (✓ kısmen) Visual Sprite positions · (⬜) Rakam OnlukCerceve SayiDogrusu Terazi Banknot
-│   │   ├── feedback/               # (⬜) HintPanel Celebration Maskot
+│   │   ├── feedback/               # (✓) Maskot Celebration useMaskot maskotState
 │   │   ├── layout/                 # (✓) GameShell
-│   │   └── screens/                # (✓) AudioUnlock ExerciseScreen TapCount TapToPlace · (⬜) AnaEkran Bahcem VeliPaneli KonuSecimi
+│   │   └── screens/                # (✓) AudioUnlock ExerciseScreen TapCount TapToPlace OturumSonu Bahcem · (⬜) AnaEkran VeliPaneli KonuSecimi
 │   ├── store/                      # (⬜) Zustand: session.ts progress.ts settings.ts
 │   └── dev/                        # (✓) BoardHarness.tsx AudioProbe.tsx (§13)
 ├── scripts/                        # (✓) generate-audio, audit-audio, validate-content, fetch-fonts · (⬜) generate-content
@@ -1190,7 +1190,7 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 4 | **Alıştırma ekranı** — uyaran + seçenek + seç/onayla + geri bildirim (§11 anatomi) | ✅ | 4 şablon ekranda oynanır; e2e tahta geometri testi geçer; **ilk gerçek çocuk testi burada yapılabilir** |
 | 5 | **Oturum motoru:** `src/progress/` → `mastery.ts` (§6.1 formüller + Leitner + yakınlık `q`), `scheduler.ts` (§6.4 kovalar + 5 sert kural), `session.ts` (8 soru yaşam döngüsü) | ⬜ | §15'teki ustalık senaryo testleri geçer; kova oranları 1000 simüle oturumda ±%5 tutar; sert kuralların her biri birim testli; `mastery.ts` ve `scheduler.ts` SAF (içlerinde `Date.now`, Dexie, `Math.random` yok — grep ile kanıtla) |
 | 6 | **Yardım akışı:** 3 kademe (§7.2) + hareketsizlik sayacı + hata taksonomisi bağlama (`diagnosticTag` → `remediation` kovası §6.6) | ✅ | K1/K2/K3 senaryo testli (23 test); `GOREV_ANLASILMADI` ustalığı ETKİLEMEZ (testle kanıtla ✓); 15/30/30 sn zamanlayıcılar ekran değişiminde sıfırlanır (`useHelpTimer` hook); `TaniTakipcisi` remediation tetikleme |
-| 7 | Maskot durumları (6 poz §7.5) + kutlama + Bahçem (§7.4) | ⬜ | Maskot 6 duruma geçer; kutlama ≤2 sn ve atlanabilir; çıkartma oturum SONUNA bağlı (doğru sayısına değil, testle) |
+| 7 | Maskot durumları (6 poz §7.5) + kutlama + Bahçem (§7.4) | ✅ | Maskot 6 duruma geçer (17 test); kutlama ≤2 sn ve atlanabilir (`Celebration.tsx`); çıkartma oturum SONUNA bağlı (doğru sayısına değil, 13 testle kanıtla ✓); `cikartma.ts` SAF + 30 çıkartma→yeni sahne |
 | 8 | İlk açılış, mod seçimi, avatar, ana ekran (7 tema), tahta modu konu seçimi ([4b] §11), veli kapısı + panel (§11 liste) | ⬜ | §11 akışının tamamı gezilebilir; veli paneli 5 kalemi içerir; tahta modunda IndexedDB'ye yazılmadığı testle kanıtlı |
 | 9 | **Kalıcılık + PWA:** `src/persistence/` (§10 store'lar, `active_session`, migrasyon iskeleti, yedek), `vite-plugin-pwa` precache, `storage.persist()` | ⬜ | Çevrimdışı tam oturum e2e geçer; yedek dışa/içe aktarım e2e geçer; sayfa yenilenince duraklatılmış oturum kaldığı sorudan sürer; Lighthouse PWA kurulabilir raporu |
 | 10 | **Kalan 35 şablon** (§5.2'de ⬜ olanlar) + gerektirdikleri ses kümeleri (§4.5) + SVG varlıklar (banknot, terazi, ızgara, çetele) | ⬜ | Tema sırasına göre parti parti: **T1 (3) → T2 kalanı (7) → T4 (9) → T3 (4) → T5 (2) → T6 (6) → T7 (4) = 35.** Her şablon §5.5'teki 8 adımı tamamlar. 19 kazanımın TAMAMI kapsanınca kapanır |
