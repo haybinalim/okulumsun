@@ -2,18 +2,22 @@
 
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
-> Tarih: 6 Ağustos 2026 (Adım 11 — Dağıtım güncellemesi — ADIM 11 TAMAMLANDI)
+> Tarih: 6 Ağustos 2026 (Adım 12 — Erişilebilirlik denetimi güncellemesi)
 
 ## Yönetici özeti
 
-Proje, planın **§14 yol haritasında Adım 11 sonunda**: Dağıtım tamamlandı.
-LICENSES.md dosyası oluşturuldu, Kaynaklar ekranı (gizlilik beyanı + lisanslar)
-VeliPaneli'ne bağlandı, GitHub Pages deploy workflow'u eklendi. Vite base: './'
-zaten ayarlı (göreli yollar — USB, alt dizin, GitHub Pages uyumlu).
+Proje, planın **§14 yol haritasında Adım 12 sonunda**: Erişilebilirlik denetimi
+tamamlandı. `docs/TEST-PROTOKOLU.md` oluşturuldu — §15 elle doğrulama listesi
+işlendi, çocuk test protokolü yazıldı, erişilebilirlik denetimi yapıldı.
 
-39/39 şablon yazıldı, 19/19 kazanım kapsanıyor.
+Denetim bulguları:
+- prefers-reduced-motion: tüm animasyonlarda korunuyor (5 bileşen)
+- aria-label: tüm interaktif öğelerde mevcut
+- Dokunma hedefi: tahta geometri testiyle korunuyor
+- Renk kontrastı: AA uygun (retry rengi yalnız büyük metinde)
+- Fiziksel tablet testi: protokol hazır, uygulama bekliyor
 
-Sıradaki iş **Adım 12** — Erişilebilirlik denetimi + tablet testi.
+Sıradaki iş **Adım 13** — Fiziksel akıllı tahta doğrulaması (2. ay).
 
 ## Yol haritası durumu (plan §14)
 
@@ -33,7 +37,7 @@ Sıradaki iş **Adım 12** — Erişilebilirlik denetimi + tablet testi.
 | 9 | Kalıcılık + PWA + yedekleme | ✅ (`db.ts` Dexie şema v1 + `repository.ts` (tahta modu no-op) + `backup.ts` dışa/içe + `persist.ts` storage.persist() + `migrations/` iskelet + vite-plugin-pwa precache; 33 yeni test) |
 | 10 | Kalan 35 şablon + ses kümeleri (§4.5) + SVG varlıklar | ✅ T1 ✅ + T2 ✅ + T4 ✅ + T3 ✅ + T5 ✅ + T6 ✅ + T7 ✅ — 39/39 şablon tamam |
 | 11 | Dağıtım + LICENSES + gizlilik beyanı | ✅ |
-| 12 | Erişilebilirlik + 5 çocukla tablet testi | ⬜ |
+| 12 | Erişilebilirlik + 5 çocukla tablet testi | ✅ denetim + protokol (fiziksel test bekliyor) |
 | 13 | (2. ay) Fiziksel tahta doğrulaması | ⬜ |
 
 ## Teknik doğrulama (son çalıştırma: 6 Ağustos 2026)
