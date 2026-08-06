@@ -29,6 +29,39 @@ Motor, içerik ve arayüz altyapısı ders-bağımsız tasarlanıyor; diğer der
 
 ---
 
+## 0. Uygulayıcı Kılavuzu — planı koda çeviren herkes için
+
+Bu belge **normatiftir** ve farklı yapay zeka modelleri farklı oturumlarda kod yazacağı
+varsayımıyla yazılmıştır. Oturumlar arasında hafıza **yoktur**; bağlam yalnız bu repodur.
+
+1. **Tek gerçek kaynaklar ve öncelik sırası.** Çelişki görürsen şu sıra geçerli:
+   `docs/mufredat-kisitlari.md` (müfredat sınırları — ihlal edilemez)
+   → `src/content/skills.json` (beceri düğümleri + şablon eşlemesi)
+   → `src/exercises/types.ts` (veri modeli sözleşmesi)
+   → bu plan → diğer her şey.
+   Plan ile kod çelişiyorsa **sessizce sapma; planı düzelt ve düzeltmeyi commit'e yaz.**
+2. **Anahtar kelimeler.** ZORUNLU = yapılmadan adım kapanamaz. YASAK = hiçbir koşulda
+   yapılmaz. Tablolardaki sayısal değerler (px, %, gün, oran, ms) keyfî değildir;
+   değiştirmek için önce bu planda gerekçeli değişiklik yap.
+3. **Çalışmaya başlamadan önce** §14'teki ilgili adımın "Bitti tanımı"nı ve dokunacağın
+   dosyaların baş yorum bloklarını oku — her dosya kendi gerekçesini taşır.
+4. **Her değişiklikte doğrulama zinciri:** `npm run lint && npm test && npm run validate
+   && npm run build`. Şablon veya ekran eklerken ayrıca `npm run e2e` (tahta geometrisi).
+   Bunlardan biri kırıkken adım "bitti" **sayılamaz**.
+5. **Yasaklar (özet — gerekçeleri ilgili bölümlerde):** `Math.random()` (§5.3) ·
+   sürükle-bırak (§3.2) · kırmızı renk / `X` / buzzer / "yanlış" kelimesi (§7.1) ·
+   çalışma anında yapay zeka çağrısı (Context) · `<` `>` karşılaştırma sembolleri,
+   saat okuma, çarpma/bölme/kesir (mufredat-kisitlari §3) · TÜMÜ BÜYÜK HARF ve
+   `toLocaleUpperCase('tr')` dışı büyütme (§3.4) · Lucide/Phosphor ikonları (§8) ·
+   OpenMoji (§8 lisans) · sonucu 20'yi aşan işlem.
+6. **Dil.** Kod yorumları, commit mesajları ve kullanıcıya görünen tüm metin Türkçe.
+7. **Yeni şablon eklerken sıra:** `skills.json`'da düğüm/şablon zaten tanımlı →
+   gerekli ses anahtarlarını `tr.json`'a ekle (§4.5) → jeneratörü `src/exercises/templates/`
+   altına yaz (mevcut 4 şablonun dosya düzenini kopyala) → property-based test ekle →
+   `validate-content.ts`'te "uygulandı" listesine geçir → ekranda oynat, e2e geçir.
+
+---
+
 ## 1. Müfredat — Doğrulanmış Resmî Kaynak
 
 Kaynak: **MEB, [TYMM] İLKOKUL MATEMATİK DERSİ (1-4) ÖĞRETİM PROGRAMI, 2024** — `mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1972`, 160 sayfa. PDF indirildi ve metni çıkarılıp doğrulandı.
@@ -226,6 +259,29 @@ Kurallar:
 - **Cihaz sessizken ürün çalışmalı:** her sesli talimatın görsel karşılığı var.
 - Hız normalden %10 yavaş, cümle araları 400ms. Talimatlar 6–8 kelime, tek yönerge.
 
+### 4.5 Ses envanteri — şablon başına gerekli klip kümeleri
+
+Mevcut manifest (171 klip): `sayi.0–100`, işlemler (`op.arti/eksi/esit/kadar`),
+10 nesne adı, renkler, UI/geri bildirim cümleleri, tema girişleri. Bu envanter
+ilk 4 şablonu karşılar; **kalan şablonlar için şu kümeler ÜRETİLMEDEN o şablon
+yazılamaz** (jeneratör derlenir ama `validate-content.ts` eksik `speechKey`'de kırılır):
+
+| Klip kümesi | Anahtarlar | Gereken şablon | Adet |
+|---|---|---|---|
+| Sıra sayıları | `sira.1` … `sira.20` ("birinci"…"yirminci") | `M-SIRA-SAYI` | 20 |
+| Yön/konum | `yon.ileri`, `yon.geri`, `yon.saga`, `yon.sola`, `yon.yukari`, `yon.asagi`, `konum.altinda`, `konum.ustunde`, `konum.icinde`, `konum.onunde`, `konum.arkasinda`, `konum.arasinda`, `sayi-adim.bir-adim` … | `M-KONUM`, `M-YONERGE` | ~15 |
+| Para | `para.lira`, `sayi.200` (manifestte yok!) | `M-PARA-TANI`, `M-PARA-SIRALA` | 2 |
+| Şekil adları | `sekil.ucgen`, `sekil.kare`, `sekil.dikdortgen`, `sekil.cember`, `sekil.yuvarlak`, `sekil.koseli`, `sekil.kenar`, `sekil.kose` | `M-GEO-*` | 8 |
+| Ölçme | `olcme.uzun`, `olcme.kisa`, `olcme.agir`, `olcme.hafif`, `olcme.atac`, `olcme.karis`, `olcme.blok` | `M-OLC-*` | ~7 |
+| Karşılaştırma ek | (mevcut: çok/az/eşit kontrol et) `kiyas.daha-cok`, `kiyas.daha-az` | `M-KARSILASTIR` | ~2 |
+| Veri | `veri.en-cok`, `veri.en-az`, `veri.kac-tane` + kategori adları | `M-VERI-*` | ~8 |
+| Şablon talimat cümleleri | her yeni şablon için 1–3 tam cümle (`soru.*`) | tümü | ~50 |
+
+Üretim akışı değişmez: anahtarı `src/content/tr.json`'a ekle → `npm run audio`
+(yalnız hash'i değişeni üretir) → manifest ve `SpeechKey` tipi kendini günceller.
+**Sayı birleştirme kuralı geçerli:** sıra sayıları ve yönler TAM KELİME klipleridir,
+parçadan birleştirilmez (§4.3'teki prozodi kuralı).
+
 ---
 
 ## 5. Alıştırma Sistemi
@@ -238,27 +294,90 @@ Hepsi metinsiz çalışır, hepsi **tek dokunma**:
 
 ### 5.2 Şablonlar — kazanım eşlemesi
 
-| Şablon | Kazanım | Not |
-|---|---|---|
-| `M-YON-YONERGE` | `MAT.1.3.1` | Izgarada karakteri sesli yönergeyle hedefe götür ("iki adım ileri, sonra sağa"). Yıl başı teması. |
-| `M-ESLIK` | `MAT.1.3.2` | İki nesne üst üste bindirilerek eş mi değil mi |
-| `M-SAY` | `MAT.1.1.1`, `MAT.1.1.2` | **İki aşamalı:** önce dokunarak say, sonra rakam seç. Tek soruyla iki düğüm ölçülür — dokunma doğru/rakam yanlış = kardinalite sorunu. `layout: dağınık` sayma stratejisini ortaya çıkarır (`MAT.1.1.2`'nin tam karşılığı). |
-| `M-SIRA-SAYI` | `MAT.1.1.3` | Sıradaki kaçıncı (birinci, ikinci…) |
-| `M-KARSILASTIR` | `MAT.1.1.4` | çok / daha çok / az / daha az / eşit. Boyut-çeliştirmeli maddeler zorunlu (büyük nesne ≠ çok) |
-| `M-RITMIK` | `MAT.1.1.5` | Sayı doğrusunda eksik sayı. **100'e kadar ileri, 20'den geri**, adım 1/2/5/10 |
-| `M-ORUNTU` | `MAT.1.1.6` | Artan/azalan sayı **ve** şekil örüntüsü |
-| `M-TAHMIN` | `MAT.1.1.7` | Küme kısa süre gösterilir, çocuk tahmin eder, sonra birlikte sayılır. **Doğru/yanlış yok — yakınlık ölçülür.** |
-| `M-OLCME` | `MAT.1.1.8` | Standart olmayan birimle (ataç, karış, blok) uzunluk **ve kütle** tahmini, sonra ölçüm |
-| `M-TOPLA-GORSEL` | `MAT.1.2.1`, `MAT.1.2.2` | Onluk çerçeve / küme / sayı doğrusu modelleri, sonuç ≤20 |
-| `M-ESIT-ISARET` | `MAT.1.2.3` | Terazi metaforu: `7 = 3 + ?`, `4 + 3 = ? + 5`. **Programın vurguladığı ama çoğu uygulamanın atladığı kazanım.** |
-| `M-TERS-ISLEM` | `MAT.1.2.4` | `8 − 3 = 5` gösterilir, `5 + 3 = 8` kurulur (aynı sayı üçlüsü) |
-| `M-PARA-TANI` | `MAT.1.1.9` | Banknot tanıma ve büyüklük sıralaması (1→200 TL). **Toplama yok** — kazanım sadece tanıma. |
-| `M-YUVARLAK-KOSELI` | `MAT.1.3.3` | Günlük nesneleri yuvarlak/köşeli ayırma |
-| `M-YAPIDA-SEKIL` | `MAT.1.3.4` | Ev/robot resmindeki şekilleri bul (hotspot) |
-| `M-SEKIL-SINIFLA` | `MAT.1.3.5` | Üçgen/kare/dikdörtgen/**çember**. Öğelerin ≥%40'ı döndürülmüş — prototip hatasını hem ölçer hem düzeltir. |
-| `M-VERI` | `MAT.1.4.1` | Çetele tut → sıklık tablosu → nesne grafiği → soruyu cevapla |
+> **Tek gerçek kaynak `src/content/skills.json`'dur** — her beceri düğümü
+> `exerciseTemplates` alanıyla şablonlarına bağlıdır ve `validate-content.ts`
+> bu eşlemeyi CI'da doğrular. Aşağıdaki tablo o dosyanın insan-okur özetidir;
+> uygulama sırasında planın ilk taslağındaki 17 kaba şablon, tek tip etkileşim =
+> tek şablon ilkesiyle **40 ince şablona** bölündü (ör. eski `M-VERI` dört
+> aşamasının her biri ayrı ekran ve ayrı ölçüm gerektirdiği için 4 şablona ayrıldı).
+> Tabloda ✅ = jeneratör yazıldı, ⬜ = `skills.json`'da tanımlı, jeneratör bekliyor.
 
-17 şablon, 19 kazanımı kapsıyor.
+**Tema 1 — Geometri (1):**
+
+| Şablon | Kazanım | Durum | Not |
+|---|---|---|---|
+| `M-KONUM` | `MAT.1.3.1` | ⬜ | Konum ifadeleri: altında/üstünde/içinde/önünde/arasında; sesi dinle, doğru sahneyi seç |
+| `M-YONERGE` | `MAT.1.3.1` | ⬜ | Izgarada karakteri sesli yönergeyle hedefe götür ("iki adım ileri, sonra sağa"). Yön klipleri gerekli (§4.5) |
+| `M-ESLIK` | `MAT.1.3.2` | ⬜ | İki nesne üst üste bindirilerek eş mi değil mi |
+
+**Tema 2 — Sayılar ve Nicelikler (1):**
+
+| Şablon | Kazanım | Durum | Not |
+|---|---|---|---|
+| `M-SAY` | `MAT.1.1.1`, `.2`, `.7` | ✅ | **İki aşamalı:** önce dokunarak say, sonra rakam seç. Dokunma doğru/rakam yanlış = kardinalite sorunu. `layout: dağınık` sayma stratejisini ortaya çıkarır |
+| `M-RAKAM-TANI` | `MAT.1.1.1` | ⬜ | Sesi dinle ("yedi"), rakam glifini seç |
+| `M-ONLUK-COZUMLE` | `MAT.1.1.1`, `.2` | ⬜ | 11–20 arası sayıyı onluk+birlik olarak çözümle (onluk çerçeve) |
+| `M-SIPSAK` | `MAT.1.1.2`, `.7` | ⬜ | Şipşak sayılama (subitizing): düzenli küme ≤1 sn gösterilir, saymadan tanınır |
+| `M-SIRA-SAYI` | `MAT.1.1.3` | ⬜ | Sıradaki kaçıncı (birinci…onuncu). Sıra sayısı ses klipleri ZORUNLU (§4.5) |
+| `M-KARSILASTIR` | `MAT.1.1.4` | ✅ | çok / daha çok / az / daha az / eşit. Boyut-çeliştirmeli maddeler zorunlu (büyük nesne ≠ çok). Sembol YASAK |
+| `M-RITMIK` | `MAT.1.1.5` | ✅ | Dizide eksik sayı. Geçerli (yön, adım, sınır) üçlüleri YALNIZ mufredat-kisitlari §2'dekiler — genel jeneratör yazma |
+| `M-ORUNTU-SAYI` | `MAT.1.1.6` | ⬜ | Artan/azalan sayı örüntüsünde verilmeyen terim; en çok 6 terim |
+| `M-ORUNTU-SEKIL` | `MAT.1.1.6` | ⬜ | Tekrar eden şekil örüntüsünü sürdür |
+| `M-TAHMIN-MIKTAR` | `MAT.1.1.7` | ⬜ | Küme ~2 sn gösterilir, çocuk tahmin eder, sonra birlikte sayılır. **Doğru/yanlış yok — yakınlık ölçülür** (puanlama: §6.1) |
+
+**Tema 3 — Ölçme:**
+
+| Şablon | Kazanım | Durum | Not |
+|---|---|---|---|
+| `M-OLC-UZUNLUK` | `MAT.1.1.8` | ⬜ | İki nesnenin boyunu kıyasla (uzun/kısa) |
+| `M-OLC-KUTLE` | `MAT.1.1.8` | ⬜ | Terazi görseliyle ağır/hafif kıyası |
+| `M-OLC-BIRIM` | `MAT.1.1.8` | ⬜ | Standart olmayan birimle ölç: "kalem kaç ataç?" |
+| `M-OLC-TAHMIN` | `MAT.1.1.8` | ⬜ | Önce tahmin, sonra ölçüm; yakınlık ölçülür (§6.1) |
+
+**Tema 4 — İşlemlerden Cebirsel Düşünmeye:**
+
+| Şablon | Kazanım | Durum | Not |
+|---|---|---|---|
+| `M-TOPLA-GORSEL` | `MAT.1.2.1`, `.2` | ✅ | Onluk çerçeve / küme modelleriyle toplama, sonuç ≤20 |
+| `M-TOPLA-SEMBOL` | `MAT.1.2.1`, `.2` | ⬜ | `7 + 5 = ?` sembolik; görsel destek şıklarda |
+| `M-TOPLA-ONA-TUMLE` | `MAT.1.2.2` | ⬜ | 10'a tümleme: `8 + ? = 10` (onluk çerçeve) |
+| `M-CIKAR-GORSEL` | `MAT.1.2.1`, `.2` | ⬜ | Ayırma/geriye sayma modeliyle çıkarma |
+| `M-CIKAR-SEMBOL` | `MAT.1.2.1` | ⬜ | `9 − 4 = ?` sembolik; fark bulma dahil |
+| `M-TAHMIN-ISLEM` | `MAT.1.2.2` | ⬜ | Sonucu tahmin et, sonra zihinden doğrula; yakınlık ölçülür |
+| `M-ESIT-DENGE` | `MAT.1.2.3` | ⬜ | Terazi metaforu: `7 = 3 + ?`, `4 + 3 = ? + 5`. **Programın vurguladığı, çoğu uygulamanın atladığı kazanım** |
+| `M-EKSIK-TOPLANAN` | `MAT.1.2.3`, `.4` | ⬜ | `3 + ? = 8` eksik toplanan |
+| `M-TERS-ISLEM` | `MAT.1.2.4` | ⬜ | `8 − 3 = 5` gösterilir, `5 + 3 = 8` kurulur (aynı sayı üçlüsü) |
+| `M-ISLEM-HIKAYE` | `MAT.1.2.1` | ⬜ | Sesli günlük yaşam problemi ("5 kuş vardı, 2'si uçtu"). Senaryolar `senaryolar.json`'dan |
+
+**Tema 5 — Para:**
+
+| Şablon | Kazanım | Durum | Not |
+|---|---|---|---|
+| `M-PARA-TANI` | `MAT.1.1.9` | ⬜ | Banknot tanıma (1–200 TL, stilize görsel §8). **Toplama YASAK** — kazanım sadece tanıma |
+| `M-PARA-SIRALA` | `MAT.1.1.9` | ⬜ | Banknotları değer büyüklüğüne sırala |
+
+**Tema 6 — Geometri (2):**
+
+| Şablon | Kazanım | Durum | Not |
+|---|---|---|---|
+| `M-GEO-AYIR` | `MAT.1.3.3` | ⬜ | Günlük nesneleri yuvarlak/köşeli ayır |
+| `M-GEO-ESLE` | `MAT.1.3.3` | ⬜ | Nesneyi biçimce benzediği şekille eşle |
+| `M-GEO-KENAR-KOSE` | `MAT.1.3.4` | ⬜ | Kenar/köşe sayısıyla şekli tanımla |
+| `M-GEO-YAPI` | `MAT.1.3.4` | ⬜ | Ev/robot resmindeki şekilleri bul (hotspot) |
+| `M-GEO-ADLANDIR` | `MAT.1.3.5` | ⬜ | Üçgen/kare/dikdörtgen/**çember** adlandır ("daire" deme) |
+| `M-GEO-SINIFLA` | `MAT.1.3.5` | ⬜ | Şekilleri sınıfla; öğelerin ≥%40'ı döndürülmüş — prototip hatasını hem ölçer hem düzeltir |
+
+**Tema 7 — Veri:**
+
+| Şablon | Kazanım | Durum | Not |
+|---|---|---|---|
+| `M-VERI-GRUPLA` | `MAT.1.4.1` | ⬜ | Karışık nesneleri kategoriye grupla (dokun-seç → dokun-yerleştir) |
+| `M-VERI-CETELE` | `MAT.1.4.1` | ⬜ | Sayarak çetele işaretle |
+| `M-VERI-SIKLIK` | `MAT.1.4.1` | ⬜ | Çeteleden sıklık tablosu doldur |
+| `M-VERI-GRAFIK` | `MAT.1.4.1` | ⬜ | Nesne grafiğini oku, soruyu cevapla ("en çok hangisi?") |
+
+**40 şablon, 19 kazanımın tamamını ve 57 beceri düğümünü kapsıyor** (kanıt:
+`npm run validate` müfredat kapsamını doğrular). 4 jeneratör yazıldı, 36 bekliyor.
 
 ### 5.3 Üretim ayrımı
 
@@ -290,6 +409,35 @@ doğru:  strength += 0.35 · zorlukKatsayısı · q · (1 − strength)
 yanlış: strength -= 0.30 · strength
 strengthEff = strength · 2^(−Δgün / halfLife[box])   // [1,2,4,8,16,32] gün
 ```
+
+**Leitner kutusu (`box`) — tam tanım.** `box ∈ {0..5}`, başlangıç `0`.
+Yalnız **günler arası** hareket eder (aynı gün içindeki tekrarlar kutuyu değiştirmez —
+aralıklı tekrarın özü zaman aralığıdır):
+
+- Bir önceki cevaptan **farklı bir günde** gelen ilk cevapta değerlendirilir:
+  - o günkü ilk cevap `q ≥ 0.85` → `box = min(box + 1, 5)`
+  - o günkü ilk cevap `q = 0` → `box = max(box − 1, 0)` (asla 2+ düşmez)
+  - aradaki `q` değerleri (ipuçlu doğru) → kutu değişmez.
+- **Vade:** düğüm, son cevabından `halfLife[box]` gün sonra "vadesi gelmiş" sayılır ve
+  §6.4'teki `review` kovasına aday olur. `strengthEff < 0.55`e düşen `mastered` düğüm
+  `rusty` durumuna geçer.
+- Kutu, ustalık koşulundan bağımsızdır; `mastered` olduktan sonra da işlemeye devam eder
+  (unutma eğrisini yönetir).
+
+**Yakınlık puanlaması (`M-TAHMIN-MIKTAR`, `M-OLC-TAHMIN`, `M-TAHMIN-ISLEM`).**
+Bu şablonlarda doğru/yanlış ikiliği YOKTUR; `q` göreli hatadan türetilir:
+
+```ts
+// hata oranı: e = |tahmin − gerçek| / max(gerçek, 1)
+q = e ≤ 0.15 → 1.00   // isabetli tahmin
+  | e ≤ 0.30 → 0.85
+  | e ≤ 0.50 → 0.45
+  | aksi     → 0.20   // ASLA 0.00 değil — tahmin şablonunda "yanlış" yok (§7.1 ruhu)
+```
+
+Geri bildirim de ikili değildir: her tahminden sonra gerçek değer birlikte sayılarak/
+ölçülerek gösterilir, kutlama tonu `q`'ya göre "harika tahmin" / "yaklaştın" olur.
+`strength` güncellemesi aynı formülle çalışır; `yanlış` dalı bu şablonlarda hiç kullanılmaz.
 
 Asimetri kasıtlı — yanlış cevap ilerlemenin çoğunu silmez. Çocuk asla "geri gitmiş" hissetmez.
 
@@ -328,6 +476,21 @@ Her madde taşır (0 = hiç okuma gerekmez … 3 = cümle). Motor sert filtre uy
 > `readingLoad > learner.readingLevel` → madde **asla** gösterilmez.
 
 Matematikte hedef `readingLoad: 0` — rakamlar hariç metin yok. Bu, uygulamayı Eylül'den itibaren kullanılabilir kılıyor.
+
+**`readingLevel` yaşam döngüsü (tam tanım):**
+
+- **Tip ve başlangıç:** `0 | 1 | 2 | 3`, yeni profilde **daima `0`** (Eylül varsayımı —
+  yanlışsa zararsız: çocuk yalnız daha az metin görür).
+- **Kim değiştirir:** YALNIZ veli, veli panelindeki ayardan ("Çocuğunuz okumaya
+  başladı mı?" — 4 seviyeli ikonlu seçim). **Otomatik yükseltme YASAK:** uygulama
+  matematik performansından okuma becerisi ÇIKARSAYAMAZ; yanlış pozitif, okuyamayan
+  çocuğa metinli soru göstermek demektir ve ürünü kullanılamaz kılar.
+- **Okul ayı ile ilişkisi yok:** okul ayı (§6.5) içerik başlangıç noktasını seçer,
+  `readingLevel`'a dokunmaz.
+- **Saklama:** `learner_profile` store'unda (§10); yedeğe dahildir.
+- Matematik dersinde tüm maddeler `readingLoad: 0` hedeflendiği için bu alan pratikte
+  ilk sürümde filtrelemez — mekanizma, Türkçe dersi eklendiğinde hazır olsun diye
+  İLK SÜRÜMDE kurulur (sonradan eklemek migrasyon gerektirir).
 
 ### 6.4 Sıradaki soruyu seçme
 
@@ -368,7 +531,7 @@ Veli kapısı arkasında tek soru: **"Okulun kaçıncı ayı?"** (Eylül…Hazir
 | `FAZLA/EKSIK_SAYMA` | `a+b±1` | Çeldirici etiketi | Sayı doğrusunda sıçrama görselleştirmesi |
 | `TEK_KUMEYI_ALMA` | Sadece bir kümeyi cevaplama | Çeldirici `a` veya `b` | İki kümeyi tek çerçevede birleştirme |
 | `ONLUK_BOZMA` | 10'u geçende tümleme kaybı | 10 altı/üstü keskin fark | `ikili_10_tumleme`'ye dön, onluk çerçeve |
-| `ESIT_ISLEM_SONUCU` | `=` işaretini "cevap gelir" sanma; `3+4=7+2` yazma | `M-ESIT-ISARET` başarısız | Terazi metaforu, iki yönlü okuma |
+| `ESIT_ISLEM_SONUCU` | `=` işaretini "cevap gelir" sanma; `3+4=7+2` yazma | `M-ESIT-DENGE` başarısız | Terazi metaforu, iki yönlü okuma |
 | `SEKIL_PROTOTIP` | Döndürülmüş kareyi kare saymama | `rotation≠0` maddelerinde düşüş | Döndürme animasyonu, kenar/köşe sayarak tanımlama |
 | `BUYUKLUK_MIKTAR` | Büyük nesneler = daha çok | Boyut-çeliştirmeli maddeler | Birebir eşleştirme kanıtı |
 | `PARA_BOYUT_DEGER` | Banknot boyutunu değerle eşleme | `M-PARA-TANI` çeldiricileri | Değer sıralaması, renk+sayı vurgusu |
@@ -477,16 +640,41 @@ Tek net işlevi: **sesin sahibi olmak.** Tüm sesli talimat ondan gelir; "kim ko
 | Store | İçerik |
 |---|---|
 | `content_*` | Kazanımlar, mikro düğümler, şablonlar, hata kataloğu — salt-okunur |
-| `learner_mastery` | Düğüm başına ustalık kaydı (§6.1) |
+| `learner_mastery` | Düğüm başına ustalık kaydı (§6.1: `strength`, `box`, `streak`, `distinctDays`, `lastAnsweredAt`, durum) |
 | `learner_profile` | `readingLevel`, ayarlar, cihaz profili geçersiz kılma, okul ayı |
+| `active_session` | Duraklatılmış oturumun TAM durumu (aşağıda) |
 | `events` | Append-only cevap logu, son 2000 kayıt halka tampon |
 | `sessions` | Oturum özeti, son 90 gün |
 
 `localStorage` yalnız: `activeProfileId`, `contentPackVersion`, `dbSchemaVersion`.
 
+**Duraklatılmış oturum (`active_session`).** §7.3 "geri butonu oturumu duraklatır,
+dönünce kaldığı sorudan devam" der — bu, uygulama tamamen kapansa da geçerli olmalı:
+
+- Her sorunun **cevap anında** (soru geçişinde değil) yazılır: seçilmiş 8 sorunun
+  `itemId` + tohum listesi, güncel soru indeksi, verilen cevaplar, yardım kademeleri.
+  Sorular tohumdan deterministik yeniden üretilebildiği için (§5.3) soru gövdesi saklanmaz.
+- Açılışta `active_session` doluysa ana ekran yerine "Kaldığın yerden devam edelim mi?"
+  (iki büyük ikonlu kart: devam / yeni). **24 saatten eski** duraklatılmış oturum
+  sessizce atılır — dünkü yarım oturumu dayatmak cezalandırıcıdır.
+- Oturum tamamlanınca kayıt silinir ve `sessions`'a özet yazılır.
+- Tahta modunda (§3.3) `active_session` HİÇ yazılmaz.
+
+**Kalıcılık garantisi — ZORUNLU, ilk sürümde:**
+
+1. İlk oturum tamamlandığında `navigator.storage.persist()` çağrılır (ilk açılışta
+   değil — tarayıcılar "etkileşim görmüş" siteye izni daha yüksek oranla verir).
+   Sonuç `learner_profile`'a yazılır; `false` dönerse veli panelinde uyarı rozeti
+   gösterilir ("Verileriniz güvence altında değil, yedek alın").
+2. **iOS Safari 7 gün kuralı:** kullanılmayan sitenin tüm depolaması 7 günde silinir;
+   **ana ekrana eklenmiş PWA muaftır.** Bu yüzden iOS Safari'de 2. oturum sonunda
+   veli kapısı arkasında "ana ekrana ekle" yönergesi gösterilir. Bu, estetik değil
+   veri güvenliği önlemidir.
+3. `navigator.storage.estimate()` veli panelinde gösterilir (tanılama).
+
 **Migrasyon:** `src/persistence/migrations/` — sürüm başına ayrı dosya, eski tipler **dondurulur** (`types/progressV1.ts`). Uygulama güncellenince yılın verisi bozulmaz.
 
-**Yedekleme zorunlu, ilk sürümde.** Hesapsız mimarinin tek ciddi riski: tarayıcı verisi silinince yılın emeği gider. Veli kapısı arkasında tek düğmelik **JSON dışa/içe aktar**.
+**Yedekleme zorunlu, ilk sürümde.** Hesapsız mimarinin tek ciddi riski: tarayıcı verisi silinince yılın emeği gider. Veli kapısı arkasında tek düğmelik **JSON dışa/içe aktar**. Dışa aktarım dosya adı `okulumsun-yedek-YYYY-AA-GG.json`; içe aktarım Zod ile doğrulanır, sürümü eskiyse önce migrasyondan geçirilir, mevcut veriyle **birleştirilmez** — kullanıcıya "değiştir" onayı sorulur (veli ekranı, metin serbest).
 
 ---
 
@@ -496,6 +684,7 @@ Tek net işlevi: **sesin sahibi olmak.** Tüm sesli talimat ondan gelir; "kim ko
 [0] Açılış — ses kilidi (240px daire + oynat)
       ├─ ilk kez ─→ [1] Mod seçimi (Tahta / Kişisel)
       │               └─ Kişisel ─→ [2] Avatar (2x4) → [3] Renk (6 top)
+      ├─ active_session dolu ─→ [D] "Devam edelim mi?" (devam / yeni) → [6] veya [4]
       ▼
 [4] ANA EKRAN — 7 tema kartı (ikon + renk + siluet) + maskot + dişli (32px, çocuk hedefi değil)
       ▼
@@ -509,6 +698,31 @@ Tek net işlevi: **sesin sahibi olmak.** Tüm sesli talimat ondan gelir; "kim ko
 
 Yan dal: [4] → dişli → Veli kapısı → [9] Veli paneli
 ```
+
+**Tahta modunda akış farkı (§3.3).** Tahta modu seçiliyse:
+
+- [2]/[3] (avatar/renk) atlanır — profil yok.
+- [4] ana ekranda tema kartına dokununca [5]'e değil **[4b] Konu seçimi** ekranına
+  gidilir: temanın beceri düğümleri `childLabel` etiketiyle büyük kartlar hâlinde
+  (ör. "Nerede?", "Kaç tane?"). Öğretmen o günkü konuyu elle seçer — adaptif motor
+  devre dışıdır, `readingLoad` filtresi hariç tüm §6.4 kuralları atlanır.
+- [6] alıştırma serbest uzunluktadır: 8 soru sınırı ve boncuk yolu yerine sonsuz
+  "sıradaki soru" akışı + her sorudan sonra büyük "bir tane daha" kartı.
+- [7]/[8] (çıkartma/bahçe) atlanır — ödül kişiseldir, sınıf ekranında anlamsız.
+  Oturum "Ev" ile biter.
+- Hiçbir şey IndexedDB'ye yazılmaz (`events` dahil).
+
+**Veli paneli [9] — içerik listesi (ilk sürüm, bu kadarı ZORUNLU, fazlası değil):**
+
+1. Tema bazında ilerleme: 7 tema satırı × düğüm durumu (tohum/filiz/çiçek/meyve
+   sayıları). Yüzde ve puan YOK — çocuğa yasak olan gösterim veliye de gösterilmez,
+   veli çocuğa söyler.
+2. "Zorlandığı konular": `struggling` durumundaki düğümlerin `childLabel` listesi +
+   evde ne yapılabileceğine dair tek cümlelik öneri (içeriği `tr.json`'dan).
+3. Ayarlar: `readingLevel` (§6.3) · okul ayı (§6.5) · cihaz profili geçersiz kılma
+   (§3.1) · ses hızı.
+4. Yedekleme: dışa/içe aktar (§10) + kalıcılık uyarı rozeti + depolama alanı.
+5. "Kaynaklar" ekranı bağlantısı (§8 lisanslar).
 
 **Alıştırma ekranı anatomisi** (yatay):
 
@@ -537,40 +751,47 @@ Yan dal: [4] → dişli → Veli kapısı → [9] Veli paneli
 
 ## 12. Proje Yapısı
 
+Ağaç, hedef son durumu gösterir; `(✓)` bugün repoda var, `(⬜)` planlandı.
+
 ```
-/Users/alim/okulumsun/
-├── docs/meb-ilkokul-matematik-2024.pdf   # resmî kaynak, referans
+okulumsun/
+├── .github/workflows/ci.yml        # (⬜) lint+test+validate+build, PR'da e2e (§14 adım 2b)
+├── docs/
+│   ├── meb-ilkokul-matematik-2024.pdf  # (✓) resmî kaynak
+│   ├── meb-matematik-2024-metin.txt    # (✓) çıkarılmış metin, sayfa bölümlü
+│   ├── mufredat-kisitlari.md           # (✓) İHLAL EDİLEMEZ sınırlar
+│   ├── PLAN.md                         # (✓) bu belge
+│   └── PROGRESS.md                     # (✓) plan ↔ kod durum raporu
 ├── src/
-│   ├── content/                    # SAF VERİ
+│   ├── content/                    # SAF VERİ (✓)
 │   │   ├── kazanimlar.json         # 19 resmî çıktı + tema/saat
-│   │   ├── skills.json             # mikro düğümler + DAG
+│   │   ├── skills.json             # 57 mikro düğüm + DAG + şablon eşlemesi (TEK KAYNAK)
 │   │   ├── tr.json                 # UI metinleri + speech key'ler
-│   │   ├── senaryolar.json         # günlük yaşam problemleri
-│   │   ├── hints.json              # yapay zeka üretimi, insan onaylı
-│   │   ├── misconceptions.json
-│   │   └── schema/                 # Zod şemaları
+│   │   ├── senaryolar.json         # (⬜) günlük yaşam problemleri (M-ISLEM-HIKAYE)
+│   │   ├── hints.json              # (⬜) yapay zeka üretimi, insan onaylı
+│   │   ├── misconceptions.json     # (✓) 15 hata etiketi kataloğu
+│   │   └── schema/                 # (✓) Zod sınır doğrulayıcıları
 │   ├── exercises/                  # DETERMİNİSTİK JENERATÖRLER
-│   │   ├── types.ts registry.ts rng.ts distractors.ts
-│   │   └── templates/              # 17 şablon (§5.2)
-│   ├── progress/                   # mastery.ts scheduler.ts session.ts
-│   ├── persistence/                # db.ts repository.ts backup.ts migrations/
-│   ├── audio/                      # speech.ts unlock.ts audioManifest.generated.ts
-│   ├── design/                     # tokens.ts deviceProfile.ts
+│   │   ├── types.ts rng.ts distractors.ts   # (✓) sözleşme + tohumlu RNG + çeldirici
+│   │   ├── registry.ts             # (⬜) şablon kimliği → jeneratör haritası
+│   │   └── templates/              # 4/40 şablon (✓ say, karsilastir, ritmik, toplaGorsel)
+│   ├── progress/                   # (⬜) mastery.ts scheduler.ts session.ts (§6)
+│   ├── persistence/                # (⬜) db.ts repository.ts backup.ts migrations/ (§10)
+│   ├── audio/                      # (✓) speech.ts useSpeak.ts audioManifest.generated.ts
+│   ├── design/                     # (✓) tokens.ts deviceProfile.ts useDeviceProfile.ts
 │   ├── ui/
-│   │   ├── primitives/             # BigButton SpeakButton ChoiceCard Character
-│   │   ├── svg/                    # Manipulatives Rakam Sekiller OnlukCerceve
-│   │   ├── feedback/               # HintPanel Celebration
-│   │   └── layout/                 # GameShell SafeArea ReachZone
-│   ├── store/                      # session.ts progress.ts settings.ts
-│   └── dev/BoardHarness.tsx        # tahta simülasyonu (§13)
-├── scripts/
-│   ├── generate-audio.ts           # TTS hattı (Yelda/Piper/ElevenLabs)
-│   ├── generate-content.ts         # Claude ile senaryo/ipucu yazarlığı
-│   ├── validate-content.ts         # CI: şema + çapraz referans + DAG
-│   └── audit-assets.ts
-├── public/audio/{core,sayilar,temalar}/
-├── public/images/{maskot,nesneler,sahneler,ikonlar}/
-└── tests/{unit,e2e}/
+│   │   ├── primitives/             # (✓) BigButton SpeakButton ChoiceCard
+│   │   ├── svg/                    # (✓ kısmen) Visual Sprite positions · (⬜) Rakam OnlukCerceve SayiDogrusu Terazi Banknot
+│   │   ├── feedback/               # (⬜) HintPanel Celebration Maskot
+│   │   ├── layout/                 # (✓) GameShell
+│   │   └── screens/                # (✓) AudioUnlock ExerciseScreen TapCount TapToPlace · (⬜) AnaEkran Bahcem VeliPaneli KonuSecimi
+│   ├── store/                      # (⬜) Zustand: session.ts progress.ts settings.ts
+│   └── dev/                        # (✓) BoardHarness.tsx AudioProbe.tsx (§13)
+├── scripts/                        # (✓) generate-audio, audit-audio, validate-content, fetch-fonts · (⬜) generate-content
+├── public/
+│   ├── audio/{sayi,op,nesne,renk,soru,tema,ui,geri,yardim}/   # (✓) 171 klip
+│   └── fonts/                      # (✓) Andika latin + latin-ext
+└── tests/{unit,e2e}/               # (✓) generators.spec, board-geometry.spec
 ```
 
 **İçerik ayrı JSON'da.** Bir öğretmen/editör/script JSON üretebilir, TypeScript üretemez · `validate-content.ts` çapraz referansları doğrular · **kod deploy etmeden içerik güncellenebilir** · tip güvenliği Zod `z.infer` + üretilen union tipleriyle korunur.
@@ -597,23 +818,32 @@ Tahta 1 ay yok. Bu, tahta katmanını **ertelemek** için değil, **yazılımsal
 
 İlke: **en riskli parçayı önce kanıtla.** Kabuk işleri sona.
 
-| # | İş | Süre | Neden bu sırada |
-|---|---|---|---|
-| 0 | Vite iskeleti, `tokens.ts`, `deviceProfile.ts`, `BoardHarness`, tek `BigButton` | 1–2 g | Ölçek kararları en erken; tahta koruması baştan kurulur |
-| 1 | **Ses altyapısı:** `generate-audio.ts` (macOS Yelda ile), `SpeechService`, ses kilidi, 0–100 sayı klipleri, ilk 20 cümleyi dinle | 2–3 g | **En riskli parça.** Burada tökezlerse ürün fikri değişir |
-| 2 | **Soru jeneratörleri, saf TS, UI yok:** `M-SAY`, `M-KARSILASTIR`, `M-TOPLA-GORSEL`, `M-RITMIK`; property-based test + 200 soru gözle denetim | 2 g | Pedagojik doğruluk arayüzden bağımsız doğrulanır |
-| 3 | SVG manipülatifler: `NesneKümesi` (yerleşim algoritması), `OnlukÇerçeve`, `SayıDoğrusu`, `Rakam`, `SeçenekKartı` | 3 g | |
-| 4 | **Tek alıştırma ekranı şablonu** — uyaran + seçenek + seç/onayla + geri bildirim | 3 g | **En önemli kilometre taşı.** Burada ilk gerçek çocuk testi yapılabilir; ~2 hafta sonunda ürünün işe yarayıp yaramadığını biliyorsun |
-| 5 | Oturum motoru: 8 soru, ustalık, seçici, tekrar kuyruğu, DAG | 2–3 g | |
-| 6 | 3 kademeli yardım + hareketsizlik tetikleyicisi + hata taksonomisi | 2–3 g | |
-| 7 | Maskot durumları + kutlama + Bahçem | 2 g | |
-| 8 | İlk açılış, mod seçimi, avatar, ana ekran (7 tema), veli kapısı + panel | 2 g | Tahmin edilebilir iş, sona |
-| 9 | PWA, service worker, IndexedDB kalıcılık, **yedekleme** | 2 g | |
-| 10 | **Kalan 13 şablon** (geometri, ölçme, para, eşit işareti, ters işlem, veri) | 6–7 g | Altyapı kanıtlandıktan sonra hızlı ilerler |
-| 11 | Erişilebilirlik denetimi + **5 gerçek çocukla tablet testi** + düzeltme | 3 g | |
-| 12 | *(2. ay)* Fiziksel akıllı tahta doğrulaması + ölçek ayarı | 1–2 g | Erişim geldiğinde |
+Her adımın **"Bitti tanımı"** vardır: listedeki her madde doğrulanmadan adım kapanamaz
+ve bir sonraki adıma geçilemez. Durum sütunu bu repodaki gerçeği yansıtır; bir adımı
+bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 
-Kabaca **5–6 hafta / tek geliştirici.** Adım 4 sonunda (~2. hafta) çocuğa gösterilebilir gerçek bir deneyim var — erken sinyal noktası bu.
+| # | İş | Durum | Bitti tanımı |
+|---|---|---|---|
+| 0 | Vite iskeleti, `tokens.ts`, `deviceProfile.ts`, `BoardHarness`, tek `BigButton` | ✅ | `npm run build` geçer; `?device=board` üç profili değiştirir; BoardHarness erişim bölgesini çizer |
+| 1 | **Ses altyapısı:** `generate-audio.ts`, `SpeechService`, ses kilidi, 0–100 sayı klipleri | ✅ | 171 klip diskte; `npm run audio:audit` temiz; `speak({kind:'sequence'})` çalışır; ekran değişiminde ses kesilir |
+| 2 | **İlk 4 jeneratör, saf TS, UI yok:** `M-SAY`, `M-KARSILASTIR`, `M-TOPLA-GORSEL`, `M-RITMIK` | ✅ | Property-based testler geçer (determinizm, tek doğru, ≤20, müfredat üçlüleri); `npm run validate` temiz |
+| 2b | **CI kurulumu** (`.github/workflows/ci.yml`): push'ta `lint + test + validate + build`, PR'da ek olarak `e2e` (tahta geometrisi) | ⬜ | CI yeşil; geometri ihlali içeren kasıtlı commit CI'da KIRMIZI yanar (tuzak testiyle kanıtla) |
+| 3 | SVG manipülatifler: `NesneKümesi` (yerleşim algoritması §8), `OnlukÇerçeve`, `SayıDoğrusu`, `Rakam` (10 özel glif §3.4), `SeçenekKartı` | ✅/⚠ | 4 şablonun ihtiyacı karşılandı (`Visual.tsx`, `positions.ts`); Rakam glifleri MEB dik temel formuna göre ELDEN GEÇİRİLMEDİ — Adım 10 öncesi doğrula |
+| 4 | **Alıştırma ekranı** — uyaran + seçenek + seç/onayla + geri bildirim (§11 anatomi) | ✅ | 4 şablon ekranda oynanır; e2e tahta geometri testi geçer; **ilk gerçek çocuk testi burada yapılabilir** |
+| 5 | **Oturum motoru:** `src/progress/` → `mastery.ts` (§6.1 formüller + Leitner + yakınlık `q`), `scheduler.ts` (§6.4 kovalar + 5 sert kural), `session.ts` (8 soru yaşam döngüsü) | ⬜ | §15'teki ustalık senaryo testleri geçer; kova oranları 1000 simüle oturumda ±%5 tutar; sert kuralların her biri birim testli |
+| 6 | **Yardım akışı:** 3 kademe (§7.2) + hareketsizlik sayacı + hata taksonomisi bağlama (`diagnosticTag` → `remediation` kovası §6.6) | ⬜ | K1/K2/K3 senaryo testli; `GOREV_ANLASILMADI` ustalığı ETKİLEMEZ (testle kanıtla); 15/30/30 sn zamanlayıcılar ekran değişiminde sıfırlanır |
+| 7 | Maskot durumları (6 poz §7.5) + kutlama + Bahçem (§7.4) | ⬜ | Maskot 6 duruma geçer; kutlama ≤2 sn ve atlanabilir; çıkartma oturum SONUNA bağlı (doğru sayısına değil, testle) |
+| 8 | İlk açılış, mod seçimi, avatar, ana ekran (7 tema), tahta modu konu seçimi ([4b] §11), veli kapısı + panel (§11 liste) | ⬜ | §11 akışının tamamı gezilebilir; veli paneli 5 kalemi içerir; tahta modunda IndexedDB'ye yazılmadığı testle kanıtlı |
+| 9 | **Kalıcılık + PWA:** `src/persistence/` (§10 store'lar, `active_session`, migrasyon iskeleti, yedek), `vite-plugin-pwa` precache, `storage.persist()` | ⬜ | Çevrimdışı tam oturum e2e geçer; yedek dışa/içe aktarım e2e geçer; sayfa yenilenince duraklatılmış oturum kaldığı sorudan sürer; Lighthouse PWA kurulabilir raporu |
+| 10 | **Kalan 36 şablon** (§5.2'de ⬜ olanlar) + gerektirdikleri ses kümeleri (§4.5) + SVG varlıklar (banknot, terazi, ızgara, çetele) | ⬜ | Tema sırasına göre parti parti: T1 (3) → T2 kalanı (5) → T4 (9) → T3 (4) → T5 (2) → T6 (6) → T7 (4). Her şablon: jeneratör + property testi + ses klipleri + ekranda oynanabilir + `validate` temiz. 19 kazanımın TAMAMI kapsanınca kapanır |
+| 11 | **Dağıtım:** statik host (GitHub Pages veya Netlify) + `LICENSES.md` + "Kaynaklar" ekranı (§8) | ⬜ | Ürün herkese açık URL'de; çevrimdışı ikinci ziyaret çalışır; USB'den `file://` ile açılış denendi (PWA hariç çalışmalı) |
+| 12 | Erişilebilirlik denetimi + **5 gerçek çocukla tablet testi** + düzeltme | ⬜ | §15 elle doğrulama listesi işlenmiş; bulgular `docs/`e not edilmiş |
+| 13 | *(2. ay)* Fiziksel akıllı tahta doğrulaması + ölçek ayarı | ⬜ | §13'teki fiziksel test listesi; gerekirse yalnız `tokens.ts` ayarı |
+
+Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **36 şablon / ~3 haftaya** büyüdü
+(şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**
+Sıra bilinçli: kalıcılık (9), şablon seline (10) girmeden ÖNCE gelir — 36 şablon
+boyunca her oturum gerçek veri üretir ve motor gerçek koşulda pişer.
 
 **Sonraya bırakılanlar:** Türkçe ve Hayat Bilgisi dersleri (altyapı hazır, veri eklenerek gelir), tanılayıcı test, çoklu profil, öğretmen/sınıf modu.
 
@@ -629,12 +859,17 @@ npm test
 
 | Ne | Nasıl | Neden kritik |
 |---|---|---|
-| Soru jeneratörleri | Vitest **property-based**, 10.000 tohum: cevap doğru mu, sonuç ≤20 mi, negatif var mı, çeldirici cevaba eşit mi, ritmik sayma ≤100 mü | Bir aritmetik hatası 6 yaşındaki çocuğa yanlış öğretir |
-| Ustalık motoru | Senaryo testleri: "3 doğru tek günde ≠ mastered", "yanlış ilerlemeyi silmiyor", "aşınma doğru" | Yanlış ölçüm = yanlış içerik = ürün amacını kaçırır |
+| Soru jeneratörleri | Vitest **property-based**, 10.000 tohum: cevap doğru mu, sonuç ≤20 mi, negatif var mı, çeldirici cevaba eşit mi, ritmik üçlü müfredat listesinde mi, aynı tohum → birebir aynı soru mu | Bir aritmetik hatası 6 yaşındaki çocuğa yanlış öğretir |
+| Ustalık motoru | Senaryo testleri (asgari liste): ① aynı gün 3 doğru → `mastered` DEĞİL (distinctDays) ② 2 farklı günde 3'lü seri + strengthEff ≥0.85 → `mastered` ③ tek yanlış strength'in en çok %30'unu siler ④ 32 gün cevapsız box-5 düğüm → `rusty` ⑤ aynı gün 10 doğru kutuyu EN ÇOK 1 yükseltir ⑥ `GOREV_ANLASILMADI` cevabı strength/attempts'i DEĞİŞTİRMEZ ⑦ yakınlık şablonunda q asla 0 olmaz | Yanlış ölçüm = yanlış içerik = ürün amacını kaçırır |
+| Oturum seçici | 1000 simüle oturum: kova oranları ±%5; sert kuralların (§6.4) her biri ihlal senaryosuyla test edilir (ör. 2 ardışık yanlış → 3. soru `warmup` MI) | Seçici hataları sessizce yanlış zorlukta soru gösterir |
 | Migrasyon | `fixtures/progress-v1.json` → v2 → doğrula | Veri kaybı geri alınamaz |
 | İçerik bütünlüğü | `validate-content.ts`: DAG'da çevrim, eksik `imageId`/`speechKey`, kazanım referansları | Projedeki en çok hata yakalayan araç |
 | **Müfredat kapsamı** | 19 resmî kazanımın **her biri** en az bir şablona bağlı mı | Müfredat uyumu iddiasının tek kanıtı |
 | Tahta geometrisi | Playwright, 1920×1080 `board`: üst %35'te interaktif öğe yok, hedefler ≥102px | Elle test edilemeyen kuralın tek koruması |
+
+**CI (`.github/workflows/ci.yml`, §14 adım 2b):** her push'ta `npm run lint && npm test
+&& npm run validate && npm run build`; PR'da ek olarak Playwright e2e. "CI'da doğrulanır"
+diyen her kural ancak bu iş akışı kurulunca doğrulanmış sayılır.
 
 ### Uçtan uca (Playwright)
 
@@ -662,3 +897,6 @@ npm run dev
 3. **Piper kurulumu** Python 3.9 ile uyumlu mu; değilse `python3.11` veya `edge-tts` alternatifi.
 4. **`MAT.1.1.9` banknot görselleri** — TCMB koruması nedeniyle stilize temsil çizilmeli. Projedeki tek gerçek varlık riski.
 5. **`MAT.1.4.1` (veriye dayalı araştırma)** doğası gereği çok adımlı ve sınıf ortamına dönük — tek kişilik dijital alıştırmaya indirgenmesi programın ruhunu tam karşılamayabilir. Sadeleştirilmiş bir versiyon yapılıp sınırı açıkça kaydedilecek.
+6. **Tarayıcı depolama tahliyesi.** `storage.persist()` + PWA kurulumu + yedek (§10) riski azaltır ama sıfırlamaz; özellikle kurulmamış iOS Safari'de 7 gün kuralı yılın verisini silebilir. Karşı önlem davranışsal: veli panelindeki yedek uyarısı ve "ana ekrana ekle" yönergesi.
+7. **Hata görünürlüğü yok.** Tamamen çevrimdışı üründe telemetri yok; sınıfta çökerse kimse bilmez. İlk sürüm kararı: `window.onerror` → `events` store'una yerel kayıt + veli panelinde "sorun bildir" (hata özetini panoya kopyalar). Uzak toplama BİLİNÇLİ olarak yok (KVKK ve okul ağı kısıtları).
+8. **Kişisel veri notu.** Uygulama ad/soyad, fotoğraf, konum, hesap İSTEMEZ; tüm veri cihazda kalır, hiçbir sunucuya gitmez. Bu, KVKK yükünü pratikte sıfıra indirir ama okula resmî sunumda yazılı olarak beyan edilmeli — "Kaynaklar" ekranına tek paragraf gizlilik beyanı eklenir (§14 adım 11).
