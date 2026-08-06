@@ -21,12 +21,12 @@ Sıradaki iş **Adım 2b (CI)**, **Adım 2c (kayıt defteri)** ve **Adım 5 (otu
 | 0 | İskelet + tokens + cihaz profili + BoardHarness | ✅ |
 | 1 | Ses altyapısı (171 klip, SpeechService, ses kilidi) | ✅ |
 | 2 | İlk 4 jeneratör + property-based testler | ✅ |
-| 2b | CI iş akışı (`.github/workflows/ci.yml`) | ⬜ |
-| 2c | Şablon kayıt defteri (`src/exercises/registry.ts`, PLAN §5.4) | ⬜ |
+| 2b | CI iş akışı (`.github/workflows/ci.yml`) | ✅ |
+| 2c | Şablon kayıt defteri (`src/exercises/registry.ts`, PLAN §5.4) | ✅ |
 | 3 | SVG manipülatifler | ✅/⚠ (4 şablonun ihtiyacı var; Rakam glifleri MEB formuna göre doğrulanmadı) |
 | 4 | Alıştırma ekranı | ✅ (`ExerciseScreen`, `GameShell`, e2e geometri testi) |
-| 5 | Oturum motoru (`src/progress/`) | ⬜ — SIRADAKİ |
-| 6 | 3 kademeli yardım + hata taksonomisi akışı | ⬜ |
+| 5 | Oturum motoru (`src/progress/`) | ✅/⚠ (`mastery.ts`, `scheduler.ts`, `session.ts` yazıldı; 8 senaryo testi geçer; SAF; kova oranı testi gevşek — gerçekçi profil gerektirir) |
+| 6 | 3 kademeli yardım + hata taksonomisi akışı | ⬜ — SIRADAKİ |
 | 7 | Maskot + kutlama + Bahçem | ⬜ |
 | 8 | Kabuk ekranları (ana ekran, mod seçimi, veli paneli, tahta konu seçimi) | ⬜ |
 | 9 | Kalıcılık + PWA + yedekleme | ⬜ |

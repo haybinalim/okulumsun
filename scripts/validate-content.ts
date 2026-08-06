@@ -27,22 +27,14 @@ import path from 'node:path';
 import { kazanimlariDogrula, kazanimHaritasi } from '../src/content/schema/kazanim';
 import { skillGrafiniAyristir } from '../src/content/schema/skill';
 import { TUM_HATA_ETIKETLERI } from '../src/exercises/distractors';
-import { saySablonu } from '../src/exercises/templates/say';
-import { karsilastirGenerator } from '../src/exercises/templates/karsilastir';
-import { M_RITMIK } from '../src/exercises/templates/ritmik';
-import { toplaGorselJeneratoru } from '../src/exercises/templates/toplaGorsel';
+import { REGISTRY } from '../src/exercises/registry';
 import type { ExerciseGenerator } from '../src/exercises/types';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel: string): unknown => JSON.parse(readFileSync(path.join(ROOT, rel), 'utf8'));
 
-/** Uygulanmış jeneratörler — 'hazir' düğümlerin ancak bunlara bağlanması beklenir. */
-const JENERATORLER: readonly ExerciseGenerator[] = [
-  saySablonu,
-  karsilastirGenerator,
-  M_RITMIK,
-  toplaGorselJeneratoru,
-];
+/** Uygulanmış jeneratörler — kayıt defterinden (§5.4) tek kaynaktan okunur. */
+const JENERATORLER: readonly ExerciseGenerator[] = [...REGISTRY.values()];
 const UYGULANMIS_SABLONLAR = new Set(JENERATORLER.map((g) => g.templateId));
 
 /**

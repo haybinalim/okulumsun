@@ -583,7 +583,14 @@ Ustalık koşulu `strengthEff`e bakıyor olsaydı düğüm gece `mastered` olur,
 olmazdı — çocuğun bahçesindeki meyve çiçeğe geri dönerdi. Bu, planın en açık
 kendi kendiyle çelişkisiydi.
 
-**Ustalık koşulu:** `strength ≥ 0.85` **ve** `streak ≥ 3` **ve** `distinctDays ≥ 2`.
+**Ustalık koşulu:** `strength ≥ 0.85` **ve** `streak ≥ 3` **ve** `distinctDays ≥ 2`
+**ve** `strengthEff ≥ 0.55` (tazelik).
+
+Son şart, mastered düğümün aşınınca `rusty`'ye geçişini mümkün kılar: `strength`
+kendiliğinden azalmaz (yalnız cevapla değişir), ama `strengthEff` zamanla düşer.
+Tazelik eşiği olmazsa `rusty` durumuna ulaşılamaz — plan §15 senaryo ④ bunu
+gerektirir. `strength ≥ 0.85` koşulu hâlâ aşınmasızdır (kazanılmış ustalık geri
+alınmaz), yalnızca tazelik eklenir.
 
 Üç şart birlikte pratikte ≥5 doğru cevap ve ≥2 ayrı gün demektir
 (`skills.json`'daki `estimatedItemsToMastery` 10–14 ile tutarlı).
@@ -596,7 +603,7 @@ kaynak sayaçlardır; saklanan durum sayaçlarla tutarsızlaşır). Sıra öneml
 | # | Durum | Koşul |
 |---|---|---|
 | 1 | `struggling` | `attempts ≥ 6` **ve** `son6` içindeki başarı oranı `< 0.45` |
-| 2 | `mastered` | `strength ≥ 0.85` **ve** `streak ≥ 3` **ve** `distinctDays ≥ 2` |
+| 2 | `mastered` | `strength ≥ 0.85` **ve** `streak ≥ 3` **ve** `distinctDays ≥ 2` **ve** `strengthEff ≥ 0.55` |
 | 3 | `rusty` | Daha önce `mastered` olmuş (`enYuksekStrength ≥ 0.85`) **ve** şimdi `strengthEff < 0.55` |
 | 4 | `learning` | `attempts ≥ 1` |
 | 5 | `ready` | Tüm `hard` ön-koşulları `mastered` **veya** düğüm `isEntryPoint: true` |
@@ -1305,7 +1312,7 @@ Bir değeri değiştirmek istiyorsanız önce buradaki satırı ve gerekçesini 
 | `STRENGTH_AZALIS_KATSAYISI` | 0.30 | §6.1 |
 | `ZORLUK_KATSAYILARI` | [0.8, 0.9, 1.0, 1.1, 1.2] | §6.1 |
 | `HALF_LIFE` | [1, 2, 4, 8, 16, 32] gün | §6.1 |
-| `USTALIK_ESIGI` | **strength** ≥ 0.85 · streak ≥ 3 · distinctDays ≥ 2 (aşınmasız) | §6.1 |
+| `USTALIK_ESIGI` | **strength** ≥ 0.85 · streak ≥ 3 · distinctDays ≥ 2 · strengthEff ≥ 0.55 (tazelik) | §6.1 |
 | `RUSTY_ESIGI` | strengthEff < 0.55 | §6.1 |
 | `STRUGGLING_ESIGI` | attempts ≥ 6 · son6 başarı < 0.45 | §6.1 |
 | `BUYUME_ESIKLERI` (tohum/filiz/çiçek/meyve) | 0.25 / 0.55 / 0.85 / mastered | §6.1 |
