@@ -8,14 +8,15 @@ import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { randomPraise, randomRetry } from '../../audio/speech';
 import type { Exercise } from '../../exercises/types';
 import type { Accent } from '../../design/tokens';
+import { TapCountScreen } from './TapCountScreen';
+import { TapToPlaceScreen } from './TapToPlaceScreen';
 
 /**
- * Alıştırma ekranı — bir Exercise'i ekrana getirir (plan Adım 4).
+ * Alıştırma ekranı — bir Exercise'i kind'ına göre ilgili alt ekrana yönlendirir.
  *
- * Şimdilik AUDIO_TO_IMAGE (tek seçim) akışını yönetir; diğer etkileşim türleri
- * (TAP_COUNT, TAP_TO_PLACE) ayrı bileşenlere ayrılacak. Akış §7.3'ün "seç→onayla"
- * kuralını izler: çocuk önce bir şık dokunur (büyür + çerçeve), sonra "Onayla".
- * Bu, yanlışlıkla çift dokunuşu veri kirliliği olmaktan çıkarır.
+ * AUDIO_TO_IMAGE (M-KARSILASTIR, M-TOPLA-GORSEL, M-SAY pickOnly) bu dosyada;
+ * TAP_COUNT (M-SAY) ve TAP_TO_PLACE (M-RITMIK) ayrı ekranlarda. Her akış §7.3'ün
+ * "seç→onayla" kuralını izler: yanlışlıkla çift dokunuş veri kirliliği olmasın.
  */
 export function ExerciseScreen({
   exercise,
@@ -26,22 +27,19 @@ export function ExerciseScreen({
   accent: Accent;
   onDone: (dogruMu: boolean) => void;
 }) {
-  // Ekrana girince talimatı söyle, çıkınca kes (useScreenSpeech bunu yapar).
+  // Etkileşim türüne göre ilgili ekrana yönlendir.
+  if (exercise.kind === 'TAP_COUNT') {
+    return <TapCountScreen exercise={exercise} accent={accent} onDone={onDone} />;
+  }
+  if (exercise.kind === 'TAP_TO_PLACE') {
+    return <TapToPlaceScreen exercise={exercise} accent={accent} onDone={onDone} />;
+  }
+
+  // --- Aşağısı AUDIO_TO_IMAGE akışı ---
   useScreenSpeech(exercise.prompt.ses, [exercise.itemId]);
 
   const [seciliId, setSeciliId] = useState<string | null>(null);
   const [cozum, setCozum] = useState<'bos' | 'dogru' | 'tekrar'>('bos');
-
-  // AUDIO_TO_IMAGE dışındaki türler henüz bu ekranda desteklenmiyor.
-  if (exercise.kind !== 'AUDIO_TO_IMAGE') {
-    return (
-      <GameShell
-        accent={accent.hex}
-        stimulus={<p style={{ color: 'var(--color-ink-soft)' }}>{exercise.kind} henüz desteklenmiyor</p>}
-        interaction={<SpeakButton />}
-      />
-    );
-  }
 
   const dogruId = exercise.validation.dogruOptionId;
 

@@ -19,6 +19,7 @@ import type {
 } from '../../exercises/types';
 import { ACCENTS } from '../../design/tokens';
 import { Sprite } from './Sprite';
+import { nesneKonumlari } from './positions';
 
 /** Renk adını hex'e çevirir — ACCENTS tek kaynak (mor=turuncu=… haritaları çift tutmaz). */
 const RENK_HEX: Record<Renk, string> = Object.fromEntries(
@@ -159,8 +160,7 @@ function NesneKumesi({
   height: number;
 }) {
   const renk = spec.renk ? RENK_HEX[spec.renk] : undefined;
-  // Her yerleşim için normalize (0..1) konumlar üret; tek çizim yolu.
-  const yerler = yerlesimKonumlari(spec);
+  const yerler = nesneKonumlari(spec);
   const spriteSize = Math.min(width, height) * 0.22;
 
   return (
@@ -174,55 +174,6 @@ function NesneKumesi({
       ))}
     </svg>
   );
-}
-
-/** Yerleşim biçimine göre normalize konum dizisi üretir (deterministik). */
-function yerlesimKonumlari(spec: Extract<VisualSpec, { type: 'nesneKumesi' }>): readonly { x: number; y: number }[] {
-  const n = spec.adet;
-  if (spec.layout === 'dagınık' && spec.konumlar && spec.konumlar.length >= n) {
-    return spec.konumlar.slice(0, n);
-  }
-  if (spec.layout === 'onlukCerceve') {
-    // Onluk çerçeve: 5 sütun × 2 satır. [10,3] → 2 çerçeve.
-    return onlukKonumlari(spec.adet);
-  }
-  if (spec.layout === 'gruplu') {
-    // İki alt küme yan yana; her biri sira düzeninde.
-    const yarisi = Math.ceil(n / 2);
-    const sol = siraKonumlari(yarisi, 0.0, 0.42);
-    const sag = siraKonumlari(n - yarisi, 0.5, 1.0);
-    return [...sol, ...sag];
-  }
-  // 'sira' ve verilmeyen — tek blok düzenli ızgara.
-  return siraKonumlari(n, 0.04, 0.96);
-}
-
-/** n nesneyi soldan sağa, satırlara sararak [x0..x1] aralığna dizer. */
-function siraKonumlari(n: number, x0: number, x1: number): readonly { x: number; y: number }[] {
-  if (n <= 0) return [];
-  const sutun = Math.min(n, Math.max(1, Math.round(Math.sqrt(n))));
-  const satir = Math.ceil(n / sutun);
-  const adimX = sutun > 1 ? (x1 - x0) / (sutun - 1) : 0;
-  const adimY = satir > 1 ? 0.85 / (satir - 1) : 0;
-  const out: { x: number; y: number }[] = [];
-  for (let i = 0; i < n; i++) {
-    const r = Math.floor(i / sutun);
-    const c = i % sutun;
-    out.push({ x: x0 + c * adimX, y: 0.12 + r * adimY });
-  }
-  return out;
-}
-
-/** Onluk çerçeve konumları: 5 sütun × 2 satır, 10'dan sonrası yeni çerçeve. */
-function onlukKonumlari(n: number): readonly { x: number; y: number }[] {
-  const out: { x: number; y: number }[] = [];
-  for (let i = 0; i < n; i++) {
-    const kalan = i % 10;
-    const satir = Math.floor(kalan / 5);
-    const sutun = kalan % 5;
-    out.push({ x: 0.1 + sutun * 0.18, y: 0.12 + satir * 0.4 });
-  }
-  return out;
 }
 
 // ----------------------------------------------------------- onluk çerçeve
