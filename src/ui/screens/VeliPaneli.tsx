@@ -132,11 +132,25 @@ export function VeliPaneli() {
           Müfredat kaynağı: MEB 2024 Türkiye Yüzyılı Maarif Modeli, İlkokul
           Matematik Dersi Öğretim Programı.
         </p>
-        <p style={{ fontSize: 'var(--text-adult)', color: COLOR.inkSoft, margin: '8px 0 0' }}>
+        <p style={{ fontSize: 'var(--text-adult)', color: COLOR.inkSoft, margin: '8px 0 12px' }}>
           Ses klipleri: macOS `say` (geliştirme) / Piper TTS (üretim).
           Görseller: programatik SVG + Noto Color Emoji (SIL OFL).
           Bu uygulama hiçbir veriyi sunucuya göndermez; tüm veri cihazda kalır.
         </p>
+        <button
+          onClick={() => useAppStore.getState().ekranGit('kaynaklar')}
+          style={{
+            padding: '8px 16px',
+            fontSize: 'var(--text-adult)',
+            background: COLOR.surface,
+            color: COLOR.ink,
+            border: `1px solid ${COLOR.border}`,
+            borderRadius: 8,
+            cursor: 'pointer',
+          }}
+        >
+          Lisanslar ve gizlilik →
+        </button>
       </Bolum>
     </main>
   );

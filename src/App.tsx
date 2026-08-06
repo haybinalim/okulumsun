@@ -10,6 +10,7 @@ import { TemaGirisi } from './ui/screens/TemaGirisi';
 import { KonuSecimi } from './ui/screens/KonuSecimi';
 import { VeliKapisi } from './ui/screens/VeliKapisi';
 import { VeliPaneli } from './ui/screens/VeliPaneli';
+import { Kaynaklar } from './ui/screens/Kaynaklar';
 import { OturumSonu } from './ui/screens/OturumSonu';
 import { Bahcem } from './ui/screens/Bahcem';
 import { useAppStore, accentBul } from './store/appStore';
@@ -87,6 +88,7 @@ export default function App() {
         {ekran === 'konuSecimi' && <KonuSecimi />}
         {ekran === 'veliKapisi' && <VeliKapisi />}
         {ekran === 'veliPaneli' && <VeliPaneli />}
+        {ekran === 'kaynaklar' && <Kaynaklar />}
 
         {ekran === 'alistirma' && (
           <ExerciseScreen

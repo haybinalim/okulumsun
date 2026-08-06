@@ -2,22 +2,18 @@
 
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
-> Tarih: 6 Ağustos 2026 (Adım 10 — T7 partisi güncellemesi — ADIM 10 TAMAMLANDI)
+> Tarih: 6 Ağustos 2026 (Adım 11 — Dağıtım güncellemesi — ADIM 11 TAMAMLANDI)
 
 ## Yönetici özeti
 
-Proje, planın **§14 yol haritasında Adım 10 sonunda**: T1 (3), T2 (7), T4 (9),
-T3 (4), T5 (2), T6 (6) ve T7 (4) partileri tamamlandı. **39/39 şablon yazıldı**.
-19 kazanımın tamamı en az bir jeneratörle kapsanıyor. Tüm 7 etkileşim
-primitifi için jeneratör yazıldı (AUDIO_TO_IMAGE, TAP_TO_PLACE, TAP_COUNT,
-SEQUENCE_ORDER, MATCH_PAIRS, HOTSPOT_FIND, NUMBER_LINE).
+Proje, planın **§14 yol haritasında Adım 11 sonunda**: Dağıtım tamamlandı.
+LICENSES.md dosyası oluşturuldu, Kaynaklar ekranı (gizlilik beyanı + lisanslar)
+VeliPaneli'ne bağlandı, GitHub Pages deploy workflow'u eklendi. Vite base: './'
+zaten ayarlı (göreli yollar — USB, alt dizin, GitHub Pages uyumlu).
 
-HOTSPOT_FIND, MATCH_PAIRS, TAP_COUNT ve SEQUENCE_ORDER ekranları henüz
-ExerciseScreen'e bağlanmadı — jeneratörler çalışıyor ve test geçiyor ama
-bu etkileşim tipleri ekranda render edilmiyor. Bu iş Adım 10'un ekran
-bağlama fazında gelecek.
+39/39 şablon yazıldı, 19/19 kazanım kapsanıyor.
 
-Sıradaki iş **Adım 11 (Dağıtım)** — PWA deploy, gizlilik beyanı, kaynaklar.
+Sıradaki iş **Adım 12** — Erişilebilirlik denetimi + tablet testi.
 
 ## Yol haritası durumu (plan §14)
 
@@ -36,7 +32,7 @@ Sıradaki iş **Adım 11 (Dağıtım)** — PWA deploy, gizlilik beyanı, kaynak
 | 8 | Kabuk ekranları (ana ekran, mod seçimi, veli paneli, tahta konu seçimi) | ✅ (`appStore.ts` Zustand + `okulAyi.ts` §6.5 + 8 ekran: ModSecimi, AvatarSecimi, RenkSecimi, AnaEkran, TemaGirisi, KonuSecimi, VeliKapisi, VeliPaneli; 45 yeni test) |
 | 9 | Kalıcılık + PWA + yedekleme | ✅ (`db.ts` Dexie şema v1 + `repository.ts` (tahta modu no-op) + `backup.ts` dışa/içe + `persist.ts` storage.persist() + `migrations/` iskelet + vite-plugin-pwa precache; 33 yeni test) |
 | 10 | Kalan 35 şablon + ses kümeleri (§4.5) + SVG varlıklar | ✅ T1 ✅ + T2 ✅ + T4 ✅ + T3 ✅ + T5 ✅ + T6 ✅ + T7 ✅ — 39/39 şablon tamam |
-| 11 | Dağıtım + LICENSES + gizlilik beyanı | ⬜ |
+| 11 | Dağıtım + LICENSES + gizlilik beyanı | ✅ |
 | 12 | Erişilebilirlik + 5 çocukla tablet testi | ⬜ |
 | 13 | (2. ay) Fiziksel tahta doğrulaması | ⬜ |
 
