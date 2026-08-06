@@ -2,18 +2,20 @@
 
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
-> Tarih: 6 Ağustos 2026 (Adım 7 güncellemesi)
+> Tarih: 6 Ağustos 2026 (Adım 8 güncellemesi)
 
 ## Yönetici özeti
 
-Proje, planın **§14 yol haritasında Adım 7 sonunda**: maskot (6 durum), kutlama
-ve Bahçem ekranı eklendi. İlk 4 şablon jeneratörüyle, property-based testleriyle,
-oturum/ustalık motoruyla, yardım akışıyla ve ödül sistemiyle ekranda oynanabilir
-durumda. `validate-content.ts` çalışıyor, birim testleri yeşil.
+Proje, planın **§14 yol haritasında Adım 8 sonunda**: kabuk ekranları eklendi
+(mod seçimi, avatar, renk, ana ekran, tema girişi, konu seçimi, veli kapısı,
+veli paneli). §11 akışının tamamı gezilebilir durumda. Tahta modunda
+IndexedDB'ye yazılmadığı `persistenceEnabled` bayrağıyla testle kanıtlandı.
+İlk 4 şablon jeneratörüyle, property-based testleriyle, oturum/ustalık
+motoruyla, yardım akışıyla, ödül sistemiyle ve tam ekran akışıyla ekranda
+oynanabilir. `validate-content.ts` çalışıyor, birim testleri yeşil.
 
-Sıradaki iş **Adım 8 (kabuk ekranları)** ve **Adım 9 (kalıcılık + PWA)**.
-Henüz olmayan büyük parçalar: kalıcılık (IndexedDB + PWA), kabuk ekranları
-(ana ekran, mod seçimi, veli paneli, tahta konu seçimi) ve 35 şablon.
+Sıradaki iş **Adım 9 (kalıcılık + PWA + yedekleme)**.
+Henüz olmayan büyük parçalar: kalıcılık (IndexedDB + PWA) ve 35 şablon.
 
 ## Yol haritası durumu (plan §14)
 
@@ -29,7 +31,7 @@ Henüz olmayan büyük parçalar: kalıcılık (IndexedDB + PWA), kabuk ekranlar
 | 5 | Oturum motoru (`src/progress/`) | ✅/⚠ (`mastery.ts`, `scheduler.ts`, `session.ts` yazıldı; 8 senaryo testi geçer; SAF; kova oranı testi gevşek — gerçekçi profil gerektirir) |
 | 6 | 3 kademeli yardım + hata taksonomisi akışı | ✅ (`itemLifecycle.ts` saf makine + `useHelpTimer` hook + `TaniTakipcisi`; 23 yeni test) |
 | 7 | Maskot + kutlama + Bahçem | ✅ (`maskotState.ts` saf makine + `Maskot.tsx` SVG + `Celebration.tsx` + `cikartma.ts` + `Bahcem.tsx` + `OturumSonu.tsx`; 30 yeni test) |
-| 8 | Kabuk ekranları (ana ekran, mod seçimi, veli paneli, tahta konu seçimi) | ⬜ — SIRADAKİ |
+| 8 | Kabuk ekranları (ana ekran, mod seçimi, veli paneli, tahta konu seçimi) | ✅ (`appStore.ts` Zustand + `okulAyi.ts` §6.5 + 8 ekran: ModSecimi, AvatarSecimi, RenkSecimi, AnaEkran, TemaGirisi, KonuSecimi, VeliKapisi, VeliPaneli; 45 yeni test) |
 | 9 | Kalıcılık + PWA + yedekleme | ⬜ |
 | 10 | Kalan 35 şablon + ses kümeleri (§4.5) | ⬜ (4/39 tamam) |
 | 11 | Dağıtım + LICENSES + gizlilik beyanı | ⬜ |
@@ -38,7 +40,7 @@ Henüz olmayan büyük parçalar: kalıcılık (IndexedDB + PWA), kabuk ekranlar
 
 ## Teknik doğrulama (son çalıştırma: 6 Ağustos 2026)
 
-- `npm test` → ✅ 79/79 (jeneratör 5 + ustalık 14 + seçici 7 + madde yaşam döngüsü 23 + maskot 17 + çıkartma 13)
+- `npm test` → ✅ 124/124 (jeneratör 5 + ustalık 14 + seçici 7 + madde yaşam döngüsü 23 + maskot 17 + çıkartma 13 + okul ayı 15 + app store 30)
 - `npm run validate` → ✅ 19 kazanım · 57 beceri · 15/15 hata etiketi · 4 jeneratör
 - `npm run build` → ✅
 - `npm run lint` → ✅ 0 uyarı 0 hata
