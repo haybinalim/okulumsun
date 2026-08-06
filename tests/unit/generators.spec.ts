@@ -54,6 +54,12 @@ import { olcBirimUret } from '../../src/exercises/templates/olcBirim';
 import { olcTahminUret } from '../../src/exercises/templates/olcTahmin';
 import { paraTaniUret } from '../../src/exercises/templates/paraTani';
 import { paraSiralaUret } from '../../src/exercises/templates/paraSirala';
+import { geoAdlandirUret } from '../../src/exercises/templates/geoAdlandir';
+import { geoKenarKoseUret } from '../../src/exercises/templates/geoKenarKose';
+import { geoYapiUret } from '../../src/exercises/templates/geoYapi';
+import { geoAyirUret } from '../../src/exercises/templates/geoAyir';
+import { geoEsleUret } from '../../src/exercises/templates/geoEsle';
+import { geoSiniflaUret } from '../../src/exercises/templates/geoSinifla';
 
 /** Her jeneratörün altından geçirildiği tohum sayısı. Plan 10.000 ister; bu değer
  *  derleme/hata ayıklama döngüsünü hızlı tutar — CI'da yükseltilebilir. */
@@ -84,6 +90,7 @@ function beklenenDogruSayisi(ex: Exercise): number {
   if (ex.kind === 'TAP_TO_PLACE') return ex.yuvalar.length;
   if (ex.kind === 'SEQUENCE_ORDER') return ex.validation.dogruSira.length;
   if (ex.kind === 'MATCH_PAIRS') return ex.options.filter((o) => o.correct === true).length;
+  if (ex.kind === 'HOTSPOT_FIND') return ex.validation.dogruHotspotIds.length;
   return 1;
 }
 
@@ -280,4 +287,28 @@ test('M-PARA-TANI: değişmezler, determinizm, tek doğru korunuyor', () => {
 
 test('M-PARA-SIRALA: değişmezler, determinizm korunuyor', () => {
   jeneratoreiYokla('M-PARA-SIRALA', (p, rng) => paraSiralaUret(p, rng), 200);
+});
+
+test('M-GEO-ADLANDIR: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-GEO-ADLANDIR', (p, rng) => geoAdlandirUret(p, rng), Infinity);
+});
+
+test('M-GEO-KENAR-KOSE: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-GEO-KENAR-KOSE', (p, rng) => geoKenarKoseUret(p, rng), Infinity);
+});
+
+test('M-GEO-YAPI: değişmezler, determinizm, ≥1 doğru hotspot korunuyor', () => {
+  jeneratoreiYokla('M-GEO-YAPI', (p, rng) => geoYapiUret(p, rng), Infinity);
+});
+
+test('M-GEO-AYIR: değişmezler, determinizm, ≥1 doğru hotspot korunuyor', () => {
+  jeneratoreiYokla('M-GEO-AYIR', (p, rng) => geoAyirUret(p, rng), Infinity);
+});
+
+test('M-GEO-ESLE: değişmezler, determinizm korunuyor', () => {
+  jeneratoreiYokla('M-GEO-ESLE', (p, rng) => geoEsleUret(p, rng), Infinity);
+});
+
+test('M-GEO-SINIFLA: değişmezler, determinizm, ≥1 doğru hotspot korunuyor', () => {
+  jeneratoreiYokla('M-GEO-SINIFLA', (p, rng) => geoSiniflaUret(p, rng), Infinity);
 });

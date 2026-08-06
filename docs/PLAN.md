@@ -390,7 +390,7 @@ Hepsi metinsiz çalışır, hepsi **tek dokunma**:
 | `M-VERI-GRAFIK` | `MAT.1.4.1` | ✅ | Nesne grafiğini oku, soruyu cevapla ("en çok hangisi?") |
 
 **39 şablon, 19 kazanımın tamamını ve 57 beceri düğümünü kapsıyor** (kanıt:
-`npm run validate` müfredat kapsamını doğrular). 29 jeneratör yazıldı, **10 bekliyor**.
+`npm run validate` müfredat kapsamını doğrular). 35 jeneratör yazıldı, **4 bekliyor**.
 Sayı `src/content/skills.json`'daki BENZERSİZ `exerciseTemplates` değerlerinden sayılır;
 değiştiğinde bu cümle ve §14 adım 10 aynı commit'te güncellenir.
 

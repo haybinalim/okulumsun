@@ -265,6 +265,21 @@ export const AUDIO_MANIFEST = {
   'para.deger-kac': { file: 'para/deger-kac.m4a', core: false },
   'para.sirala-kucukten': { file: 'para/sirala-kucukten.m4a', core: false },
   'para.sirala-buyukten': { file: 'para/sirala-buyukten.m4a', core: false },
+  'sekil.ucgen': { file: 'sekil/ucgen.m4a', core: false },
+  'sekil.kare': { file: 'sekil/kare.m4a', core: false },
+  'sekil.dikdortgen': { file: 'sekil/dikdortgen.m4a', core: false },
+  'sekil.cember': { file: 'sekil/cember.m4a', core: false },
+  'sekil.yuvarlak': { file: 'sekil/yuvarlak.m4a', core: false },
+  'sekil.koseli': { file: 'sekil/koseli.m4a', core: false },
+  'sekil.kenar': { file: 'sekil/kenar.m4a', core: false },
+  'sekil.kose': { file: 'sekil/kose.m4a', core: false },
+  'soru-geo.hangisi-sekil': { file: 'soru-geo/hangisi-sekil.m4a', core: false },
+  'soru-geo.kac-kenar': { file: 'soru-geo/kac-kenar.m4a', core: false },
+  'soru-geo.kac-kose': { file: 'soru-geo/kac-kose.m4a', core: false },
+  'soru-geo.yuvarlak-mi-koseli-mi': { file: 'soru-geo/yuvarlak-mi-koseli-mi.m4a', core: false },
+  'soru-geo.sekli-bul': { file: 'soru-geo/sekli-bul.m4a', core: false },
+  'soru-geo.esleseni-bul': { file: 'soru-geo/esleseni-bul.m4a', core: false },
+  'soru-geo.siniflandir': { file: 'soru-geo/siniflandir.m4a', core: false },
 } as const satisfies Record<string, AudioClip>;
 
 /**

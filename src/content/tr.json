@@ -262,5 +262,28 @@
     "deger-kac": "Kaç lira?",
     "sirala-kucukten": "Küçükten büyüğe sırala.",
     "sirala-buyukten": "Büyükten küçüğe sırala."
+  },
+
+  "sekil": {
+    "$not": "Şekil adları — M-GEO-* şablonları.",
+    "ucgen": "üçgen",
+    "kare": "kare",
+    "dikdortgen": "dikdörtgen",
+    "cember": "çember",
+    "yuvarlak": "yuvarlak",
+    "koseli": "köşeli",
+    "kenar": "kenar",
+    "kose": "köşe"
+  },
+
+  "soru-geo": {
+    "$not": "M-GEO-* şablonu talimatları.",
+    "hangisi-sekil": "Hangisi bu şekil?",
+    "kac-kenar": "Kaç kenarı var?",
+    "kac-kose": "Kaç köşesi var?",
+    "yuvarlak-mi-koseli-mi": "Yuvarlak mı, köşeli mi?",
+    "sekli-bul": "Şekli bul.",
+    "esleseni-bul": "Eşleşeni bul.",
+    "siniflandir": "Şekilleri grupla."
   }
 }

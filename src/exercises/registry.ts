@@ -44,6 +44,12 @@ import { OLC_BIRIM_TEMPLATE_ID, olcBirimGenerator } from './templates/olcBirim';
 import { OLC_TAHMIN_TEMPLATE_ID, olcTahminGenerator } from './templates/olcTahmin';
 import { PARA_TANI_TEMPLATE_ID, paraTaniGenerator } from './templates/paraTani';
 import { PARA_SIRALA_TEMPLATE_ID, paraSiralaGenerator } from './templates/paraSirala';
+import { GEO_ADLANDIR_TEMPLATE_ID, geoAdlandirGenerator } from './templates/geoAdlandir';
+import { GEO_KENAR_KOSE_TEMPLATE_ID, geoKenarKoseGenerator } from './templates/geoKenarKose';
+import { GEO_YAPI_TEMPLATE_ID, geoYapiGenerator } from './templates/geoYapi';
+import { GEO_AYIR_TEMPLATE_ID, geoAyirGenerator } from './templates/geoAyir';
+import { GEO_ESLE_TEMPLATE_ID, geoEsleGenerator } from './templates/geoEsle';
+import { GEO_SINIFLA_TEMPLATE_ID, geoSiniflaGenerator } from './templates/geoSinifla';
 
 export const REGISTRY: ReadonlyMap<TemplateId, ExerciseGenerator> = new Map([
   [M_SAY_TEMPLATE_ID, saySablonu],
@@ -75,4 +81,10 @@ export const REGISTRY: ReadonlyMap<TemplateId, ExerciseGenerator> = new Map([
   [OLC_TAHMIN_TEMPLATE_ID, olcTahminGenerator],
   [PARA_TANI_TEMPLATE_ID, paraTaniGenerator],
   [PARA_SIRALA_TEMPLATE_ID, paraSiralaGenerator],
+  [GEO_ADLANDIR_TEMPLATE_ID, geoAdlandirGenerator],
+  [GEO_KENAR_KOSE_TEMPLATE_ID, geoKenarKoseGenerator],
+  [GEO_YAPI_TEMPLATE_ID, geoYapiGenerator],
+  [GEO_AYIR_TEMPLATE_ID, geoAyirGenerator],
+  [GEO_ESLE_TEMPLATE_ID, geoEsleGenerator],
+  [GEO_SINIFLA_TEMPLATE_ID, geoSiniflaGenerator],
 ]);

@@ -1405,7 +1405,7 @@
     ],
     "estimatedItemsToMastery": 12,
     "isEntryPoint": true,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.geometri.kenar-kose",
@@ -1436,7 +1436,7 @@
       "SEKIL_PROTOTIP"
     ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.geometri.sekil-adlandirma",
@@ -1461,7 +1461,7 @@
       "SEKIL_PROTOTIP"
     ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.geometri.dondurulmus-sekil",
@@ -1487,7 +1487,7 @@
       "SEKIL_PROTOTIP"
     ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.geometri.yapidaki-sekiller",
@@ -1517,7 +1517,7 @@
       "EKSIK_SAYMA"
     ],
     "estimatedItemsToMastery": 14,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.veri.gruplama",
