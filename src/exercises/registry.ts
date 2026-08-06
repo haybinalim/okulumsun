@@ -22,6 +22,13 @@ import { TOPLA_GORSEL_TEMPLATE_ID, toplaGorselJeneratoru } from './templates/top
 import { KONUM_TEMPLATE_ID, konumGenerator } from './templates/konum';
 import { ESLIK_TEMPLATE_ID, eslikGenerator } from './templates/eslik';
 import { YONERGE_TEMPLATE_ID, yonergeGenerator } from './templates/yonerge';
+import { RAKAM_TANI_TEMPLATE_ID, rakamTaniGenerator } from './templates/rakamTani';
+import { SIPSAK_TEMPLATE_ID, sipsakGenerator } from './templates/sipsak';
+import { SIRA_SAYI_TEMPLATE_ID, siraSayiGenerator } from './templates/siraSayi';
+import { TAHMIN_MIKTAR_TEMPLATE_ID, tahminMiktarGenerator } from './templates/tahminMiktar';
+import { ONLUK_COZUMLE_TEMPLATE_ID, onlukCozumleGenerator } from './templates/onlukCozumle';
+import { ORUNTU_SAYI_TEMPLATE_ID, oruntuSayiGenerator } from './templates/oruntuSayi';
+import { ORUNTU_SEKIL_TEMPLATE_ID, oruntuSekilGenerator } from './templates/oruntuSekil';
 
 export const REGISTRY: ReadonlyMap<TemplateId, ExerciseGenerator> = new Map([
   [M_SAY_TEMPLATE_ID, saySablonu],
@@ -31,4 +38,11 @@ export const REGISTRY: ReadonlyMap<TemplateId, ExerciseGenerator> = new Map([
   [KONUM_TEMPLATE_ID, konumGenerator],
   [ESLIK_TEMPLATE_ID, eslikGenerator],
   [YONERGE_TEMPLATE_ID, yonergeGenerator],
+  [RAKAM_TANI_TEMPLATE_ID, rakamTaniGenerator],
+  [SIPSAK_TEMPLATE_ID, sipsakGenerator],
+  [SIRA_SAYI_TEMPLATE_ID, siraSayiGenerator],
+  [TAHMIN_MIKTAR_TEMPLATE_ID, tahminMiktarGenerator],
+  [ONLUK_COZUMLE_TEMPLATE_ID, onlukCozumleGenerator],
+  [ORUNTU_SAYI_TEMPLATE_ID, oruntuSayiGenerator],
+  [ORUNTU_SEKIL_TEMPLATE_ID, oruntuSekilGenerator],
 ]);

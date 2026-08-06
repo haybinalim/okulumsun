@@ -328,15 +328,15 @@ Hepsi metinsiz çalışır, hepsi **tek dokunma**:
 | Şablon | Kazanım | Durum | Not |
 |---|---|---|---|
 | `M-SAY` | `MAT.1.1.1`, `.2`, `.7` | ✅ | **İki aşamalı:** önce dokunarak say, sonra rakam seç. Dokunma doğru/rakam yanlış = kardinalite sorunu. `layout: dağınık` sayma stratejisini ortaya çıkarır |
-| `M-RAKAM-TANI` | `MAT.1.1.1` | ⬜ | Sesi dinle ("yedi"), rakam glifini seç |
-| `M-ONLUK-COZUMLE` | `MAT.1.1.1`, `.2` | ⬜ | 11–20 arası sayıyı onluk+birlik olarak çözümle (onluk çerçeve) |
-| `M-SIPSAK` | `MAT.1.1.2`, `.7` | ⬜ | Şipşak sayılama (subitizing): düzenli küme ≤1 sn gösterilir, saymadan tanınır |
-| `M-SIRA-SAYI` | `MAT.1.1.3` | ⬜ | Sıradaki kaçıncı (birinci…onuncu). Sıra sayısı ses klipleri ZORUNLU (§4.5) |
+| `M-RAKAM-TANI` | `MAT.1.1.1` | ✅ | Sesi dinle ("yedi"), rakam glifini seç |
+| `M-ONLUK-COZUMLE` | `MAT.1.1.1`, `.2` | ✅ | 11–20 arası sayıyı onluk+birlik olarak çözümle (onluk çerçeve) |
+| `M-SIPSAK` | `MAT.1.1.2`, `.7` | ✅ | Şipşak sayılama (subitizing): düzenli küme ≤1 sn gösterilir, saymadan tanınır |
+| `M-SIRA-SAYI` | `MAT.1.1.3` | ✅ | Sıradaki kaçıncı (birinci…onuncu). Sıra sayısı ses klipleri ZORUNLU (§4.5) |
 | `M-KARSILASTIR` | `MAT.1.1.4` | ✅ | çok / daha çok / az / daha az / eşit. Boyut-çeliştirmeli maddeler zorunlu (büyük nesne ≠ çok). Sembol YASAK |
 | `M-RITMIK` | `MAT.1.1.5` | ✅ | Dizide eksik sayı. Geçerli (yön, adım, sınır) üçlüleri YALNIZ mufredat-kisitlari §2'dekiler — genel jeneratör yazma |
-| `M-ORUNTU-SAYI` | `MAT.1.1.6` | ⬜ | Artan/azalan sayı örüntüsünde verilmeyen terim; en çok 6 terim |
-| `M-ORUNTU-SEKIL` | `MAT.1.1.6` | ⬜ | Tekrar eden şekil örüntüsünü sürdür |
-| `M-TAHMIN-MIKTAR` | `MAT.1.1.7` | ⬜ | Küme ~2 sn gösterilir, çocuk tahmin eder, sonra birlikte sayılır. **Doğru/yanlış yok — yakınlık ölçülür** (puanlama: §6.1) |
+| `M-ORUNTU-SAYI` | `MAT.1.1.6` | ✅ | Artan/azalan sayı örüntüsünde verilmeyen terim; en çok 6 terim |
+| `M-ORUNTU-SEKIL` | `MAT.1.1.6` | ✅ | Tekrar eden şekil örüntüsünü sürdür |
+| `M-TAHMIN-MIKTAR` | `MAT.1.1.7` | ✅ | Küme ~2 sn gösterilir, çocuk tahmin eder, sonra birlikte sayılır. **Doğru/yanlış yok — yakınlık ölçülür** (puanlama: §6.1) |
 
 **Tema 3 — Ölçme:**
 
@@ -390,7 +390,7 @@ Hepsi metinsiz çalışır, hepsi **tek dokunma**:
 | `M-VERI-GRAFIK` | `MAT.1.4.1` | ⬜ | Nesne grafiğini oku, soruyu cevapla ("en çok hangisi?") |
 
 **39 şablon, 19 kazanımın tamamını ve 57 beceri düğümünü kapsıyor** (kanıt:
-`npm run validate` müfredat kapsamını doğrular). 7 jeneratör yazıldı, **32 bekliyor**.
+`npm run validate` müfredat kapsamını doğrular). 14 jeneratör yazıldı, **25 bekliyor**.
 Sayı `src/content/skills.json`'daki BENZERSİZ `exerciseTemplates` değerlerinden sayılır;
 değiştiğinde bu cümle ve §14 adım 10 aynı commit'te güncellenir.
 

@@ -137,7 +137,7 @@
     ],
     "estimatedItemsToMastery": 10,
     "isEntryPoint": true,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.sayma.kardinalite",
@@ -258,7 +258,7 @@
       "EKSIK_SAYMA"
     ],
     "estimatedItemsToMastery": 12,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.sayi.rakam-tanima",
@@ -280,7 +280,7 @@
     ],
     "estimatedItemsToMastery": 14,
     "isEntryPoint": true,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.sayi.miktar-rakam-eslestirme",
@@ -376,7 +376,7 @@
       "KARDINALITE"
     ],
     "estimatedItemsToMastery": 18,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.sayi.sira-sayisi",
@@ -406,7 +406,7 @@
       "GOREV_ANLASILMADI"
     ],
     "estimatedItemsToMastery": 14,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.karsilastirma.sezgisel",
@@ -688,7 +688,7 @@
     ],
     "estimatedItemsToMastery": 14,
     "isEntryPoint": true,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.oruntu.artan-sayi",
@@ -722,7 +722,7 @@
       "FAZLA_SAYMA"
     ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.oruntu.azalan-sayi",
@@ -752,7 +752,7 @@
       "ISLEM_YONU"
     ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.olcme.uzunluk-kiyas",

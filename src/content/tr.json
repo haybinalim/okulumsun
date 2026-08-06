@@ -170,5 +170,53 @@
     "$not": "M-YONERGE şablonu talimatları.",
     "hedefe-git": "Hedefe ulaşmak için adımları sırayla seç.",
     "dinle-ve-uygula": "Yönergeyi dinle ve uygula."
+  },
+
+  "sira": {
+    "$not": "Sıra sayıları — M-SIRA-SAYI şablonu. Tam kelime klipleri, 1-20.",
+    "1": "birinci",
+    "2": "ikinci",
+    "3": "üçüncü",
+    "4": "dördüncü",
+    "5": "beşinci",
+    "6": "altıncı",
+    "7": "yedinci",
+    "8": "sekizinci",
+    "9": "dokuzuncu",
+    "10": "onuncu",
+    "11": "on birinci",
+    "12": "on ikinci",
+    "13": "on üçüncü",
+    "14": "on dördüncü",
+    "15": "on beşinci",
+    "16": "on altıncı",
+    "17": "on yedinci",
+    "18": "on sekizinci",
+    "19": "on dokuzuncu",
+    "20": "yirminci"
+  },
+
+  "tahmin": {
+    "$not": "Tahmin şablonları (M-TAHMIN-MIKTAR, M-TAHMIN-ISLEM, M-OLC-TAHMIN).",
+    "kac-tahmin": "Sence kaç tane var?",
+    "harika-tahmin": "Harika tahmin!",
+    "yaklastin": "Çok yaklaştın!",
+    "birlikte-sayalim": "Haydi birlikte sayalım."
+  },
+
+  "oruntu": {
+    "$not": "Örüntü şablonları (M-ORUNTU-SAYI, M-ORUNTU-SEKIL).",
+    "sirada-ne-var": "Sırada ne var?",
+    "devam-ettir": "Örüntüyü sürdür."
+  },
+
+  "soru-rakam": {
+    "$not": "M-RAKAM-TANI şablonu talimatları.",
+    "dinle-sec": "Sesi dinle, rakamı seç."
+  },
+
+  "soru-sipsak": {
+    "$not": "M-SIPSAK şablonu talimatları — şipşak sayılama (subitizing).",
+    "kac-tane-hizli": "Hızlıca kaç tane gördün?"
   }
 }

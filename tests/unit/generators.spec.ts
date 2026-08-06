@@ -32,6 +32,13 @@ import { uretToplaGorsel } from '../../src/exercises/templates/toplaGorsel';
 import { konumUret } from '../../src/exercises/templates/konum';
 import { eslikUret } from '../../src/exercises/templates/eslik';
 import { yonergeUret } from '../../src/exercises/templates/yonerge';
+import { rakamTaniUret } from '../../src/exercises/templates/rakamTani';
+import { sipsakUret } from '../../src/exercises/templates/sipsak';
+import { siraSayiUret } from '../../src/exercises/templates/siraSayi';
+import { tahminMiktarUret } from '../../src/exercises/templates/tahminMiktar';
+import { onlukCozumleUret } from '../../src/exercises/templates/onlukCozumle';
+import { oruntuSayiUret } from '../../src/exercises/templates/oruntuSayi';
+import { oruntuSekilUret } from '../../src/exercises/templates/oruntuSekil';
 
 /** Her jeneratörün altından geçirildiği tohum sayısı. Plan 10.000 ister; bu değer
  *  derleme/hata ayıklama döngüsünü hızlı tutar — CI'da yükseltilebilir. */
@@ -169,4 +176,32 @@ test('M-ESLIK: değişmezler, determinizm, tek doğru korunuyor', () => {
 
 test('M-YONERGE: değişmezler, determinizm, tek doğru korunuyor', () => {
   jeneratoreiYokla('M-YONERGE', (p, rng) => yonergeUret(p, rng), Infinity);
+});
+
+test('M-RAKAM-TANI: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-RAKAM-TANI', (p, rng) => rakamTaniUret(p, rng), 9);
+});
+
+test('M-SIPSAK: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-SIPSAK', (p, rng) => sipsakUret(p, rng), 10);
+});
+
+test('M-SIRA-SAYI: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-SIRA-SAYI', (p, rng) => siraSayiUret(p, rng), 10);
+});
+
+test('M-TAHMIN-MIKTAR: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-TAHMIN-MIKTAR', (p, rng) => tahminMiktarUret(p, rng), 20);
+});
+
+test('M-ONLUK-COZUMLE: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-ONLUK-COZUMLE', (p, rng) => onlukCozumleUret(p, rng), 20);
+});
+
+test('M-ORUNTU-SAYI: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-ORUNTU-SAYI', (p, rng) => oruntuSayiUret(p, rng), 20);
+});
+
+test('M-ORUNTU-SEKIL: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-ORUNTU-SEKIL', (p, rng) => oruntuSekilUret(p, rng), Infinity);
 });
