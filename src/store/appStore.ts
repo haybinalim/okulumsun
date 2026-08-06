@@ -2,13 +2,13 @@
  * UYGULAMA DURUMU — Zustand store (plan §10, §11).
  *
  * Tüm navigasyon, profil ve ayar durumu burada.
- * Kalıcılık (Adım 9) geldiğinde `persist` middleware eklenecek; şimdilik
- * in-memory çalışır.
+ * Kalıcılık (Adım 9): ayarlar repository.ts üzerinden IndexedDB'ye yazılır.
+ * Navigasyon durumu kalıcı DEĞİL — ekran geçici, yenilemede sıfırlanır.
  *
  * TAHTA MODU KURALI (plan §3.3, §11):
  *  · Tahta modunda HİÇBİR ŞEY IndexedDB'ye yazılmaz (`events` dahil).
  *  · Bu, `persistenceEnabled` bayrağıyla kod düzeyinde garanti edilir.
- *    Adım 9'da eklenecek persistence katmanı bu bayrağı kontrol edecek.
+ *    repository.ts tüm yazma fonksiyonlarında bu bayrağı kontrol eder.
  *  · Tahta modunda avatar/renk seçilmez, çıkartma/bahçe atlanır.
  */
 
@@ -112,6 +112,8 @@ interface AppStore {
   temaSec: (temaNo: number) => void;
   oturumuTamamla: () => void;
   sifirla: () => void;
+  // --- Kalıcılık (Adım 9)
+  profildenYukle: (profil: Partial<AppStore>) => void;
 }
 
 /**
@@ -190,4 +192,6 @@ export const useAppStore = create<AppStore>((set) => ({
     set({ oturumTamamlandi: true, ekran: 'oturumSonu', oncekiEkran: 'alistirma' }),
 
   sifirla: () => set({ ...baslangicDurumu }),
+
+  profildenYukle: (profil) => set(profil),
 }));

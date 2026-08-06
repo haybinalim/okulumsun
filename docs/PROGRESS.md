@@ -2,20 +2,20 @@
 
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
-> Tarih: 6 Ağustos 2026 (Adım 8 güncellemesi)
+> Tarih: 6 Ağustos 2026 (Adım 9 güncellemesi)
 
 ## Yönetici özeti
 
-Proje, planın **§14 yol haritasında Adım 8 sonunda**: kabuk ekranları eklendi
-(mod seçimi, avatar, renk, ana ekran, tema girişi, konu seçimi, veli kapısı,
-veli paneli). §11 akışının tamamı gezilebilir durumda. Tahta modunda
-IndexedDB'ye yazılmadığı `persistenceEnabled` bayrağıyla testle kanıtlandı.
-İlk 4 şablon jeneratörüyle, property-based testleriyle, oturum/ustalık
-motoruyla, yardım akışıyla, ödül sistemiyle ve tam ekran akışıyla ekranda
-oynanabilir. `validate-content.ts` çalışıyor, birim testleri yeşil.
+Proje, planın **§14 yol haritasında Adım 9 sonunda**: kalıcılık katmanı
+(IndexedDB/Dexie + repository + yedekleme + migrasyon iskeleti) ve PWA
+(vite-plugin-pwa precache + manifest) eklendi. Tüm veri cihazda kalır,
+sunucuya hiçbir şey gönderilmez. Tahta modunda hiçbir şey yazılmadığı
+repository fonksiyonlarındaki `persistenceEnabled` kontrolüyle testle
+kanıtlandı. Yedek dışa/içe aktarım çalışır; format doğrulaması manuel
+şema kontrolüyle yapılır (formatVersion 1).
 
-Sıradaki iş **Adım 9 (kalıcılık + PWA + yedekleme)**.
-Henüz olmayan büyük parçalar: kalıcılık (IndexedDB + PWA) ve 35 şablon.
+Sıradaki iş **Adım 10 (kalan 35 şablon)**.
+Henüz olmayan büyük parçalar: 35 şablon jeneratörü + ses klipleri.
 
 ## Yol haritası durumu (plan §14)
 
@@ -32,7 +32,7 @@ Henüz olmayan büyük parçalar: kalıcılık (IndexedDB + PWA) ve 35 şablon.
 | 6 | 3 kademeli yardım + hata taksonomisi akışı | ✅ (`itemLifecycle.ts` saf makine + `useHelpTimer` hook + `TaniTakipcisi`; 23 yeni test) |
 | 7 | Maskot + kutlama + Bahçem | ✅ (`maskotState.ts` saf makine + `Maskot.tsx` SVG + `Celebration.tsx` + `cikartma.ts` + `Bahcem.tsx` + `OturumSonu.tsx`; 30 yeni test) |
 | 8 | Kabuk ekranları (ana ekran, mod seçimi, veli paneli, tahta konu seçimi) | ✅ (`appStore.ts` Zustand + `okulAyi.ts` §6.5 + 8 ekran: ModSecimi, AvatarSecimi, RenkSecimi, AnaEkran, TemaGirisi, KonuSecimi, VeliKapisi, VeliPaneli; 45 yeni test) |
-| 9 | Kalıcılık + PWA + yedekleme | ⬜ |
+| 9 | Kalıcılık + PWA + yedekleme | ✅ (`db.ts` Dexie şema v1 + `repository.ts` (tahta modu no-op) + `backup.ts` dışa/içe + `persist.ts` storage.persist() + `migrations/` iskelet + vite-plugin-pwa precache; 33 yeni test) |
 | 10 | Kalan 35 şablon + ses kümeleri (§4.5) | ⬜ (4/39 tamam) |
 | 11 | Dağıtım + LICENSES + gizlilik beyanı | ⬜ |
 | 12 | Erişilebilirlik + 5 çocukla tablet testi | ⬜ |
@@ -40,9 +40,9 @@ Henüz olmayan büyük parçalar: kalıcılık (IndexedDB + PWA) ve 35 şablon.
 
 ## Teknik doğrulama (son çalıştırma: 6 Ağustos 2026)
 
-- `npm test` → ✅ 124/124 (jeneratör 5 + ustalık 14 + seçici 7 + madde yaşam döngüsü 23 + maskot 17 + çıkartma 13 + okul ayı 15 + app store 30)
+- `npm test` → ✅ 157/157 (jeneratör 5 + ustalık 14 + seçici 7 + madde yaşam döngüsü 23 + maskot 17 + çıkartma 13 + okul ayı 15 + app store 30 + kalıcılık 33)
 - `npm run validate` → ✅ 19 kazanım · 57 beceri · 15/15 hata etiketi · 4 jeneratör
-- `npm run build` → ✅
+- `npm run build` → ✅ (PWA service worker üretildi, 12 precache entry)
 - `npm run lint` → ✅ 0 uyarı 0 hata
 - CI → ⬜ yok (Adım 2b)
 
