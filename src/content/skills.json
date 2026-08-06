@@ -1548,7 +1548,7 @@
     ],
     "estimatedItemsToMastery": 12,
     "isEntryPoint": true,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.veri.cetele",
@@ -1578,7 +1578,7 @@
       "EKSIK_SAYMA"
     ],
     "estimatedItemsToMastery": 14,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.veri.siklik-tablosu",
@@ -1608,7 +1608,7 @@
       "TEK_KUMEYI_ALMA"
     ],
     "estimatedItemsToMastery": 14,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.veri.nesne-grafigi",
@@ -1638,6 +1638,6 @@
       "TEK_KUMEYI_ALMA"
     ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   }
 ]

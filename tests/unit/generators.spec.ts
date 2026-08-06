@@ -60,6 +60,10 @@ import { geoYapiUret } from '../../src/exercises/templates/geoYapi';
 import { geoAyirUret } from '../../src/exercises/templates/geoAyir';
 import { geoEsleUret } from '../../src/exercises/templates/geoEsle';
 import { geoSiniflaUret } from '../../src/exercises/templates/geoSinifla';
+import { veriGruplaUret } from '../../src/exercises/templates/veriGrupla';
+import { veriCeteleUret } from '../../src/exercises/templates/veriCetele';
+import { veriSiklikUret } from '../../src/exercises/templates/veriSiklik';
+import { veriGrafikUret } from '../../src/exercises/templates/veriGrafik';
 
 /** Her jeneratörün altından geçirildiği tohum sayısı. Plan 10.000 ister; bu değer
  *  derleme/hata ayıklama döngüsünü hızlı tutar — CI'da yükseltilebilir. */
@@ -91,6 +95,7 @@ function beklenenDogruSayisi(ex: Exercise): number {
   if (ex.kind === 'SEQUENCE_ORDER') return ex.validation.dogruSira.length;
   if (ex.kind === 'MATCH_PAIRS') return ex.options.filter((o) => o.correct === true).length;
   if (ex.kind === 'HOTSPOT_FIND') return ex.validation.dogruHotspotIds.length;
+  if (ex.kind === 'TAP_COUNT') return ex.options.filter((o) => o.correct === true).length;
   return 1;
 }
 
@@ -311,4 +316,20 @@ test('M-GEO-ESLE: değişmezler, determinizm korunuyor', () => {
 
 test('M-GEO-SINIFLA: değişmezler, determinizm, ≥1 doğru hotspot korunuyor', () => {
   jeneratoreiYokla('M-GEO-SINIFLA', (p, rng) => geoSiniflaUret(p, rng), Infinity);
+});
+
+test('M-VERI-GRUPLA: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-VERI-GRUPLA', (p, rng) => veriGruplaUret(p, rng), Infinity);
+});
+
+test('M-VERI-CETELE: değişmezler, determinizm, beklenen adet korunuyor', () => {
+  jeneratoreiYokla('M-VERI-CETELE', (p, rng) => veriCeteleUret(p, rng), 15);
+});
+
+test('M-VERI-SIKLIK: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-VERI-SIKLIK', (p, rng) => veriSiklikUret(p, rng), Infinity);
+});
+
+test('M-VERI-GRAFIK: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-VERI-GRAFIK', (p, rng) => veriGrafikUret(p, rng), Infinity);
 });

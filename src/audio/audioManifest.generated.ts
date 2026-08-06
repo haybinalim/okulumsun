@@ -280,6 +280,18 @@ export const AUDIO_MANIFEST = {
   'soru-geo.sekli-bul': { file: 'soru-geo/sekli-bul.m4a', core: false },
   'soru-geo.esleseni-bul': { file: 'soru-geo/esleseni-bul.m4a', core: false },
   'soru-geo.siniflandir': { file: 'soru-geo/siniflandir.m4a', core: false },
+  'veri.en-cok': { file: 'veri/en-cok.m4a', core: false },
+  'veri.en-az': { file: 'veri/en-az.m4a', core: false },
+  'veri.kac-tane': { file: 'veri/kac-tane.m4a', core: false },
+  'veri.cetele': { file: 'veri/cetele.m4a', core: false },
+  'veri.tablo': { file: 'veri/tablo.m4a', core: false },
+  'veri.grafik': { file: 'veri/grafik.m4a', core: false },
+  'soru-veri.grupla': { file: 'soru-veri/grupla.m4a', core: false },
+  'soru-veri.say-isaretle': { file: 'soru-veri/say-isaretle.m4a', core: false },
+  'soru-veri.tablo-doldur': { file: 'soru-veri/tablo-doldur.m4a', core: false },
+  'soru-veri.en-cok-hangisi': { file: 'soru-veri/en-cok-hangisi.m4a', core: false },
+  'soru-veri.en-az-hangisi': { file: 'soru-veri/en-az-hangisi.m4a', core: false },
+  'soru-veri.toplam-kac': { file: 'soru-veri/toplam-kac.m4a', core: false },
 } as const satisfies Record<string, AudioClip>;
 
 /**

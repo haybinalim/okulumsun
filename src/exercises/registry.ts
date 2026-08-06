@@ -50,6 +50,10 @@ import { GEO_YAPI_TEMPLATE_ID, geoYapiGenerator } from './templates/geoYapi';
 import { GEO_AYIR_TEMPLATE_ID, geoAyirGenerator } from './templates/geoAyir';
 import { GEO_ESLE_TEMPLATE_ID, geoEsleGenerator } from './templates/geoEsle';
 import { GEO_SINIFLA_TEMPLATE_ID, geoSiniflaGenerator } from './templates/geoSinifla';
+import { VERI_GRUPLA_TEMPLATE_ID, veriGruplaGenerator } from './templates/veriGrupla';
+import { VERI_CETELE_TEMPLATE_ID, veriCeteleGenerator } from './templates/veriCetele';
+import { VERI_SIKLIK_TEMPLATE_ID, veriSiklikGenerator } from './templates/veriSiklik';
+import { VERI_GRAFIK_TEMPLATE_ID, veriGrafikGenerator } from './templates/veriGrafik';
 
 export const REGISTRY: ReadonlyMap<TemplateId, ExerciseGenerator> = new Map([
   [M_SAY_TEMPLATE_ID, saySablonu],
@@ -87,4 +91,8 @@ export const REGISTRY: ReadonlyMap<TemplateId, ExerciseGenerator> = new Map([
   [GEO_AYIR_TEMPLATE_ID, geoAyirGenerator],
   [GEO_ESLE_TEMPLATE_ID, geoEsleGenerator],
   [GEO_SINIFLA_TEMPLATE_ID, geoSiniflaGenerator],
+  [VERI_GRUPLA_TEMPLATE_ID, veriGruplaGenerator],
+  [VERI_CETELE_TEMPLATE_ID, veriCeteleGenerator],
+  [VERI_SIKLIK_TEMPLATE_ID, veriSiklikGenerator],
+  [VERI_GRAFIK_TEMPLATE_ID, veriGrafikGenerator],
 ]);

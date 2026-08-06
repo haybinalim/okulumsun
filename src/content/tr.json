@@ -285,5 +285,25 @@
     "sekli-bul": "Şekli bul.",
     "esleseni-bul": "Eşleşeni bul.",
     "siniflandir": "Şekilleri grupla."
+  },
+
+  "veri": {
+    "$not": "Veri kavramları — M-VERI-* şablonları.",
+    "en-cok": "En çok hangisi var?",
+    "en-az": "En az hangisi var?",
+    "kac-tane": "Kaç tane var?",
+    "cetele": "Çetele yap.",
+    "tablo": "Tablo doldur.",
+    "grafik": "Grafiği oku."
+  },
+
+  "soru-veri": {
+    "$not": "M-VERI-* şablonu talimatları.",
+    "grupla": "Nesneleri grupla.",
+    "say-isaretle": "Say ve işaretle.",
+    "tablo-doldur": "Sıklık tablosunu doldur.",
+    "en-cok-hangisi": "En çok hangisi var?",
+    "en-az-hangisi": "En az hangisi var?",
+    "toplam-kac": "Toplam kaç tane var?"
   }
 }
