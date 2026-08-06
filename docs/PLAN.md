@@ -55,10 +55,12 @@ varsayımıyla yazılmıştır. Oturumlar arasında hafıza **yoktur**; bağlam 
    `toLocaleUpperCase('tr')` dışı büyütme (§3.4) · Lucide/Phosphor ikonları (§8) ·
    OpenMoji (§8 lisans) · sonucu 20'yi aşan işlem.
 6. **Dil.** Kod yorumları, commit mesajları ve kullanıcıya görünen tüm metin Türkçe.
-7. **Yeni şablon eklerken sıra:** `skills.json`'da düğüm/şablon zaten tanımlı →
-   gerekli ses anahtarlarını `tr.json`'a ekle (§4.5) → jeneratörü `src/exercises/templates/`
-   altına yaz (mevcut 4 şablonun dosya düzenini kopyala) → property-based test ekle →
-   `validate-content.ts`'te "uygulandı" listesine geçir → ekranda oynat, e2e geçir.
+7. **Yeni şablon eklerken** §5.5'teki 8 adımlı reçeteyi harfiyen izle. Kısa hâli:
+   ses anahtarları → gerekçe bloğu → saf jeneratör → property testi → kayıt defteri
+   (§5.4) → ekran → doğrulama zinciri.
+8. **Bir şeyi burada bulamıyorsan uydurma.** Plan bir sayı, eşik veya kural için sessizse
+   bu bir eksiktir: önce bu belgeye gerekçesiyle yaz, sonra kodla. "Uygulayıcının
+   takdirine bırakıldı" diyen tek bir yer yoktur; varsa hatadır ve kapatılmalıdır.
 
 ---
 
@@ -261,26 +263,37 @@ Kurallar:
 
 ### 4.5 Ses envanteri — şablon başına gerekli klip kümeleri
 
-Mevcut manifest (171 klip): `sayi.0–100`, işlemler (`op.arti/eksi/esit/kadar`),
-10 nesne adı, renkler, UI/geri bildirim cümleleri, tema girişleri. Bu envanter
-ilk 4 şablonu karşılar; **kalan şablonlar için şu kümeler ÜRETİLMEDEN o şablon
-yazılamaz** (jeneratör derlenir ama `validate-content.ts` eksik `speechKey`'de kırılır):
+Mevcut manifest (**171 klip**, diskte doğrulandı): `sayi.0–100` (101), `op.*` (4),
+`nesne.*` (10), `renk.*` (6), `soru.*` (14), `ui.*` (14), `geri.*` (9), `yardim.*` (6),
+`tema.*` (7). Bu envanter ilk 4 şablonu karşılar; **kalan şablonlar için şu kümeler
+ÜRETİLMEDEN o şablon yazılamaz** (jeneratör zaten DERLENMEZ: `SpeechKey` bir union tiptir
+ve manifestte olmayan anahtar tip hatası verir — bu, unutmayı imkânsız kılan bir korumadır).
 
 | Klip kümesi | Anahtarlar | Gereken şablon | Adet |
 |---|---|---|---|
 | Sıra sayıları | `sira.1` … `sira.20` ("birinci"…"yirminci") | `M-SIRA-SAYI` | 20 |
-| Yön/konum | `yon.ileri`, `yon.geri`, `yon.saga`, `yon.sola`, `yon.yukari`, `yon.asagi`, `konum.altinda`, `konum.ustunde`, `konum.icinde`, `konum.onunde`, `konum.arkasinda`, `konum.arasinda`, `sayi-adim.bir-adim` … | `M-KONUM`, `M-YONERGE` | ~15 |
-| Para | `para.lira`, `sayi.200` (manifestte yok!) | `M-PARA-TANI`, `M-PARA-SIRALA` | 2 |
+| Yön | `yon.ileri`, `yon.geri`, `yon.saga`, `yon.sola`, `yon.yukari`, `yon.asagi` | `M-YONERGE` | 6 |
+| Konum | `konum.altinda`, `konum.ustunde`, `konum.icinde`, `konum.onunde`, `konum.arkasinda`, `konum.arasinda`, `konum.yaninda`, `konum.disinda` | `M-KONUM` | 8 |
+| Adım | `adim.bir-adim`, `adim.iki-adim`, `adim.uc-adim`, `adim.dort-adim`, `adim.bes-adim` | `M-YONERGE` | 5 |
+| Para | `para.lira`, `sayi.200` (manifestte yok) | `M-PARA-TANI`, `M-PARA-SIRALA` | 2 |
 | Şekil adları | `sekil.ucgen`, `sekil.kare`, `sekil.dikdortgen`, `sekil.cember`, `sekil.yuvarlak`, `sekil.koseli`, `sekil.kenar`, `sekil.kose` | `M-GEO-*` | 8 |
-| Ölçme | `olcme.uzun`, `olcme.kisa`, `olcme.agir`, `olcme.hafif`, `olcme.atac`, `olcme.karis`, `olcme.blok` | `M-OLC-*` | ~7 |
-| Karşılaştırma ek | (mevcut: çok/az/eşit kontrol et) `kiyas.daha-cok`, `kiyas.daha-az` | `M-KARSILASTIR` | ~2 |
-| Veri | `veri.en-cok`, `veri.en-az`, `veri.kac-tane` + kategori adları | `M-VERI-*` | ~8 |
-| Şablon talimat cümleleri | her yeni şablon için 1–3 tam cümle (`soru.*`) | tümü | ~50 |
+| Ölçme | `olcme.uzun`, `olcme.kisa`, `olcme.agir`, `olcme.hafif`, `olcme.atac`, `olcme.karis`, `olcme.blok` | `M-OLC-*` | 7 |
+| Karşılaştırma ek | `kiyas.daha-cok`, `kiyas.daha-az`, `terim.esit`, `terim.esit-degil` | `M-KARSILASTIR` (şık sesleri) | 4 |
+| Veri | `veri.en-cok`, `veri.en-az`, `veri.kac-tane`, `veri.cetele`, `veri.tablo`, `veri.grafik` | `M-VERI-*` | 6 |
+| Eşitlik/denge | `esit.dengede`, `esit.dengede-degil`, `esit.ayni-mi` | `M-ESIT-DENGE` | 3 |
+| Örüntü | `oruntu.sirada-ne-var`, `oruntu.devam-ettir` | `M-ORUNTU-*` | 2 |
+| Tahmin | `tahmin.kac-tahmin`, `tahmin.harika-tahmin`, `tahmin.yaklastin`, `tahmin.birlikte-sayalim` | tahmin şablonları | 4 |
+| Şablon talimat cümleleri | Şablon başına 1–3 tam cümle (`soru.*`) | 35 şablon | ≤ 90 |
+
+**Toplam yeni klip: 75 sabit + en çok 90 talimat cümlesi ≈ 165.** Toplam manifest yaklaşık
+336 klipte kapanır. Şablon başına talimat cümlesi listesi, o şablon yazılırken §5.5 adım 2'de
+`tr.json`'a eklenir — hepsini önceden yazmak, yazılmayan şablonlar için ölü klip üretir.
 
 Üretim akışı değişmez: anahtarı `src/content/tr.json`'a ekle → `npm run audio`
-(yalnız hash'i değişeni üretir) → manifest ve `SpeechKey` tipi kendini günceller.
-**Sayı birleştirme kuralı geçerli:** sıra sayıları ve yönler TAM KELİME klipleridir,
-parçadan birleştirilmez (§4.3'teki prozodi kuralı).
+(yalnız hash'i değişeni üretir) → manifest ve `SpeechKey` tipi kendini günceller →
+`npm run audio:audit` ile diskteki dosya ↔ manifest eşleşmesini doğrula.
+**Sayı birleştirme kuralı geçerli:** sıra sayıları, yönler ve konum ifadeleri TAM KELİME
+klipleridir, parçadan birleştirilmez (§4.3'teki prozodi kuralı).
 
 ---
 
@@ -298,7 +311,7 @@ Hepsi metinsiz çalışır, hepsi **tek dokunma**:
 > `exerciseTemplates` alanıyla şablonlarına bağlıdır ve `validate-content.ts`
 > bu eşlemeyi CI'da doğrular. Aşağıdaki tablo o dosyanın insan-okur özetidir;
 > uygulama sırasında planın ilk taslağındaki 17 kaba şablon, tek tip etkileşim =
-> tek şablon ilkesiyle **40 ince şablona** bölündü (ör. eski `M-VERI` dört
+> tek şablon ilkesiyle **39 ince şablona** bölündü (ör. eski `M-VERI` dört
 > aşamasının her biri ayrı ekran ve ayrı ölçüm gerektirdiği için 4 şablona ayrıldı).
 > Tabloda ✅ = jeneratör yazıldı, ⬜ = `skills.json`'da tanımlı, jeneratör bekliyor.
 
@@ -376,8 +389,28 @@ Hepsi metinsiz çalışır, hepsi **tek dokunma**:
 | `M-VERI-SIKLIK` | `MAT.1.4.1` | ⬜ | Çeteleden sıklık tablosu doldur |
 | `M-VERI-GRAFIK` | `MAT.1.4.1` | ⬜ | Nesne grafiğini oku, soruyu cevapla ("en çok hangisi?") |
 
-**40 şablon, 19 kazanımın tamamını ve 57 beceri düğümünü kapsıyor** (kanıt:
-`npm run validate` müfredat kapsamını doğrular). 4 jeneratör yazıldı, 36 bekliyor.
+**39 şablon, 19 kazanımın tamamını ve 57 beceri düğümünü kapsıyor** (kanıt:
+`npm run validate` müfredat kapsamını doğrular). 4 jeneratör yazıldı, **35 bekliyor**.
+Sayı `src/content/skills.json`'daki BENZERSİZ `exerciseTemplates` değerlerinden sayılır;
+değiştiğinde bu cümle ve §14 adım 10 aynı commit'te güncellenir.
+
+**Şablon → etkileşim biçimi (`Exercise.kind`) eşlemesi.** Jeneratör hangi `Exercise`
+dalını üreteceğini burada bulur; bu seçim keyfî değildir, `Validation` dalını ve ekran
+bileşenini belirler. `ExerciseScreen` yalnız işaretli biçimleri bağlar; yeni bir biçim
+ilk kez kullanılıyorsa ekranını yazmak o şablonun işidir (§5.5 adım 7).
+
+| `kind` | Ekran | Şablonlar |
+|---|---|---|
+| `AUDIO_TO_IMAGE` | ✅ var | `M-KONUM`, `M-ESLIK`, `M-RAKAM-TANI`, `M-SIPSAK`, `M-SIRA-SAYI`, `M-KARSILASTIR`, `M-TAHMIN-MIKTAR`, `M-TOPLA-GORSEL`, `M-TOPLA-SEMBOL`, `M-CIKAR-GORSEL`, `M-CIKAR-SEMBOL`, `M-TAHMIN-ISLEM`, `M-ISLEM-HIKAYE`, `M-PARA-TANI`, `M-GEO-ADLANDIR`, `M-GEO-KENAR-KOSE`, `M-OLC-UZUNLUK`, `M-OLC-KUTLE`, `M-OLC-BIRIM`, `M-OLC-TAHMIN`, `M-VERI-GRAFIK` |
+| `TAP_COUNT` | ✅ var | `M-SAY`, `M-VERI-CETELE` |
+| `TAP_TO_PLACE` | ✅ var | `M-RITMIK`, `M-ONLUK-COZUMLE`, `M-ORUNTU-SAYI`, `M-ORUNTU-SEKIL`, `M-ESIT-DENGE`, `M-EKSIK-TOPLANAN`, `M-TOPLA-ONA-TUMLE`, `M-VERI-GRUPLA`, `M-VERI-SIKLIK` |
+| `MATCH_PAIRS` | ⬜ yazılacak | `M-GEO-ESLE`, `M-TERS-ISLEM` |
+| `SEQUENCE_ORDER` | ⬜ yazılacak | `M-PARA-SIRALA`, `M-YONERGE` |
+| `HOTSPOT_FIND` | ⬜ yazılacak | `M-GEO-YAPI`, `M-GEO-AYIR`, `M-GEO-SINIFLA` |
+| `NUMBER_LINE` | ⬜ yazılacak | (ilk sürümde şablon atanmadı; `M-RITMIK`'in görsel varyantı olarak değerlendirilecek) |
+
+Sıra da buradan çıkar: **`AUDIO_TO_IMAGE` şablonları önce yazılır** (ekranı hazır,
+en hızlı geri dönüş), sonra `TAP_TO_PLACE`, en son yeni ekran gerektiren dört biçim.
 
 ### 5.3 Üretim ayrımı
 
@@ -391,6 +424,73 @@ Yapay zeka (geliştirme anında, `scripts/generate-content.ts`, insan onaylı):
 - Nesne/sahne listeleri, kültürel uygunluk denetimi
 
 **Yapay zeka kesinlikle matematik sorusu üretmez.** Deterministik jeneratörün üstünlüğü: %100 doğruluk, tohumla tekrar üretilebilirlik (test ve hata analizi mümkün), 0ms gecikme, sıfır maliyet, tam çevrimdışı. Bir aritmetik hatası 6 yaşındaki çocuğa yanlış öğretir.
+
+### 5.4 Kayıt defteri ve tohum türetme
+
+Planlayıcı bir `skillId` seçer; **soruyu üreten şey şablon kayıt defteridir.**
+`src/exercises/registry.ts` bu iki dünyayı bağlayan TEK yerdir:
+
+```ts
+// src/exercises/registry.ts
+export const REGISTRY: ReadonlyMap<TemplateId, ExerciseGenerator> = new Map([
+  [M_SAY_TEMPLATE_ID, saySablonu],
+  [KARSILASTIR_TEMPLATE_ID, karsilastirGenerator],
+  [RITMIK_TEMPLATE_ID, M_RITMIK],
+  [TOPLA_GORSEL_TEMPLATE_ID, toplaGorselJeneratoru],
+]);
+```
+
+Kurallar (hepsi ZORUNLU):
+
+1. **Yeni şablonun son adımı buraya eklenmektir.** Kayıtlı olmayan şablon `assetReady = 0`
+   alır (§6.4) ve motor onu asla seçmez — yani yarım bir şablon uygulamayı kırmaz,
+   sadece görünmez olur. Bu, 35 şablonu tek tek eklemeyi güvenli kılan mekanizmadır.
+2. `validate-content.ts` şunu doğrular: `skills.json`'da `durum: "hazir"` olan her
+   düğümün her `exerciseTemplates` kaydı defterde vardır. Tersi serbesttir (defterde
+   olup düğümü `planlandi` olan şablon, geliştirme sırasında normaldir).
+3. Bir düğümün birden çok şablonu varsa seçim `rng.pick` ile yapılır — ama önce
+   `REGISTRY`de olmayanlar elenir.
+
+**Madde tohumu (`seed`) türetme — deterministik ve tekrarsız.** Aynı çocuğa aynı soruyu
+üst üste göstermemek ile "aynı tohum aynı soru" garantisini bir arada tutan tek formül:
+
+```ts
+seed = hash32(`${profilTohumu}|${skillId}|${templateId}|${dugumSayaci}`)
+```
+
+- `profilTohumu`: profil oluşturulurken bir kez üretilir, `learner_profile`'a yazılır.
+  İki çocuk aynı sırayla aynı soruları görmesin diye vardır.
+- `dugumSayaci`: bu düğümde şimdiye kadar sorulmuş madde sayısı (`attempts` değil —
+  `GOREV_ANLASILMADI` maddeleri de sayaçta ilerler, yoksa aynı soru tekrar gelir).
+- Üretilen `itemId` son 20 madde içinde varsa `dugumSayaci` bir artırılıp yeniden
+  denenir (en çok 5 kez); hâlâ çakışıyorsa madde olduğu gibi kabul edilir. Küçük
+  şablonlarda (ör. `M-ESLIK`) havuz gerçekten sınırlıdır; sonsuza dek denemek donma
+  demektir.
+- Tahta modunda `profilTohumu` yerine oturum başında üretilen geçici bir değer kullanılır
+  (profil yok, §3.3).
+
+### 5.5 Yeni şablon yazma — adım adım şablon
+
+Bu bölüm, "35 şablon" işini birbirini görmeyen oturumlarda tekrarlanabilir kılar.
+Kopyalanacak referans: `src/exercises/templates/karsilastir.ts` (en eksiksiz örnek).
+
+1. **Oku:** `skills.json`'da şablonu isteyen düğümler, `docs/mufredat-kisitlari.md`'nin
+   ilgili bölümü, `src/exercises/types.ts`'in ilgili `Validation` dalı.
+2. **Ses anahtarlarını ekle:** §4.5 tablosundan bu şablonun kümesi → `src/content/tr.json`
+   → `npm run audio`. Manifest ve `SpeechKey` tipi kendini günceller. **Bu adım atlanırsa
+   jeneratör derlenmez** (`SpeechKey` union'ında anahtar yoktur).
+3. **Dosya başına gerekçe bloğu yaz:** kazanım, müfredat sınırı, hangi mikro düğümleri
+   ölçtüğü, çeldirici etiketlerinin mantığı, bilinen eksikler. Diğer modeller bunu okuyacak.
+4. **Jeneratörü yaz:** saf fonksiyon, `Math.random()` yok, tüm rastgelelik `rng`'den ve
+   ayrı alt akışlardan (`rng.fork('sahne')`, `rng.fork('celdirici')`). Her yanlış şık
+   `diagnosticTag` taşır.
+5. **Property-based test ekle** (`tests/unit/generators.spec.ts` düzenini kopyala):
+   10.000 tohumda determinizm, tek doğru cevap, müfredat sınırı, `alistirmaIhlalleri(ex)`
+   boş dizi döndürür, her yanlış şıkta etiket var.
+6. **Kayıt defterine ekle** (§5.4) ve ilgili düğümlerin `durum`unu `hazir` yap.
+7. **Ekranda oynat:** gerekiyorsa `ExerciseScreen`'e `kind` dalını bağla.
+8. **Doğrulama zinciri:** `npm run lint && npm test && npm run validate && npm run build
+   && npm run e2e`. Beşi de yeşil olmadan şablon bitmiş sayılmaz.
 
 ---
 
@@ -409,6 +509,32 @@ doğru:  strength += 0.35 · zorlukKatsayısı · q · (1 − strength)
 yanlış: strength -= 0.30 · strength
 strengthEff = strength · 2^(−Δgün / halfLife[box])   // [1,2,4,8,16,32] gün
 ```
+
+**Formüldeki her terimin tam tanımı.** Hiçbiri uygulayıcının yorumuna bırakılmamıştır:
+
+| Terim | Tanım |
+|---|---|
+| `q = 1.00` | Doğru · hiç ipucu alınmadı · **hızlı** |
+| `q = 0.85` | Doğru · hiç ipucu alınmadı · hızlı değil |
+| `q = 0.45` | Doğru, ama K1 veya K2 yardımından sonra. **İlk deneme yanlış olan madde de buraya düşer** — §7.1'e göre ilk yanlıştan sonra K1 otomatik açılır, yani ikinci denemede verilen doğru cevap tanımı gereği ipuçludur |
+| `q = 0.20` | Doğru, K3'ten (tam gösterim) sonra |
+| `q = 0.00` | Madde yanlış kapandı (ikinci deneme de yanlış → doğru gösterildi) |
+| *kayıt yok* | `GOREV_ANLASILMADI` etiketli madde. `strength`, `box`, `streak`, `attempts` **hiç dokunulmaz** (misconceptions.json `skorlamaYokSay: true`) |
+| **hızlı** | `latencyMs ≤ exercise.estimatedSec · 1000`. Sabit bir saniye eşiği şablonlar arasında haksızlık olurdu; her madde kendi süre tahminini `ExerciseBase.estimatedSec` alanında zaten taşıyor |
+| `zorlukKatsayısı` | `[0.8, 0.9, 1.0, 1.1, 1.2][difficulty − 1]` — **düğümün** `skills.json`'daki `difficulty` alanı (maddenin `difficulty`si değil). Zor düğümdeki doğru cevap daha güçlü kanıttır |
+| `strength` | `[0, 1]` aralığında, yeni kayıtta `0`. Formül matematiksel olarak 1'i aşmaz, yine de yazmadan önce `clamp(0, 1)` uygulanır |
+| `Δgün` | `gunAnahtari(bugün) − gunAnahtari(lastAnsweredAt)` tam gün farkı |
+| `gunAnahtari` | **YEREL** saatle `YYYY-AA-GG`. UTC KULLANMA: 23:30'da çözülen soru ertesi güne yazılırsa `distinctDays` sahte biçimde şişer ve ustalık koşulu delinir |
+
+**Sayaçların güncellenmesi** (madde kapandığında, tam bir kez):
+
+| Sayaç | Kural |
+|---|---|
+| `attempts` | `+1` (yalnız `GOREV_ANLASILMADI` hariç) |
+| `streak` | `q ≥ 0.85` → `+1` · `q = 0` → `0` · aradaki `q` (ipuçlu doğru) → **değişmez** (ne artar ne sıfırlanır) |
+| `distinctDays` | `gunAnahtari(bugün) !== gunAnahtari(lastAnsweredAt)` ise `+1` |
+| `lastAnsweredAt` | Her kayıtta güncel zaman damgası |
+| `son6` | Son 6 maddenin `q ≥ 0.45` olup olmadığı — halka tampon, `struggling` tespiti için |
 
 **Leitner kutusu (`box`) — tam tanım.** `box ∈ {0..5}`, başlangıç `0`.
 Yalnız **günler arası** hareket eder (aynı gün içindeki tekrarlar kutuyu değiştirmez —
@@ -441,13 +567,89 @@ Geri bildirim de ikili değildir: her tahminden sonra gerçek değer birlikte sa
 
 Asimetri kasıtlı — yanlış cevap ilerlemenin çoğunu silmez. Çocuk asla "geri gitmiş" hissetmez.
 
-**Ustalık koşulu:** `strengthEff ≥ 0.85` **ve** `streak ≥ 3` **ve** `distinctDays ≥ 2`.
+**`strength` mi `strengthEff` mi — iki sayının işi ayrıdır.** Bu ayrım karıştırılırsa
+ustalık her gece kendiliğinden bozulur; aşağıdaki tablo bağlayıcıdır:
 
-Son şart kritik: tek oturumda 3 doğru "öğrendi" değil, "kısa süreli bellek". Bu tek şart sahte ustalığın çoğunu eler.
+| Nerede | Hangisi | Neden |
+|---|---|---|
+| Ustalık koşulu (`mastered`) | **`strength`** (aşınmasız) | Kazanılmış ustalık geri alınmaz |
+| Çocuğa gösterim (tohum→meyve) | **`strength`** | Bahçe bir gecede solmaz (§7.4) |
+| `rusty` tespiti | `strengthEff` | Unutma tam olarak buradan ölçülür |
+| `frontier` kovası aralığı, `urgency` | `strengthEff` | Planlama tazeliğe bakmalı |
 
-**Durumlar:** `locked` → `ready` → `learning` → `mastered`, ayrıca `rusty` ve `struggling` (6+ denemede <%45 → kök neden taraması).
+Sayısal kanıt (neden bu ayrım şart): `q = 1.00` ile 5 doğru → `strength = 0.884`.
+Aynı düğüm `box = 2` (halfLife 4 gün) iken bir gün sonra `strengthEff = 0.777`'ye düşer.
+Ustalık koşulu `strengthEff`e bakıyor olsaydı düğüm gece `mastered` olur, sabah
+olmazdı — çocuğun bahçesindeki meyve çiçeğe geri dönerdi. Bu, planın en açık
+kendi kendiyle çelişkisiydi.
 
-**Çocuğa gösterim: sayı yok, yüzde yok.** 4 seviye: tohum → filiz → çiçek → meyve.
+**Ustalık koşulu:** `strength ≥ 0.85` **ve** `streak ≥ 3` **ve** `distinctDays ≥ 2`.
+
+Üç şart birlikte pratikte ≥5 doğru cevap ve ≥2 ayrı gün demektir
+(`skills.json`'daki `estimatedItemsToMastery` 10–14 ile tutarlı).
+`distinctDays` şartı kritik: tek oturumda 3 doğru "öğrendi" değil, "kısa süreli bellek".
+Bu tek şart sahte ustalığın çoğunu eler.
+
+**Durum makinesi — tam tanım.** Durum saklanmaz, her okumada **türetilir** (tek gerçek
+kaynak sayaçlardır; saklanan durum sayaçlarla tutarsızlaşır). Sıra önemlidir, ilk eşleşen kazanır:
+
+| # | Durum | Koşul |
+|---|---|---|
+| 1 | `struggling` | `attempts ≥ 6` **ve** `son6` içindeki başarı oranı `< 0.45` |
+| 2 | `mastered` | `strength ≥ 0.85` **ve** `streak ≥ 3` **ve** `distinctDays ≥ 2` |
+| 3 | `rusty` | Daha önce `mastered` olmuş (`enYuksekStrength ≥ 0.85`) **ve** şimdi `strengthEff < 0.55` |
+| 4 | `learning` | `attempts ≥ 1` |
+| 5 | `ready` | Tüm `hard` ön-koşulları `mastered` **veya** düğüm `isEntryPoint: true` |
+| 6 | `locked` | Aksi hâlde |
+
+`enYuksekStrength` (gördüğü en yüksek `strength`) kayıtta tutulur — yoksa `rusty`,
+"hiç öğrenilmemiş" düğümden ayırt edilemez. `struggling` en üstte, çünkü kök neden
+taraması diğer her şeyi geçersiz kılar. `struggling`ten çıkış: `son6` oranı `≥ 0.45`.
+
+**Kayıt sözleşmesi ve saf fonksiyon imzası.** `src/progress/mastery.ts` içeriği
+**saf ve senkron**dur — `Date.now()`, IndexedDB veya rastgelelik ÇAĞIRMAZ; test
+edilebilirliğin tek garantisi budur. Zaman ve kalıcılık dışarıdan verilir:
+
+```ts
+export interface MasteryRecord {
+  readonly skillId: SkillId;
+  readonly strength: number;        // 0..1
+  readonly enYuksekStrength: number;// 0..1, rusty tespiti
+  readonly box: 0 | 1 | 2 | 3 | 4 | 5;
+  readonly streak: number;
+  readonly attempts: number;
+  readonly distinctDays: number;
+  readonly lastAnsweredAt: number | null;  // epoch ms
+  readonly son6: readonly boolean[];       // en fazla 6, sonuncu en yeni
+}
+
+export interface CevapOlayi {
+  readonly skillIds: readonly SkillId[];   // madde birden çok düğümü yoklar
+  readonly dogru: boolean;
+  readonly kullanilanYardimKademesi: 0 | 1 | 2 | 3;
+  readonly latencyMs: number;
+  readonly estimatedSec: number;
+  readonly nodeDifficulty: Difficulty;     // skills.json'daki düğüm zorluğu
+  readonly tani: HataEtiketi | null;
+  readonly yakinlik?: number;              // yalnız tahmin şablonları: e = |tahmin−gerçek|/max(gerçek,1)
+  readonly zamanMs: number;                // olayın zamanı — Date.now() İÇERİDE çağrılmaz
+}
+
+export function qHesapla(olay: CevapOlayi): number | null;   // null = skorlama yok
+export function masteryGuncelle(kayit: MasteryRecord, olay: CevapOlayi): MasteryRecord;
+export function durumTuret(
+  kayit: MasteryRecord, dugum: SkillNode, simdiMs: number,
+  onKosulDurumlari: ReadonlyMap<SkillId, MasteryDurumu>,
+): MasteryDurumu;
+```
+
+Bir madde birden çok `skillId` yokluyorsa (`Exercise.skillIds`) **her biri için ayrı ayrı,
+aynı `q` ile** güncellenir. Ağırlıklandırma yapılmaz: hangi düğümün ne kadar sorumlu
+olduğu ölçülemez, uydurulan ağırlık ölçümü bozar.
+
+**Çocuğa gösterim: sayı yok, yüzde yok.** 4 seviye — eşikler **`strength`** üzerinden
+(aşınmasız; bahçe bir gecede solmaz): tohum `< 0.25` · filiz `< 0.55` · çiçek `< 0.85` ·
+meyve `mastered`.
 
 ### 6.2 Ön-koşul grafiği
 
@@ -496,28 +698,97 @@ Matematikte hedef `readingLoad: 0` — rakamlar hariç metin yok. Bu, uygulamay�
 
 Oturum = **8 soru ≈ 5–7 dakika.** Sonsuz akış yok — 6–7 yaşta sürdürülen dikkat 10–15 dakika.
 
-| Kova | Oran | İçerik |
+Kova dağılımı **oturum başına sabit sayıdır**, yüzde değil. (Planın ilk taslağındaki
+%15/%45/%20/%15/%5 hedefleri 8 soruya tam bölünmüyordu ve uygulayıcıyı yuvarlama
+kararıyla baş başa bırakıyordu; aşağıdaki tablo o belirsizliği kapatır.)
+
+| Sıra | Kova | Adet | İçerik |
+|---|---|---|---|
+| 1 | `warmup` | **1** | `mastered`, düşük zorluk. Oturum **daima başarıyla açılır**. |
+| 2–5 | `frontier` | **4** | `learning`, `strengthEff` 0.3–0.85 |
+| 6 | `new` | **1** | `ready` düğüm. Oturum başına **en fazla 2** (yalnız devir yoluyla 2 olabilir) |
+| 7 | `review` | **1** | `rusty` **veya** Leitner vadesi gelmiş (§6.1) |
+| 8 | *kapanış* | **1** | `mastered` — sert kural 5: son izlenim başarı |
+| — | `remediation` | **0 / 2** | Tetiklenirse (§6.6) 2 soru alır ve `frontier` 4 → 2'ye iner |
+
+Uzun vadeli oran bu tablodan çıkar: frontier %50, diğerleri %12.5. §15'teki "1000 simüle
+oturumda ±%5" testi bu değerleri denetler — sapma yalnız **devirden** doğar.
+
+**Devir kuralı.** Bir kova aday bulamazsa (ör. hiç `rusty` düğüm yok) kotası şu sırayla
+devredilir: `review → frontier → new → warmup`. Hiçbir kova doldurulamıyorsa oturum
+daha kısa kapanır — **uydurma soru üretilmez.** Yeni profilin ilk oturumu doğal olarak
+`new` ağırlıklıdır (başka aday yoktur); "en fazla 2 yeni düğüm" tavanı burada bağlar
+ve oturumu 2 yeni düğümün tekrarlarıyla doldurur, 8 farklı yeni düğümle değil.
+
+**Skorlama.** Kova içinde adaylar `urgency × novelty × readingFit × assetReady ×
+interleave × difficultyFit` ile puanlanır. Her çarpan `[0, 1]` aralığındadır; **çarpanlardan
+biri 0 ise aday elenir** (`readingFit`, `assetReady` ve `novelty` bilerek sıfır
+verebilir — bu bir eleme mekanizmasıdır, zayıf bir puan değil). Tam tanımlar:
+
+| Çarpan | Formül | Neden |
 |---|---|---|
-| `warmup` | %15 (ilk 1–2) | Ustalaşılmış, kolay. Oturum **daima başarıyla açılır**. |
-| `frontier` | %45 | `learning`, `strengthEff` 0.3–0.85 |
-| `new` | %20 | `ready`, oturum başına **en fazla 2 yeni düğüm** |
-| `review` | %15 | `rusty` + Leitner vadesi gelmiş |
-| `remediation` | %5 (tetiklenirse %30) | Aktif hata etiketi olanlar |
+| `urgency` | `1 − strengthEff` (min 0.05) | Zayıf düğüm önce gelir |
+| `novelty` | Bu oturumda hiç sorulmadıysa `1.0`; 1 kez `0.5`; 2 kez `0.2`; 3+ `0` | Aynı düğümün oturuma hâkim olmasını engeller |
+| `readingFit` | `readingLoad ≤ readingLevel` → `1.0`, aksi `0` | Sert kural 1'in çarpan karşılığı (çift koruma) |
+| `assetReady` | Şablonun jeneratörü `registry.ts`'te kayıtlı **ve** gerekli ses anahtarları manifestte var → `1.0`, aksi `0` | Yazılmamış şablon asla seçilmez; 35 şablon eklenirken motor kırılmaz |
+| `interleave` | Son sorunun temasından farklı tema → `1.0`, aynı tema → `0.6` | Araya girmeli tekrar (interleaving) öğrenmeyi güçlendirir |
+| `difficultyFit` | `1 − |dugum.difficulty − hedefZorluk| / 5`, `hedefZorluk` = son 4 maddede ≥%75 doğruysa `+1`, ≤%25 doğruysa `−1`, aksi hâlde sabit; `1..5`e kelepçelenir | Akış (flow) bandında tutar |
 
-Skorlama: `urgency × novelty × readingFit × assetReady × interleave × difficultyFit`. En yüksek 3 aday arasından ağırlıklı rastgele — çocuk örüntüyü ezberlemesin.
+En yüksek 3 aday arasından **ağırlıklı rastgele** seçilir (ağırlık = puan). Rastgelelik
+`createRng(oturumTohumu)` alt akışından gelir; `Math.random()` burada da YASAK — aynı
+tohumla aynı oturum yeniden üretilebilmelidir (hata ayıklamanın tek yolu).
 
-**Sert kurallar:**
+**Sert kurallar** (skorlamadan ÖNCE uygulanır; skorlama yalnız hayatta kalan adaylara):
 1. `readingLoad > readingLevel` → asla göster**me**.
 2. Aynı düğüm üst üste 3'ten fazla → zorla tema değiştir.
 3. **2 ardışık yanlış → sonraki soru zorunlu `warmup`** (duygusal toparlanma).
-4. Bir düğümde 3 kez yanlış/destekli → 1 gün askıya al, en yakın ön-koşula in.
+4. Bir düğümde 3 kez yanlış/destekli → 1 gün askıya al (`askidaBitis` zaman damgası
+   `learner_mastery` kaydına yazılır), en yakın `hard` ön-koşula in.
 5. **Oturum daima ustalaşılmış bir soruyla biter** — son izlenim başarı.
+
+Çakışma sırası: **1 > 3 > 5 > 4 > 2**. Kural 1 hiçbir koşulda esnemez; 3 ile 5 aynı anda
+geçerliyse (7. soruda 2 ardışık yanlış) ikisi de `mastered` düğüm ister, çelişki yoktur.
+Kural 4'ün askı süresi dolmadan düğüm hiçbir kovada aday olamaz — ama askı **`review`
+kovasını boşaltabilir**, o zaman devir kuralı işler.
+
+**8 soruluk kilit varsayım.** `warmup` ve kapanış soruları `mastered` düğüm ister; yeni
+bir profilde hiç `mastered` düğüm YOKTUR. Bu durumda ikisi de sırasıyla "en yüksek
+`strength`e sahip düğüm"e düşer (hiç cevap yoksa: en düşük `difficulty` değerine sahip
+`isEntryPoint` düğüm). Aksi hâlde ilk oturum hiç kurulamazdı — bu kural yazılmazsa
+uygulayıcı burada takılır.
+
+**Kalıcılıkla ilişkisi.** `scheduler.ts` de **saftır**: girdisi `MasteryRecord[]`,
+`SkillNode[]`, oturum geçmişi ve `oturumTohumu`; çıktısı seçilmiş `skillId` + şablon +
+madde tohumu. Veritabanına `session.ts` yazar. Bu ayrım olmadan 1000 oturumluk
+simülasyon testi (§15) yazılamaz.
 
 ### 6.5 Seviye tespiti
 
 **İlk oturumda kalibrasyon testi YAPILMAZ.** İlk deneyimin başarısızlıkla başlaması en pahalı hata. Herkes kolaydan başlar, motor 2–3 oturumda yerini bulur.
 
 Veli kapısı arkasında tek soru: **"Okulun kaçıncı ayı?"** (Eylül…Haziran, ikonlu). Programın tema sırası bilindiği için bu tek cevap başlangıç noktasını isabetle ayarlar. Soğuk başlangıç böyle çözülür.
+
+**Okul ayı → açılan tema (tam eşleme).** Ders saatleri (§1) aya oranlanarak türetildi;
+ay seçildiğinde o aya kadarki temaların düğümleri `locked` yerine `ready`ye açılır
+(ön-koşulları da karşılanmışsa). Sonraki temalar normal ilerlemeyle açılır.
+
+| Okul ayı | Açılan temalar | Gerekçe (saat) |
+|---|---|---|
+| Eylül | 1 | 15 saat, yıl geometriyle başlar |
+| Ekim | 1–2 | Tema 2 başlar (57 saat, en uzun) |
+| Kasım | 1–2 | Tema 2 sürüyor |
+| Aralık | 1–3 | Tema 3 (18 saat) |
+| Ocak | 1–4 | Tema 4 başlar (50 saat) |
+| Şubat | 1–4 | Tema 4 sürüyor |
+| Mart | 1–5 | Tema 5 (7 saat) |
+| Nisan | 1–6 | Tema 6 (15 saat) |
+| Mayıs | 1–7 | Tema 7 (10 saat) — tümü açık |
+| Haziran | 1–7 | Tümü açık, `review` kovası ağırlıklı |
+
+Bu eşleme **yalnız kilit açar, ustalık uydurmaz**: açılan düğümler `ready` durumunda
+başlar, `strength = 0`. Çocuk Mart'ta başlasa bile Tema 1'i hiç çözmemiştir ve motor
+onu `new` kovasında sırayla sunar. Veli ayı yanlış girerse zarar sınırlıdır (fazla
+açılırsa ön-koşul DAG'ı yine sıralamayı korur; az açılırsa motor 2–3 oturumda ilerler).
 
 ### 6.6 Hata taksonomisi
 
@@ -559,6 +830,25 @@ Tetik: maskota dokunma **veya** 15 sn hareketsizlik (K1), +30 sn (K2), +30 sn (K
 
 Özü: **çocuk yardım istediği için bedel ödemez, ama sistem gerçek yeterliliği yine de doğru ölçer.**
 
+**Madde yaşam döngüsü — §7.1, §7.2 ve §6.1'i birleştiren tek makine.** Uygulayıcı bu
+tabloyu doğrudan koda çevirir; her satır bir geçiştir ve `q` yalnız "kapandı" satırlarında
+hesaplanır:
+
+| Durum | Olay | Sonraki durum | Yan etki |
+|---|---|---|---|
+| `bekliyor` | Ekran açıldı | `deneme1` | Talimat çalar, 15 sn hareketsizlik sayacı başlar |
+| `deneme1` | Onayla → doğru | **kapandı** | `q` = 1.00 / 0.85 / 0.45 / 0.20 (alınan en yüksek yardım kademesine göre) |
+| `deneme1` | Onayla → yanlış | `deneme2` | Amber geri bildirim; **K1 otomatik açılır** (§7.1); sayaçlar sıfırlanır |
+| `deneme1` | Maskota dokundu / 15 sn sessizlik | `deneme1` (K1) | Yardım kademesi 1; +30 sn sonra K2, +30 sn sonra K3 |
+| `deneme2` | Onayla → doğru | **kapandı** | `q = 0.45` (K1 zaten açık) veya K3 alındıysa `0.20` |
+| `deneme2` | Onayla → yanlış | **kapandı** | `q = 0.00`; doğru cevap gösterilir ve sesle açıklanır; **aynı soru tekrar sorulmaz** |
+| herhangi | K3 sonrası doğru dokunuş | **kapandı** | `q = 0.20`; kutlama TAM doğruyla aynı (§7.2) |
+| herhangi | `GOREV_ANLASILMADI` tespiti | **kapandı** | Skorlama yok (`q = null`); talimat tekrarlanır, madde tekrar kuyruğuna girer |
+
+Zamanlayıcı kuralları: sayaçlar **ekran değişiminde ve her dokunuşta** sıfırlanır;
+`deneme2`ye geçişte yeniden başlar; kademe geri gitmez (K2'den K1'e dönülmez).
+Kapanan madde `session.ts`'e tek bir `CevapOlayi` (§6.1) olarak bildirilir — **tam bir kez.**
+
 ### 7.3 Seç → Onayla
 
 Seçenek dokunuşu cevabı göndermez; seçenek büyür ve çerçevelenir, sağ altta Onayla belirir. Onaydan önce sınırsız değiştirilebilir. Akıllı tahtada kalibrasyon kayması yüzünden zorunlu. 2 seçenekli sorularda bile aynı kural.
@@ -580,6 +870,20 @@ Doğru cevap: 400–600ms, yeşil çerçeve + tik + %8 nabız + yükselen iki no
 Tek net işlevi: **sesin sahibi olmak.** Tüm sesli talimat ondan gelir; "kim konuşuyor" sorusunu çözer, yardım istemeyi doğallaştırır.
 
 **İnsan değil** (etnik/cinsiyet temsili ve tekinsiz vadi) · türü belirsiz, yuvarlak, tüylü · silueti asla değişmez, yalnız yüz ifadesi ve kol pozu (6 durum) · sabit sıcak turuncu · 16px'te bile tanınabilir.
+
+**Altı durum — tam liste.** Silüet ve renk sabit; değişen yalnız yüz ve kol:
+
+| Durum | Ne zaman | Yüz / kol |
+|---|---|---|
+| `sakin` | Varsayılan, çocuk düşünürken | Nötr gülümseme, kollar aşağıda. **Hareketsiz** — bekleyen çocuğu rahatsız etmez |
+| `konusuyor` | Talimat veya ipucu çalarken | Ağız senkron açılıp kapanır, bir kol işaret eder |
+| `dinliyor` | Çocuk seçim yaparken (seç→onayla arası) | Hafif öne eğik, kulak/baş yönelmiş |
+| `sevinmis` | Doğru cevap | Kollar yukarı, gözler kısılmış gülüş. ≤2 sn, sonra `sakin` |
+| `cesaretlendiriyor` | Yanlış cevap ve K1/K2/K3 | Nötr-sıcak, bir kol "devam" işareti. **ASLA üzgün değil** (§7.1) |
+| `uykulu` | 60 sn tam hareketsizlik (K3'ten sonra da cevap yok) | Gözler yarı kapalı, esneme. Çocuk oyundan kopmuşsa ekran onu suçlamaz |
+
+Geçişler yalnız bu tablodaki olaylarla tetiklenir; ara durum yoktur. `prefers-reduced-motion`
+açıkken poz değişir ama animasyon yoktur (anlık geçiş).
 
 **Asla:** üzülmez, ağlamaz, suçlamaz, gereksiz konuşmaz, bekletmez. Sessiz kalabilmesi en önemli özelliği.
 
@@ -648,6 +952,28 @@ Tek net işlevi: **sesin sahibi olmak.** Tüm sesli talimat ondan gelir; "kim ko
 
 `localStorage` yalnız: `activeProfileId`, `contentPackVersion`, `dbSchemaVersion`.
 
+**Dexie şema tanımı — birebir bu.** Sürüm numarası ve indeksler uygulayıcının seçimine
+bırakılmaz; farklı oturumlarda farklı şema yazılırsa migrasyon zinciri kopar:
+
+```ts
+// src/persistence/db.ts
+db.version(1).stores({
+  learner_mastery: 'skillId, box, lastAnsweredAt',   // skillId birincil anahtar
+  learner_profile: 'id',                              // tek kayıt: id = 'aktif'
+  active_session:  'id',                              // tek kayıt: id = 'aktif'
+  events:          '++seq, ts, skillId',              // halka tampon, son 2000
+  sessions:        'sessionId, bitisTs',              // son 90 gün
+});
+```
+
+`content_*` store'ları **yoktur** — içerik JSON'ları paketle birlikte gelir ve
+salt-okunurdur; IndexedDB'ye kopyalamak ikinci bir gerçek kaynak yaratır ve sürüm
+uyuşmazlığı üretir. İçerik sürümü `localStorage.contentPackVersion` ile izlenir.
+
+**Budama (ZORUNLU, aksi hâlde depolama sınırsız büyür):** her oturum kapanışında
+`events` 2000 kaydı aşarsa en eskiler silinir, `sessions` 90 günden eski kayıtları
+silinir. Silme oturum kapanışında yapılır — soru arasında yapılırsa çocuğu bekletir.
+
 **Duraklatılmış oturum (`active_session`).** §7.3 "geri butonu oturumu duraklatır,
 dönünce kaldığı sorudan devam" der — bu, uygulama tamamen kapansa da geçerli olmalı:
 
@@ -675,6 +1001,30 @@ dönünce kaldığı sorudan devam" der — bu, uygulama tamamen kapansa da geç
 **Migrasyon:** `src/persistence/migrations/` — sürüm başına ayrı dosya, eski tipler **dondurulur** (`types/progressV1.ts`). Uygulama güncellenince yılın verisi bozulmaz.
 
 **Yedekleme zorunlu, ilk sürümde.** Hesapsız mimarinin tek ciddi riski: tarayıcı verisi silinince yılın emeği gider. Veli kapısı arkasında tek düğmelik **JSON dışa/içe aktar**. Dışa aktarım dosya adı `okulumsun-yedek-YYYY-AA-GG.json`; içe aktarım Zod ile doğrulanır, sürümü eskiyse önce migrasyondan geçirilir, mevcut veriyle **birleştirilmez** — kullanıcıya "değiştir" onayı sorulur (veli ekranı, metin serbest).
+
+**Yedek dosyası biçimi — sürümler arası sözleşme:**
+
+```jsonc
+{
+  "format": "okulumsun-yedek",
+  "formatVersion": 1,          // yedek biçiminin sürümü
+  "dbSchemaVersion": 1,        // yazıldığı andaki Dexie şema sürümü
+  "olusturulmaTs": 1754400000000,
+  "uygulamaSurumu": "0.1.0",
+  "veri": {
+    "learner_profile": { },
+    "learner_mastery": [ ],
+    "sessions": [ ],
+    "events": [ ]              // isteğe bağlı; dosyayı küçük tutmak için atlanabilir
+  }
+}
+```
+
+İçe aktarım kuralları: `format` alanı eşleşmiyorsa dosya **reddedilir** (sessizce
+yorumlamaya çalışma) · `dbSchemaVersion` mevcut sürümden **büyükse** reddedilir
+("bu yedek daha yeni bir sürümle alınmış") · küçükse migrasyon zincirinden geçirilir ·
+`active_session` yedeğe **dahil edilmez** (yarım oturumu başka bir cihazda sürdürmenin
+anlamı yok ve tohum bağlamı taşınmaz).
 
 ---
 
@@ -774,7 +1124,7 @@ okulumsun/
 │   ├── exercises/                  # DETERMİNİSTİK JENERATÖRLER
 │   │   ├── types.ts rng.ts distractors.ts   # (✓) sözleşme + tohumlu RNG + çeldirici
 │   │   ├── registry.ts             # (⬜) şablon kimliği → jeneratör haritası
-│   │   └── templates/              # 4/40 şablon (✓ say, karsilastir, ritmik, toplaGorsel)
+│   │   └── templates/              # 4/39 şablon (✓ say, karsilastir, ritmik, toplaGorsel)
 │   ├── progress/                   # (⬜) mastery.ts scheduler.ts session.ts (§6)
 │   ├── persistence/                # (⬜) db.ts repository.ts backup.ts migrations/ (§10)
 │   ├── audio/                      # (✓) speech.ts useSpeak.ts audioManifest.generated.ts
@@ -828,21 +1178,22 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 1 | **Ses altyapısı:** `generate-audio.ts`, `SpeechService`, ses kilidi, 0–100 sayı klipleri | ✅ | 171 klip diskte; `npm run audio:audit` temiz; `speak({kind:'sequence'})` çalışır; ekran değişiminde ses kesilir |
 | 2 | **İlk 4 jeneratör, saf TS, UI yok:** `M-SAY`, `M-KARSILASTIR`, `M-TOPLA-GORSEL`, `M-RITMIK` | ✅ | Property-based testler geçer (determinizm, tek doğru, ≤20, müfredat üçlüleri); `npm run validate` temiz |
 | 2b | **CI kurulumu** (`.github/workflows/ci.yml`): push'ta `lint + test + validate + build`, PR'da ek olarak `e2e` (tahta geometrisi) | ⬜ | CI yeşil; geometri ihlali içeren kasıtlı commit CI'da KIRMIZI yanar (tuzak testiyle kanıtla) |
+| 2c | **Kayıt defteri** (`src/exercises/registry.ts`, §5.4) + `validate-content.ts`'e "hazır düğümün şablonu defterde mi" denetimi | ⬜ | 4 şablon defterde; `durum:"hazir"` bir düğümün şablonunu defterden silmek `npm run validate`'i KIRAR (kanıtla); defterde olmayan şablon `assetReady = 0` alır |
 | 3 | SVG manipülatifler: `NesneKümesi` (yerleşim algoritması §8), `OnlukÇerçeve`, `SayıDoğrusu`, `Rakam` (10 özel glif §3.4), `SeçenekKartı` | ✅/⚠ | 4 şablonun ihtiyacı karşılandı (`Visual.tsx`, `positions.ts`); Rakam glifleri MEB dik temel formuna göre ELDEN GEÇİRİLMEDİ — Adım 10 öncesi doğrula |
 | 4 | **Alıştırma ekranı** — uyaran + seçenek + seç/onayla + geri bildirim (§11 anatomi) | ✅ | 4 şablon ekranda oynanır; e2e tahta geometri testi geçer; **ilk gerçek çocuk testi burada yapılabilir** |
-| 5 | **Oturum motoru:** `src/progress/` → `mastery.ts` (§6.1 formüller + Leitner + yakınlık `q`), `scheduler.ts` (§6.4 kovalar + 5 sert kural), `session.ts` (8 soru yaşam döngüsü) | ⬜ | §15'teki ustalık senaryo testleri geçer; kova oranları 1000 simüle oturumda ±%5 tutar; sert kuralların her biri birim testli |
+| 5 | **Oturum motoru:** `src/progress/` → `mastery.ts` (§6.1 formüller + Leitner + yakınlık `q`), `scheduler.ts` (§6.4 kovalar + 5 sert kural), `session.ts` (8 soru yaşam döngüsü) | ⬜ | §15'teki ustalık senaryo testleri geçer; kova oranları 1000 simüle oturumda ±%5 tutar; sert kuralların her biri birim testli; `mastery.ts` ve `scheduler.ts` SAF (içlerinde `Date.now`, Dexie, `Math.random` yok — grep ile kanıtla) |
 | 6 | **Yardım akışı:** 3 kademe (§7.2) + hareketsizlik sayacı + hata taksonomisi bağlama (`diagnosticTag` → `remediation` kovası §6.6) | ⬜ | K1/K2/K3 senaryo testli; `GOREV_ANLASILMADI` ustalığı ETKİLEMEZ (testle kanıtla); 15/30/30 sn zamanlayıcılar ekran değişiminde sıfırlanır |
 | 7 | Maskot durumları (6 poz §7.5) + kutlama + Bahçem (§7.4) | ⬜ | Maskot 6 duruma geçer; kutlama ≤2 sn ve atlanabilir; çıkartma oturum SONUNA bağlı (doğru sayısına değil, testle) |
 | 8 | İlk açılış, mod seçimi, avatar, ana ekran (7 tema), tahta modu konu seçimi ([4b] §11), veli kapısı + panel (§11 liste) | ⬜ | §11 akışının tamamı gezilebilir; veli paneli 5 kalemi içerir; tahta modunda IndexedDB'ye yazılmadığı testle kanıtlı |
 | 9 | **Kalıcılık + PWA:** `src/persistence/` (§10 store'lar, `active_session`, migrasyon iskeleti, yedek), `vite-plugin-pwa` precache, `storage.persist()` | ⬜ | Çevrimdışı tam oturum e2e geçer; yedek dışa/içe aktarım e2e geçer; sayfa yenilenince duraklatılmış oturum kaldığı sorudan sürer; Lighthouse PWA kurulabilir raporu |
-| 10 | **Kalan 36 şablon** (§5.2'de ⬜ olanlar) + gerektirdikleri ses kümeleri (§4.5) + SVG varlıklar (banknot, terazi, ızgara, çetele) | ⬜ | Tema sırasına göre parti parti: T1 (3) → T2 kalanı (5) → T4 (9) → T3 (4) → T5 (2) → T6 (6) → T7 (4). Her şablon: jeneratör + property testi + ses klipleri + ekranda oynanabilir + `validate` temiz. 19 kazanımın TAMAMI kapsanınca kapanır |
+| 10 | **Kalan 35 şablon** (§5.2'de ⬜ olanlar) + gerektirdikleri ses kümeleri (§4.5) + SVG varlıklar (banknot, terazi, ızgara, çetele) | ⬜ | Tema sırasına göre parti parti: **T1 (3) → T2 kalanı (7) → T4 (9) → T3 (4) → T5 (2) → T6 (6) → T7 (4) = 35.** Her şablon §5.5'teki 8 adımı tamamlar. 19 kazanımın TAMAMI kapsanınca kapanır |
 | 11 | **Dağıtım:** statik host (GitHub Pages veya Netlify) + `LICENSES.md` + "Kaynaklar" ekranı (§8) | ⬜ | Ürün herkese açık URL'de; çevrimdışı ikinci ziyaret çalışır; USB'den `file://` ile açılış denendi (PWA hariç çalışmalı) |
 | 12 | Erişilebilirlik denetimi + **5 gerçek çocukla tablet testi** + düzeltme | ⬜ | §15 elle doğrulama listesi işlenmiş; bulgular `docs/`e not edilmiş |
 | 13 | *(2. ay)* Fiziksel akıllı tahta doğrulaması + ölçek ayarı | ⬜ | §13'teki fiziksel test listesi; gerekirse yalnız `tokens.ts` ayarı |
 
-Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **36 şablon / ~3 haftaya** büyüdü
+Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **35 şablon / ~3 haftaya** büyüdü
 (şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**
-Sıra bilinçli: kalıcılık (9), şablon seline (10) girmeden ÖNCE gelir — 36 şablon
+Sıra bilinçli: kalıcılık (9), şablon seline (10) girmeden ÖNCE gelir — 35 şablon
 boyunca her oturum gerçek veri üretir ve motor gerçek koşulda pişer.
 
 **Sonraya bırakılanlar:** Türkçe ve Hayat Bilgisi dersleri (altyapı hazır, veri eklenerek gelir), tanılayıcı test, çoklu profil, öğretmen/sınıf modu.
@@ -860,16 +1211,50 @@ npm test
 | Ne | Nasıl | Neden kritik |
 |---|---|---|
 | Soru jeneratörleri | Vitest **property-based**, 10.000 tohum: cevap doğru mu, sonuç ≤20 mi, negatif var mı, çeldirici cevaba eşit mi, ritmik üçlü müfredat listesinde mi, aynı tohum → birebir aynı soru mu | Bir aritmetik hatası 6 yaşındaki çocuğa yanlış öğretir |
-| Ustalık motoru | Senaryo testleri (asgari liste): ① aynı gün 3 doğru → `mastered` DEĞİL (distinctDays) ② 2 farklı günde 3'lü seri + strengthEff ≥0.85 → `mastered` ③ tek yanlış strength'in en çok %30'unu siler ④ 32 gün cevapsız box-5 düğüm → `rusty` ⑤ aynı gün 10 doğru kutuyu EN ÇOK 1 yükseltir ⑥ `GOREV_ANLASILMADI` cevabı strength/attempts'i DEĞİŞTİRMEZ ⑦ yakınlık şablonunda q asla 0 olmaz | Yanlış ölçüm = yanlış içerik = ürün amacını kaçırır |
-| Oturum seçici | 1000 simüle oturum: kova oranları ±%5; sert kuralların (§6.4) her biri ihlal senaryosuyla test edilir (ör. 2 ardışık yanlış → 3. soru `warmup` MI) | Seçici hataları sessizce yanlış zorlukta soru gösterir |
+| Ustalık motoru | Senaryo testleri — **sekizi de ZORUNLU**: ① aynı gün 3 doğru → `mastered` DEĞİL (`distinctDays`) ② 2 farklı günde `q=1.00` beş doğru → `strength ≥ 0.85` ve `mastered` ③ tek yanlış `strength`in EN ÇOK %30'unu siler ④ 32 gün cevapsız box-5 düğüm → `rusty` (0.925 → 0.463) ⑤ aynı gün 10 doğru kutuyu EN ÇOK 1 yükseltir ⑥ `GOREV_ANLASILMADI` cevabı `strength`/`attempts`/`box`ı DEĞİŞTİRMEZ ⑦ yakınlık şablonunda `q` asla 0 olmaz ⑧ `mastered` düğüm ertesi gün HÂLÂ `mastered` (aşınma ustalığı geri almaz — `strength` ↔ `strengthEff` ayrımı) | Yanlış ölçüm = yanlış içerik = ürün amacını kaçırır |
+| Oturum seçici | 1000 simüle oturum: kova oranları hedefe ±%5 (frontier %50, diğerleri %12.5 — §6.4); 5 sert kuralın her biri AYRI ihlal senaryosuyla test edilir (ör. 2 ardışık yanlış → 3. soru `warmup` MI; oturumun son sorusu `mastered` MI); boş kova devri oturumu 8'in altına düşürmüyor mu | Seçici hataları sessizce yanlış zorlukta soru gösterir |
 | Migrasyon | `fixtures/progress-v1.json` → v2 → doğrula | Veri kaybı geri alınamaz |
 | İçerik bütünlüğü | `validate-content.ts`: DAG'da çevrim, eksik `imageId`/`speechKey`, kazanım referansları | Projedeki en çok hata yakalayan araç |
 | **Müfredat kapsamı** | 19 resmî kazanımın **her biri** en az bir şablona bağlı mı | Müfredat uyumu iddiasının tek kanıtı |
 | Tahta geometrisi | Playwright, 1920×1080 `board`: üst %35'te interaktif öğe yok, hedefler ≥102px | Elle test edilemeyen kuralın tek koruması |
 
-**CI (`.github/workflows/ci.yml`, §14 adım 2b):** her push'ta `npm run lint && npm test
-&& npm run validate && npm run build`; PR'da ek olarak Playwright e2e. "CI'da doğrulanır"
-diyen her kural ancak bu iş akışı kurulunca doğrulanmış sayılır.
+**CI (`.github/workflows/ci.yml`, §14 adım 2b).** Dosya bu içerikle kurulur — "CI'da
+doğrulanır" diyen her kural ancak bu iş akışı yeşil olunca doğrulanmış sayılır:
+
+```yaml
+name: ci
+on:
+  push:
+  pull_request:
+jobs:
+  dogrula:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '24', cache: 'npm' }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run validate
+      - run: npm run build
+  e2e:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '24', cache: 'npm' }
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run e2e
+```
+
+Yalnız `chromium` indirilir (playwright.config.ts iki profilde de Chromium kullanır —
+doğrulanan şey tarayıcı motoru değil yerleşim geometrisidir). **Tuzak testi zorunlu:**
+CI kurulduktan sonra, üst %35'e kasten interaktif bir öğe koyan bir commit atılır ve
+`e2e` işinin KIRMIZI yandığı görülür; sonra geri alınır. Testin gerçekten koruduğu
+böyle kanıtlanır — yeşil CI, çalışan test demek değildir.
 
 ### Uçtan uca (Playwright)
 
@@ -900,3 +1285,66 @@ npm run dev
 6. **Tarayıcı depolama tahliyesi.** `storage.persist()` + PWA kurulumu + yedek (§10) riski azaltır ama sıfırlamaz; özellikle kurulmamış iOS Safari'de 7 gün kuralı yılın verisini silebilir. Karşı önlem davranışsal: veli panelindeki yedek uyarısı ve "ana ekrana ekle" yönergesi.
 7. **Hata görünürlüğü yok.** Tamamen çevrimdışı üründe telemetri yok; sınıfta çökerse kimse bilmez. İlk sürüm kararı: `window.onerror` → `events` store'una yerel kayıt + veli panelinde "sorun bildir" (hata özetini panoya kopyalar). Uzak toplama BİLİNÇLİ olarak yok (KVKK ve okul ağı kısıtları).
 8. **Kişisel veri notu.** Uygulama ad/soyad, fotoğraf, konum, hesap İSTEMEZ; tüm veri cihazda kalır, hiçbir sunucuya gitmez. Bu, KVKK yükünü pratikte sıfıra indirir ama okula resmî sunumda yazılı olarak beyan edilmeli — "Kaynaklar" ekranına tek paragraf gizlilik beyanı eklenir (§14 adım 11).
+
+---
+
+## 17. Ek: Sayısal Sabitler Sözlüğü
+
+Planın her yerine dağılmış sayılar burada tek tabloda. **Kodda çıplak sayı yazmayın** —
+bu sabitler `src/progress/constants.ts` ve `src/design/tokens.ts` içinde adlandırılır.
+Bir değeri değiştirmek istiyorsanız önce buradaki satırı ve gerekçesini değiştirin.
+
+| Sabit | Değer | Bölüm |
+|---|---|---|
+| `OTURUM_SORU_SAYISI` | 8 | §6.4 |
+| `KOVA_DAGILIMI` | warmup 1 · frontier 4 · new 1 · review 1 · kapanış 1 | §6.4 |
+| `OTURUM_BASI_YENI_DUGUM` | en fazla 2 | §6.4 |
+| `REMEDIATION_TETIK` | son 6 maddede aynı etiket ≥ 2 | §6.6 |
+| `REMEDIATION_SORU` | tetiklenince 2 (frontier'dan düşülür) | §6.4 |
+| `STRENGTH_ARTIS_KATSAYISI` | 0.35 | §6.1 |
+| `STRENGTH_AZALIS_KATSAYISI` | 0.30 | §6.1 |
+| `ZORLUK_KATSAYILARI` | [0.8, 0.9, 1.0, 1.1, 1.2] | §6.1 |
+| `HALF_LIFE` | [1, 2, 4, 8, 16, 32] gün | §6.1 |
+| `USTALIK_ESIGI` | **strength** ≥ 0.85 · streak ≥ 3 · distinctDays ≥ 2 (aşınmasız) | §6.1 |
+| `RUSTY_ESIGI` | strengthEff < 0.55 | §6.1 |
+| `STRUGGLING_ESIGI` | attempts ≥ 6 · son6 başarı < 0.45 | §6.1 |
+| `BUYUME_ESIKLERI` (tohum/filiz/çiçek/meyve) | 0.25 / 0.55 / 0.85 / mastered | §6.1 |
+| `YARDIM_GECIKMELERI` | 15 sn → +30 sn → +30 sn | §7.2 |
+| `MASKOT_UYKULU_SURESI` | 60 sn | §7.5 |
+| `ARDISIK_YANLIS_WARMUP` | 2 | §6.4 |
+| `DUGUM_ASKI_SURESI` | 3 başarısızlıktan sonra 1 gün | §6.4 |
+| `DOKUNMA_SOGUMASI` | 250 ms | §7.3 |
+| `KUTLAMA_SURESI` | ≤ 2 sn (doğru geri bildirimi 400–600 ms) | §7.1, §7.4 |
+| `KONFETI` | ≤ 40 parçacık, ≤ 1.5 sn, yalnız oturum sonu | §7.4, §9 |
+| `SES_HIZI` | normalden %10 yavaş, cümle arası 400 ms | §4.4 |
+| `SES_KUYRUK_UZUNLUGU` | 3 | §4.4 |
+| `SECENEK_SAYISI` | yıl başı 2 → 3 → yıl sonu 4 (asla > 4) | §11 |
+| `EVENTS_TAMPON` | 2000 kayıt | §10 |
+| `SESSIONS_SAKLAMA` | 90 gün | §10 |
+| `ACTIVE_SESSION_TAZELIK` | 24 saat | §10 |
+| `ERISIM_BOLGESI` | dokunulabilir her şey alt %65'te | §3.2 |
+| `HEDEF_BOYUTU` | tablet 64 px · board ×1.6 = 102 px · phone ×0.75 | §3.4 |
+| `KONTRAST` | metin ≥ 7:1 · grafik ≥ 4.5:1 | §9 |
+| `ISLEM_ARALIGI` | 0–20 (sonuç 20'yi aşamaz) | mufredat-kisitlari §2 |
+| `RITMIK_UST_SINIR` | 100 (yalnız ileri 1/5/10) | mufredat-kisitlari §2 |
+
+## 18. Ek: Planın Kendi Kendini Denetlemesi
+
+Bu plan koda yaslanır ve kod değiştikçe **bayatlar**. Aşağıdaki iddialar
+`npm run validate` tarafından makine olarak denetlenir; biri kırılırsa PLAN yanlıştır
+ve kodla birlikte AYNI commit'te düzeltilir (§0 kural 1).
+
+| # | İddia | Nerede denetlenir |
+|---|---|---|
+| 1 | `skills.json`'daki benzersiz şablon sayısı = **39** | `validate-content.ts` sayar ve rapor eder |
+| 2 | 19 resmî kazanımın her biri en az bir şablona bağlı | müfredat kapsam denetimi |
+| 3 | `misconceptions.json` etiketleri ↔ `distractors.ts` `HATA_ETIKETLERI` birebir (15) | etiket eşleşme denetimi |
+| 4 | `durum: "hazir"` her düğümün şablonu kayıt defterinde var | §5.4 kuralı (adım 2c'de eklenir) |
+| 5 | Her `speechKey` ses manifestinde var | `validate-content.ts` |
+| 6 | Ön-koşul grafiğinde çevrim yok | `validate-content.ts` |
+| 7 | Ritmik sayma üçlüleri yalnız `RITMIK_SAYMA_BICIMLERI` içinde | `types.ts` tip düzeyi + property testi |
+
+**Bayatlık kontrolü — her adımın sonunda 60 saniye:** `npm run validate` çıktısındaki
+sayıları (kazanım · beceri · etiket · jeneratör) §5.2, §14 ve `PROGRESS.md` ile karşılaştır.
+Uyuşmuyorsa belgeyi düzelt. Bu, geçmişte `PROGRESS.md`'nin dört commit boyunca yanlış
+kalmasına yol açan hatanın tekrarını önler.

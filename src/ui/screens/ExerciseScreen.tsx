@@ -34,8 +34,28 @@ export function ExerciseScreen({
   if (exercise.kind === 'TAP_TO_PLACE') {
     return <TapToPlaceScreen exercise={exercise} accent={accent} onDone={onDone} />;
   }
+  if (exercise.kind === 'AUDIO_TO_IMAGE') {
+    return <AudioToImageFlow exercise={exercise} accent={accent} onDone={onDone} />;
+  }
 
-  // --- Aşağısı AUDIO_TO_IMAGE akışı ---
+  // Henüz ekranı yazılmamış etkileşim biçimleri sessizce yanlış
+  // doğrulanmamalı. Yeni tür ekleyen kişi burada ilgili ekranı bağlar.
+  return null;
+}
+
+/**
+ * AUDIO_TO_IMAGE akışı ayrı bileşendir. Böylece üst bileşen etkileşim türüne
+ * göre erken dönebilir; hook'ların çağrı sırası hiçbir render'da değişmez.
+ */
+function AudioToImageFlow({
+  exercise,
+  accent,
+  onDone,
+}: {
+  exercise: Extract<Exercise, { kind: 'AUDIO_TO_IMAGE' }>;
+  accent: Accent;
+  onDone: (dogruMu: boolean) => void;
+}) {
   useScreenSpeech(exercise.prompt.ses, [exercise.itemId]);
 
   const [seciliId, setSeciliId] = useState<string | null>(null);

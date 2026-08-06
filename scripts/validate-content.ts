@@ -15,6 +15,8 @@
  *   · beceri ←→ hata etiketi: her misconception geçerli bir HataEtiketi mi?
  *   · jeneratör ←→ içerik: her jeneratörün iddia ettiği kazanım/beceri kodları var mı?
  *   · misconceptions.json: hata listesi distractors.ts'teki 15 etiketle birebir aynı mı?
+ *   · PLAN ←→ içerik: benzersiz şablon sayısı docs/PLAN.md'nin yazdığı sayıyla aynı mı?
+ *     (Belgenin sessizce bayatlamasını yakalar — PLAN §18 iddia-1.)
  *
  * Kullanım: npm run validate
  */
@@ -42,6 +44,20 @@ const JENERATORLER: readonly ExerciseGenerator[] = [
   toplaGorselJeneratoru,
 ];
 const UYGULANMIS_SABLONLAR = new Set(JENERATORLER.map((g) => g.templateId));
+
+/**
+ * PLAN §5.2 / §18 iddia-1: skills.json'daki BENZERSİZ şablon sayısı.
+ *
+ * NEDEN burada bir sayı duruyor: plan bu sayıya dayanarak iş planı (§14 adım 10),
+ * süre tahmini ve ses envanteri (§4.5) yazıyor. skills.json'a şablon eklenip plan
+ * güncellenmezse belge sessizce yalan söyler — geçmişte tam olarak bu oldu
+ * (plan 17 derken içerik 39'du). Bu denetim o sapmayı ilk commit'te yakalar.
+ *
+ * Sayı değiştiğinde AYNI commit'te güncellenmesi gerekenler:
+ *   docs/PLAN.md §5.2 (şablon tablosu + toplam), §4.5, §14 adım 10, §18 tablosu
+ *   docs/PROGRESS.md yol haritası satırı.
+ */
+const PLAN_SABLON_SAYISI = 39;
 
 interface Sonuc {
   hatalar: string[];
@@ -114,6 +130,22 @@ try {
       }
     }
   }
+
+  // (e) PLAN ↔ içerik: benzersiz şablon sayısı plandaki sayıyla aynı mı?
+  //     Belgenin bayatlamasını yakalayan denetim (PLAN §18 iddia-1).
+  const tumSablonlar = new Set<string>();
+  for (const d of graf) for (const t of d.exerciseTemplates) tumSablonlar.add(t);
+  if (tumSablonlar.size !== PLAN_SABLON_SAYISI) {
+    hata(
+      `Şablon sayısı sapması: skills.json ${tumSablonlar.size} benzersiz şablon içeriyor, ` +
+        `plan ${PLAN_SABLON_SAYISI} diyor. docs/PLAN.md §5.2/§4.5/§14 ve docs/PROGRESS.md'yi ` +
+        `AYNI commit'te güncelleyin, sonra bu betikteki PLAN_SABLON_SAYISI değerini düzeltin.`,
+    );
+  }
+  sonuc.istatistik.push(
+    `şablonlar: ${tumSablonlar.size} benzersiz · ${UYGULANMIS_SABLONLAR.size} uygulandı · ` +
+      `${tumSablonlar.size - UYGULANMIS_SABLONLAR.size} bekliyor`,
+  );
 } catch (e) {
   hata(`skills.json: ${(e as Error).message}`);
 }
