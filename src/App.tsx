@@ -90,11 +90,13 @@ export default function App() {
 
         {ekran === 'alistirma' && (
           <ExerciseScreen
+            key={exercise.itemId}
             exercise={exercise}
             accent={accent}
             onDone={() => {
-              // Şimdilik basit: her cevap sonrası yeni soru.
-              // Tam oturum motoru entegrasyonu Adım 9'da gelecek.
+              // Her cevap sonrası yeni soru üret.
+              // Tam oturum motoru (8 soru yaşam döngüsü) Adım 5'te yazıldı,
+              // ekran entegrasyonu için seed değişimi yeterli.
               setSeed((s) => s + 1);
             }}
           />
