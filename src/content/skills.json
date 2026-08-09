@@ -1,924 +1,1643 @@
 [
   {
     "id": "mat.uzam.konum-ifadeleri",
-    "mebOutcomes": ["MAT.1.3.1"],
+    "mebOutcomes": [
+      "MAT.1.3.1"
+    ],
     "tema": 1,
     "baslik": "Konum bildiren ifadeleri anlama (altında, üstünde, içinde, önünde, arasında)",
     "childLabel": "Nerede?",
     "prerequisites": [],
     "difficulty": 1,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-KONUM"],
-    "misconceptions": ["GOREV_ANLASILMADI"],
+    "exerciseTemplates": [
+      "M-KONUM"
+    ],
+    "misconceptions": [
+      "GOREV_ANLASILMADI"
+    ],
     "estimatedItemsToMastery": 10,
     "isEntryPoint": true,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.uzam.yon-yonerge",
-    "mebOutcomes": ["MAT.1.3.1"],
+    "mebOutcomes": [
+      "MAT.1.3.1"
+    ],
     "tema": 1,
     "baslik": "Mesafe ve yön içeren yönergeyi çözümleyip izleme (yön yalnız ileri/geri)",
     "childLabel": "İleri mi geri mi?",
-    "prerequisites": [{ "id": "mat.uzam.konum-ifadeleri", "type": "hard" }],
+    "prerequisites": [
+      {
+        "id": "mat.uzam.konum-ifadeleri",
+        "type": "hard"
+      }
+    ],
     "difficulty": 2,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-YONERGE"],
-    "misconceptions": ["GOREV_ANLASILMADI"],
+    "exerciseTemplates": [
+      "M-YONERGE"
+    ],
+    "misconceptions": [
+      "GOREV_ANLASILMADI"
+    ],
     "estimatedItemsToMastery": 12,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.uzam.eslik",
-    "mebOutcomes": ["MAT.1.3.2"],
+    "mebOutcomes": [
+      "MAT.1.3.2"
+    ],
     "tema": 1,
     "baslik": "Nesnelerin eşliğini renk, boy ve şekil ölçütleriyle değerlendirme",
     "childLabel": "Aynısını bul",
     "prerequisites": [],
     "difficulty": 1,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-ESLIK"],
-    "misconceptions": ["SEKIL_PROTOTIP"],
+    "exerciseTemplates": [
+      "M-ESLIK"
+    ],
+    "misconceptions": [
+      "SEKIL_PROTOTIP"
+    ],
     "estimatedItemsToMastery": 10,
     "isEntryPoint": true,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.ritmik.ileri-birer-20",
-    "mebOutcomes": ["MAT.1.1.5"],
+    "mebOutcomes": [
+      "MAT.1.1.5"
+    ],
     "tema": 2,
     "baslik": "20'ye kadar ileriye doğru birer ritmik sayma (sayı sözcüğü dizisi)",
     "childLabel": "Birer birer sayalım",
     "prerequisites": [],
     "difficulty": 1,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-RITMIK"],
-    "misconceptions": ["FAZLA_SAYMA", "EKSIK_SAYMA"],
+    "exerciseTemplates": [
+      "M-RITMIK"
+    ],
+    "misconceptions": [
+      "FAZLA_SAYMA",
+      "EKSIK_SAYMA"
+    ],
     "estimatedItemsToMastery": 12,
     "isEntryPoint": true,
     "durum": "hazir"
   },
   {
     "id": "mat.sayma.birebir-esleme",
-    "mebOutcomes": ["MAT.1.1.2"],
+    "mebOutcomes": [
+      "MAT.1.1.2"
+    ],
     "tema": 2,
     "baslik": "Her nesneye bir ve yalnız bir sayı sözcüğü söyleme (birebir eşleme)",
     "childLabel": "Hepsine dokun",
-    "prerequisites": [{ "id": "mat.ritmik.ileri-birer-20", "type": "soft" }],
+    "prerequisites": [
+      {
+        "id": "mat.ritmik.ileri-birer-20",
+        "type": "soft"
+      }
+    ],
     "difficulty": 1,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-SAY"],
-    "misconceptions": ["BIREBIR_ESLESME", "FAZLA_SAYMA", "EKSIK_SAYMA"],
+    "exerciseTemplates": [
+      "M-SAY"
+    ],
+    "misconceptions": [
+      "BIREBIR_ESLESME",
+      "FAZLA_SAYMA",
+      "EKSIK_SAYMA"
+    ],
     "estimatedItemsToMastery": 14,
     "isEntryPoint": true,
     "durum": "hazir"
   },
   {
     "id": "mat.sayma.sipsak-sayilama",
-    "mebOutcomes": ["MAT.1.1.7", "MAT.1.1.2"],
+    "mebOutcomes": [
+      "MAT.1.1.7",
+      "MAT.1.1.2"
+    ],
     "tema": 2,
     "baslik": "Beşi geçmeyen çoklukları saymadan görerek söyleme (şıpşak sayılama)",
     "childLabel": "Bakınca söyle",
     "prerequisites": [],
     "difficulty": 1,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-SIPSAK"],
-    "misconceptions": ["EKSIK_SAYMA", "FAZLA_SAYMA"],
+    "exerciseTemplates": [
+      "M-SIPSAK"
+    ],
+    "misconceptions": [
+      "EKSIK_SAYMA",
+      "FAZLA_SAYMA"
+    ],
     "estimatedItemsToMastery": 10,
     "isEntryPoint": true,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.sayma.kardinalite",
-    "mebOutcomes": ["MAT.1.1.2", "MAT.1.1.1"],
+    "mebOutcomes": [
+      "MAT.1.1.2",
+      "MAT.1.1.1"
+    ],
     "tema": 2,
     "baslik": "Son söylenen sayının çokluğun tamamını gösterdiğini kavrama (10'a kadar, düzenli dizilim)",
     "childLabel": "Kaç tane?",
     "prerequisites": [
-      { "id": "mat.sayma.birebir-esleme", "type": "hard" },
-      { "id": "mat.ritmik.ileri-birer-20", "type": "soft" }
+      {
+        "id": "mat.sayma.birebir-esleme",
+        "type": "hard"
+      },
+      {
+        "id": "mat.ritmik.ileri-birer-20",
+        "type": "soft"
+      }
     ],
     "difficulty": 2,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-SAY"],
-    "misconceptions": ["KARDINALITE", "FAZLA_SAYMA", "EKSIK_SAYMA"],
+    "exerciseTemplates": [
+      "M-SAY"
+    ],
+    "misconceptions": [
+      "KARDINALITE",
+      "FAZLA_SAYMA",
+      "EKSIK_SAYMA"
+    ],
     "estimatedItemsToMastery": 16,
     "durum": "hazir"
   },
   {
     "id": "mat.sayma.dagilmis-10",
-    "mebOutcomes": ["MAT.1.1.2"],
+    "mebOutcomes": [
+      "MAT.1.1.2"
+    ],
     "tema": 2,
     "baslik": "Dağınık yerleşimli 10'a kadar çokluğu izleme stratejisiyle sayma",
     "childLabel": "Dağınık say",
-    "prerequisites": [{ "id": "mat.sayma.kardinalite", "type": "hard" }],
+    "prerequisites": [
+      {
+        "id": "mat.sayma.kardinalite",
+        "type": "hard"
+      }
+    ],
     "difficulty": 2,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-SAY"],
-    "misconceptions": ["BIREBIR_ESLESME", "FAZLA_SAYMA", "EKSIK_SAYMA"],
+    "exerciseTemplates": [
+      "M-SAY"
+    ],
+    "misconceptions": [
+      "BIREBIR_ESLESME",
+      "FAZLA_SAYMA",
+      "EKSIK_SAYMA"
+    ],
     "estimatedItemsToMastery": 14,
     "durum": "hazir"
   },
   {
     "id": "mat.sayma.yirmiye-kadar",
-    "mebOutcomes": ["MAT.1.1.2", "MAT.1.1.1"],
+    "mebOutcomes": [
+      "MAT.1.1.2",
+      "MAT.1.1.1"
+    ],
     "tema": 2,
     "baslik": "11-20 aralığındaki çoklukları sayma",
     "childLabel": "Yirmiye kadar say",
-    "prerequisites": [{ "id": "mat.sayma.dagilmis-10", "type": "hard" }],
+    "prerequisites": [
+      {
+        "id": "mat.sayma.dagilmis-10",
+        "type": "hard"
+      }
+    ],
     "difficulty": 3,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-SAY"],
-    "misconceptions": ["FAZLA_SAYMA", "EKSIK_SAYMA", "KARDINALITE"],
+    "exerciseTemplates": [
+      "M-SAY"
+    ],
+    "misconceptions": [
+      "FAZLA_SAYMA",
+      "EKSIK_SAYMA",
+      "KARDINALITE"
+    ],
     "estimatedItemsToMastery": 16,
     "durum": "hazir"
   },
   {
     "id": "mat.sayma.tahmin",
-    "mebOutcomes": ["MAT.1.1.7"],
+    "mebOutcomes": [
+      "MAT.1.1.7"
+    ],
     "tema": 2,
     "baslik": "5 ve 10'u referans alarak 20'ye kadar çokluk tahmini ve sayarak doğrulama",
     "childLabel": "Sence kaç tane?",
     "prerequisites": [
-      { "id": "mat.sayma.sipsak-sayilama", "type": "hard" },
-      { "id": "mat.sayma.yirmiye-kadar", "type": "soft" },
-      { "id": "mat.sayi.onluk-cerceve", "type": "soft" }
+      {
+        "id": "mat.sayma.sipsak-sayilama",
+        "type": "hard"
+      },
+      {
+        "id": "mat.sayma.yirmiye-kadar",
+        "type": "soft"
+      },
+      {
+        "id": "mat.sayi.onluk-cerceve",
+        "type": "soft"
+      }
     ],
     "difficulty": 3,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-TAHMIN-MIKTAR"],
-    "misconceptions": ["BUYUKLUK_MIKTAR", "EKSIK_SAYMA"],
+    "exerciseTemplates": [
+      "M-TAHMIN-MIKTAR"
+    ],
+    "misconceptions": [
+      "BUYUKLUK_MIKTAR",
+      "EKSIK_SAYMA"
+    ],
     "estimatedItemsToMastery": 12,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.sayi.rakam-tanima",
-    "mebOutcomes": ["MAT.1.1.1"],
+    "mebOutcomes": [
+      "MAT.1.1.1"
+    ],
     "tema": 2,
     "baslik": "0-9 rakamlarını tanıma; sıfırın hiçliği temsil ettiğini kavrama",
     "childLabel": "Rakamları tanı",
     "prerequisites": [],
     "difficulty": 1,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-RAKAM-TANI"],
-    "misconceptions": ["GOREV_ANLASILMADI", "KARDINALITE"],
+    "exerciseTemplates": [
+      "M-RAKAM-TANI"
+    ],
+    "misconceptions": [
+      "GOREV_ANLASILMADI",
+      "KARDINALITE"
+    ],
     "estimatedItemsToMastery": 14,
     "isEntryPoint": true,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.sayi.miktar-rakam-eslestirme",
-    "mebOutcomes": ["MAT.1.1.1"],
+    "mebOutcomes": [
+      "MAT.1.1.1"
+    ],
     "tema": 2,
     "baslik": "Bir çokluğu doğru sayıyla temsil etme (0-10 arası miktar-rakam eşlemesi)",
     "childLabel": "Sayısını bul",
     "prerequisites": [
-      { "id": "mat.sayma.kardinalite", "type": "hard" },
-      { "id": "mat.sayi.rakam-tanima", "type": "soft" }
+      {
+        "id": "mat.sayma.kardinalite",
+        "type": "hard"
+      },
+      {
+        "id": "mat.sayi.rakam-tanima",
+        "type": "soft"
+      }
     ],
     "difficulty": 2,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-SAY"],
-    "misconceptions": ["KARDINALITE", "BUYUKLUK_MIKTAR"],
+    "exerciseTemplates": [
+      "M-SAY"
+    ],
+    "misconceptions": [
+      "KARDINALITE",
+      "BUYUKLUK_MIKTAR"
+    ],
     "estimatedItemsToMastery": 16,
     "durum": "hazir"
   },
   {
     "id": "mat.sayi.onluk-cerceve",
-    "mebOutcomes": ["MAT.1.1.2", "MAT.1.1.7"],
+    "mebOutcomes": [
+      "MAT.1.1.2",
+      "MAT.1.1.7"
+    ],
     "tema": 2,
     "baslik": "Onluk çerçevede çokluğu 5 ve 10 referansıyla okuma",
     "childLabel": "Onluk çerçeve",
     "prerequisites": [
-      { "id": "mat.sayma.kardinalite", "type": "hard" },
-      { "id": "mat.sayma.yirmiye-kadar", "type": "soft" }
+      {
+        "id": "mat.sayma.kardinalite",
+        "type": "hard"
+      },
+      {
+        "id": "mat.sayma.yirmiye-kadar",
+        "type": "soft"
+      }
     ],
     "difficulty": 3,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-SAY"],
-    "misconceptions": ["KARDINALITE", "BUYUKLUK_MIKTAR"],
+    "exerciseTemplates": [
+      "M-SAY"
+    ],
+    "misconceptions": [
+      "KARDINALITE",
+      "BUYUKLUK_MIKTAR"
+    ],
     "estimatedItemsToMastery": 14,
     "durum": "hazir"
   },
   {
     "id": "mat.sayi.onluk-birlik",
-    "mebOutcomes": ["MAT.1.1.2", "MAT.1.1.1"],
+    "mebOutcomes": [
+      "MAT.1.1.2",
+      "MAT.1.1.1"
+    ],
     "tema": 2,
     "baslik": "11-20 sayılarını bir onluk ve birliklere çözümleme (önce kavram adı kullanmadan)",
     "childLabel": "Onluk ve birlik",
     "prerequisites": [
-      { "id": "mat.sayma.yirmiye-kadar", "type": "hard" },
-      { "id": "mat.sayi.onluk-cerceve", "type": "soft" },
-      { "id": "mat.sayi.rakam-tanima", "type": "soft" }
+      {
+        "id": "mat.sayma.yirmiye-kadar",
+        "type": "hard"
+      },
+      {
+        "id": "mat.sayi.onluk-cerceve",
+        "type": "soft"
+      },
+      {
+        "id": "mat.sayi.rakam-tanima",
+        "type": "soft"
+      }
     ],
     "difficulty": 4,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-ONLUK-COZUMLE"],
-    "misconceptions": ["ONLUK_BOZMA", "KARDINALITE"],
+    "exerciseTemplates": [
+      "M-ONLUK-COZUMLE"
+    ],
+    "misconceptions": [
+      "ONLUK_BOZMA",
+      "KARDINALITE"
+    ],
     "estimatedItemsToMastery": 18,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.sayi.sira-sayisi",
-    "mebOutcomes": ["MAT.1.1.3"],
+    "mebOutcomes": [
+      "MAT.1.1.3"
+    ],
     "tema": 2,
     "baslik": "Öncelik-sonralık-arasında olma durumları ve 20'ye kadar sıra sayıları",
     "childLabel": "Kaçıncı?",
     "prerequisites": [
-      { "id": "mat.sayma.birebir-esleme", "type": "hard" },
-      { "id": "mat.ritmik.ileri-birer-20", "type": "soft" }
+      {
+        "id": "mat.sayma.birebir-esleme",
+        "type": "hard"
+      },
+      {
+        "id": "mat.ritmik.ileri-birer-20",
+        "type": "soft"
+      }
     ],
     "difficulty": 3,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-SIRA-SAYI"],
-    "misconceptions": ["BIREBIR_ESLESME", "GOREV_ANLASILMADI"],
+    "exerciseTemplates": [
+      "M-SIRA-SAYI"
+    ],
+    "misconceptions": [
+      "BIREBIR_ESLESME",
+      "GOREV_ANLASILMADI"
+    ],
     "estimatedItemsToMastery": 14,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.karsilastirma.sezgisel",
-    "mebOutcomes": ["MAT.1.1.4"],
+    "mebOutcomes": [
+      "MAT.1.1.4"
+    ],
     "tema": 2,
     "baslik": "İki çokluğu sezgisel olarak 'çok', 'az', 'eşit' terimleriyle karşılaştırma",
     "childLabel": "Hangisi çok?",
-    "prerequisites": [{ "id": "mat.sayma.sipsak-sayilama", "type": "soft" }],
+    "prerequisites": [
+      {
+        "id": "mat.sayma.sipsak-sayilama",
+        "type": "soft"
+      }
+    ],
     "difficulty": 1,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-KARSILASTIR"],
-    "misconceptions": ["BUYUKLUK_MIKTAR", "TEK_KUMEYI_ALMA"],
+    "exerciseTemplates": [
+      "M-KARSILASTIR"
+    ],
+    "misconceptions": [
+      "BUYUKLUK_MIKTAR",
+      "TEK_KUMEYI_ALMA"
+    ],
     "estimatedItemsToMastery": 12,
     "isEntryPoint": true,
     "durum": "hazir"
   },
   {
     "id": "mat.karsilastirma.birebir-esleme",
-    "mebOutcomes": ["MAT.1.1.4"],
+    "mebOutcomes": [
+      "MAT.1.1.4"
+    ],
     "tema": 2,
     "baslik": "Birebir eşlemeye dayalı karşılaştırma: daha çok, daha az, eşit",
     "childLabel": "Eşleyip karşılaştır",
     "prerequisites": [
-      { "id": "mat.karsilastirma.sezgisel", "type": "hard" },
-      { "id": "mat.sayma.birebir-esleme", "type": "hard" }
+      {
+        "id": "mat.karsilastirma.sezgisel",
+        "type": "hard"
+      },
+      {
+        "id": "mat.sayma.birebir-esleme",
+        "type": "hard"
+      }
     ],
     "difficulty": 2,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-KARSILASTIR"],
-    "misconceptions": ["BIREBIR_ESLESME", "BUYUKLUK_MIKTAR"],
+    "exerciseTemplates": [
+      "M-KARSILASTIR"
+    ],
+    "misconceptions": [
+      "BIREBIR_ESLESME",
+      "BUYUKLUK_MIKTAR"
+    ],
     "estimatedItemsToMastery": 14,
     "durum": "hazir"
   },
   {
     "id": "mat.karsilastirma.on-referansi",
-    "mebOutcomes": ["MAT.1.1.4"],
+    "mebOutcomes": [
+      "MAT.1.1.4"
+    ],
     "tema": 2,
     "baslik": "10'a göre karşılaştırma: 10'dan az, 10'dan çok, 10'a eşit",
     "childLabel": "Ondan çok mu?",
     "prerequisites": [
-      { "id": "mat.karsilastirma.birebir-esleme", "type": "hard" },
-      { "id": "mat.sayi.onluk-cerceve", "type": "soft" }
+      {
+        "id": "mat.karsilastirma.birebir-esleme",
+        "type": "hard"
+      },
+      {
+        "id": "mat.sayi.onluk-cerceve",
+        "type": "soft"
+      }
     ],
     "difficulty": 3,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-KARSILASTIR"],
-    "misconceptions": ["BUYUKLUK_MIKTAR", "KARDINALITE"],
+    "exerciseTemplates": [
+      "M-KARSILASTIR"
+    ],
+    "misconceptions": [
+      "BUYUKLUK_MIKTAR",
+      "KARDINALITE"
+    ],
     "estimatedItemsToMastery": 14,
     "durum": "hazir"
   },
   {
     "id": "mat.ritmik.ileri-birer-100",
-    "mebOutcomes": ["MAT.1.1.5"],
+    "mebOutcomes": [
+      "MAT.1.1.5"
+    ],
     "tema": 2,
     "baslik": "100'e kadar (100 dâhil) ileriye birer ritmik sayma; onluk geçişleri",
     "childLabel": "Yüze kadar sayalım",
     "prerequisites": [
-      { "id": "mat.ritmik.ileri-birer-20", "type": "hard" },
-      { "id": "mat.sayi.onluk-birlik", "type": "soft" }
+      {
+        "id": "mat.ritmik.ileri-birer-20",
+        "type": "hard"
+      },
+      {
+        "id": "mat.sayi.onluk-birlik",
+        "type": "soft"
+      }
     ],
     "difficulty": 3,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-RITMIK"],
-    "misconceptions": ["ORUNTU_FAZ", "FAZLA_SAYMA", "EKSIK_SAYMA"],
+    "exerciseTemplates": [
+      "M-RITMIK"
+    ],
+    "misconceptions": [
+      "ORUNTU_FAZ",
+      "FAZLA_SAYMA",
+      "EKSIK_SAYMA"
+    ],
     "estimatedItemsToMastery": 16,
     "durum": "hazir"
   },
   {
     "id": "mat.ritmik.ileri-onar-100",
-    "mebOutcomes": ["MAT.1.1.5"],
+    "mebOutcomes": [
+      "MAT.1.1.5"
+    ],
     "tema": 2,
     "baslik": "100'e kadar ileriye onar ritmik sayma",
     "childLabel": "Onar sayalım",
-    "prerequisites": [{ "id": "mat.ritmik.ileri-birer-100", "type": "hard" }],
+    "prerequisites": [
+      {
+        "id": "mat.ritmik.ileri-birer-100",
+        "type": "hard"
+      }
+    ],
     "difficulty": 3,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-RITMIK"],
-    "misconceptions": ["ORUNTU_FAZ"],
+    "exerciseTemplates": [
+      "M-RITMIK"
+    ],
+    "misconceptions": [
+      "ORUNTU_FAZ"
+    ],
     "estimatedItemsToMastery": 12,
     "durum": "hazir"
   },
   {
     "id": "mat.ritmik.ileri-beser-100",
-    "mebOutcomes": ["MAT.1.1.5"],
+    "mebOutcomes": [
+      "MAT.1.1.5"
+    ],
     "tema": 2,
     "baslik": "100'e kadar ileriye beşer ritmik sayma",
     "childLabel": "Beşer sayalım",
     "prerequisites": [
-      { "id": "mat.ritmik.ileri-birer-100", "type": "hard" },
-      { "id": "mat.ritmik.ileri-onar-100", "type": "soft" }
+      {
+        "id": "mat.ritmik.ileri-birer-100",
+        "type": "hard"
+      },
+      {
+        "id": "mat.ritmik.ileri-onar-100",
+        "type": "soft"
+      }
     ],
     "difficulty": 4,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-RITMIK"],
-    "misconceptions": ["ORUNTU_FAZ", "FAZLA_SAYMA"],
+    "exerciseTemplates": [
+      "M-RITMIK"
+    ],
+    "misconceptions": [
+      "ORUNTU_FAZ",
+      "FAZLA_SAYMA"
+    ],
     "estimatedItemsToMastery": 14,
     "durum": "hazir"
   },
   {
     "id": "mat.ritmik.ileri-ikiser-20",
-    "mebOutcomes": ["MAT.1.1.5"],
+    "mebOutcomes": [
+      "MAT.1.1.5"
+    ],
     "tema": 2,
     "baslik": "20'ye kadar ileriye ikişer ritmik sayma (üst sınır 20, aşılamaz)",
     "childLabel": "İkişer sayalım",
-    "prerequisites": [{ "id": "mat.ritmik.ileri-birer-20", "type": "hard" }],
+    "prerequisites": [
+      {
+        "id": "mat.ritmik.ileri-birer-20",
+        "type": "hard"
+      }
+    ],
     "difficulty": 3,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-RITMIK"],
-    "misconceptions": ["ORUNTU_FAZ", "FAZLA_SAYMA"],
+    "exerciseTemplates": [
+      "M-RITMIK"
+    ],
+    "misconceptions": [
+      "ORUNTU_FAZ",
+      "FAZLA_SAYMA"
+    ],
     "estimatedItemsToMastery": 12,
     "durum": "hazir"
   },
   {
     "id": "mat.ritmik.geri-birer-20",
-    "mebOutcomes": ["MAT.1.1.5"],
+    "mebOutcomes": [
+      "MAT.1.1.5"
+    ],
     "tema": 2,
     "baslik": "20'den geriye doğru birer ritmik sayma",
     "childLabel": "Geriye sayalım",
-    "prerequisites": [{ "id": "mat.ritmik.ileri-birer-20", "type": "hard" }],
+    "prerequisites": [
+      {
+        "id": "mat.ritmik.ileri-birer-20",
+        "type": "hard"
+      }
+    ],
     "difficulty": 3,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-RITMIK"],
-    "misconceptions": ["ISLEM_YONU", "ORUNTU_FAZ"],
+    "exerciseTemplates": [
+      "M-RITMIK"
+    ],
+    "misconceptions": [
+      "ISLEM_YONU",
+      "ORUNTU_FAZ"
+    ],
     "estimatedItemsToMastery": 14,
     "durum": "hazir"
   },
   {
     "id": "mat.ritmik.geri-ikiser-20",
-    "mebOutcomes": ["MAT.1.1.5"],
+    "mebOutcomes": [
+      "MAT.1.1.5"
+    ],
     "tema": 2,
     "baslik": "20'den geriye doğru ikişer ritmik sayma",
     "childLabel": "Geriye ikişer",
     "prerequisites": [
-      { "id": "mat.ritmik.geri-birer-20", "type": "hard" },
-      { "id": "mat.ritmik.ileri-ikiser-20", "type": "soft" }
+      {
+        "id": "mat.ritmik.geri-birer-20",
+        "type": "hard"
+      },
+      {
+        "id": "mat.ritmik.ileri-ikiser-20",
+        "type": "soft"
+      }
     ],
     "difficulty": 4,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-RITMIK"],
-    "misconceptions": ["ISLEM_YONU", "ORUNTU_FAZ"],
+    "exerciseTemplates": [
+      "M-RITMIK"
+    ],
+    "misconceptions": [
+      "ISLEM_YONU",
+      "ORUNTU_FAZ"
+    ],
     "estimatedItemsToMastery": 14,
     "durum": "hazir"
   },
   {
     "id": "mat.oruntu.tekrar-eden-sekil",
-    "mebOutcomes": ["MAT.1.1.6"],
+    "mebOutcomes": [
+      "MAT.1.1.6"
+    ],
     "tema": 2,
     "baslik": "Tekrar eden şekil örüntüsünü sürdürme ve eksik ögeyi bulma",
     "childLabel": "Sırada ne var?",
-    "prerequisites": [{ "id": "mat.uzam.eslik", "type": "soft" }],
+    "prerequisites": [
+      {
+        "id": "mat.uzam.eslik",
+        "type": "soft"
+      }
+    ],
     "difficulty": 2,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-ORUNTU-SEKIL"],
-    "misconceptions": ["ORUNTU_FAZ", "SEKIL_PROTOTIP"],
+    "exerciseTemplates": [
+      "M-ORUNTU-SEKIL"
+    ],
+    "misconceptions": [
+      "ORUNTU_FAZ",
+      "SEKIL_PROTOTIP"
+    ],
     "estimatedItemsToMastery": 14,
     "isEntryPoint": true,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.oruntu.artan-sayi",
-    "mebOutcomes": ["MAT.1.1.6"],
+    "mebOutcomes": [
+      "MAT.1.1.6"
+    ],
     "tema": 2,
     "baslik": "Artan sayı örüntüsünü çözümleme (adım, ritmik sayma sınırlarını aşmaz)",
     "childLabel": "Artan sayılar",
     "prerequisites": [
-      { "id": "mat.oruntu.tekrar-eden-sekil", "type": "hard" },
-      { "id": "mat.ritmik.ileri-ikiser-20", "type": "hard" },
-      { "id": "mat.ritmik.ileri-beser-100", "type": "soft" }
+      {
+        "id": "mat.oruntu.tekrar-eden-sekil",
+        "type": "hard"
+      },
+      {
+        "id": "mat.ritmik.ileri-ikiser-20",
+        "type": "hard"
+      },
+      {
+        "id": "mat.ritmik.ileri-beser-100",
+        "type": "soft"
+      }
     ],
     "difficulty": 4,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-ORUNTU-SAYI"],
-    "misconceptions": ["ORUNTU_FAZ", "FAZLA_SAYMA"],
+    "exerciseTemplates": [
+      "M-ORUNTU-SAYI"
+    ],
+    "misconceptions": [
+      "ORUNTU_FAZ",
+      "FAZLA_SAYMA"
+    ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.oruntu.azalan-sayi",
-    "mebOutcomes": ["MAT.1.1.6"],
+    "mebOutcomes": [
+      "MAT.1.1.6"
+    ],
     "tema": 2,
     "baslik": "Azalan sayı örüntüsünü çözümleme (20'den geriye birer/ikişer)",
     "childLabel": "Azalan sayılar",
     "prerequisites": [
-      { "id": "mat.oruntu.artan-sayi", "type": "hard" },
-      { "id": "mat.ritmik.geri-ikiser-20", "type": "hard" }
+      {
+        "id": "mat.oruntu.artan-sayi",
+        "type": "hard"
+      },
+      {
+        "id": "mat.ritmik.geri-ikiser-20",
+        "type": "hard"
+      }
     ],
     "difficulty": 4,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-ORUNTU-SAYI"],
-    "misconceptions": ["ORUNTU_FAZ", "ISLEM_YONU"],
+    "exerciseTemplates": [
+      "M-ORUNTU-SAYI"
+    ],
+    "misconceptions": [
+      "ORUNTU_FAZ",
+      "ISLEM_YONU"
+    ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.olcme.uzunluk-kiyas",
-    "mebOutcomes": ["MAT.1.1.8"],
+    "mebOutcomes": [
+      "MAT.1.1.8"
+    ],
     "tema": 3,
     "baslik": "İki nesnenin uzunluğunu doğrudan kıyaslama ve en fazla beş nesneyi sıralama",
     "childLabel": "Hangisi uzun?",
     "prerequisites": [],
     "difficulty": 1,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-OLC-UZUNLUK"],
-    "misconceptions": ["BUYUKLUK_MIKTAR", "GOREV_ANLASILMADI"],
+    "exerciseTemplates": [
+      "M-OLC-UZUNLUK"
+    ],
+    "misconceptions": [
+      "BUYUKLUK_MIKTAR",
+      "GOREV_ANLASILMADI"
+    ],
     "estimatedItemsToMastery": 12,
     "isEntryPoint": true,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.olcme.kutle-kiyas",
-    "mebOutcomes": ["MAT.1.1.8"],
+    "mebOutcomes": [
+      "MAT.1.1.8"
+    ],
     "tema": 3,
     "baslik": "Eşit kollu terazi ile kütle kıyaslama (ağır, hafif, denge)",
     "childLabel": "Hangisi ağır?",
-    "prerequisites": [{ "id": "mat.olcme.uzunluk-kiyas", "type": "soft" }],
+    "prerequisites": [
+      {
+        "id": "mat.olcme.uzunluk-kiyas",
+        "type": "soft"
+      }
+    ],
     "difficulty": 2,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-OLC-KUTLE"],
-    "misconceptions": ["BUYUKLUK_MIKTAR"],
+    "exerciseTemplates": [
+      "M-OLC-KUTLE"
+    ],
+    "misconceptions": [
+      "BUYUKLUK_MIKTAR"
+    ],
     "estimatedItemsToMastery": 12,
     "isEntryPoint": true,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.olcme.birimle-olcme",
-    "mebOutcomes": ["MAT.1.1.8"],
+    "mebOutcomes": [
+      "MAT.1.1.8"
+    ],
     "tema": 3,
     "baslik": "Standart olmayan birimle (karış, adım, ayak) boşluksuz ve üst üste bindirmeden ölçme",
     "childLabel": "Karışla ölç",
     "prerequisites": [
-      { "id": "mat.olcme.uzunluk-kiyas", "type": "hard" },
-      { "id": "mat.sayma.birebir-esleme", "type": "soft" },
-      { "id": "mat.sayma.kardinalite", "type": "soft" }
+      {
+        "id": "mat.olcme.uzunluk-kiyas",
+        "type": "hard"
+      },
+      {
+        "id": "mat.sayma.birebir-esleme",
+        "type": "soft"
+      },
+      {
+        "id": "mat.sayma.kardinalite",
+        "type": "soft"
+      }
     ],
     "difficulty": 3,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-OLC-BIRIM"],
-    "misconceptions": ["BIREBIR_ESLESME", "FAZLA_SAYMA", "EKSIK_SAYMA"],
+    "exerciseTemplates": [
+      "M-OLC-BIRIM"
+    ],
+    "misconceptions": [
+      "BIREBIR_ESLESME",
+      "FAZLA_SAYMA",
+      "EKSIK_SAYMA"
+    ],
     "estimatedItemsToMastery": 14,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.olcme.olcum-tahmini",
-    "mebOutcomes": ["MAT.1.1.8"],
+    "mebOutcomes": [
+      "MAT.1.1.8"
+    ],
     "tema": 3,
     "baslik": "Ölçüm sonucunu tahmin etme ve ölçerek tahminin doğruluğunu değerlendirme",
     "childLabel": "Kaç karış olur?",
     "prerequisites": [
-      { "id": "mat.olcme.birimle-olcme", "type": "hard" },
-      { "id": "mat.olcme.kutle-kiyas", "type": "soft" },
-      { "id": "mat.sayma.tahmin", "type": "soft" }
+      {
+        "id": "mat.olcme.birimle-olcme",
+        "type": "hard"
+      },
+      {
+        "id": "mat.olcme.kutle-kiyas",
+        "type": "soft"
+      },
+      {
+        "id": "mat.sayma.tahmin",
+        "type": "soft"
+      }
     ],
     "difficulty": 4,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-OLC-TAHMIN"],
-    "misconceptions": ["BUYUKLUK_MIKTAR", "GOREV_ANLASILMADI"],
+    "exerciseTemplates": [
+      "M-OLC-TAHMIN"
+    ],
+    "misconceptions": [
+      "BUYUKLUK_MIKTAR",
+      "GOREV_ANLASILMADI"
+    ],
     "estimatedItemsToMastery": 14,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.toplama.gorsel-birlestirme",
-    "mebOutcomes": ["MAT.1.2.1"],
+    "mebOutcomes": [
+      "MAT.1.2.1"
+    ],
     "tema": 4,
     "baslik": "İki kümeyi birleştirmenin toplama olduğunu görsel olarak kavrama",
     "childLabel": "Bir araya koy",
     "prerequisites": [
-      { "id": "mat.sayma.kardinalite", "type": "hard" },
-      { "id": "mat.sayma.dagilmis-10", "type": "soft" }
+      {
+        "id": "mat.sayma.kardinalite",
+        "type": "hard"
+      },
+      {
+        "id": "mat.sayma.dagilmis-10",
+        "type": "soft"
+      }
     ],
     "difficulty": 2,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-TOPLA-GORSEL"],
-    "misconceptions": ["TEK_KUMEYI_ALMA", "ISLEM_YONU"],
+    "exerciseTemplates": [
+      "M-TOPLA-GORSEL"
+    ],
+    "misconceptions": [
+      "TEK_KUMEYI_ALMA",
+      "ISLEM_YONU"
+    ],
     "estimatedItemsToMastery": 16,
     "durum": "hazir"
   },
   {
     "id": "mat.toplama.hepsini-sayma",
-    "mebOutcomes": ["MAT.1.2.1"],
+    "mebOutcomes": [
+      "MAT.1.2.1"
+    ],
     "tema": 4,
     "baslik": "Birleştirilen çokluğu baştan sayarak toplamı bulma (toplam 10'a kadar)",
     "childLabel": "Hepsini say",
-    "prerequisites": [{ "id": "mat.toplama.gorsel-birlestirme", "type": "hard" }],
+    "prerequisites": [
+      {
+        "id": "mat.toplama.gorsel-birlestirme",
+        "type": "hard"
+      }
+    ],
     "difficulty": 2,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-TOPLA-GORSEL"],
-    "misconceptions": ["HEPSINI_SAYMA", "TEK_KUMEYI_ALMA", "FAZLA_SAYMA"],
+    "exerciseTemplates": [
+      "M-TOPLA-GORSEL"
+    ],
+    "misconceptions": [
+      "HEPSINI_SAYMA",
+      "TEK_KUMEYI_ALMA",
+      "FAZLA_SAYMA"
+    ],
     "estimatedItemsToMastery": 16,
     "durum": "hazir"
   },
   {
     "id": "mat.toplama.ustune-sayma",
-    "mebOutcomes": ["MAT.1.2.1", "MAT.1.2.2"],
+    "mebOutcomes": [
+      "MAT.1.2.1",
+      "MAT.1.2.2"
+    ],
     "tema": 4,
     "baslik": "Büyük sayıdan başlayıp üzerine sayma stratejisi (değişme özelliği dâhil)",
     "childLabel": "Üstüne say",
     "prerequisites": [
-      { "id": "mat.toplama.hepsini-sayma", "type": "hard" },
-      { "id": "mat.ritmik.ileri-birer-20", "type": "soft" }
+      {
+        "id": "mat.toplama.hepsini-sayma",
+        "type": "hard"
+      },
+      {
+        "id": "mat.ritmik.ileri-birer-20",
+        "type": "soft"
+      }
     ],
     "difficulty": 3,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-TOPLA-GORSEL"],
-    "misconceptions": ["HEPSINI_SAYMA", "FAZLA_SAYMA", "ISLEM_YONU"],
+    "exerciseTemplates": [
+      "M-TOPLA-GORSEL"
+    ],
+    "misconceptions": [
+      "HEPSINI_SAYMA",
+      "FAZLA_SAYMA",
+      "ISLEM_YONU"
+    ],
     "estimatedItemsToMastery": 20,
     "durum": "hazir"
   },
   {
     "id": "mat.toplama.ona-tumleme",
-    "mebOutcomes": ["MAT.1.2.2"],
+    "mebOutcomes": [
+      "MAT.1.2.2"
+    ],
     "tema": 4,
     "baslik": "10'a tamamlayan sayı çiftlerini tanıma (10'a tümleme)",
     "childLabel": "Ona tamamla",
     "prerequisites": [
-      { "id": "mat.toplama.ustune-sayma", "type": "hard" },
-      { "id": "mat.sayi.onluk-cerceve", "type": "soft" }
+      {
+        "id": "mat.toplama.ustune-sayma",
+        "type": "hard"
+      },
+      {
+        "id": "mat.sayi.onluk-cerceve",
+        "type": "soft"
+      }
     ],
     "difficulty": 4,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-TOPLA-ONA-TUMLE"],
-    "misconceptions": ["ONLUK_BOZMA", "ESIT_ISLEM_SONUCU"],
+    "exerciseTemplates": [
+      "M-TOPLA-ONA-TUMLE"
+    ],
+    "misconceptions": [
+      "ONLUK_BOZMA",
+      "ESIT_ISLEM_SONUCU"
+    ],
     "estimatedItemsToMastery": 20,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.toplama.onu-gecen-20",
-    "mebOutcomes": ["MAT.1.2.1", "MAT.1.2.2"],
+    "mebOutcomes": [
+      "MAT.1.2.1",
+      "MAT.1.2.2"
+    ],
     "tema": 4,
     "baslik": "Toplamı 10'u geçen, 20'yi aşmayan eldesiz toplama",
     "childLabel": "Onu geçen toplama",
     "prerequisites": [
-      { "id": "mat.toplama.ona-tumleme", "type": "hard" },
-      { "id": "mat.sayi.onluk-birlik", "type": "hard" }
+      {
+        "id": "mat.toplama.ona-tumleme",
+        "type": "hard"
+      },
+      {
+        "id": "mat.sayi.onluk-birlik",
+        "type": "hard"
+      }
     ],
     "difficulty": 5,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-TOPLA-SEMBOL"],
-    "misconceptions": ["ONLUK_BOZMA", "FAZLA_SAYMA", "EKSIK_SAYMA"],
+    "exerciseTemplates": [
+      "M-TOPLA-SEMBOL"
+    ],
+    "misconceptions": [
+      "ONLUK_BOZMA",
+      "FAZLA_SAYMA",
+      "EKSIK_SAYMA"
+    ],
     "estimatedItemsToMastery": 20,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.toplama.tahmin-zihinden",
-    "mebOutcomes": ["MAT.1.2.2"],
+    "mebOutcomes": [
+      "MAT.1.2.2"
+    ],
     "tema": 4,
     "baslik": "Toplama sonucunu tahmin edip zihinden işlemle tutarlılığını muhakeme etme",
     "childLabel": "Zihinden bul",
     "prerequisites": [
-      { "id": "mat.toplama.onu-gecen-20", "type": "hard" },
-      { "id": "mat.sayma.tahmin", "type": "soft" }
+      {
+        "id": "mat.toplama.onu-gecen-20",
+        "type": "hard"
+      },
+      {
+        "id": "mat.sayma.tahmin",
+        "type": "soft"
+      }
     ],
     "difficulty": 5,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-TAHMIN-ISLEM"],
-    "misconceptions": ["BUYUKLUK_MIKTAR", "ESIT_ISLEM_SONUCU"],
+    "exerciseTemplates": [
+      "M-TAHMIN-ISLEM"
+    ],
+    "misconceptions": [
+      "BUYUKLUK_MIKTAR",
+      "ESIT_ISLEM_SONUCU"
+    ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.cikarma.ayirma",
-    "mebOutcomes": ["MAT.1.2.1"],
+    "mebOutcomes": [
+      "MAT.1.2.1"
+    ],
     "tema": 4,
     "baslik": "Bütünden bir kısmını ayırıp kalanı sayma (çıkarmanın ayırma anlamı)",
     "childLabel": "Ayır, kalanı say",
     "prerequisites": [
-      { "id": "mat.toplama.hepsini-sayma", "type": "hard" },
-      { "id": "mat.sayma.kardinalite", "type": "soft" }
+      {
+        "id": "mat.toplama.hepsini-sayma",
+        "type": "hard"
+      },
+      {
+        "id": "mat.sayma.kardinalite",
+        "type": "soft"
+      }
     ],
     "difficulty": 3,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-CIKAR-GORSEL"],
-    "misconceptions": ["ISLEM_YONU", "TEK_KUMEYI_ALMA"],
+    "exerciseTemplates": [
+      "M-CIKAR-GORSEL"
+    ],
+    "misconceptions": [
+      "ISLEM_YONU",
+      "TEK_KUMEYI_ALMA"
+    ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.cikarma.geriye-sayarak",
-    "mebOutcomes": ["MAT.1.2.1", "MAT.1.2.2"],
+    "mebOutcomes": [
+      "MAT.1.2.1",
+      "MAT.1.2.2"
+    ],
     "tema": 4,
     "baslik": "Geriye sayarak çıkarma (20'den geriye birer sayma stratejisi)",
     "childLabel": "Geriye sayarak çıkar",
     "prerequisites": [
-      { "id": "mat.cikarma.ayirma", "type": "hard" },
-      { "id": "mat.ritmik.geri-birer-20", "type": "hard" }
+      {
+        "id": "mat.cikarma.ayirma",
+        "type": "hard"
+      },
+      {
+        "id": "mat.ritmik.geri-birer-20",
+        "type": "hard"
+      }
     ],
     "difficulty": 3,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-CIKAR-GORSEL"],
-    "misconceptions": ["ISLEM_YONU", "FAZLA_SAYMA", "EKSIK_SAYMA"],
+    "exerciseTemplates": [
+      "M-CIKAR-GORSEL"
+    ],
+    "misconceptions": [
+      "ISLEM_YONU",
+      "FAZLA_SAYMA",
+      "EKSIK_SAYMA"
+    ],
     "estimatedItemsToMastery": 18,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.cikarma.fark-bulma",
-    "mebOutcomes": ["MAT.1.2.1"],
+    "mebOutcomes": [
+      "MAT.1.2.1"
+    ],
     "tema": 4,
     "baslik": "İki çokluk arasındaki farkı bulma (çıkarmanın karşılaştırma anlamı)",
     "childLabel": "Kaç tane fazla?",
     "prerequisites": [
-      { "id": "mat.cikarma.geriye-sayarak", "type": "hard" },
-      { "id": "mat.karsilastirma.birebir-esleme", "type": "soft" }
+      {
+        "id": "mat.cikarma.geriye-sayarak",
+        "type": "hard"
+      },
+      {
+        "id": "mat.karsilastirma.birebir-esleme",
+        "type": "soft"
+      }
     ],
     "difficulty": 4,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-CIKAR-SEMBOL"],
-    "misconceptions": ["ISLEM_YONU", "TEK_KUMEYI_ALMA", "BUYUKLUK_MIKTAR"],
+    "exerciseTemplates": [
+      "M-CIKAR-SEMBOL"
+    ],
+    "misconceptions": [
+      "ISLEM_YONU",
+      "TEK_KUMEYI_ALMA",
+      "BUYUKLUK_MIKTAR"
+    ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.cikarma.onluk-bozmadan-20",
-    "mebOutcomes": ["MAT.1.2.1"],
+    "mebOutcomes": [
+      "MAT.1.2.1"
+    ],
     "tema": 4,
     "baslik": "20'ye kadar sayılarla onluk bozmayı gerektirmeyen çıkarma",
     "childLabel": "Yirmiye kadar çıkar",
     "prerequisites": [
-      { "id": "mat.cikarma.fark-bulma", "type": "hard" },
-      { "id": "mat.sayi.onluk-birlik", "type": "soft" }
+      {
+        "id": "mat.cikarma.fark-bulma",
+        "type": "hard"
+      },
+      {
+        "id": "mat.sayi.onluk-birlik",
+        "type": "soft"
+      }
     ],
     "difficulty": 5,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-CIKAR-SEMBOL"],
-    "misconceptions": ["ONLUK_BOZMA", "ISLEM_YONU"],
+    "exerciseTemplates": [
+      "M-CIKAR-SEMBOL"
+    ],
+    "misconceptions": [
+      "ONLUK_BOZMA",
+      "ISLEM_YONU"
+    ],
     "estimatedItemsToMastery": 20,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.cebir.esit-isareti",
-    "mebOutcomes": ["MAT.1.2.3"],
+    "mebOutcomes": [
+      "MAT.1.2.3"
+    ],
     "tema": 4,
     "baslik": "Eşit işaretinin denge bildirdiğini kavrama (sonuç yazma komutu değil)",
     "childLabel": "İki taraf eşit",
-    "prerequisites": [{ "id": "mat.toplama.ustune-sayma", "type": "hard" }],
+    "prerequisites": [
+      {
+        "id": "mat.toplama.ustune-sayma",
+        "type": "hard"
+      }
+    ],
     "difficulty": 3,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-ESIT-DENGE"],
-    "misconceptions": ["ESIT_ISLEM_SONUCU", "TEK_KUMEYI_ALMA"],
+    "exerciseTemplates": [
+      "M-ESIT-DENGE"
+    ],
+    "misconceptions": [
+      "ESIT_ISLEM_SONUCU",
+      "TEK_KUMEYI_ALMA"
+    ],
     "estimatedItemsToMastery": 18,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.cebir.esitligi-donusturme",
-    "mebOutcomes": ["MAT.1.2.3"],
+    "mebOutcomes": [
+      "MAT.1.2.3"
+    ],
     "tema": 4,
     "baslik": "7 = 3 + 4 ve 3 + 4 = 2 + 5 biçimindeki eşitlikleri yorumlama ve dönüştürme",
     "childLabel": "Eşitliği değiştir",
     "prerequisites": [
-      { "id": "mat.cebir.esit-isareti", "type": "hard" },
-      { "id": "mat.toplama.ona-tumleme", "type": "soft" }
+      {
+        "id": "mat.cebir.esit-isareti",
+        "type": "hard"
+      },
+      {
+        "id": "mat.toplama.ona-tumleme",
+        "type": "soft"
+      }
     ],
     "difficulty": 4,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-ESIT-DENGE"],
-    "misconceptions": ["ESIT_ISLEM_SONUCU", "ISLEM_YONU"],
+    "exerciseTemplates": [
+      "M-ESIT-DENGE"
+    ],
+    "misconceptions": [
+      "ESIT_ISLEM_SONUCU",
+      "ISLEM_YONU"
+    ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.cebir.eksik-toplanan",
-    "mebOutcomes": ["MAT.1.2.4", "MAT.1.2.3"],
+    "mebOutcomes": [
+      "MAT.1.2.4",
+      "MAT.1.2.3"
+    ],
     "tema": 4,
     "baslik": "Verilmeyen toplananı bulma (3 + ? = 8)",
     "childLabel": "Kaç tane eksik?",
     "prerequisites": [
-      { "id": "mat.cebir.esit-isareti", "type": "hard" },
-      { "id": "mat.toplama.ona-tumleme", "type": "soft" }
+      {
+        "id": "mat.cebir.esit-isareti",
+        "type": "hard"
+      },
+      {
+        "id": "mat.toplama.ona-tumleme",
+        "type": "soft"
+      }
     ],
     "difficulty": 4,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-EKSIK-TOPLANAN"],
-    "misconceptions": ["ESIT_ISLEM_SONUCU", "ISLEM_YONU", "HEPSINI_SAYMA"],
+    "exerciseTemplates": [
+      "M-EKSIK-TOPLANAN"
+    ],
+    "misconceptions": [
+      "ESIT_ISLEM_SONUCU",
+      "ISLEM_YONU",
+      "HEPSINI_SAYMA"
+    ],
     "estimatedItemsToMastery": 18,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.cebir.ters-islem",
-    "mebOutcomes": ["MAT.1.2.4"],
+    "mebOutcomes": [
+      "MAT.1.2.4"
+    ],
     "tema": 4,
     "baslik": "Toplama ve çıkarmanın ters işlem ilişkisi: a + b = c ise c − b = a",
     "childLabel": "Tersini yap",
     "prerequisites": [
-      { "id": "mat.cebir.eksik-toplanan", "type": "hard" },
-      { "id": "mat.cikarma.onluk-bozmadan-20", "type": "hard" }
+      {
+        "id": "mat.cebir.eksik-toplanan",
+        "type": "hard"
+      },
+      {
+        "id": "mat.cikarma.onluk-bozmadan-20",
+        "type": "hard"
+      }
     ],
     "difficulty": 5,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-TERS-ISLEM"],
-    "misconceptions": ["ISLEM_YONU", "ESIT_ISLEM_SONUCU"],
+    "exerciseTemplates": [
+      "M-TERS-ISLEM"
+    ],
+    "misconceptions": [
+      "ISLEM_YONU",
+      "ESIT_ISLEM_SONUCU"
+    ],
     "estimatedItemsToMastery": 20,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.cebir.islem-hikayesi",
-    "mebOutcomes": ["MAT.1.2.1"],
+    "mebOutcomes": [
+      "MAT.1.2.1"
+    ],
     "tema": 4,
     "baslik": "Günlük yaşam durumunu toplama ya da çıkarma işlemine çevirme",
     "childLabel": "Hikâyeyi çöz",
     "prerequisites": [
-      { "id": "mat.toplama.ustune-sayma", "type": "hard" },
-      { "id": "mat.cikarma.ayirma", "type": "soft" }
+      {
+        "id": "mat.toplama.ustune-sayma",
+        "type": "hard"
+      },
+      {
+        "id": "mat.cikarma.ayirma",
+        "type": "soft"
+      }
     ],
     "difficulty": 4,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-ISLEM-HIKAYE"],
-    "misconceptions": ["ISLEM_YONU", "GOREV_ANLASILMADI", "TEK_KUMEYI_ALMA"],
+    "exerciseTemplates": [
+      "M-ISLEM-HIKAYE"
+    ],
+    "misconceptions": [
+      "ISLEM_YONU",
+      "GOREV_ANLASILMADI",
+      "TEK_KUMEYI_ALMA"
+    ],
     "estimatedItemsToMastery": 18,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.para.banknot-tanima",
-    "mebOutcomes": ["MAT.1.1.9"],
+    "mebOutcomes": [
+      "MAT.1.1.9"
+    ],
     "tema": 5,
     "baslik": "1, 5, 10, 20, 50, 100 ve 200 TL banknotlarını tanıma",
     "childLabel": "Bu kaç lira?",
     "prerequisites": [],
     "difficulty": 1,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-PARA-TANI"],
-    "misconceptions": ["PARA_BOYUT_DEGER"],
+    "exerciseTemplates": [
+      "M-PARA-TANI"
+    ],
+    "misconceptions": [
+      "PARA_BOYUT_DEGER"
+    ],
     "estimatedItemsToMastery": 14,
     "isEntryPoint": true,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.para.deger-siralama",
-    "mebOutcomes": ["MAT.1.1.9"],
+    "mebOutcomes": [
+      "MAT.1.1.9"
+    ],
     "tema": 5,
     "baslik": "Banknotları temsil ettikleri büyüklüğe göre sıralama (200 TL sıralamaya dâhil edilmez)",
     "childLabel": "Hangisi değerli?",
     "prerequisites": [
-      { "id": "mat.para.banknot-tanima", "type": "hard" },
-      { "id": "mat.karsilastirma.on-referansi", "type": "soft" },
-      { "id": "mat.sayi.sira-sayisi", "type": "soft" }
+      {
+        "id": "mat.para.banknot-tanima",
+        "type": "hard"
+      },
+      {
+        "id": "mat.karsilastirma.on-referansi",
+        "type": "soft"
+      },
+      {
+        "id": "mat.sayi.sira-sayisi",
+        "type": "soft"
+      }
     ],
     "difficulty": 3,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-PARA-SIRALA"],
-    "misconceptions": ["PARA_BOYUT_DEGER", "BUYUKLUK_MIKTAR"],
+    "exerciseTemplates": [
+      "M-PARA-SIRALA"
+    ],
+    "misconceptions": [
+      "PARA_BOYUT_DEGER",
+      "BUYUKLUK_MIKTAR"
+    ],
     "estimatedItemsToMastery": 14,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.geometri.yuvarlak-koseli",
-    "mebOutcomes": ["MAT.1.3.3"],
+    "mebOutcomes": [
+      "MAT.1.3.3"
+    ],
     "tema": 6,
     "baslik": "Günlük yaşam nesnelerini yuvarlak/köşeli olarak ayırt etme ve eşleştirme",
     "childLabel": "Yuvarlak mı köşeli mi?",
-    "prerequisites": [{ "id": "mat.uzam.eslik", "type": "soft" }],
+    "prerequisites": [
+      {
+        "id": "mat.uzam.eslik",
+        "type": "soft"
+      }
+    ],
     "difficulty": 1,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-GEO-AYIR", "M-GEO-ESLE"],
-    "misconceptions": ["SEKIL_PROTOTIP", "GOREV_ANLASILMADI"],
+    "exerciseTemplates": [
+      "M-GEO-AYIR",
+      "M-GEO-ESLE"
+    ],
+    "misconceptions": [
+      "SEKIL_PROTOTIP",
+      "GOREV_ANLASILMADI"
+    ],
     "estimatedItemsToMastery": 12,
     "isEntryPoint": true,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.geometri.kenar-kose",
-    "mebOutcomes": ["MAT.1.3.4"],
+    "mebOutcomes": [
+      "MAT.1.3.4"
+    ],
     "tema": 6,
     "baslik": "Şekilleri kenar ve köşe sayısıyla belirleme",
     "childLabel": "Kenar ve köşe say",
     "prerequisites": [
-      { "id": "mat.geometri.yuvarlak-koseli", "type": "hard" },
-      { "id": "mat.sayma.kardinalite", "type": "soft" }
+      {
+        "id": "mat.geometri.yuvarlak-koseli",
+        "type": "hard"
+      },
+      {
+        "id": "mat.sayma.kardinalite",
+        "type": "soft"
+      }
     ],
     "difficulty": 3,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-GEO-KENAR-KOSE"],
-    "misconceptions": ["FAZLA_SAYMA", "EKSIK_SAYMA", "SEKIL_PROTOTIP"],
+    "exerciseTemplates": [
+      "M-GEO-KENAR-KOSE"
+    ],
+    "misconceptions": [
+      "FAZLA_SAYMA",
+      "EKSIK_SAYMA",
+      "SEKIL_PROTOTIP"
+    ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.geometri.sekil-adlandirma",
-    "mebOutcomes": ["MAT.1.3.5"],
+    "mebOutcomes": [
+      "MAT.1.3.5"
+    ],
     "tema": 6,
     "baslik": "Üçgen, kare, dikdörtgen ve çemberi adlandırma",
     "childLabel": "Bu hangi şekil?",
-    "prerequisites": [{ "id": "mat.geometri.kenar-kose", "type": "hard" }],
+    "prerequisites": [
+      {
+        "id": "mat.geometri.kenar-kose",
+        "type": "hard"
+      }
+    ],
     "difficulty": 3,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-GEO-ADLANDIR"],
-    "misconceptions": ["SEKIL_PROTOTIP"],
+    "exerciseTemplates": [
+      "M-GEO-ADLANDIR"
+    ],
+    "misconceptions": [
+      "SEKIL_PROTOTIP"
+    ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.geometri.dondurulmus-sekil",
-    "mebOutcomes": ["MAT.1.3.5"],
+    "mebOutcomes": [
+      "MAT.1.3.5"
+    ],
     "tema": 6,
     "baslik": "Döndürülmüş, büyütülmüş ya da alışılmadık duruştaki şekilleri tanıma ve sınıflandırma",
     "childLabel": "Dönse de tanı",
-    "prerequisites": [{ "id": "mat.geometri.sekil-adlandirma", "type": "hard" }],
+    "prerequisites": [
+      {
+        "id": "mat.geometri.sekil-adlandirma",
+        "type": "hard"
+      }
+    ],
     "difficulty": 4,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-GEO-ADLANDIR", "M-GEO-SINIFLA"],
-    "misconceptions": ["SEKIL_PROTOTIP"],
+    "exerciseTemplates": [
+      "M-GEO-ADLANDIR",
+      "M-GEO-SINIFLA"
+    ],
+    "misconceptions": [
+      "SEKIL_PROTOTIP"
+    ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.geometri.yapidaki-sekiller",
-    "mebOutcomes": ["MAT.1.3.4"],
+    "mebOutcomes": [
+      "MAT.1.3.4"
+    ],
     "tema": 6,
     "baslik": "Günlük yaşamdaki geometrik yapılarda (mimari vb.) şekilleri bulup çözümleme",
     "childLabel": "Şekilleri bul",
     "prerequisites": [
-      { "id": "mat.geometri.sekil-adlandirma", "type": "hard" },
-      { "id": "mat.geometri.dondurulmus-sekil", "type": "soft" }
+      {
+        "id": "mat.geometri.sekil-adlandirma",
+        "type": "hard"
+      },
+      {
+        "id": "mat.geometri.dondurulmus-sekil",
+        "type": "soft"
+      }
     ],
     "difficulty": 4,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-GEO-YAPI"],
-    "misconceptions": ["SEKIL_PROTOTIP", "EKSIK_SAYMA"],
+    "exerciseTemplates": [
+      "M-GEO-YAPI"
+    ],
+    "misconceptions": [
+      "SEKIL_PROTOTIP",
+      "EKSIK_SAYMA"
+    ],
     "estimatedItemsToMastery": 14,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.veri.gruplama",
-    "mebOutcomes": ["MAT.1.4.1"],
+    "mebOutcomes": [
+      "MAT.1.4.1"
+    ],
     "tema": 7,
     "baslik": "Nesneleri kategorik özelliğine (renk, tür, şekil) göre gruplama",
     "childLabel": "Ayrı ayrı grupla",
     "prerequisites": [
-      { "id": "mat.uzam.eslik", "type": "soft" },
-      { "id": "mat.geometri.yuvarlak-koseli", "type": "soft" }
+      {
+        "id": "mat.uzam.eslik",
+        "type": "soft"
+      },
+      {
+        "id": "mat.geometri.yuvarlak-koseli",
+        "type": "soft"
+      }
     ],
     "difficulty": 2,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-VERI-GRUPLA"],
-    "misconceptions": ["TEK_KUMEYI_ALMA", "GOREV_ANLASILMADI"],
+    "exerciseTemplates": [
+      "M-VERI-GRUPLA"
+    ],
+    "misconceptions": [
+      "TEK_KUMEYI_ALMA",
+      "GOREV_ANLASILMADI"
+    ],
     "estimatedItemsToMastery": 12,
     "isEntryPoint": true,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.veri.cetele",
-    "mebOutcomes": ["MAT.1.4.1"],
+    "mebOutcomes": [
+      "MAT.1.4.1"
+    ],
     "tema": 7,
     "baslik": "Çetele tablosu oluşturma ve okuma",
     "childLabel": "Çetele tut",
     "prerequisites": [
-      { "id": "mat.veri.gruplama", "type": "hard" },
-      { "id": "mat.ritmik.ileri-beser-100", "type": "soft" }
+      {
+        "id": "mat.veri.gruplama",
+        "type": "hard"
+      },
+      {
+        "id": "mat.ritmik.ileri-beser-100",
+        "type": "soft"
+      }
     ],
     "difficulty": 3,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-VERI-CETELE"],
-    "misconceptions": ["BIREBIR_ESLESME", "EKSIK_SAYMA"],
+    "exerciseTemplates": [
+      "M-VERI-CETELE"
+    ],
+    "misconceptions": [
+      "BIREBIR_ESLESME",
+      "EKSIK_SAYMA"
+    ],
     "estimatedItemsToMastery": 14,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.veri.siklik-tablosu",
-    "mebOutcomes": ["MAT.1.4.1"],
+    "mebOutcomes": [
+      "MAT.1.4.1"
+    ],
     "tema": 7,
     "baslik": "Sıklık tablosunu okuma ve çeteleyle ilişkilendirme",
     "childLabel": "Tabloyu oku",
     "prerequisites": [
-      { "id": "mat.veri.cetele", "type": "hard" },
-      { "id": "mat.sayma.yirmiye-kadar", "type": "soft" }
+      {
+        "id": "mat.veri.cetele",
+        "type": "hard"
+      },
+      {
+        "id": "mat.sayma.yirmiye-kadar",
+        "type": "soft"
+      }
     ],
     "difficulty": 4,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-VERI-SIKLIK"],
-    "misconceptions": ["KARDINALITE", "TEK_KUMEYI_ALMA"],
+    "exerciseTemplates": [
+      "M-VERI-SIKLIK"
+    ],
+    "misconceptions": [
+      "KARDINALITE",
+      "TEK_KUMEYI_ALMA"
+    ],
     "estimatedItemsToMastery": 14,
-    "durum": "planlandi"
+    "durum": "hazir"
   },
   {
     "id": "mat.veri.nesne-grafigi",
-    "mebOutcomes": ["MAT.1.4.1"],
+    "mebOutcomes": [
+      "MAT.1.4.1"
+    ],
     "tema": 7,
     "baslik": "Nesne grafiğini okuma ve veriye dayalı çıkarım yapma (en çok, en az)",
     "childLabel": "En çok hangisi?",
     "prerequisites": [
-      { "id": "mat.veri.siklik-tablosu", "type": "hard" },
-      { "id": "mat.karsilastirma.on-referansi", "type": "soft" }
+      {
+        "id": "mat.veri.siklik-tablosu",
+        "type": "hard"
+      },
+      {
+        "id": "mat.karsilastirma.on-referansi",
+        "type": "soft"
+      }
     ],
     "difficulty": 4,
     "readingLoadCeiling": 0,
-    "exerciseTemplates": ["M-VERI-GRAFIK"],
-    "misconceptions": ["BUYUKLUK_MIKTAR", "TEK_KUMEYI_ALMA"],
+    "exerciseTemplates": [
+      "M-VERI-GRAFIK"
+    ],
+    "misconceptions": [
+      "BUYUKLUK_MIKTAR",
+      "TEK_KUMEYI_ALMA"
+    ],
     "estimatedItemsToMastery": 16,
-    "durum": "planlandi"
+    "durum": "hazir"
   }
 ]

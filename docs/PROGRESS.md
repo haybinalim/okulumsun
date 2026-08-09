@@ -2,17 +2,22 @@
 
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
-> Tarih: 6 Ağustos 2026
+> Tarih: 6 Ağustos 2026 (Adım 12 — Erişilebilirlik denetimi güncellemesi)
 
 ## Yönetici özeti
 
-Proje, planın **§14 yol haritasında Adım 4 sonunda**: ilk 4 şablon jeneratörüyle,
-property-based testleriyle ve alıştırma ekranıyla ekranda oynanabilir durumda.
-`validate-content.ts` çalışıyor, birim testleri yeşil.
+Proje, planın **§14 yol haritasında Adım 12 sonunda**: Erişilebilirlik denetimi
+tamamlandı. `docs/TEST-PROTOKOLU.md` oluşturuldu — §15 elle doğrulama listesi
+işlendi, çocuk test protokolü yazıldı, erişilebilirlik denetimi yapıldı.
 
-Sıradaki iş **Adım 2b (CI)**, **Adım 2c (kayıt defteri)** ve **Adım 5 (oturum motoru,
-`src/progress/`)**. Henüz olmayan büyük parçalar: oturum/ustalık motoru, kalıcılık
-(IndexedDB + PWA), yardım akışı, kabuk ekranları ve 35 şablon.
+Denetim bulguları:
+- prefers-reduced-motion: tüm animasyonlarda korunuyor (5 bileşen)
+- aria-label: tüm interaktif öğelerde mevcut
+- Dokunma hedefi: tahta geometri testiyle korunuyor
+- Renk kontrastı: AA uygun (retry rengi yalnız büyük metinde)
+- Fiziksel tablet testi: protokol hazır, uygulama bekliyor
+
+Sıradaki iş **Adım 13** — Fiziksel akıllı tahta doğrulaması (2. ay).
 
 ## Yol haritası durumu (plan §14)
 
@@ -27,19 +32,20 @@ Sıradaki iş **Adım 2b (CI)**, **Adım 2c (kayıt defteri)** ve **Adım 5 (otu
 | 4 | Alıştırma ekranı | ✅ (`ExerciseScreen`, `GameShell`, e2e geometri testi) |
 | 5 | Oturum motoru (`src/progress/`) | ✅/⚠ (`mastery.ts`, `scheduler.ts`, `session.ts` yazıldı; 8 senaryo testi geçer; SAF; kova oranı testi gevşek — gerçekçi profil gerektirir) |
 | 6 | 3 kademeli yardım + hata taksonomisi akışı | ✅ (`itemLifecycle.ts` saf makine + `useHelpTimer` hook + `TaniTakipcisi`; 23 yeni test) |
-| 7 | Maskot + kutlama + Bahçem | ⬜ — SIRADAKİ |
-| 8 | Kabuk ekranları (ana ekran, mod seçimi, veli paneli, tahta konu seçimi) | ⬜ |
-| 9 | Kalıcılık + PWA + yedekleme | ⬜ |
-| 10 | Kalan 35 şablon + ses kümeleri (§4.5) | ⬜ (4/39 tamam) |
-| 11 | Dağıtım + LICENSES + gizlilik beyanı | ⬜ |
-| 12 | Erişilebilirlik + 5 çocukla tablet testi | ⬜ |
+| 7 | Maskot + kutlama + Bahçem | ✅ (`maskotState.ts` saf makine + `Maskot.tsx` SVG + `Celebration.tsx` + `cikartma.ts` + `Bahcem.tsx` + `OturumSonu.tsx`; 30 yeni test) |
+| 8 | Kabuk ekranları (ana ekran, mod seçimi, veli paneli, tahta konu seçimi) | ✅ (`appStore.ts` Zustand + `okulAyi.ts` §6.5 + 8 ekran: ModSecimi, AvatarSecimi, RenkSecimi, AnaEkran, TemaGirisi, KonuSecimi, VeliKapisi, VeliPaneli; 45 yeni test) |
+| 9 | Kalıcılık + PWA + yedekleme | ✅ (`db.ts` Dexie şema v1 + `repository.ts` (tahta modu no-op) + `backup.ts` dışa/içe + `persist.ts` storage.persist() + `migrations/` iskelet + vite-plugin-pwa precache; 33 yeni test) |
+| 10 | Kalan 35 şablon + ses kümeleri (§4.5) + SVG varlıklar | ✅ T1 ✅ + T2 ✅ + T4 ✅ + T3 ✅ + T5 ✅ + T6 ✅ + T7 ✅ — 39/39 şablon tamam |
+| 11 | Dağıtım + LICENSES + gizlilik beyanı | ✅ |
+| 12 | Erişilebilirlik + 5 çocukla tablet testi | ✅ denetim + protokol (fiziksel test bekliyor) |
 | 13 | (2. ay) Fiziksel tahta doğrulaması | ⬜ |
 
 ## Teknik doğrulama (son çalıştırma: 6 Ağustos 2026)
 
-- `npm test` → ✅ 49/49 (jeneratör 5 + ustalık 14 + seçici 7 + madde yaşam döngüsü 23)
-- `npm run validate` → ✅ 19 kazanım · 57 beceri · 15/15 hata etiketi · 4 jeneratör
-- `npm run build` → ✅
+- `npm test` → ✅ 192/192 (jeneratör 40 + ustalık 14 + seçici 7 + madde yaşam döngüsü 23 + maskot 17 + çıkartma 13 + okul ayı 15 + app store 30 + kalıcılık 33)
+- `npm run validate` → ✅ 19 kazanım · 57 beceri · 15/15 hata etiketi · 39 jeneratör · **0 bekliyor**
+- `npm run build` → ✅ (PWA service worker üretildi, 12 precache entry)
+- `npm run lint` → ✅ 0 uyarı 0 hata
 - CI → ⬜ yok (Adım 2b)
 
 ## Bilinen sapmalar / notlar

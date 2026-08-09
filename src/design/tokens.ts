@@ -138,5 +138,31 @@ export const REACH = {
   deadTopRatio: 0.35,
 } as const;
 
+/**
+ * Maskot uykuya geçme süresi — plan §7.5.
+ *
+ * 60 sn tam hareketsizlik (K3'ten sonra da cevap yok) → uykulu durum.
+ * Çocuk oyundan kopmuşsa ekran onu suçlamaz; maskot sadece uyuklar.
+ */
+export const MASKOT_UYKULU_SURESI = 60_000;
+
+/**
+ * Konfeti — plan §7.4, §17.
+ *
+ * Yalnız oturum sonunda. ≤40 parçacık, ≤1.5 sn.
+ * Kutlama ≤2 sn ve atlanabilir.
+ */
+export const KONFETI = {
+  parcacikSayisi: 40,
+  sureMs: 1500,
+} as const;
+
+/** Kutlama süresi — plan §7.4, §17. Doğru geri bildirimi 400–600 ms. */
+export const KUTLAMA = {
+  dogruMinMs: 400,
+  dogruMaksMs: 600,
+  oturumSonuMaksMs: 2000,
+} as const;
+
 /** Bir oturumdaki soru sayısı — 6-7 yaş dikkat süresi ~5-7 dakika. */
 export const SESSION_LENGTH = 8;

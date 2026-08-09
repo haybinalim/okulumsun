@@ -19,10 +19,80 @@ import { M_SAY_TEMPLATE_ID, saySablonu } from './templates/say';
 import { KARSILASTIR_TEMPLATE_ID, karsilastirGenerator } from './templates/karsilastir';
 import { RITMIK_TEMPLATE_ID, M_RITMIK } from './templates/ritmik';
 import { TOPLA_GORSEL_TEMPLATE_ID, toplaGorselJeneratoru } from './templates/toplaGorsel';
+import { KONUM_TEMPLATE_ID, konumGenerator } from './templates/konum';
+import { ESLIK_TEMPLATE_ID, eslikGenerator } from './templates/eslik';
+import { YONERGE_TEMPLATE_ID, yonergeGenerator } from './templates/yonerge';
+import { RAKAM_TANI_TEMPLATE_ID, rakamTaniGenerator } from './templates/rakamTani';
+import { SIPSAK_TEMPLATE_ID, sipsakGenerator } from './templates/sipsak';
+import { SIRA_SAYI_TEMPLATE_ID, siraSayiGenerator } from './templates/siraSayi';
+import { TAHMIN_MIKTAR_TEMPLATE_ID, tahminMiktarGenerator } from './templates/tahminMiktar';
+import { ONLUK_COZUMLE_TEMPLATE_ID, onlukCozumleGenerator } from './templates/onlukCozumle';
+import { ORUNTU_SAYI_TEMPLATE_ID, oruntuSayiGenerator } from './templates/oruntuSayi';
+import { ORUNTU_SEKIL_TEMPLATE_ID, oruntuSekilGenerator } from './templates/oruntuSekil';
+import { TOPLA_SEMBOL_TEMPLATE_ID, toplaSembolGenerator } from './templates/toplaSembol';
+import { CIKAR_GORSEL_TEMPLATE_ID, cikarGorselGenerator } from './templates/cikarGorsel';
+import { CIKAR_SEMBOL_TEMPLATE_ID, cikarSembolGenerator } from './templates/cikarSembol';
+import { TAHMIN_ISLEM_TEMPLATE_ID, tahminIslemGenerator } from './templates/tahminIslem';
+import { ISLEM_HIKAYE_TEMPLATE_ID, islemHikayeGenerator } from './templates/islemHikaye';
+import { TOPLA_ONA_TUMLE_TEMPLATE_ID, toplaOnaTumleGenerator } from './templates/toplaOnaTumle';
+import { ESIT_DENGE_TEMPLATE_ID, esitDengeGenerator } from './templates/esitDenge';
+import { EKSIK_TOPLANAN_TEMPLATE_ID, eksikToplananGenerator } from './templates/eksikToplanan';
+import { TERS_ISLEM_TEMPLATE_ID, tersIslemGenerator } from './templates/tersIslem';
+import { OLC_UZUNLUK_TEMPLATE_ID, olcUzunlukGenerator } from './templates/olcUzunluk';
+import { OLC_KUTLE_TEMPLATE_ID, olcKutleGenerator } from './templates/olcKutle';
+import { OLC_BIRIM_TEMPLATE_ID, olcBirimGenerator } from './templates/olcBirim';
+import { OLC_TAHMIN_TEMPLATE_ID, olcTahminGenerator } from './templates/olcTahmin';
+import { PARA_TANI_TEMPLATE_ID, paraTaniGenerator } from './templates/paraTani';
+import { PARA_SIRALA_TEMPLATE_ID, paraSiralaGenerator } from './templates/paraSirala';
+import { GEO_ADLANDIR_TEMPLATE_ID, geoAdlandirGenerator } from './templates/geoAdlandir';
+import { GEO_KENAR_KOSE_TEMPLATE_ID, geoKenarKoseGenerator } from './templates/geoKenarKose';
+import { GEO_YAPI_TEMPLATE_ID, geoYapiGenerator } from './templates/geoYapi';
+import { GEO_AYIR_TEMPLATE_ID, geoAyirGenerator } from './templates/geoAyir';
+import { GEO_ESLE_TEMPLATE_ID, geoEsleGenerator } from './templates/geoEsle';
+import { GEO_SINIFLA_TEMPLATE_ID, geoSiniflaGenerator } from './templates/geoSinifla';
+import { VERI_GRUPLA_TEMPLATE_ID, veriGruplaGenerator } from './templates/veriGrupla';
+import { VERI_CETELE_TEMPLATE_ID, veriCeteleGenerator } from './templates/veriCetele';
+import { VERI_SIKLIK_TEMPLATE_ID, veriSiklikGenerator } from './templates/veriSiklik';
+import { VERI_GRAFIK_TEMPLATE_ID, veriGrafikGenerator } from './templates/veriGrafik';
 
 export const REGISTRY: ReadonlyMap<TemplateId, ExerciseGenerator> = new Map([
   [M_SAY_TEMPLATE_ID, saySablonu],
   [KARSILASTIR_TEMPLATE_ID, karsilastirGenerator],
   [RITMIK_TEMPLATE_ID, M_RITMIK],
   [TOPLA_GORSEL_TEMPLATE_ID, toplaGorselJeneratoru],
+  [KONUM_TEMPLATE_ID, konumGenerator],
+  [ESLIK_TEMPLATE_ID, eslikGenerator],
+  [YONERGE_TEMPLATE_ID, yonergeGenerator],
+  [RAKAM_TANI_TEMPLATE_ID, rakamTaniGenerator],
+  [SIPSAK_TEMPLATE_ID, sipsakGenerator],
+  [SIRA_SAYI_TEMPLATE_ID, siraSayiGenerator],
+  [TAHMIN_MIKTAR_TEMPLATE_ID, tahminMiktarGenerator],
+  [ONLUK_COZUMLE_TEMPLATE_ID, onlukCozumleGenerator],
+  [ORUNTU_SAYI_TEMPLATE_ID, oruntuSayiGenerator],
+  [ORUNTU_SEKIL_TEMPLATE_ID, oruntuSekilGenerator],
+  [TOPLA_SEMBOL_TEMPLATE_ID, toplaSembolGenerator],
+  [CIKAR_GORSEL_TEMPLATE_ID, cikarGorselGenerator],
+  [CIKAR_SEMBOL_TEMPLATE_ID, cikarSembolGenerator],
+  [TAHMIN_ISLEM_TEMPLATE_ID, tahminIslemGenerator],
+  [ISLEM_HIKAYE_TEMPLATE_ID, islemHikayeGenerator],
+  [TOPLA_ONA_TUMLE_TEMPLATE_ID, toplaOnaTumleGenerator],
+  [ESIT_DENGE_TEMPLATE_ID, esitDengeGenerator],
+  [EKSIK_TOPLANAN_TEMPLATE_ID, eksikToplananGenerator],
+  [TERS_ISLEM_TEMPLATE_ID, tersIslemGenerator],
+  [OLC_UZUNLUK_TEMPLATE_ID, olcUzunlukGenerator],
+  [OLC_KUTLE_TEMPLATE_ID, olcKutleGenerator],
+  [OLC_BIRIM_TEMPLATE_ID, olcBirimGenerator],
+  [OLC_TAHMIN_TEMPLATE_ID, olcTahminGenerator],
+  [PARA_TANI_TEMPLATE_ID, paraTaniGenerator],
+  [PARA_SIRALA_TEMPLATE_ID, paraSiralaGenerator],
+  [GEO_ADLANDIR_TEMPLATE_ID, geoAdlandirGenerator],
+  [GEO_KENAR_KOSE_TEMPLATE_ID, geoKenarKoseGenerator],
+  [GEO_YAPI_TEMPLATE_ID, geoYapiGenerator],
+  [GEO_AYIR_TEMPLATE_ID, geoAyirGenerator],
+  [GEO_ESLE_TEMPLATE_ID, geoEsleGenerator],
+  [GEO_SINIFLA_TEMPLATE_ID, geoSiniflaGenerator],
+  [VERI_GRUPLA_TEMPLATE_ID, veriGruplaGenerator],
+  [VERI_CETELE_TEMPLATE_ID, veriCeteleGenerator],
+  [VERI_SIKLIK_TEMPLATE_ID, veriSiklikGenerator],
+  [VERI_GRAFIK_TEMPLATE_ID, veriGrafikGenerator],
 ]);

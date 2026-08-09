@@ -115,5 +115,195 @@
     "yildiz": "yıldız",
     "balik": "balık",
     "kelebek": "kelebek"
+  },
+
+  "konum": {
+    "$not": "Konum bildiren ifadeler — M-KONUM şablonu. Tam kelime klipleri, parçadan birleştirilmez.",
+    "altinda": "altında",
+    "ustunde": "üstünde",
+    "icinde": "içinde",
+    "onunde": "önünde",
+    "arkasinda": "arkasında",
+    "arasinda": "arasında",
+    "yaninda": "yanında",
+    "disinda": "dışında"
+  },
+
+  "yon": {
+    "$not": "Yön klipleri — M-YONERGE şablonu.",
+    "ileri": "ileri",
+    "geri": "geri",
+    "saga": "sağa",
+    "sola": "sola",
+    "yukari": "yukarı",
+    "asagi": "aşağı"
+  },
+
+  "adim": {
+    "$not": "Adım sayıları — M-YONERGE şablonu. Tam kelime klipleri.",
+    "bir-adim": "bir adım",
+    "iki-adim": "iki adım",
+    "uc-adim": "üç adım",
+    "dort-adim": "dört adım",
+    "bes-adim": "beş adım"
+  },
+
+  "eslik": {
+    "$not": "Eşlik kavramı — M-ESLIK şablonu.",
+    "ayni-mi": "Aynı mı?",
+    "farkli-mi": "Farklı mı?",
+    "hangisi-ayni": "Hangisi aynı?",
+    "hangisi-farkli": "Hangisi farklı?"
+  },
+
+  "soru-konum": {
+    "nereede": "Nerede?",
+    "altinda-mi": "Altında mı?",
+    "ustunde-mi": "Üstünde mü?",
+    "icinde-mi": "İçinde mi?",
+    "onunde-mi": "Önünde mi?",
+    "arkasinda-mi": "Arkasında mı?",
+    "yaninda-mi": "Yanında mı?"
+  },
+
+  "soru-yonerge": {
+    "$not": "M-YONERGE şablonu talimatları.",
+    "hedefe-git": "Hedefe ulaşmak için adımları sırayla seç.",
+    "dinle-ve-uygula": "Yönergeyi dinle ve uygula."
+  },
+
+  "sira": {
+    "$not": "Sıra sayıları — M-SIRA-SAYI şablonu. Tam kelime klipleri, 1-20.",
+    "1": "birinci",
+    "2": "ikinci",
+    "3": "üçüncü",
+    "4": "dördüncü",
+    "5": "beşinci",
+    "6": "altıncı",
+    "7": "yedinci",
+    "8": "sekizinci",
+    "9": "dokuzuncu",
+    "10": "onuncu",
+    "11": "on birinci",
+    "12": "on ikinci",
+    "13": "on üçüncü",
+    "14": "on dördüncü",
+    "15": "on beşinci",
+    "16": "on altıncı",
+    "17": "on yedinci",
+    "18": "on sekizinci",
+    "19": "on dokuzuncu",
+    "20": "yirminci"
+  },
+
+  "tahmin": {
+    "$not": "Tahmin şablonları (M-TAHMIN-MIKTAR, M-TAHMIN-ISLEM, M-OLC-TAHMIN).",
+    "kac-tahmin": "Sence kaç tane var?",
+    "harika-tahmin": "Harika tahmin!",
+    "yaklastin": "Çok yaklaştın!",
+    "birlikte-sayalim": "Haydi birlikte sayalım."
+  },
+
+  "oruntu": {
+    "$not": "Örüntü şablonları (M-ORUNTU-SAYI, M-ORUNTU-SEKIL).",
+    "sirada-ne-var": "Sırada ne var?",
+    "devam-ettir": "Örüntüyü sürdür."
+  },
+
+  "soru-rakam": {
+    "$not": "M-RAKAM-TANI şablonu talimatları.",
+    "dinle-sec": "Sesi dinle, rakamı seç."
+  },
+
+  "soru-sipsak": {
+    "$not": "M-SIPSAK şablonu talimatları — şipşak sayılama (subitizing).",
+    "kac-tane-hizli": "Hızlıca kaç tane gördün?"
+  },
+
+  "esit": {
+    "$not": "Eşitlik/denge — M-ESIT-DENGE şablonu.",
+    "dengede": "Dengede.",
+    "dengede-degil": "Dengede değil.",
+    "ayni-mi": "Aynı mı?"
+  },
+
+  "soru-islem": {
+    "$not": "İşlem şablonları talimatları.",
+    "ona-tumle": "10'a tamamlamak için kaç gerekir?",
+    "eksik-bul": "Eksik sayıyı bul.",
+    "ters-islem": "Ters işlemi bul.",
+    "hikaye-dinle": "Hikayeyi dinle ve cevapla."
+  },
+
+  "olcme": {
+    "$not": "Ölçme kavramları — M-OLC-* şablonları.",
+    "uzun": "uzun",
+    "kisa": "kısa",
+    "agir": "ağır",
+    "hafif": "hafif",
+    "atac": "ataç",
+    "karis": "karış",
+    "blok": "blok"
+  },
+
+  "soru-olcme": {
+    "$not": "M-OLC-* şablonu talimatları.",
+    "hangisi-uzun": "Hangisi daha uzun?",
+    "hangisi-kisa": "Hangisi daha kısa?",
+    "hangisi-agir": "Hangisi daha ağır?",
+    "hangisi-hafif": "Hangisi daha hafif?",
+    "kac-birim": "Kaç birim uzunluğunda?",
+    "kac-tahmin-uzun": "Sence kaç birim uzunluğunda?"
+  },
+
+  "para": {
+    "$not": "Para kavramları — M-PARA-* şablonları.",
+    "lira": "lira",
+    "deger-kac": "Kaç lira?",
+    "sirala-kucukten": "Küçükten büyüğe sırala.",
+    "sirala-buyukten": "Büyükten küçüğe sırala."
+  },
+
+  "sekil": {
+    "$not": "Şekil adları — M-GEO-* şablonları.",
+    "ucgen": "üçgen",
+    "kare": "kare",
+    "dikdortgen": "dikdörtgen",
+    "cember": "çember",
+    "yuvarlak": "yuvarlak",
+    "koseli": "köşeli",
+    "kenar": "kenar",
+    "kose": "köşe"
+  },
+
+  "soru-geo": {
+    "$not": "M-GEO-* şablonu talimatları.",
+    "hangisi-sekil": "Hangisi bu şekil?",
+    "kac-kenar": "Kaç kenarı var?",
+    "kac-kose": "Kaç köşesi var?",
+    "yuvarlak-mi-koseli-mi": "Yuvarlak mı, köşeli mi?",
+    "sekli-bul": "Şekli bul.",
+    "esleseni-bul": "Eşleşeni bul.",
+    "siniflandir": "Şekilleri grupla."
+  },
+
+  "veri": {
+    "$not": "Veri kavramları — M-VERI-* şablonları.",
+    "en-cok": "En çok hangisi var?",
+    "en-az": "En az hangisi var?",
+    "kac-tane": "Kaç tane var?",
+    "cetele": "Çetele yap.",
+    "tablo": "Tablo doldur.",
+    "grafik": "Grafiği oku."
+  },
+
+  "soru-veri": {
+    "$not": "M-VERI-* şablonu talimatları.",
+    "grupla": "Nesneleri grupla.",
+    "say-isaretle": "Say ve işaretle.",
+    "tablo-doldur": "Sıklık tablosunu doldur.",
+    "en-cok-hangisi": "En çok hangisi var?",
+    "en-az-hangisi": "En az hangisi var?",
+    "toplam-kac": "Toplam kaç tane var?"
   }
 }

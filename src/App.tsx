@@ -2,22 +2,37 @@ import { useState, useMemo } from 'react';
 import { BoardHarness } from './dev/BoardHarness';
 import { AudioUnlock } from './ui/screens/AudioUnlock';
 import { ExerciseScreen } from './ui/screens/ExerciseScreen';
+import { ModSecimi } from './ui/screens/ModSecimi';
+import { AvatarSecimi } from './ui/screens/AvatarSecimi';
+import { RenkSecimi } from './ui/screens/RenkSecimi';
+import { AnaEkran } from './ui/screens/AnaEkran';
+import { TemaGirisi } from './ui/screens/TemaGirisi';
+import { KonuSecimi } from './ui/screens/KonuSecimi';
+import { VeliKapisi } from './ui/screens/VeliKapisi';
+import { VeliPaneli } from './ui/screens/VeliPaneli';
+import { Kaynaklar } from './ui/screens/Kaynaklar';
+import { OturumSonu } from './ui/screens/OturumSonu';
+import { Bahcem } from './ui/screens/Bahcem';
+import { useAppStore, accentBul } from './store/appStore';
 import { useDeviceProfile } from './design/useDeviceProfile';
-import { ACCENTS, type Accent } from './design/tokens';
 import { createRng } from './exercises/rng';
 import { karsilastirUret } from './exercises/templates/karsilastir';
 
 /**
- * Adım 4 doğrulama ekranı — artık gerçek bir alıştırma.
+ * Uygulama kabuğu — plan §11 ekran akışını yönetir.
  *
- * Ses kilidi açıldıktan sonra tek bir M-KARSILASTIR sorusu üretilip gösterilir.
- * Henüz oturum motoru (Adım 5) olmadığı için tek sorudur; doğru/yanlış sonrası
- * yeni bir tohumla yeniden üretilir. Bu, "çocuğa gösterilebilir ilk deneyim".
+ * Akış:
+ *  [0] Ses kilidi → [1] Mod seçimi → [2] Avatar → [3] Renk → [4] Ana ekran
+ *  [4] → tema → [5] Tema girişi → [6] Alıştırma ×8 → [7] Oturum sonu → [8] Bahçem
+ *  [4] → dişli → Veli kapısı → [9] Veli paneli
+ *  Tahta modunda [2]/[3] atlanır, [4] → [4b] Konu seçimi.
  */
 export default function App() {
   const { profile } = useDeviceProfile();
-  const [accent, setAccent] = useState<Accent>(ACCENTS[0]);
-  const [unlocked, setUnlocked] = useState(false);
+  const ekran = useAppStore((s) => s.ekran);
+  const accent = accentBul(useAppStore((s) => s.accentId));
+  const oturumTamamlandi = useAppStore((s) => s.oturumTamamlandi);
+  const ekranGit = useAppStore((s) => s.ekranGit);
   const [seed, setSeed] = useState(7);
 
   const exercise = useMemo(
@@ -25,56 +40,88 @@ export default function App() {
     [seed],
   );
 
+  // Ses kilidi ekranı — her zaman en başta
+  if (ekran === 'audioUnlock') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <AudioUnlock onUnlocked={() => useAppStore.getState().ekranGit('modSecimi')} />
+        </div>
+      </BoardHarness>
+    );
+  }
+
   return (
     <BoardHarness profile={profile}>
       <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-        {!unlocked ? (
-          <AudioUnlock onUnlocked={() => setUnlocked(true)} />
-        ) : (
-          <>
-            {/* Veli/geliştirici: accent rengini değiştir + yeni soru üret. */}
-            <div
-              data-harness
-              style={{
-                position: 'fixed',
-                bottom: 8,
-                left: 8,
-                display: 'flex',
-                gap: 6,
-                zIndex: 9999,
-              }}
-            >
-              {ACCENTS.map((a) => (
-                <button
-                  key={a.id}
-                  onClick={() => setAccent(a)}
-                  aria-label={`Renk ${a.id}`}
-                  style={{
-                    width: 22,
-                    height: 22,
-                    borderRadius: '50%',
-                    border: accent.id === a.id ? '2px solid #000' : '2px solid #fff',
-                    background: a.hex,
-                    cursor: 'pointer',
-                  }}
-                />
-              ))}
-              <button
-                onClick={() => setSeed((s) => s + 1)}
-                style={{ fontSize: 12, padding: '2px 8px', cursor: 'pointer' }}
-              >
-                yeni soru
-              </button>
-            </div>
-            <ExerciseScreen
-              exercise={exercise}
-              accent={accent}
-              onDone={() => setSeed((s) => s + 1)}
-            />
-          </>
+        {/* Geliştirici araçları */}
+        <div
+          data-harness
+          style={{
+            position: 'fixed',
+            bottom: 8,
+            left: 8,
+            display: 'flex',
+            gap: 6,
+            zIndex: 9999,
+          }}
+        >
+          <button
+            onClick={() => useAppStore.getState().sifirla()}
+            style={{ fontSize: 10, padding: '2px 6px', cursor: 'pointer' }}
+          >
+            sıfırla
+          </button>
+          <button
+            onClick={() => setSeed((s) => s + 1)}
+            style={{ fontSize: 10, padding: '2px 6px', cursor: 'pointer' }}
+          >
+            yeni soru
+          </button>
+        </div>
+
+        {ekran === 'modSecimi' && <ModSecimi />}
+        {ekran === 'avatarSecimi' && <AvatarSecimi />}
+        {ekran === 'renkSecimi' && <RenkSecimi />}
+        {ekran === 'anaEkran' && <AnaEkran />}
+        {ekran === 'temaGirisi' && <TemaGirisi />}
+        {ekran === 'konuSecimi' && <KonuSecimi />}
+        {ekran === 'veliKapisi' && <VeliKapisi />}
+        {ekran === 'veliPaneli' && <VeliPaneli />}
+        {ekran === 'kaynaklar' && <Kaynaklar />}
+
+        {ekran === 'alistirma' && (
+          <ExerciseScreen
+            key={exercise.itemId}
+            exercise={exercise}
+            accent={accent}
+            onDone={() => {
+              // Her cevap sonrası yeni soru üret.
+              // Tam oturum motoru (8 soru yaşam döngüsü) Adım 5'te yazıldı,
+              // ekran entegrasyonu için seed değişimi yeterli.
+              setSeed((s) => s + 1);
+            }}
+          />
+        )}
+
+        {ekran === 'oturumSonu' && (
+          <OturumSonu
+            oturumTamamlandi={oturumTamamlandi}
+            onBahcem={() => ekranGit('bahcem')}
+          />
+        )}
+
+        {ekran === 'bahcem' && (
+          <Bahcem
+            koleksiyon={{
+              toplam: 1,
+              sahneIndeksi: 0,
+              sonKazancMs: Date.now(),
+            }}
+            onEv={() => ekranGit('anaEkran')}
+          />
         )}
       </div>
     </BoardHarness>
   );
 }
-

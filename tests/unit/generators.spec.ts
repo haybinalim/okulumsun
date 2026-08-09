@@ -29,6 +29,41 @@ import { uretSay } from '../../src/exercises/templates/say';
 import { karsilastirUret } from '../../src/exercises/templates/karsilastir';
 import { ritmikUret } from '../../src/exercises/templates/ritmik';
 import { uretToplaGorsel } from '../../src/exercises/templates/toplaGorsel';
+import { konumUret } from '../../src/exercises/templates/konum';
+import { eslikUret } from '../../src/exercises/templates/eslik';
+import { yonergeUret } from '../../src/exercises/templates/yonerge';
+import { rakamTaniUret } from '../../src/exercises/templates/rakamTani';
+import { sipsakUret } from '../../src/exercises/templates/sipsak';
+import { siraSayiUret } from '../../src/exercises/templates/siraSayi';
+import { tahminMiktarUret } from '../../src/exercises/templates/tahminMiktar';
+import { onlukCozumleUret } from '../../src/exercises/templates/onlukCozumle';
+import { oruntuSayiUret } from '../../src/exercises/templates/oruntuSayi';
+import { oruntuSekilUret } from '../../src/exercises/templates/oruntuSekil';
+import { toplaSembolUret } from '../../src/exercises/templates/toplaSembol';
+import { cikarGorselUret } from '../../src/exercises/templates/cikarGorsel';
+import { cikarSembolUret } from '../../src/exercises/templates/cikarSembol';
+import { tahminIslemUret } from '../../src/exercises/templates/tahminIslem';
+import { islemHikayeUret } from '../../src/exercises/templates/islemHikaye';
+import { toplaOnaTumleUret } from '../../src/exercises/templates/toplaOnaTumle';
+import { esitDengeUret } from '../../src/exercises/templates/esitDenge';
+import { eksikToplananUret } from '../../src/exercises/templates/eksikToplanan';
+import { tersIslemUret } from '../../src/exercises/templates/tersIslem';
+import { olcUzunlukUret } from '../../src/exercises/templates/olcUzunluk';
+import { olcKutleUret } from '../../src/exercises/templates/olcKutle';
+import { olcBirimUret } from '../../src/exercises/templates/olcBirim';
+import { olcTahminUret } from '../../src/exercises/templates/olcTahmin';
+import { paraTaniUret } from '../../src/exercises/templates/paraTani';
+import { paraSiralaUret } from '../../src/exercises/templates/paraSirala';
+import { geoAdlandirUret } from '../../src/exercises/templates/geoAdlandir';
+import { geoKenarKoseUret } from '../../src/exercises/templates/geoKenarKose';
+import { geoYapiUret } from '../../src/exercises/templates/geoYapi';
+import { geoAyirUret } from '../../src/exercises/templates/geoAyir';
+import { geoEsleUret } from '../../src/exercises/templates/geoEsle';
+import { geoSiniflaUret } from '../../src/exercises/templates/geoSinifla';
+import { veriGruplaUret } from '../../src/exercises/templates/veriGrupla';
+import { veriCeteleUret } from '../../src/exercises/templates/veriCetele';
+import { veriSiklikUret } from '../../src/exercises/templates/veriSiklik';
+import { veriGrafikUret } from '../../src/exercises/templates/veriGrafik';
 
 /** Her jeneratörün altından geçirildiği tohum sayısı. Plan 10.000 ister; bu değer
  *  derleme/hata ayıklama döngüsünü hızlı tutar — CI'da yükseltilebilir. */
@@ -57,6 +92,10 @@ function dogruDegerler(ex: Exercise): number[] {
  */
 function beklenenDogruSayisi(ex: Exercise): number {
   if (ex.kind === 'TAP_TO_PLACE') return ex.yuvalar.length;
+  if (ex.kind === 'SEQUENCE_ORDER') return ex.validation.dogruSira.length;
+  if (ex.kind === 'MATCH_PAIRS') return ex.options.filter((o) => o.correct === true).length;
+  if (ex.kind === 'HOTSPOT_FIND') return ex.validation.dogruHotspotIds.length;
+  if (ex.kind === 'TAP_COUNT') return ex.options.filter((o) => o.correct === true).length;
   return 1;
 }
 
@@ -151,4 +190,146 @@ test('M-RITMIK: değişmezler, determinizm, tek doğru ve ≤100 korunuyor', () 
 
 test('M-TOPLA-GORSEL: değişmezler, determinizm, tek doğru ve ≤20 korunuyor', () => {
   jeneratoreiYokla('M-TOPLA-GORSEL', (p, rng) => uretToplaGorsel(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-KONUM: değişmezler, determinizm, tek doğru korunuyor', () => {
+  // Görsel şıklı — sayısal sınır yok, ama değişmezler ve determinizm kontrolü yapılır.
+  // cevapUstSinir: Infinity çünkü görsel şıkların sayısal değeri yok.
+  jeneratoreiYokla('M-KONUM', (p, rng) => konumUret(p, rng), Infinity);
+});
+
+test('M-ESLIK: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-ESLIK', (p, rng) => eslikUret(p, rng), Infinity);
+});
+
+test('M-YONERGE: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-YONERGE', (p, rng) => yonergeUret(p, rng), Infinity);
+});
+
+test('M-RAKAM-TANI: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-RAKAM-TANI', (p, rng) => rakamTaniUret(p, rng), 9);
+});
+
+test('M-SIPSAK: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-SIPSAK', (p, rng) => sipsakUret(p, rng), 10);
+});
+
+test('M-SIRA-SAYI: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-SIRA-SAYI', (p, rng) => siraSayiUret(p, rng), 10);
+});
+
+test('M-TAHMIN-MIKTAR: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-TAHMIN-MIKTAR', (p, rng) => tahminMiktarUret(p, rng), 20);
+});
+
+test('M-ONLUK-COZUMLE: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-ONLUK-COZUMLE', (p, rng) => onlukCozumleUret(p, rng), 20);
+});
+
+test('M-ORUNTU-SAYI: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-ORUNTU-SAYI', (p, rng) => oruntuSayiUret(p, rng), 20);
+});
+
+test('M-ORUNTU-SEKIL: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-ORUNTU-SEKIL', (p, rng) => oruntuSekilUret(p, rng), Infinity);
+});
+
+test('M-TOPLA-SEMBOL: değişmezler, determinizm, tek doğru ve ≤20 korunuyor', () => {
+  jeneratoreiYokla('M-TOPLA-SEMBOL', (p, rng) => toplaSembolUret(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-CIKAR-GORSEL: değişmezler, determinizm, tek doğru ve ≤20 korunuyor', () => {
+  jeneratoreiYokla('M-CIKAR-GORSEL', (p, rng) => cikarGorselUret(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-CIKAR-SEMBOL: değişmezler, determinizm, tek doğru ve ≤20 korunuyor', () => {
+  jeneratoreiYokla('M-CIKAR-SEMBOL', (p, rng) => cikarSembolUret(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-TAHMIN-ISLEM: değişmezler, determinizm, tek doğru ve ≤20 korunuyor', () => {
+  jeneratoreiYokla('M-TAHMIN-ISLEM', (p, rng) => tahminIslemUret(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-ISLEM-HIKAYE: değişmezler, determinizm, tek doğru ve ≤20 korunuyor', () => {
+  jeneratoreiYokla('M-ISLEM-HIKAYE', (p, rng) => islemHikayeUret(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-TOPLA-ONA-TUMLE: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-TOPLA-ONA-TUMLE', (p, rng) => toplaOnaTumleUret(p, rng), 10);
+});
+
+test('M-ESIT-DENGE: değişmezler, determinizm, tek doğru ve ≤20 korunuyor', () => {
+  jeneratoreiYokla('M-ESIT-DENGE', (p, rng) => esitDengeUret(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-EKSIK-TOPLANAN: değişmezler, determinizm, tek doğru ve ≤20 korunuyor', () => {
+  jeneratoreiYokla('M-EKSIK-TOPLANAN', (p, rng) => eksikToplananUret(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-TERS-ISLEM: değişmezler, determinizm korunuyor', () => {
+  jeneratoreiYokla('M-TERS-ISLEM', (p, rng) => tersIslemUret(p, rng), ISLEM_ARALIGI.max);
+});
+
+test('M-OLC-UZUNLUK: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-OLC-UZUNLUK', (p, rng) => olcUzunlukUret(p, rng), 15);
+});
+
+test('M-OLC-KUTLE: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-OLC-KUTLE', (p, rng) => olcKutleUret(p, rng), 15);
+});
+
+test('M-OLC-BIRIM: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-OLC-BIRIM', (p, rng) => olcBirimUret(p, rng), 15);
+});
+
+test('M-OLC-TAHMIN: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-OLC-TAHMIN', (p, rng) => olcTahminUret(p, rng), 15);
+});
+
+test('M-PARA-TANI: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-PARA-TANI', (p, rng) => paraTaniUret(p, rng), 200);
+});
+
+test('M-PARA-SIRALA: değişmezler, determinizm korunuyor', () => {
+  jeneratoreiYokla('M-PARA-SIRALA', (p, rng) => paraSiralaUret(p, rng), 200);
+});
+
+test('M-GEO-ADLANDIR: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-GEO-ADLANDIR', (p, rng) => geoAdlandirUret(p, rng), Infinity);
+});
+
+test('M-GEO-KENAR-KOSE: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-GEO-KENAR-KOSE', (p, rng) => geoKenarKoseUret(p, rng), Infinity);
+});
+
+test('M-GEO-YAPI: değişmezler, determinizm, ≥1 doğru hotspot korunuyor', () => {
+  jeneratoreiYokla('M-GEO-YAPI', (p, rng) => geoYapiUret(p, rng), Infinity);
+});
+
+test('M-GEO-AYIR: değişmezler, determinizm, ≥1 doğru hotspot korunuyor', () => {
+  jeneratoreiYokla('M-GEO-AYIR', (p, rng) => geoAyirUret(p, rng), Infinity);
+});
+
+test('M-GEO-ESLE: değişmezler, determinizm korunuyor', () => {
+  jeneratoreiYokla('M-GEO-ESLE', (p, rng) => geoEsleUret(p, rng), Infinity);
+});
+
+test('M-GEO-SINIFLA: değişmezler, determinizm, ≥1 doğru hotspot korunuyor', () => {
+  jeneratoreiYokla('M-GEO-SINIFLA', (p, rng) => geoSiniflaUret(p, rng), Infinity);
+});
+
+test('M-VERI-GRUPLA: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-VERI-GRUPLA', (p, rng) => veriGruplaUret(p, rng), Infinity);
+});
+
+test('M-VERI-CETELE: değişmezler, determinizm, beklenen adet korunuyor', () => {
+  jeneratoreiYokla('M-VERI-CETELE', (p, rng) => veriCeteleUret(p, rng), 15);
+});
+
+test('M-VERI-SIKLIK: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-VERI-SIKLIK', (p, rng) => veriSiklikUret(p, rng), Infinity);
+});
+
+test('M-VERI-GRAFIK: değişmezler, determinizm, tek doğru korunuyor', () => {
+  jeneratoreiYokla('M-VERI-GRAFIK', (p, rng) => veriGrafikUret(p, rng), Infinity);
 });
