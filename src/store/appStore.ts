@@ -181,13 +181,13 @@ export const useAppStore = create<AppStore>((set) => ({
   veliGec: (gecildi) => set({ veliGecildi: gecildi }),
 
   temaSec: (temaNo) =>
-    set({
+    set((s) => ({
       secilenTemaNo: temaNo,
-      // Kişisel mod → tema girişi → alıştırma
-      // Tahta modu → konu seçimi
-      ekran: 'konuSecimi', // Şimdilik her iki modda da konu seçimi
+      // Kişisel mod → tema girişi → gerçek oturum, tahta → konu seçimi.
+      ekran: s.mod === 'kisisel' ? 'temaGirisi' : 'konuSecimi',
       oncekiEkran: 'anaEkran',
-    }),
+      oturumTamamlandi: false,
+    })),
 
   oturumuTamamla: () =>
     set({ oturumTamamlandi: true, ekran: 'oturumSonu', oncekiEkran: 'alistirma' }),
