@@ -885,11 +885,11 @@
         "type": "hard"
       },
       {
-        "id": "mat.sayma.dagilmis-10",
+        "id": "mat.sayma.birebir-esleme",
         "type": "soft"
       }
     ],
-    "difficulty": 2,
+    "difficulty": 1,
     "readingLoadCeiling": 0,
     "exerciseTemplates": [
       "M-TOPLA-GORSEL"

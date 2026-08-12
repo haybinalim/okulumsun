@@ -37,13 +37,15 @@ export interface OruntuSayiParams {
   readonly seed: number;
   readonly difficulty: Difficulty;
   readonly mod?: 'tahta' | 'kisisel';
+  /** Oturumun hedef becerisi belirliyse yön rastgele seçilmez. */
+  readonly yon?: 'artan' | 'azalan';
 }
 
 export function oruntuSayiUret(params: OruntuSayiParams, rng: Rng): TapToPlaceExercise {
   const { seed, difficulty } = params;
 
   const yonRng = rng.fork('yon');
-  const yon: 'artan' | 'azalan' = yonRng.pick(['artan', 'azalan'] as const);
+  const yon: 'artan' | 'azalan' = params.yon ?? yonRng.pick(['artan', 'azalan'] as const);
 
   // Adım: 1-3 arası, difficulty arttıkça büyük adım
   const adimRng = rng.fork('adim');

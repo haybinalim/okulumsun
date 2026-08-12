@@ -31,19 +31,53 @@ const CONTENT = path.join(ROOT, 'src/content/tr.json');
 const MIN_BYTES = 800;
 /** Türkçe konuşma kabaca 12 karakter/saniye. Bunun yarısından kısaysa yutulmuş. */
 const CHARS_PER_SEC = 12;
+/** CI tanısı için gerektiğinde geçersiz bir yol verilerek hata akışı sınanabilir. */
+const FFPROBE_COMMAND = process.env.AUDIO_AUDIT_FFPROBE ?? 'ffprobe';
 
-async function duration(file: string): Promise<number | null> {
+type DurationResult = {
+  seconds: number | null;
+  /** ffprobe çağrısı veya çıktısı geçersiz olduğunda CI tanısı için ayrıntı. */
+  diagnostic?: string;
+};
+
+function formatProbeError(file: string, error: unknown): string {
+  const e = error as NodeJS.ErrnoException & {
+    code?: string | number;
+    signal?: string | null;
+    stdout?: string;
+    stderr?: string;
+  };
+  const fields = [
+    `komut=${FFPROBE_COMMAND} -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ${JSON.stringify(file)}`,
+    `dosya=${file}`,
+    e.code !== undefined ? `kod=${String(e.code)}` : null,
+    e.signal ? `sinyal=${e.signal}` : null,
+    e.path ? `yol=${e.path}` : null,
+    e.stderr?.trim() ? `stderr=${e.stderr.trim()}` : null,
+    e.stdout?.trim() ? `stdout=${e.stdout.trim()}` : null,
+    e.message ? `ileti=${e.message}` : null,
+  ].filter((field): field is string => field !== null);
+
+  return fields.join(' | ');
+}
+
+async function duration(file: string): Promise<DurationResult> {
   try {
-    const { stdout } = await exec('ffprobe', [
+    const { stdout } = await exec(FFPROBE_COMMAND, [
       '-v', 'error',
       '-show_entries', 'format=duration',
       '-of', 'default=noprint_wrappers=1:nokey=1',
       file,
     ]);
     const d = Number.parseFloat(stdout.trim());
-    return Number.isFinite(d) ? d : null;
-  } catch {
-    return null;
+    return Number.isFinite(d)
+      ? { seconds: d }
+      : {
+          seconds: null,
+          diagnostic: `komut=${FFPROBE_COMMAND} | dosya=${file} | ileti=ffprobe sayısal olmayan süre döndürdü | stdout=${JSON.stringify(stdout.trim())}`,
+        };
+  } catch (error) {
+    return { seconds: null, diagnostic: formatProbeError(file, error) };
   }
 }
 
@@ -77,6 +111,7 @@ async function main(): Promise<void> {
   };
 
   const problems: string[] = [];
+  const durationDiagnostics: string[] = [];
   let totalBytes = 0;
   let checked = 0;
 
@@ -97,14 +132,17 @@ async function main(): Promise<void> {
 
     const text = textOf(key);
     if (text) {
-      const d = await duration(full);
-      if (d === null) {
-        problems.push(`OKUNAMADI  ${key}`);
+      const result = await duration(full);
+      if (result.seconds === null) {
+        problems.push(`OKUNAMADI  ${key} -> ${file}`);
+        durationDiagnostics.push(
+          `  ${key} -> ${file}\n    ${result.diagnostic ?? 'Tanı ayrıntısı üretilemedi.'}`,
+        );
       } else {
         const expected = text.length / CHARS_PER_SEC;
-        if (d < expected * 0.5) {
+        if (result.seconds < expected * 0.5) {
           problems.push(
-            `KISA       ${key} — ${d.toFixed(2)}sn, beklenen ~${expected.toFixed(2)}sn ("${text}")`,
+            `KISA       ${key} — ${result.seconds.toFixed(2)}sn, beklenen ~${expected.toFixed(2)}sn ("${text}")`,
           );
         }
       }
@@ -129,6 +167,10 @@ async function main(): Promise<void> {
 
   console.error(`\n${problems.length} sorun:`);
   for (const p of problems) console.error(`  ${p}`);
+  if (durationDiagnostics.length) {
+    console.error(`\n${durationDiagnostics.length} süre analizi hata ayrıntısı:`);
+    for (const diagnostic of durationDiagnostics) console.error(diagnostic);
+  }
   process.exitCode = 1;
 }
 

@@ -75,8 +75,20 @@ describe('Uygulama store — navigasyon akışı', () => {
 
   // ----------------------------------------------------- tema seçimi
 
-  it('tema seçilince konu seçimine gider', () => {
+  it('kişisel modda tema seçilince tema girişine gider ve tamamlanmış oturumu sıfırlar', () => {
+    useAppStore.getState().modSec('kisisel');
+    useAppStore.getState().oturumuTamamla();
     useAppStore.getState().temaSec(2);
+
+    expect(useAppStore.getState().secilenTemaNo).toBe(2);
+    expect(useAppStore.getState().ekran).toBe('temaGirisi');
+    expect(useAppStore.getState().oturumTamamlandi).toBe(false);
+  });
+
+  it('tahta modunda tema seçilince konu seçimine gider', () => {
+    useAppStore.getState().modSec('tahta');
+    useAppStore.getState().temaSec(2);
+
     expect(useAppStore.getState().secilenTemaNo).toBe(2);
     expect(useAppStore.getState().ekran).toBe('konuSecimi');
   });

@@ -27,3 +27,6 @@ dist-ssr
 test-results
 playwright-report
 
+
+# Yerel TTS modelleri; yalnız üretim aracı, uygulama varlığı değildir.
+.tools/

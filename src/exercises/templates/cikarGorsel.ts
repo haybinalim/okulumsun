@@ -21,6 +21,8 @@ export interface CikarGorselParams {
   readonly difficulty: Difficulty;
   readonly tercihEdilenSprite?: NesneSprite;
   readonly mod?: 'tahta' | 'kisisel';
+  /** Oturum seçicisi hedef beceriyi belirlediyse zorluk varsayımını geçersiz kılar. */
+  readonly hedefSkillId?: 'mat.cikarma.ayirma' | 'mat.cikarma.geriye-sayarak';
 }
 
 export function cikarGorselUret(params: CikarGorselParams, rng: Rng): AudioToImageExercise {
@@ -84,8 +86,10 @@ export function cikarGorselUret(params: CikarGorselParams, rng: Rng): AudioToIma
     k3Gorsel: { type: 'onlukCerceve', gruplar: sonuc >= 10 ? [10, sonuc - 10] : [sonuc] },
   });
 
-  // Skill seçimi: ayırma vs geriye sayma
-  const skillId: SkillId = difficulty <= 2 ? 'mat.cikarma.ayirma' : 'mat.cikarma.geriye-sayarak';
+  // Oturum hedefi varsa onu ölç; doğrudan şablon kullanımında tarihsel zorluk varsayımı korunur.
+  const skillId: SkillId = params.hedefSkillId ?? (
+    difficulty <= 2 ? 'mat.cikarma.ayirma' : 'mat.cikarma.geriye-sayarak'
+  );
 
   return {
     kind: 'AUDIO_TO_IMAGE',

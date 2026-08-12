@@ -20,6 +20,8 @@ export interface CikarSembolParams {
   readonly seed: number;
   readonly difficulty: Difficulty;
   readonly mod?: 'tahta' | 'kisisel';
+  /** Oturum seçicisi hedef beceriyi belirlediyse zorluk varsayımını geçersiz kılar. */
+  readonly hedefSkillId?: 'mat.cikarma.fark-bulma' | 'mat.cikarma.onluk-bozmadan-20';
 }
 
 export function cikarSembolUret(params: CikarSembolParams, rng: Rng): AudioToImageExercise {
@@ -74,8 +76,10 @@ export function cikarSembolUret(params: CikarSembolParams, rng: Rng): AudioToIma
     k3Gorsel: { type: 'onlukCerceve', gruplar: sonuc >= 10 ? [10, sonuc - 10] : [sonuc] },
   });
 
-  // Skill: difficulty ≤3 → fark-bulma, ≥4 → onluk-bozmadan
-  const skillId: SkillId = difficulty <= 3 ? 'mat.cikarma.fark-bulma' : 'mat.cikarma.onluk-bozmadan-20';
+  // Oturum hedefi varsa onu ölç; doğrudan şablon kullanımında zorluk varsayımı korunur.
+  const skillId: SkillId = params.hedefSkillId ?? (
+    difficulty <= 3 ? 'mat.cikarma.fark-bulma' : 'mat.cikarma.onluk-bozmadan-20'
+  );
 
   return {
     kind: 'AUDIO_TO_IMAGE',

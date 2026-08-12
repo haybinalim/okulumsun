@@ -10,9 +10,12 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: '24', cache: 'npm' }
       - run: npm ci
+      - name: ffmpeg kur (ses denetimi için)
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - run: npm run lint
       - run: npm test
       - run: npm run validate
+      - run: npm run audio:audit
       - run: npm run build
   e2e:
     runs-on: ubuntu-latest

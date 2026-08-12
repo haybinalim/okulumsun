@@ -54,6 +54,12 @@ const PROVIDER = (process.env.TTS_PROVIDER ?? 'say') as 'say' | 'piper' | 'eleve
 const SAY_RATE = 158;
 const SAY_VOICE = 'Yelda';
 
+/**
+ * Yerel, dağıtılmayan Türkçe Piper modeli. Model dosyası kaynak depoya eklenmez;
+ * `PIPER_MODEL` ile başka bir ses/model yolu da verilebilir.
+ */
+const DEFAULT_PIPER_MODEL = path.join(ROOT, '.tools', 'piper', 'tr_TR-dfki-medium.onnx');
+
 /** Service worker'ın önden önbelleğe alacağı ad alanları. */
 const CORE_NAMESPACES = ['ui', 'geri', 'yardim', 'soru', 'op', 'sayi'];
 
@@ -132,11 +138,21 @@ async function synthSay(text: string, out: string): Promise<void> {
 }
 
 async function synthPiper(text: string, out: string): Promise<void> {
-  const model = process.env.PIPER_MODEL ?? 'tr_TR-fahrettin-medium';
+  const model = path.resolve(ROOT, process.env.PIPER_MODEL ?? DEFAULT_PIPER_MODEL);
+  const config = `${model}.json`;
+  if (!existsSync(model) || !existsSync(config)) {
+    throw new Error(
+      `Piper modeli bulunamadı: ${model}. ` +
+      'Model ve .onnx.json eşini .tools/piper/ altına koyun veya PIPER_MODEL ile model yolunu verin.',
+    );
+  }
+
   const tmp = `${out}.wav`;
+  // `execFile` doğrudan stdin girdisi kabul etmez; metni güvenli biçimde pipe ederiz.
   await exec('sh', [
     '-c',
-    `printf '%s' ${JSON.stringify(text)} | piper --model ${model} --output_file ${JSON.stringify(tmp)}`,
+    `printf '%s' ${JSON.stringify(text)} | piper --model ${JSON.stringify(model)} ` +
+      `--config ${JSON.stringify(config)} --output_file ${JSON.stringify(tmp)} --length-scale 1.1`,
   ]);
   await exec('ffmpeg', [
     '-y', '-loglevel', 'error',
