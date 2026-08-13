@@ -45,9 +45,9 @@ Programı'ndan referans alınmıştır. Ders kitabı görselleri kullanılmamı�
 
 ## Para görselleri
 
-Türk Lirası banknot görselleri TCMB koruması altındadır. Uygulamada
-gerçek banknot görselleri kullanılmaz — stilize temsil çizilir
-(doğru renk ve rakam, gerçekçi değil).
+Para etkinliklerinde, Türkiye Cumhuriyet Merkez Bankası'nın (TCMB) yayımladığı E9 5. tertip **ön yüz örnek banknot görselleri** kullanılır. Her yerel dosya, TCMB’nin kaynak görselindeki kırmızı `ORNEKTIR GECMEZ` ibaresini korur ve yalnız eğitim amaçlı banknot tanıma ile sıralama etkinliklerinde gösterilir.
+
+Kaynak sayfaları ve kupür eşlemesi [`docs/BANKNOT_GORSEL_KAYNAKLARI.md`](docs/BANKNOT_GORSEL_KAYNAKLARI.md) dosyasında belgelenmiştir. TCMB kullanım koşulları uyarınca kaynak gösterilmelidir; ticari kullanım planlanırsa TCMB’den yazılı izin alınmalıdır.
 
 ## Gizlilik beyanı
 

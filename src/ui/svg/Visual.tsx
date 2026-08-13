@@ -19,6 +19,7 @@ import type {
 } from '../../exercises/types';
 import { ACCENTS } from '../../design/tokens';
 import { Sprite } from './Sprite';
+import { RESMI_BANKNOT_GORSELLERI } from './banknotAssets';
 import { nesneKonumlari } from './positions';
 
 /** Renk adını hex'e çevirir — ACCENTS tek kaynak (mor=turuncu=… haritaları çift tutmaz). */
@@ -201,9 +202,10 @@ function sekilYolu(sekil: SekilAdi, cx: number, cy: number, r: number) {
 }
 
 /**
- * Banknot — gerçek Türk lirasını taklit etmeyen, çocukların değerleri ayırt etmesi
- * için tasarlanmış öğretici banknot. Değer; renk, köşe rozeti, güvenlik şeridi ve
- * merkez motifiyle birlikte ifade edilir. Böylece soru basit sayı kartına dönüşmez.
+ * Banknot — dolaşımdaki kupürler için TCMB'nin yayımladığı, üzerinde
+ * `ORNEKTIR GECMEZ` ibaresi bulunan resmî ön yüz örneklerini gösterir.
+ * 1 TL gerçek bir banknot olmadığı için şablonlar yalnız 5–200 TL kupür üretir;
+ * bu koruyucu fallback eski ya da haricî içeriklerdeki 1 TL değeri içindir.
  */
 const BANKNOT_STILLERI: Readonly<Record<BanknotDegeri, {
   readonly zemin: string;
@@ -261,6 +263,54 @@ function Banknot({
   width: number;
   height: number;
 }) {
+  const resmiGorsel = RESMI_BANKNOT_GORSELLERI[deger];
+
+  if (resmiGorsel) {
+    const kartGenislik = width * 0.93;
+    const kartYukseklik = Math.min(height * 0.7, kartGenislik * 0.5);
+    const x = (width - kartGenislik) / 2;
+    const y = (height - kartYukseklik) / 2;
+    const clipId = `banknot-${deger}-${width}-${height}`;
+
+    return (
+      <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
+        <defs>
+          <clipPath id={clipId}>
+            <rect x={x} y={y} width={kartGenislik} height={kartYukseklik} rx={kartYukseklik * 0.045} />
+          </clipPath>
+        </defs>
+        <rect
+          x={x + 3}
+          y={y + 4}
+          width={kartGenislik}
+          height={kartYukseklik}
+          rx={kartYukseklik * 0.045}
+          fill="#0f172a"
+          opacity="0.16"
+        />
+        <image
+          href={resmiGorsel}
+          x={x}
+          y={y}
+          width={kartGenislik}
+          height={kartYukseklik}
+          preserveAspectRatio="xMidYMid meet"
+          clipPath={`url(#${clipId})`}
+        />
+        <rect
+          x={x}
+          y={y}
+          width={kartGenislik}
+          height={kartYukseklik}
+          rx={kartYukseklik * 0.045}
+          fill="none"
+          stroke="#334155"
+          strokeWidth={Math.max(1.5, kartYukseklik * 0.018)}
+        />
+      </svg>
+    );
+  }
+
   const stil = BANKNOT_STILLERI[deger];
   const kartGenislik = width * 0.9;
   const kartYukseklik = Math.min(height * 0.62, kartGenislik * 0.54);

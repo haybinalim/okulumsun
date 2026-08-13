@@ -16,7 +16,8 @@ import type { SpeechKey } from '../../audio/audioManifest.generated';
 
 export const PARA_SIRALA_TEMPLATE_ID = 'M-PARA-SIRALA' as const;
 
-const BANKNOTLAR = [1, 5, 10, 20, 50, 100, 200] as const;
+// 1 TL madeni paradır; bu şablon yalnız resmî örnek görseli bulunan banknotları üretir.
+const BANKNOTLAR = [5, 10, 20, 50, 100, 200] as const;
 type BanknotDeger = (typeof BANKNOTLAR)[number];
 
 function banknotSesi(deger: BanknotDeger) {

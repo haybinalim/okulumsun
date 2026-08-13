@@ -43,7 +43,7 @@ export default defineConfig({
       },
       workbox: {
         // Tüm varlıklar precache → tam çevrimdışı.
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,m4a}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2,m4a}'],
         // Önbellek sürümü — içerik değişince otomatik güncellenir.
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB (ses klipleri)
       },
