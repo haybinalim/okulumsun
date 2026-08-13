@@ -30,10 +30,10 @@ export function KonuSecimi() {
     [secilenTemaNo],
   );
 
-  const handleKonuSec = (_dugumId: string) => {
-    // Seçilen konuyla alıştırmaya git
-    // Not: Tam session motoru entegrasyonu Adım 9'da gelecek
-    ekranGit('alistirma');
+  const dugumSec = useAppStore((s) => s.dugumSec);
+
+  const handleKonuSec = (dugumId: string) => {
+    dugumSec(dugumId);
   };
 
   const handleGeri = () => {

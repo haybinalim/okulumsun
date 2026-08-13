@@ -33,9 +33,15 @@ export function veriSiklikUret(params: VeriSiklikParams, rng: Rng): TapToPlaceEx
   const secimRng = rng.fork('secim');
   const kategoriler = secimRng.shuffle([...NESNELER]).slice(0, kategoriSayisi);
 
-  // Her kategori için sayım
+  // Her kategori için sayım. Her sayı benzersiz olmalı: iki satırın sayısı aynı
+  // olursa özdeş rakam kartları tekil yuvalara bağlanamaz ve görev belirsizleşir.
   const sayimRng = rng.fork('sayim');
-  const sayilar = kategoriler.map(() => sayimRng.int(1, Math.min(5 + difficulty, 10)));
+  const sayilar: number[] = [];
+  const sayimUstSiniri = Math.min(5 + difficulty, 10);
+  while (sayilar.length < kategoriSayisi) {
+    const sayi = sayimRng.int(1, sayimUstSiniri);
+    if (!sayilar.includes(sayi)) sayilar.push(sayi);
+  }
 
   // Yuvalar — her kategori için bir sayı yuvası
   const yuvalar: Yuva[] = kategoriler.map((_, i) => ({

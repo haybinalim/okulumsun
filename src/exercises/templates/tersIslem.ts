@@ -11,7 +11,7 @@
 import { makeItemId, varsayilanIpuclari, type Difficulty, type KazanimKodu, type SkillId, type VisualSpec, type AssetSpec, type Prompt, type EslesmeKarti } from '../types';
 import type { MatchPairsExercise, ExerciseGenerator } from '../types';
 import type { Rng } from '../rng';
-import { HATA_ETIKETLERI, type HataEtiketi } from '../distractors';
+import { HATA_ETIKETLERI } from '../distractors';
 import { ISLEM_ARALIGI } from '../types';
 
 export const TERS_ISLEM_TEMPLATE_ID = 'M-TERS-ISLEM' as const;
@@ -31,35 +31,38 @@ export function tersIslemUret(params: TersIslemParams, rng: Rng): MatchPairsExer
   const b = sayiRng.int(1, Math.min(a - 1, 8));
   const c = a - b;
 
-  // Yanlış çiftler üret
-  const celdiriciRng = rng.fork('celdirici');
-  const yanlisUcluler: { a: number; b: number; c: number }[] = [];
+  // MATCH_PAIRS içinde her kartın bir eşi vardır; "yanlış" işlem kartı yoktur.
+  // Bu nedenle ek kartlar da a − b = c eşitliğini sağlayan, ana üçlüden farklı
+  // geçerli işlem aileleri olarak üretilir.
+  const celdiriciRng = rng.fork('ek-ciftler');
+  const ekUcluler: { a: number; b: number; c: number }[] = [];
   const kullanilan = new Set<string>([`${a}-${b}-${c}`]);
 
-  // ISLEM_YONU: a + b = c (işlem yönü karıştırıldı)
-  const islemYonu = { a: c + b, b, c: b + c };
-  const islemYonuKey = `${islemYonu.a}-${islemYonu.b}-${islemYonu.c}`;
-  if (islemYonu.a <= ISLEM_ARALIGI.max && !kullanilan.has(islemYonuKey)) {
-    yanlisUcluler.push(islemYonu);
-    kullanilan.add(islemYonuKey);
-  }
-
-  // Rastgele yanlış
-  while (yanlisUcluler.length < 2) {
+  while (ekUcluler.length < 2) {
     const ya = celdiriciRng.int(3, ISLEM_ARALIGI.max);
     const yb = celdiriciRng.int(1, ya - 1);
     const yc = ya - yb;
     const key = `${ya}-${yb}-${yc}`;
     if (!kullanilan.has(key)) {
-      yanlisUcluler.push({ a: ya, b: yb, c: yc });
+      ekUcluler.push({ a: ya, b: yb, c: yc });
       kullanilan.add(key);
     }
   }
 
-  // Match pairs: sol = çıkarma, sağ = toplama
-  // Doğru çift: (a-b=c) ↔ (c+b=a)
-  // Yanlış çiftler: rastgele işlemler
+  // İki eşdeğer işlem ailesi dönüşümlü kullanılır. Aynı sayı üçlüsü, yalnızca
+  // işlem yönü değil parçanın/bütünün hangi tarafta bulunduğu bakımından da değişir.
+  const aile = rng.fork(`aile|d${difficulty}`).bool() ? 'cikar-topla' : 'topla-cikar';
+  const solGorsel = (u: { a: number; b: number; c: number }): VisualSpec =>
+    aile === 'cikar-topla'
+      ? { type: 'islemKarti', ilkSayi: u.a, ikinciSayi: u.b, sonuc: u.c, islem: '-' }
+      : { type: 'islemKarti', ilkSayi: u.b, ikinciSayi: u.c, sonuc: u.a, islem: '+' };
+  const sagGorsel = (u: { a: number; b: number; c: number }): VisualSpec =>
+    aile === 'cikar-topla'
+      ? { type: 'islemKarti', ilkSayi: u.c, ikinciSayi: u.b, sonuc: u.a, islem: '+' }
+      : { type: 'islemKarti', ilkSayi: u.a, ikinciSayi: u.c, sonuc: u.b, islem: '-' };
 
+  // MATCH_PAIRS'te her kart eşleştirilebilir bir çifttir; "yanlış kart" yoktur.
+  // Çeldirici, kartın kendisi değil aynı anda görünür başka işlem çiftleridir.
   const solKartlar: EslesmeKarti[] = [];
   const sagKartlar: EslesmeKarti[] = [];
 
@@ -69,46 +72,30 @@ export function tersIslemUret(params: TersIslemParams, rng: Rng): MatchPairsExer
   solKartlar.push({
     id: dogruSolId,
     taraf: 'sol',
-    deger: { tur: 'gorsel', gorsel: { type: 'sahne', parcalar: [
-      { gorsel: { type: 'rakam', sayi: a }, konum: { x: 0.2, y: 0.5 } },
-      { gorsel: { type: 'rakam', sayi: b }, konum: { x: 0.5, y: 0.5 } },
-      { gorsel: { type: 'rakam', sayi: c }, konum: { x: 0.8, y: 0.5 } },
-    ] } },
+    deger: { tur: 'gorsel', gorsel: solGorsel({ a, b, c }) },
     correct: true,
   });
   sagKartlar.push({
     id: dogruSagId,
     taraf: 'sag',
-    deger: { tur: 'gorsel', gorsel: { type: 'sahne', parcalar: [
-      { gorsel: { type: 'rakam', sayi: c }, konum: { x: 0.2, y: 0.5 } },
-      { gorsel: { type: 'rakam', sayi: b }, konum: { x: 0.5, y: 0.5 } },
-      { gorsel: { type: 'rakam', sayi: a }, konum: { x: 0.8, y: 0.5 } },
-    ] } },
+    deger: { tur: 'gorsel', gorsel: sagGorsel({ a, b, c }) },
     correct: true,
   });
 
-  // Yanlış çiftler
-  yanlisUcluler.forEach((u, i) => {
+  // Aynı ilişkiyi taşıyan ek çiftler. Ekranda karışık sıralandıkları için çocuk
+  // her çıkarma/toplama eşdeğerliğini görseldeki işleç ve sayılardan bulur.
+  ekUcluler.forEach((u, i) => {
     const solId = `sol-${i + 1}`;
     const sagId = `sag-${i + 1}`;
-    const etiket: HataEtiketi = i === 0 ? HATA_ETIKETLERI.ISLEM_YONU : HATA_ETIKETLERI.ESIT_ISLEM_SONUCU;
     solKartlar.push({
       id: solId, taraf: 'sol',
-      deger: { tur: 'gorsel', gorsel: { type: 'sahne', parcalar: [
-        { gorsel: { type: 'rakam', sayi: u.a }, konum: { x: 0.2, y: 0.5 } },
-        { gorsel: { type: 'rakam', sayi: u.b }, konum: { x: 0.5, y: 0.5 } },
-        { gorsel: { type: 'rakam', sayi: u.c }, konum: { x: 0.8, y: 0.5 } },
-      ] } },
-      correct: false, diagnosticTag: etiket,
+      deger: { tur: 'gorsel', gorsel: solGorsel(u) },
+      correct: true,
     });
     sagKartlar.push({
       id: sagId, taraf: 'sag',
-      deger: { tur: 'gorsel', gorsel: { type: 'sahne', parcalar: [
-        { gorsel: { type: 'rakam', sayi: u.c }, konum: { x: 0.2, y: 0.5 } },
-        { gorsel: { type: 'rakam', sayi: u.b }, konum: { x: 0.5, y: 0.5 } },
-        { gorsel: { type: 'rakam', sayi: u.a }, konum: { x: 0.8, y: 0.5 } },
-      ] } },
-      correct: false, diagnosticTag: etiket,
+      deger: { tur: 'gorsel', gorsel: sagGorsel(u) },
+      correct: true,
     });
   });
 
@@ -119,10 +106,10 @@ export function tersIslemUret(params: TersIslemParams, rng: Rng): MatchPairsExer
 
   const options = [...karistikSol, ...karistikSag];
 
-  // Çiftler: [solOptionId, sagOptionId] — doğru çift + yanlış çiftler
+  // Çiftler: [solOptionId, sagOptionId] — her işlem ailesi matematiksel olarak geçerlidir.
   const ciftler: readonly (readonly [string, string])[] = [
     [dogruSolId, dogruSagId],
-    ...yanlisUcluler.map((_, i) => [`sol-${i + 1}`, `sag-${i + 1}`] as const),
+    ...ekUcluler.map((_, i) => [`sol-${i + 1}`, `sag-${i + 1}`] as const),
   ];
 
   const prompt: Prompt = {
@@ -139,13 +126,13 @@ export function tersIslemUret(params: TersIslemParams, rng: Rng): MatchPairsExer
   const hints = varsayilanIpuclari({
     talimatSesi: { kind: 'key', key: 'soru-islem.ters-islem' },
     k2Ses: { kind: 'key', key: 'yardim.k2-eleme' },
-    eleOptionIds: options.filter((o) => !('correct' in o && o.correct)).map((o) => o.id),
+    eleOptionIds: [],
     vurgulaIds: [dogruSolId, dogruSagId],
   });
 
   return {
     kind: 'MATCH_PAIRS',
-    itemId: makeItemId(TERS_ISLEM_TEMPLATE_ID, seed, `${a}-${b}=${c}|${a}+${b}=?`),
+    itemId: makeItemId(TERS_ISLEM_TEMPLATE_ID, seed, `${a}-${b}=${c}|aile:${aile}`),
     templateId: TERS_ISLEM_TEMPLATE_ID,
     skillIds: ['mat.cebir.ters-islem'] as readonly SkillId[],
     kazanimKodlari: ['MAT.1.2.4'] as readonly KazanimKodu[],

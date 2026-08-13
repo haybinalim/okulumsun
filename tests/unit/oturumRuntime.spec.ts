@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { skillsData } from '../../src/content/skillsData';
 import { REGISTRY } from '../../src/exercises/registry';
+import { ExerciseSchema } from '../../src/content/schema/exercise';
 import type { SkillId } from '../../src/exercises/types';
 import {
   oturumDuzenuSec,
@@ -75,6 +76,36 @@ describe('oturum çalışma zamanı köprüsü', () => {
 
       expect(exercise.templateId).toBe(templateId);
       expect(exercise.skillIds).toContain(dugum.id);
+    }
+
+    expect(eksikEslesmeler).toEqual([]);
+  });
+
+  it('her kayıtlı şablonun soru, uyaran ve şık görselleri sınır sözleşmesine uyar', () => {
+    const eksikEslesmeler: string[] = [];
+
+    for (const [templateId] of REGISTRY) {
+      const dugum = skillsData.find((aday) =>
+        aday.durum === 'hazir' && aday.exerciseTemplates.includes(templateId),
+      );
+      if (!dugum) {
+        eksikEslesmeler.push(templateId);
+        continue;
+      }
+
+      // Farklı tohumlar, tek bir örneğin gizleyebileceği görsel/şık tutarsızlıklarını yakalar.
+      for (let seed = 0; seed < 32; seed++) {
+        const exercise = secilenSoruyuUret(
+          { skillId: dugum.id, templateId, seed, kova: 'frontier' },
+          skillsData,
+          'kisisel',
+        );
+        const sonuc = ExerciseSchema.safeParse(exercise);
+        expect(
+          sonuc.success,
+          `${templateId}, seed=${seed}: ${sonuc.success ? '' : sonuc.error.issues.map((issue) => issue.message).join(' | ')}`,
+        ).toBe(true);
+      }
     }
 
     expect(eksikEslesmeler).toEqual([]);

@@ -63,9 +63,10 @@ export function veriGrafikUret(params: VeriGrafikParams, rng: Rng): AudioToImage
     dogruIndex = sayilar.indexOf(Math.min(...sayilar));
     dogruCevap = kategoriler[dogruIndex];
   } else {
-    // kac-tane: rastgele bir kategorinin sayısı
-    dogruIndex = soruRng.int(0, kategoriSayisi - 1);
-    dogruCevap = sayilar[dogruIndex];
+    // Sesli soru “Toplam kaç tane?” der; doğru cevap tek bir sütun değil,
+    // grafikteki üç kategorinin birlikte sayısı olmalıdır.
+    dogruIndex = 0;
+    dogruCevap = sayilar.reduce((toplam, sayi) => toplam + sayi, 0);
   }
 
   // Şık sayısı
@@ -85,18 +86,18 @@ export function veriGrafikUret(params: VeriGrafikParams, rng: Rng): AudioToImage
       kullanilanCevaplar.add(String(n));
     }
   } else {
-    // Sayı şıkları
-    for (const d of [1, -1, 2, -2]) {
+    // Önce çocuğun sık yapacağı “yalnız bir sütunu sayma” hatasını seçenek
+    // olarak sun; kalan çeldiriciler toplamın yakınındaki sayılardır.
+    for (const y of celdiriciRng.shuffle([...sayilar, (dogruCevap as number) - 1, (dogruCevap as number) + 1, (dogruCevap as number) - 2])) {
       if (yanlislar.length >= sikSayisi - 1) break;
-      const y = (dogruCevap as number) + d;
-      if (y >= 0 && y <= 15 && !kullanilanCevaplar.has(String(y))) {
+      if (y >= 0 && y <= 30 && !kullanilanCevaplar.has(String(y))) {
         yanlislar.push(y);
         kullanilanCevaplar.add(String(y));
       }
     }
     while (yanlislar.length < sikSayisi - 1) {
       let y: number;
-      do { y = celdiriciRng.int(0, 15); } while (kullanilanCevaplar.has(String(y)));
+      do { y = celdiriciRng.int(0, 30); } while (kullanilanCevaplar.has(String(y)));
       yanlislar.push(y);
       kullanilanCevaplar.add(String(y));
     }
@@ -116,9 +117,9 @@ export function veriGrafikUret(params: VeriGrafikParams, rng: Rng): AudioToImage
     const gorsel: VisualSpec = isNesne
       ? { type: 'nesneKumesi', sprite: sec.deger as NesneSprite, adet: 1, layout: 'sira' }
       : { type: 'rakam', sayi: sec.deger as number };
-    const etiket: HataEtiketi = soruTipi === 'kac-tane'
-      ? HATA_ETIKETLERI.BUYUKLUK_MIKTAR
-      : HATA_ETIKETLERI.TEK_KUMEYI_ALMA;
+    const etiket: HataEtiketi = soruTipi === 'kac-tane' && sayilar.includes(sec.deger as number)
+      ? HATA_ETIKETLERI.TEK_KUMEYI_ALMA
+      : HATA_ETIKETLERI.BUYUKLUK_MIKTAR;
     return sec.dogru
       ? { id, deger: { tur: 'gorsel', gorsel }, correct: true }
       : { id, deger: { tur: 'gorsel', gorsel }, correct: false, diagnosticTag: etiket };

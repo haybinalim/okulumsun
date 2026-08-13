@@ -11,11 +11,17 @@
 import { makeItemId, varsayilanIpuclari, type Difficulty, type KazanimKodu, type SkillId, type Option, type VisualSpec, type AssetSpec, type Prompt } from '../types';
 import type { SequenceOrderExercise, ExerciseGenerator } from '../types';
 import type { Rng } from '../rng';
-import { HATA_ETIKETLERI, type HataEtiketi } from '../distractors';
+import { HATA_ETIKETLERI } from '../distractors';
+import type { SpeechKey } from '../../audio/audioManifest.generated';
 
 export const PARA_SIRALA_TEMPLATE_ID = 'M-PARA-SIRALA' as const;
 
 const BANKNOTLAR = [1, 5, 10, 20, 50, 100, 200] as const;
+type BanknotDeger = (typeof BANKNOTLAR)[number];
+
+function banknotSesi(deger: BanknotDeger) {
+  return { kind: 'sequence' as const, keys: [`sayi.${deger}` as SpeechKey, 'para.lira' as SpeechKey] };
+}
 
 export interface ParaSiralaParams {
   readonly seed: number;
@@ -49,42 +55,17 @@ export function paraSiralaUret(params: ParaSiralaParams, rng: Rng): SequenceOrde
     return {
       id,
       deger: { tur: 'gorsel' as const, gorsel },
+      ses: banknotSesi(deger),
       correct: true,
     };
   });
 
-  // Yanlış kartlar — değer karıştırılmış
-  const celdiriciRng = rng.fork('celdirici');
-  const yanlisKartSayisi = Math.min(adet - 1, 2);
-  const kullanilanDegerler = new Set(secilenler);
-
-  for (let i = 0; i < yanlisKartSayisi; i++) {
-    const yanlisDegerler = BANKNOTLAR.filter((n) => !kullanilanDegerler.has(n));
-    if (yanlisDegerler.length === 0) break;
-    const yd = celdiriciRng.pick(yanlisDegerler);
-    kullanilanDegerler.add(yd);
-    const id = `yanlis-${i}`;
-    const gorsel: VisualSpec = { type: 'banknot', deger: yd };
-    options.push({
-      id,
-      deger: { tur: 'gorsel' as const, gorsel },
-      correct: false,
-      diagnosticTag: HATA_ETIKETLERI.PARA_BOYUT_DEGER as HataEtiketi,
-    });
-  }
-
-  // Sahne görseli — sıralama alanı
-  const sahneGorsel: VisualSpec = {
-    type: 'sahne',
-    parcalar: sirali.map((d, i) => ({
-      gorsel: { type: 'banknot', deger: d } as VisualSpec,
-      konum: { x: 0.15 + i * (0.7 / Math.max(sirali.length - 1, 1)), y: 0.5 },
-    })),
-  };
+  // Sıralama etkinliğinde her banknot doğru son sırada yer almalıdır.
+  // Ek "yanlış" banknotlar, etkinliği sıralama yerine eleme sorusuna dönüştürür.
 
   const prompt: Prompt = {
+    // Kartlar zaten seçenek alanında görünür; sıralanmış bir sahne göstermek cevabı açık ederdi.
     ses: { kind: 'key', key: kucuktenBuyuge ? 'para.sirala-kucukten' : 'para.sirala-buyukten' },
-    gorsel: sahneGorsel,
   };
 
   const assets: readonly AssetSpec[] = options.map((o) => ({
@@ -97,7 +78,6 @@ export function paraSiralaUret(params: ParaSiralaParams, rng: Rng): SequenceOrde
   const hints = varsayilanIpuclari({
     talimatSesi: { kind: 'key', key: kucuktenBuyuge ? 'para.sirala-kucukten' : 'para.sirala-buyukten' },
     k2Ses: { kind: 'key', key: 'yardim.k2-eleme' },
-    eleOptionIds: options.filter((o) => !('correct' in o && o.correct)).map((o) => o.id),
     vurgulaIds: dogruSira,
   });
 

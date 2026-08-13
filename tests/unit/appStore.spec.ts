@@ -93,6 +93,13 @@ describe('Uygulama store — navigasyon akışı', () => {
     expect(useAppStore.getState().ekran).toBe('konuSecimi');
   });
 
+  it('konu seçilince dugumSec alıştırmaya yönlendirir ve dugumId saklanır', () => {
+    useAppStore.getState().dugumSec('mat.sayilar.bir-onluk');
+
+    expect(useAppStore.getState().secilenDugumId).toBe('mat.sayilar.bir-onluk');
+    expect(useAppStore.getState().ekran).toBe('alistirma');
+  });
+
   // ----------------------------------------------------- veli
 
   it('veli kapısı geçince veliGecildi true olur', () => {

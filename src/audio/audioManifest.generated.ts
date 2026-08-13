@@ -111,6 +111,7 @@ export const AUDIO_MANIFEST = {
   'sayi.98': { file: 'sayi/98.m4a', core: true },
   'sayi.99': { file: 'sayi/99.m4a', core: true },
   'sayi.100': { file: 'sayi/100.m4a', core: true },
+  'sayi.200': { file: 'sayi/200.m4a', core: true },
   'op.arti': { file: 'op/arti.m4a', core: true },
   'op.eksi': { file: 'op/eksi.m4a', core: true },
   'op.esit': { file: 'op/esit.m4a', core: true },

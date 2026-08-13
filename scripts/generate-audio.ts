@@ -72,7 +72,7 @@ interface Clip {
 
 // ---------------------------------------------------------------- içerik okuma
 
-/** Türkçe sayı adları — 0-100. Ritmik sayma kazanımı (MAT.1.1.5) 100'e kadar. */
+/** Türkçe sayı adları — ritmik sayma 0-100, banknot kazanımı için ayrıca 200. */
 function turkishNumber(n: number): string {
   const ones = ['sıfır', 'bir', 'iki', 'üç', 'dört', 'beş', 'altı', 'yedi', 'sekiz', 'dokuz'];
   const tens = [
@@ -88,6 +88,7 @@ function turkishNumber(n: number): string {
     'doksan',
   ];
   if (n === 100) return 'yüz';
+  if (n === 200) return 'iki yüz';
   if (n < 10) return ones[n];
   const t = Math.floor(n / 10);
   const o = n % 10;
@@ -109,6 +110,8 @@ async function collectClips(): Promise<Clip[]> {
       for (let n = 0; n <= 100; n++) {
         clips.push({ key: `sayi.${n}`, text: turkishNumber(n), file: `sayi/${n}.m4a`, core });
       }
+      // MAT.1.1.9 banknot tanımada 200 TL de sesli okunmalıdır.
+      clips.push({ key: 'sayi.200', text: turkishNumber(200), file: 'sayi/200.m4a', core });
       continue;
     }
 

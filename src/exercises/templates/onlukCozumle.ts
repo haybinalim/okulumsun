@@ -60,7 +60,6 @@ export function onlukCozumleUret(params: OnlukCozumleParams, rng: Rng): TapToPla
 
   // Yanlış onluk: 2 (hedef 11-20 ise 2 onluk = 21+ oluyor, açıkça yanlış)
   const yanlisOnlukId = 'kart-yanlis-onluk';
-  const yanlisOnlukDeger = 2;
 
   // Yanlış birlik: basamakları yer değiştir (18 → 8 onluk 1 birlik gibi)
   const yanlisBirlikId = 'kart-yanlis-birlik';
@@ -85,7 +84,8 @@ export function onlukCozumleUret(params: OnlukCozumleParams, rng: Rng): TapToPla
   if (difficulty >= 2) {
     options.push({
       id: yanlisOnlukId,
-      deger: { tur: 'gorsel', gorsel: { type: 'onlukCerceve', gruplar: [yanlisOnlukDeger * 10] } as VisualSpec },
+      // İki onluk, tek bir "20'lik" çerçeve değil iki ayrı onluk çerçevesidir.
+      deger: { tur: 'gorsel', gorsel: { type: 'onlukCerceve', gruplar: [10, 10] } as VisualSpec },
       correct: false,
       diagnosticTag: HATA_ETIKETLERI.ONLUK_BOZMA as HataEtiketi,
     });

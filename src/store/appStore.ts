@@ -36,6 +36,11 @@ export type Ekran =
 /** Kullanım modu — plan §3.3. */
 export type Mod = 'tahta' | 'kisisel';
 
+/** Tahta modunda kalıcılık devre dışıdır (§3.3). */
+export function persistenceEnabled(mod: Mod | null): boolean {
+  return mod === 'kisisel';
+}
+
 /** Okuma seviyesi — plan §6.3. 0=Eylül varsayımı (okumıyor). */
 export type ReadingLevel = 0 | 1 | 2 | 3;
 
@@ -99,6 +104,7 @@ interface AppStore {
 
   // --- Oturum durumu
   secilenTemaNo: number | null;
+  secilenDugumId: string | null;
   oturumTamamlandi: boolean;
 
   // --- Actions
@@ -111,32 +117,11 @@ interface AppStore {
   sesHiziAyarla: (hiz: number) => void;
   veliGec: (gecildi: boolean) => void;
   temaSec: (temaNo: number) => void;
+  dugumSec: (dugumId: string) => void;
   oturumuTamamla: () => void;
   sifirla: () => void;
   // --- Kalıcılık (Adım 9)
   profildenYukle: (profil: Partial<AppStore>) => void;
-}
-
-/**
- * Tahta modunda kalıcılık YOK — plan §3.3, §11.
- *
- * Bu bayrak `false` olduğunda persistence katmanı (Adım 9) hiçbir şey
- * yazmaz. Şu an persistence yok, ama bayrak testle doğrulanır.
- */
-export function persistenceEnabled(mod: Mod | null): boolean {
-  return mod === 'kisisel';
-}
-
-/** Mevcut accent — accentId'den Accent nesnesine çözüm. */
-export function accentBul(id: string | null): Accent {
-  if (!id) return ACCENTS[0];
-  return ACCENTS.find((a) => a.id === id) ?? ACCENTS[0];
-}
-
-/** Mevcut avatar — avatarId'den AvatarSecenegi'ne çözüm. */
-export function avatarBul(id: string | null): AvatarSecenegi | null {
-  if (!id) return null;
-  return AVATARLAR.find((a) => a.id === id) ?? null;
 }
 
 const baslangicDurumu = {
@@ -150,6 +135,7 @@ const baslangicDurumu = {
   sesHizi: 1.0,
   veliGecildi: false,
   secilenTemaNo: null as number | null,
+  secilenDugumId: null as string | null,
   oturumTamamlandi: false,
 };
 
@@ -183,11 +169,20 @@ export const useAppStore = create<AppStore>((set) => ({
   temaSec: (temaNo) =>
     set((s) => ({
       secilenTemaNo: temaNo,
+      secilenDugumId: null,
       // Kişisel mod → tema girişi → gerçek oturum, tahta → konu seçimi.
       ekran: s.mod === 'kisisel' ? 'temaGirisi' : 'konuSecimi',
       oncekiEkran: 'anaEkran',
       oturumTamamlandi: false,
     })),
+
+  dugumSec: (dugumId: string) =>
+    set({
+      secilenDugumId: dugumId,
+      ekran: 'alistirma',
+      oncekiEkran: 'konuSecimi',
+      oturumTamamlandi: false,
+    }),
 
   oturumuTamamla: () =>
     set({ oturumTamamlandi: true, ekran: 'oturumSonu', oncekiEkran: 'alistirma' }),
@@ -196,3 +191,12 @@ export const useAppStore = create<AppStore>((set) => ({
 
   profildenYukle: (profil) => set(profil),
 }));
+
+export function accentBul(id: Accent['id'] | null): Accent {
+  return ACCENTS.find((a) => a.id === id) ?? ACCENTS[0];
+}
+
+export function avatarBul(id: string | null): AvatarSecenegi | null {
+  if (!id) return null;
+  return AVATARLAR.find((a) => a.id === id) ?? null;
+}

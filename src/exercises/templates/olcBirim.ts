@@ -16,6 +16,15 @@ export const OLC_BIRIM_TEMPLATE_ID = 'M-OLC-BIRIM' as const;
 
 const RENKLER: readonly Renk[] = ['mavi', 'yesil', 'turuncu', 'pembe', 'mor', 'sari'];
 
+/** Aynı kazanımı farklı, çocuk için tanıdık görsel bağlamlarda ölçer.
+ * Her bağlamda yalnız nesne ve ölçü birimi değişir; birimler ortak başlangıç
+ * çizgisinde, aralıksız biçimde nesnenin altına yerleşir. */
+const OLCUM_BAGLAMLARI = [
+  { nesne: 'kalem', birim: 'yildiz' },
+  { nesne: 'araba', birim: 'top' },
+  { nesne: 'balik', birim: 'cicek' },
+] as const;
+
 export interface OlcBirimParams {
   readonly seed: number;
   readonly difficulty: Difficulty;
@@ -29,6 +38,7 @@ export function olcBirimUret(params: OlcBirimParams, rng: Rng): AudioToImageExer
   // Nesne uzunluğu: birim sayısı
   const birimSayisi = Math.min(3 + difficulty, 10);
   const renk = r.pick(RENKLER);
+  const baglam = r.pick(OLCUM_BAGLAMLARI);
 
   // Şık sayısı
   const sikSayisi = Math.min(2 + Math.floor((difficulty - 1) / 2), 4);
@@ -67,17 +77,16 @@ export function olcBirimUret(params: OlcBirimParams, rng: Rng): AudioToImageExer
   const karistirilmis = siraRng.shuffle([...options]);
   options.splice(0, options.length, ...karistirilmis);
 
-  // Sahne: birim bloklar dizisi + ölçülen nesne
-  const bloklar: VisualSpec[] = Array.from({ length: birimSayisi }, () => ({
-    type: 'sekil', sekil: 'kare', renk,
-  }));
-
+  // Ölçülen kalem ile birimler ortak başlangıç çizgisinden başlar. Böylece
+  // çocuk blokları tek başına saymaz; birimlerin kalemin uzunluğunu kapladığını görür.
   const sahneGorsel: VisualSpec = {
-    type: 'sahne',
-    parcalar: bloklar.map((b, i) => ({
-      gorsel: b,
-      konum: { x: 0.1 + i * (0.8 / birimSayisi), y: 0.5 },
-    })),
+    type: 'olcumSahnesi',
+    nesne: baglam.nesne,
+    birim: baglam.birim,
+    birimAdedi: birimSayisi,
+    boyut: 'uzunluk',
+    gorunum: 'birimlerleOlcum',
+    renk,
   };
 
   const prompt: Prompt = {
@@ -104,7 +113,7 @@ export function olcBirimUret(params: OlcBirimParams, rng: Rng): AudioToImageExer
 
   return {
     kind: 'AUDIO_TO_IMAGE',
-    itemId: makeItemId(OLC_BIRIM_TEMPLATE_ID, seed, String(birimSayisi)),
+    itemId: makeItemId(OLC_BIRIM_TEMPLATE_ID, seed, `${baglam.nesne}|${baglam.birim}|${birimSayisi}`),
     templateId: OLC_BIRIM_TEMPLATE_ID,
     skillIds: ['mat.olcme.birimle-olcme'] as readonly SkillId[],
     kazanimKodlari: ['MAT.1.1.8'] as readonly KazanimKodu[],

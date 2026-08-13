@@ -29,10 +29,18 @@
  * SAF VE SENKRON: Date.now(), Math.random(), IndexedDB ÇAĞRILMAZ.
  */
 
-import { makeItemId, varsayilanIpuclari, type Difficulty, type KazanimKodu, type SkillId } from '../types';
+import {
+  YON_KART_YONLER,
+  makeItemId,
+  varsayilanIpuclari,
+  type Difficulty,
+  type KazanimKodu,
+  type SkillId,
+  type YonKartiYonu,
+} from '../types';
 import type { SequenceOrderExercise, ExerciseGenerator, Option, VisualSpec, AssetSpec, Prompt } from '../types';
 import type { Rng } from '../rng';
-import { HATA_ETIKETLERI, type HataEtiketi } from '../distractors';
+import { HATA_ETIKETLERI } from '../distractors';
 import type { SpeechKey } from '../../audio/audioManifest.generated';
 
 // ---------------------------------------------------------------- sabitler
@@ -40,8 +48,8 @@ import type { SpeechKey } from '../../audio/audioManifest.generated';
 export const YONERGE_TEMPLATE_ID = 'M-YONERGE' as const;
 
 /** Yönler — §4.5 ses envanteriyle uyumlu. */
-export const YONLER = ['ileri', 'geri', 'saga', 'sola'] as const;
-export type Yon = (typeof YONLER)[number];
+export const YONLER = YON_KART_YONLER;
+export type Yon = YonKartiYonu;
 
 /** Yön → speechKey eşlemesi. */
 const YON_SPEECH_KEY: Record<Yon, SpeechKey> = {
@@ -86,8 +94,9 @@ export interface YonergeParams {
 export function yonergeUret(params: YonergeParams, rng: Rng): SequenceOrderExercise {
   const { seed, difficulty } = params;
 
-  // Yönerge uzunluğu: difficulty 1→1 adım, 2→2, 3→2, 4→3, 5→3
-  const adimSayisi = Math.min(1 + Math.floor((difficulty - 1) / 2), 3);
+  // Sıralama etkinliği olabilmesi için en az iki kart gerekir.
+  // Zorluk yükseldikçe hatırlanacak adım sayısı 2'den 4'e çıkar.
+  const adimSayisi = Math.min(2 + Math.floor((difficulty - 1) / 2), 4);
 
   // Yönerge adımlarını üret
   const yonergeRng = rng.fork('yonerge');
@@ -101,10 +110,6 @@ export function yonergeUret(params: YonergeParams, rng: Rng): SequenceOrderExerc
   // Doğru sıra — adımların ID'leri
   const dogruSira = adimlar.map((_, i) => `adim-${i}`);
 
-  // Yanlış kartlar üret — yönü çevrilmiş veya adım sayısı değiştirilmiş
-  const celdiriciRng = rng.fork('celdirici');
-  const yanlisKartSayisi = Math.min(adimSayisi, 2);
-
   // Prompt — yönergeyi seslendir (adım sayısı + yön)
   const yonergeSesKeys: SpeechKey[] = [];
   for (const adim of adimlar) {
@@ -117,7 +122,7 @@ export function yonergeUret(params: YonergeParams, rng: Rng): SequenceOrderExerc
     const id = `adim-${i}`;
     const sesKey = ADIM_SPEECH_KEY[adim.adim];
     const yonKey = YON_SPEECH_KEY[adim.yon];
-    const gorsel: VisualSpec = { type: 'rakam', sayi: adim.adim };
+    const gorsel: VisualSpec = { type: 'yonKarti', yon: adim.yon, adim: adim.adim };
     return {
       id,
       deger: { tur: 'gorsel' as const, gorsel },
@@ -126,24 +131,8 @@ export function yonergeUret(params: YonergeParams, rng: Rng): SequenceOrderExerc
     };
   });
 
-  // Yanlış kartlar — farklı yön/adım kombinasyonu
-  for (let i = 0; i < yanlisKartSayisi; i++) {
-    const yanlisAdim: Adim = {
-      yon: celdiriciRng.pick(YONLER.filter((y) => y !== adimlar[i % adimSayisi].yon)),
-      adim: celdiriciRng.pick(ADIMLAR.slice(0, 3) as readonly AdimSayisi[]),
-    };
-    const id = `yanlis-${i}`;
-    const sesKey = ADIM_SPEECH_KEY[yanlisAdim.adim];
-    const yonKey = YON_SPEECH_KEY[yanlisAdim.yon];
-    const gorsel: VisualSpec = { type: 'rakam', sayi: yanlisAdim.adim };
-    options.push({
-      id,
-      deger: { tur: 'gorsel' as const, gorsel },
-      ses: { kind: 'sequence' as const, keys: [...[sesKey, yonKey]] as SpeechKey[] },
-      correct: false,
-      diagnosticTag: HATA_ETIKETLERI.GOREV_ANLASILMADI as HataEtiketi,
-    });
-  }
+  // Sıralama sorusunda kart havuzu yönergede duyulan adımlardan oluşur.
+  // Başka kart eklemek "hangi sırada?" sorusunu "hangileri?" sorusuna dönüştürür.
 
   // Izgara görseli — prompt'ta gösterilir
   const promptGorsel: VisualSpec = {

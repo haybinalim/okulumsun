@@ -31,8 +31,17 @@
  * SAF VE SENKRON: Date.now(), Math.random(), IndexedDB ÇAĞRILMAZ.
  */
 
-import { makeItemId, varsayilanIpuclari, type Difficulty, type KazanimKodu, type SkillId } from '../types';
-import type { AudioToImageExercise, ExerciseGenerator, Option, VisualSpec, Nokta, AssetSpec, Prompt } from '../types';
+import {
+  KONUM_ILISKILERI,
+  makeItemId,
+  varsayilanIpuclari,
+  type Difficulty,
+  type KazanimKodu,
+  type KonumIliskisi,
+  type KonumReferansi,
+  type SkillId,
+} from '../types';
+import type { AudioToImageExercise, ExerciseGenerator, Option, VisualSpec, AssetSpec, Prompt } from '../types';
 import type { Rng } from '../rng';
 import { HATA_ETIKETLERI, type HataEtiketi } from '../distractors';
 import type { NesneSprite } from '../types';
@@ -43,18 +52,9 @@ import type { SpeechKey } from '../../audio/audioManifest.generated';
 export const KONUM_TEMPLATE_ID = 'M-KONUM' as const;
 
 /** Konum ifadeleri — §4.5 ses envanteriyle uyumlu. */
-export const KONUM_IFADELERI = [
-  'altinda',
-  'ustunde',
-  'icinde',
-  'onunde',
-  'arkasinda',
-  'arasinda',
-  'yaninda',
-  'disinda',
-] as const;
+export const KONUM_IFADELERI = KONUM_ILISKILERI;
 
-export type KonumIfadesi = (typeof KONUM_IFADELERI)[number];
+export type KonumIfadesi = KonumIliskisi;
 
 /** Konum → speechKey eşlemesi. */
 const KONUM_SPEECH_KEY: Record<KonumIfadesi, SpeechKey> = {
@@ -68,25 +68,8 @@ const KONUM_SPEECH_KEY: Record<KonumIfadesi, SpeechKey> = {
   disinda: 'konum.disinda',
 };
 
-/** Referans nesneleri — konum ifadesinin hedefi. */
-const REFERANS_NESNELER: readonly NesneSprite[] = ['kutu' as NesneSprite, 'masa' as NesneSprite, 'sepet' as NesneSprite];
-
-/**
- * Konum ifadesine göre hedef nesnenin referansa göre göreli konumu.
- * Koordinatlar normalize (0..1), referans merkezde (0.5, 0.5).
- */
-function konumToKoordinat(konum: KonumIfadesi): Nokta {
-  switch (konum) {
-    case 'altinda': return { x: 0.5, y: 0.75 };
-    case 'ustunde': return { x: 0.5, y: 0.25 };
-    case 'icinde':  return { x: 0.5, y: 0.55 }; // referansın içinde, hafif aşağıda
-    case 'onunde':  return { x: 0.5, y: 0.75 }; // önünde = aşağıda (bakış açısı)
-    case 'arkasinda': return { x: 0.5, y: 0.25 }; // arkasında = yukarıda
-    case 'arasinda': return { x: 0.5, y: 0.5 };  // iki referans arasında
-    case 'yaninda': return { x: 0.75, y: 0.5 };
-    case 'disinda': return { x: 0.8, y: 0.5 };
-  }
-}
+/** Referans nesneleri — çizimde kutu/sepet olarak açıkça temsil edilir. */
+const REFERANS_NESNELER: readonly KonumReferansi[] = ['kutu', 'sepet'];
 
 /**
  * Yanlış cevap için konumu çevir — tanısal etiket GOREV_ANLASILMADI.
@@ -161,14 +144,13 @@ export function konumUret(params: KonumParams, rng: Rng): AudioToImageExercise {
   // Option'ları oluştur
   const options: Option[] = karistirilmis.map((sec, i) => {
     const id = `secenek-${i}`;
+    // Şık, sesle sorulan ilişkiyi doğrudan taşıyan tek bir görsel sahnedir.
+    // Böylece örneğin "dışında" şıkkında nesne mutlaka kutu/sepetin DIŞINDA görünür.
     const gorsel: VisualSpec = {
-      type: 'sahne',
-      parcalar: [
-        // Referans nesne — merkezde
-        { gorsel: { type: 'nesneKumesi', sprite: referansSprite, adet: 1, layout: 'sira' }, konum: { x: 0.5, y: 0.5 } },
-        // Hedef nesne — konuma göre yerleştir
-        { gorsel: { type: 'nesneKumesi', sprite: hedefSprite, adet: 1, layout: 'sira' }, konum: konumToKoordinat(sec.konum) },
-      ],
+      type: 'konumSahnesi',
+      iliski: sec.konum,
+      hedef: hedefSprite,
+      referans: referansSprite,
     };
     return sec.dogru
       ? { id, deger: { tur: 'gorsel', gorsel }, correct: true }
