@@ -52,7 +52,9 @@ export default defineConfig({
   // Sunucu yok; çıktı tamamen statik ve göreli yollarla çalışır.
   // Bu sayede okul sunucusundan, alt dizinden veya USB'den açılabilir.
   base: './',
-  server: { host: true },
+  // Geçici Manus önizleme alan adları dinamik olduğundan geliştirme sunucusu
+  // bunları kabul eder. Bu ayar üretim çıktısına taşınmaz; uygulama statiktir.
+  server: { host: true, allowedHosts: true },
   test: {
     /**
      * YALNIZ birim testleri. `tests/e2e/**` Playwright'a aittir ve vitest
