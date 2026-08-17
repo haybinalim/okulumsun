@@ -202,58 +202,10 @@ function sekilYolu(sekil: SekilAdi, cx: number, cy: number, r: number) {
 }
 
 /**
- * Banknot — dolaşımdaki kupürler için TCMB'nin yayımladığı, üzerinde
- * `ORNEKTIR GECMEZ` ibaresi bulunan resmî ön yüz örneklerini gösterir.
- * 1 TL gerçek bir banknot olmadığı için şablonlar yalnız 5–200 TL kupür üretir;
- * bu koruyucu fallback eski ya da haricî içeriklerdeki 1 TL değeri içindir.
+ * Banknot — yalnız TCMB'nin yayımladığı, üzerinde `ORNEKTIR GECMEZ`
+ * ibaresi bulunan resmî E9 5. tertip ön yüz örneğini gösterir. Banknot türü
+ * yalnızca eşlemesi bulunan gerçek kupürleri kabul eder; stilize geri dönüş yoktur.
  */
-const BANKNOT_STILLERI: Readonly<Record<BanknotDegeri, {
-  readonly zemin: string;
-  readonly kenar: string;
-  readonly acik: string;
-  readonly vurgu: string;
-  readonly motif: 'yildiz' | 'yaprak' | 'damla' | 'gunes' | 'bulut' | 'kalp' | 'cicek';
-}>> = {
-  1: { zemin: '#bbf7d0', kenar: '#15803d', acik: '#dcfce7', vurgu: '#166534', motif: 'yaprak' },
-  5: { zemin: '#ddd6fe', kenar: '#6d28d9', acik: '#ede9fe', vurgu: '#5b21b6', motif: 'yildiz' },
-  10: { zemin: '#bae6fd', kenar: '#0369a1', acik: '#e0f2fe', vurgu: '#075985', motif: 'damla' },
-  20: { zemin: '#fed7aa', kenar: '#c2410c', acik: '#ffedd5', vurgu: '#9a3412', motif: 'gunes' },
-  50: { zemin: '#fecdd3', kenar: '#be123c', acik: '#ffe4e6', vurgu: '#9f1239', motif: 'kalp' },
-  100: { zemin: '#bfdbfe', kenar: '#1d4ed8', acik: '#dbeafe', vurgu: '#1e40af', motif: 'bulut' },
-  200: { zemin: '#f5d0fe', kenar: '#a21caf', acik: '#fae8ff', vurgu: '#86198f', motif: 'cicek' },
-};
-
-function BanknotMotifi({
-  motif,
-  cx,
-  cy,
-  boyut,
-  renk,
-}: {
-  motif: (typeof BANKNOT_STILLERI)[BanknotDegeri]['motif'];
-  cx: number;
-  cy: number;
-  boyut: number;
-  renk: string;
-}) {
-  switch (motif) {
-    case 'yildiz':
-      return <path d={`M${cx} ${cy - boyut} L${cx + boyut * 0.24} ${cy - boyut * 0.24} L${cx + boyut} ${cy} L${cx + boyut * 0.24} ${cy + boyut * 0.24} L${cx} ${cy + boyut} L${cx - boyut * 0.24} ${cy + boyut * 0.24} L${cx - boyut} ${cy} L${cx - boyut * 0.24} ${cy - boyut * 0.24} Z`} fill={renk} />;
-    case 'yaprak':
-      return <path d={`M${cx - boyut * 0.72} ${cy + boyut * 0.35} C${cx - boyut * 0.7} ${cy - boyut * 0.75} ${cx + boyut * 0.76} ${cy - boyut * 0.82} ${cx + boyut * 0.64} ${cy + boyut * 0.24} C${cx + boyut * 0.18} ${cy + boyut * 0.78} ${cx - boyut * 0.3} ${cy + boyut * 0.72} ${cx - boyut * 0.72} ${cy + boyut * 0.35} Z`} fill={renk} />;
-    case 'damla':
-      return <path d={`M${cx} ${cy - boyut} C${cx - boyut * 0.78} ${cy - boyut * 0.1} ${cx - boyut * 0.68} ${cy + boyut * 0.78} ${cx} ${cy + boyut * 0.84} C${cx + boyut * 0.68} ${cy + boyut * 0.78} ${cx + boyut * 0.78} ${cy - boyut * 0.1} ${cx} ${cy - boyut} Z`} fill={renk} />;
-    case 'gunes':
-      return <><circle cx={cx} cy={cy} r={boyut * 0.46} fill={renk} />{Array.from({ length: 8 }, (_, i) => { const a = i * Math.PI / 4; return <line key={i} x1={cx + Math.cos(a) * boyut * 0.66} y1={cy + Math.sin(a) * boyut * 0.66} x2={cx + Math.cos(a) * boyut} y2={cy + Math.sin(a) * boyut} stroke={renk} strokeWidth={Math.max(2, boyut * 0.12)} strokeLinecap="round" />; })}</>;
-    case 'kalp':
-      return <path d={`M${cx} ${cy + boyut * 0.82} C${cx - boyut * 1.35} ${cy - boyut * 0.1} ${cx - boyut * 0.76} ${cy - boyut * 0.9} ${cx} ${cy - boyut * 0.38} C${cx + boyut * 0.76} ${cy - boyut * 0.9} ${cx + boyut * 1.35} ${cy - boyut * 0.1} ${cx} ${cy + boyut * 0.82} Z`} fill={renk} />;
-    case 'bulut':
-      return <path d={`M${cx - boyut} ${cy + boyut * 0.36} C${cx - boyut * 1.12} ${cy - boyut * 0.32} ${cx - boyut * 0.43} ${cy - boyut * 0.65} ${cx - boyut * 0.06} ${cy - boyut * 0.27} C${cx + boyut * 0.28} ${cy - boyut * 0.84} ${cx + boyut * 1.1} ${cy - boyut * 0.54} ${cx + boyut * 0.86} ${cy + boyut * 0.36} Z`} fill={renk} />;
-    case 'cicek':
-      return <><circle cx={cx} cy={cy - boyut * 0.48} r={boyut * 0.42} fill={renk} /><circle cx={cx + boyut * 0.48} cy={cy} r={boyut * 0.42} fill={renk} /><circle cx={cx} cy={cy + boyut * 0.48} r={boyut * 0.42} fill={renk} /><circle cx={cx - boyut * 0.48} cy={cy} r={boyut * 0.42} fill={renk} /><circle cx={cx} cy={cy} r={boyut * 0.26} fill="#fff" /></>;
-  }
-}
-
 function Banknot({
   deger,
   width,
@@ -264,82 +216,47 @@ function Banknot({
   height: number;
 }) {
   const resmiGorsel = RESMI_BANKNOT_GORSELLERI[deger];
-
-  if (resmiGorsel) {
-    const kartGenislik = width * 0.93;
-    const kartYukseklik = Math.min(height * 0.7, kartGenislik * 0.5);
-    const x = (width - kartGenislik) / 2;
-    const y = (height - kartYukseklik) / 2;
-    const clipId = `banknot-${deger}-${width}-${height}`;
-
-    return (
-      <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
-        <defs>
-          <clipPath id={clipId}>
-            <rect x={x} y={y} width={kartGenislik} height={kartYukseklik} rx={kartYukseklik * 0.045} />
-          </clipPath>
-        </defs>
-        <rect
-          x={x + 3}
-          y={y + 4}
-          width={kartGenislik}
-          height={kartYukseklik}
-          rx={kartYukseklik * 0.045}
-          fill="#0f172a"
-          opacity="0.16"
-        />
-        <image
-          href={resmiGorsel}
-          x={x}
-          y={y}
-          width={kartGenislik}
-          height={kartYukseklik}
-          preserveAspectRatio="xMidYMid meet"
-          clipPath={`url(#${clipId})`}
-        />
-        <rect
-          x={x}
-          y={y}
-          width={kartGenislik}
-          height={kartYukseklik}
-          rx={kartYukseklik * 0.045}
-          fill="none"
-          stroke="#334155"
-          strokeWidth={Math.max(1.5, kartYukseklik * 0.018)}
-        />
-      </svg>
-    );
-  }
-
-  const stil = BANKNOT_STILLERI[deger];
-  const kartGenislik = width * 0.9;
-  const kartYukseklik = Math.min(height * 0.62, kartGenislik * 0.54);
+  const kartGenislik = width * 0.93;
+  const kartYukseklik = Math.min(height * 0.7, kartGenislik * 0.5);
   const x = (width - kartGenislik) / 2;
   const y = (height - kartYukseklik) / 2;
-  const rozetR = kartYukseklik * 0.19;
-  const rakamGenislik = Math.min(kartGenislik * 0.23, kartYukseklik * 0.48);
-  const rakamBasamak = String(deger).length;
-  const rakamToplam = rakamGenislik * rakamBasamak;
-  const rakamX = x + kartGenislik / 2 - rakamToplam / 2;
-  const rakamY = y + (kartYukseklik - rakamGenislik) / 2;
+  const clipId = `banknot-${deger}-${width}-${height}`;
 
   return (
     <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
-      <rect x={x + 4} y={y + 5} width={kartGenislik} height={kartYukseklik} rx={kartYukseklik * 0.12} fill="#0f172a" opacity="0.12" />
-      <rect x={x} y={y} width={kartGenislik} height={kartYukseklik} rx={kartYukseklik * 0.12} fill={stil.zemin} stroke={stil.kenar} strokeWidth={Math.max(2, kartYukseklik * 0.045)} />
-      <rect x={x + kartGenislik * 0.055} y={y + kartYukseklik * 0.09} width={kartGenislik * 0.89} height={kartYukseklik * 0.82} rx={kartYukseklik * 0.08} fill="none" stroke={stil.acik} strokeWidth={Math.max(2, kartYukseklik * 0.035)} />
-      <rect x={x + kartGenislik * 0.13} y={y + kartYukseklik * 0.11} width={kartGenislik * 0.07} height={kartYukseklik * 0.78} rx={kartYukseklik * 0.03} fill={stil.acik} opacity={0.96} />
-      <circle cx={x + kartGenislik * 0.72} cy={y + kartYukseklik * 0.5} r={kartYukseklik * 0.31} fill={stil.acik} opacity={0.78} />
-      <BanknotMotifi motif={stil.motif} cx={x + kartGenislik * 0.72} cy={y + kartYukseklik * 0.5} boyut={kartYukseklik * 0.2} renk={stil.vurgu} />
-      <circle cx={x + kartGenislik * 0.1} cy={y + kartYukseklik * 0.18} r={rozetR * 0.55} fill={stil.vurgu} />
-      <text x={x + kartGenislik * 0.1} y={y + kartYukseklik * 0.2 + rozetR * 0.22} textAnchor="middle" fontFamily="sans-serif" fontWeight={800} fontSize={rozetR * 0.9} fill="#fff">TL</text>
-      {String(deger).split('').map((rakam, index) => (
-        <g key={index} transform={`translate(${rakamX + index * rakamGenislik} ${rakamY}) scale(${rakamGenislik / 100})`}>
-          <path d={RAKAM_PATHS[rakam]} fill="none" stroke={stil.vurgu} strokeWidth={7} strokeLinecap="round" strokeLinejoin="round" />
-        </g>
-      ))}
-      <text x={x + kartGenislik * 0.5} y={y + kartYukseklik * 0.84} textAnchor="middle" fontFamily="sans-serif" fontWeight={800} fontSize={Math.max(9, kartYukseklik * 0.11)} fill={stil.vurgu} letterSpacing={kartYukseklik * 0.025}>OKULUMSUN</text>
-      <circle cx={x + kartGenislik * 0.89} cy={y + kartYukseklik * 0.8} r={kartYukseklik * 0.055} fill={stil.vurgu} opacity={0.7} />
+      <defs>
+        <clipPath id={clipId}>
+          <rect x={x} y={y} width={kartGenislik} height={kartYukseklik} rx={kartYukseklik * 0.045} />
+        </clipPath>
+      </defs>
+      <rect
+        x={x + 3}
+        y={y + 4}
+        width={kartGenislik}
+        height={kartYukseklik}
+        rx={kartYukseklik * 0.045}
+        fill="#0f172a"
+        opacity="0.16"
+      />
+      <image
+        href={resmiGorsel}
+        x={x}
+        y={y}
+        width={kartGenislik}
+        height={kartYukseklik}
+        preserveAspectRatio="xMidYMid meet"
+        clipPath={`url(#${clipId})`}
+      />
+      <rect
+        x={x}
+        y={y}
+        width={kartGenislik}
+        height={kartYukseklik}
+        rx={kartYukseklik * 0.045}
+        fill="none"
+        stroke="#334155"
+        strokeWidth={Math.max(1.5, kartYukseklik * 0.018)}
+      />
     </svg>
   );
 }

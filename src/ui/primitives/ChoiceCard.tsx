@@ -146,7 +146,7 @@ function ariaLabel(deger: OptionDeger): string {
     case 'sekilKategorisi':
       return deger.kategori === 'yuvarlak' ? 'yuvarlak' : 'köşeli';
     case 'banknot':
-      return `${deger.deger} lira`;
+      return `${deger.deger} lira banknotu, örnek görsel`;
     case 'terim':
       return deger.terim.replace('-', ' ');
     case 'metin':

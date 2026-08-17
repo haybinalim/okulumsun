@@ -92,9 +92,8 @@ const RenkSchema = z.enum(RENKLER);
 const SekilAdiSchema = z.enum(SEKILLER);
 const SekilKategorisiSchema = z.union([z.literal('yuvarlak'), z.literal('koseli')]);
 
-/** MAT.1.1.9 — yalnız banknot. Literaller tek tek yazılıyor ki tip daralsın. */
+/** MAT.1.1.9 — yalnız gerçek banknot. Literaller tek tek yazılıyor ki tip daralsın. */
 const BanknotDegeriSchema = z.union([
-  z.literal(1),
   z.literal(5),
   z.literal(10),
   z.literal(20),
