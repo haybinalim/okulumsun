@@ -13,6 +13,9 @@ import { COLOR } from '../../design/tokens';
 import type { ReadingLevel } from '../../store/appStore';
 import { yedekCozumle, yedekIndir, yedeIceAktar } from '../../persistence/backup';
 import { depolamaTahmini, persistDurumu, persistIste, type DepolamaTahmini } from '../../persistence/persist';
+import { masteryOku, oturumOzetleriniOku } from '../../persistence/repository';
+import { ilerlemeOzetiniHesapla, type IlerlemeOzeti } from '../../progress/ilerlemeOzeti';
+import { skillsData } from '../../content/skillsData';
 
 type KalicilikDurumu = boolean | null | undefined;
 
@@ -31,6 +34,9 @@ export function VeliPaneli() {
   const [depolama, setDepolama] = useState<DepolamaTahmini | null>(null);
   const [yedekDurumu, setYedekDurumu] = useState<string | null>(null);
   const [islemDevamEdiyor, setIslemDevamEdiyor] = useState(false);
+  const [ilerlemeOzeti, setIlerlemeOzeti] = useState<IlerlemeOzeti | null>(null);
+  const [ilerlemeYukleniyor, setIlerlemeYukleniyor] = useState(true);
+  const [ilerlemeHatasi, setIlerlemeHatasi] = useState<string | null>(null);
 
   const depolamaBilgisiniYenile = async () => {
     const [kalici, tahmin] = await Promise.all([persistDurumu(), depolamaTahmini()]);
@@ -38,8 +44,22 @@ export function VeliPaneli() {
     setDepolama(tahmin);
   };
 
+  const ilerlemeOzetiniYenile = async () => {
+    setIlerlemeYukleniyor(true);
+    setIlerlemeHatasi(null);
+    try {
+      const [kayitlar, oturumlar] = await Promise.all([masteryOku(), oturumOzetleriniOku()]);
+      setIlerlemeOzeti(ilerlemeOzetiniHesapla(kayitlar, skillsData, Date.now(), oturumlar));
+    } catch (error) {
+      setIlerlemeHatasi(`İlerleme özeti yüklenemedi: ${(error as Error).message}`);
+    } finally {
+      setIlerlemeYukleniyor(false);
+    }
+  };
+
   useEffect(() => {
     void depolamaBilgisiniYenile();
+    void ilerlemeOzetiniYenile();
   }, []);
 
   const handleGeri = () => {
@@ -133,13 +153,21 @@ export function VeliPaneli() {
       </header>
 
       <Bolum baslik="1. İlerleme">
+        <p style={{ fontSize: 'var(--text-adult)', color: COLOR.inkSoft, margin: '0 0 12px' }}>
+          Bu özet puan ve süreyi değil, yerel beceri kayıtlarından çıkan bir sonraki küçük adımı gösterir.
+        </p>
+        <IlerlemeGenelBakis
+          ozet={ilerlemeOzeti}
+          yukleniyor={ilerlemeYukleniyor}
+          hata={ilerlemeHatasi}
+          yenile={ilerlemeOzetiniYenile}
+        />
+        <div style={{ borderTop: `1px solid ${COLOR.border}`, margin: '16px 0 12px' }} />
         <TemaIlerleme okulAyiIndex={okulAyiIndex} />
       </Bolum>
 
       <Bolum baslik="2. Zorlandığı Konular">
-        <p style={{ fontSize: 'var(--text-adult)', color: COLOR.inkSoft, margin: 0 }}>
-          Çocuk alıştırma çözdükçe zorlandığı konular burada yer alır.
-        </p>
+        <DestekBecerileri ozet={ilerlemeOzeti} yukleniyor={ilerlemeYukleniyor} hata={ilerlemeHatasi} />
       </Bolum>
 
       <Bolum baslik="3. Ayarlar">
@@ -292,6 +320,94 @@ function AyarSatir({ etiket, children }: { etiket: string; children: React.React
   );
 }
 
+function IlerlemeGenelBakis({
+  ozet,
+  yukleniyor,
+  hata,
+  yenile,
+}: {
+  ozet: IlerlemeOzeti | null;
+  yukleniyor: boolean;
+  hata: string | null;
+  yenile: () => Promise<void>;
+}) {
+  if (yukleniyor) {
+    return <p role="status" style={bilgiMetniStili}>Yerel çalışma kayıtları hazırlanıyor…</p>;
+  }
+  if (hata) {
+    return (
+      <div>
+        <p role="alert" style={bilgiMetniStili}>{hata}</p>
+        <button type="button" style={aktifButtonStyle} onClick={() => void yenile()}>Yeniden Dene</button>
+      </div>
+    );
+  }
+  if (!ozet) return null;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div aria-label="Yerel çalışma kaydı" style={ozetKutuStili}>
+        <strong style={{ color: COLOR.ink }}>Yerel çalışma kaydı</strong>
+        <span style={bilgiMetniStili}>
+          {ozet.toplamCalisma.gun} gün · {ozet.toplamCalisma.oturum} oturum · Son çalışma: {tarihBicimle(ozet.sonCalisma)}
+        </span>
+      </div>
+      <div aria-labelledby="sonraki-adim-baslik" style={ozetKutuStili}>
+        <strong id="sonraki-adim-baslik" style={{ color: COLOR.ink }}>Hazır olunan sonraki küçük adım</strong>
+        {ozet.hazirOlanlar.length === 0 ? (
+          <span style={bilgiMetniStili}>Yeni bir sonraki adım için daha fazla yerel çalışma kanıtı gerekiyor.</span>
+        ) : (
+          <ul style={listeStili}>
+            {ozet.hazirOlanlar.map((beceri) => (
+              <li key={beceri.skillId}>
+                <strong>{beceri.baslik}</strong> — {beceri.kazanımAdi} için temsil köprüsünü deneyebilirsiniz.
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+      <p style={{ ...bilgiMetniStili, margin: 0 }}>
+        Bu özet yalnız bu cihazdaki verilerden oluşur; aktarım ve silme denetimleri aşağıdadır.
+      </p>
+    </div>
+  );
+}
+
+function DestekBecerileri({
+  ozet,
+  yukleniyor,
+  hata,
+}: {
+  ozet: IlerlemeOzeti | null;
+  yukleniyor: boolean;
+  hata: string | null;
+}) {
+  if (yukleniyor) return <p role="status" style={bilgiMetniStili}>Yerel beceri durumu hazırlanıyor…</p>;
+  if (hata) return <p role="alert" style={bilgiMetniStili}>Özet yüklenemediği için destek alanları gösterilemiyor.</p>;
+  if (!ozet || ozet.destekGerektiren.length === 0) {
+    return <p style={bilgiMetniStili}>Şu an için öne çıkan bir destek alanı yok. Alıştırma çözüldükçe burada en fazla üç somut öneri görünür.</p>;
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {ozet.destekGerektiren.map((beceri) => (
+        <article key={beceri.skillId} style={ozetKutuStili}>
+          <strong style={{ color: COLOR.ink }}>{beceri.baslik}</strong>
+          <p style={{ ...bilgiMetniStili, margin: '6px 0 0' }}>{beceri.hataEtiketi}</p>
+          <p style={{ ...bilgiMetniStili, margin: '6px 0 0' }}>
+            <strong style={{ color: COLOR.ink }}>Birlikte deneyin:</strong> {beceri.onerilenEylem}
+          </p>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function tarihBicimle(tarih: Date | null): string {
+  if (!tarih) return 'henüz kayıt yok';
+  return new Intl.DateTimeFormat('tr-TR', { dateStyle: 'long' }).format(tarih);
+}
+
 function TemaIlerleme({ okulAyiIndex }: { okulAyiIndex: number }) {
   const acikTemalar = acilanTemalar(okulAyiIndex);
   const temalar = [
@@ -331,6 +447,30 @@ function TemaIlerleme({ okulAyiIndex }: { okulAyiIndex: number }) {
     </div>
   );
 }
+
+const bilgiMetniStili: React.CSSProperties = {
+  fontSize: 'var(--text-adult)',
+  color: COLOR.inkSoft,
+  margin: 0,
+};
+
+const ozetKutuStili: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 4,
+  padding: 12,
+  borderRadius: 8,
+  background: COLOR.bg,
+  border: `1px solid ${COLOR.border}`,
+  fontSize: 'var(--text-adult)',
+  color: COLOR.ink,
+};
+
+const listeStili: React.CSSProperties = {
+  margin: 0,
+  paddingInlineStart: 24,
+  color: COLOR.inkSoft,
+};
 
 const selectStyle: React.CSSProperties = {
   fontSize: 'var(--text-adult)',
