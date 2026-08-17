@@ -100,6 +100,7 @@ import {
   type GeneratorParams,
   type HintSet,
   type KazanimKodu,
+  type OgretimselSozlesme,
   type NesneSprite,
   type Nokta,
   type Option,
@@ -796,6 +797,30 @@ export function uretToplaGorsel(params: ToplaGorselParams, rng: Rng): AudioToIma
     k3Gorsel: { type: 'onlukCerceve', gruplar: cerceveBol(sonuc) },
   });
 
+  const itemSkillIds = maddeSkillleri(strateji, islem);
+  const hedefBeceri = itemSkillIds[0];
+  if (hedefBeceri == null) {
+    throw new Error('M-TOPLA-GORSEL: öğretimsel sözleşme için hedef beceri üretilemedi.');
+  }
+  const ogretimselSozlesme: OgretimselSozlesme = {
+    hedefBeceri,
+    temsilKaniti: 'gorsel-islem',
+    cocukEylemi:
+      islem === '-'
+        ? 'kümeleri-ayir'
+        : strateji === 'gorselBirlestirme'
+          ? 'kümeleri-birlestir'
+          : 'nesneleri-say',
+    hataDestekEtiketleri: [
+      'TEK_KUMEYI_ALMA',
+      'HEPSINI_SAYMA',
+      'ONLUK_BOZMA',
+      'ISLEM_YONU',
+      'FAZLA_SAYMA',
+      'EKSIK_SAYMA',
+    ],
+  };
+
   return {
     // Parametre imzasına ZORLUK da giriyor: aynı tohumda 2. ve 3. kademe pekâlâ
     // aynı (a, b, model) üçlüsünü çekebilir, ama çeldirici öncelikleri farklıdır
@@ -808,7 +833,7 @@ export function uretToplaGorsel(params: ToplaGorselParams, rng: Rng): AudioToIma
     ),
     templateId: TOPLA_GORSEL_TEMPLATE_ID,
     kind: 'AUDIO_TO_IMAGE',
-    skillIds: maddeSkillleri(strateji, islem),
+    skillIds: itemSkillIds,
     kazanimKodlari: KAZANIMLAR,
     readingLoad: 0, // rakam okuma yazma değildir; metin YOK.
     difficulty,
@@ -819,6 +844,7 @@ export function uretToplaGorsel(params: ToplaGorselParams, rng: Rng): AudioToIma
       gorsel: sahne,
     },
     hints,
+    ogretimselSozlesme,
     assets,
     seed,
     options: siklar,

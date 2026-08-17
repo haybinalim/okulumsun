@@ -83,6 +83,49 @@ export type ReadingLoad = 0 | 1 | 2 | 3;
 /** Şablon içi göreli zorluk. Beceriler arası zorluk `SkillNode.difficulty`. */
 export type Difficulty = 1 | 2 | 3 | 4 | 5;
 
+// ------------------------------------------------ öğretimsel temsil sözleşmesi
+
+/**
+ * Sorunun doğru matematik fikrini çocuğa hangi GÖRSEL KANITLA sunduğu.
+ * Bu alan, soru metni ile görselin aynı kavramı ölçtüğünü denetlenebilir kılar;
+ * görsel süs değildir, yanıt için kullanılacak matematiksel kanıttır.
+ */
+export const OGRETIMSEL_TEMSIL_KANITLARI = [
+  'nesneleri-say',
+  'gorsel-islem',
+  'birimlerle-olcme',
+] as const;
+export type OgretimselTemsilKaniti = (typeof OGRETIMSEL_TEMSIL_KANITLARI)[number];
+
+/** Çocuğun görsel kanıt üzerinde yapması beklenen tek temel eylem. */
+export const COCUK_MATEMATIK_EYLEMLERI = [
+  'nesneleri-say',
+  'nesneye-dokunarak-say',
+  'kümeleri-birlestir',
+  'kümeleri-ayir',
+  'birimleri-say',
+] as const;
+export type CocukMatematikEylemi = (typeof COCUK_MATEMATIK_EYLEMLERI)[number];
+
+/**
+ * Öğretimsel sözleşme (pilot sürüm).
+ *
+ * İlk aşamada isteğe bağlıdır: yalnızca pilot şablonlar bu alanı taşır. Böylece
+ * kanıtlanmamış kuralları tüm 39 şablona zorlamadan önce gerçek sınıf/tablet
+ * gözlemleriyle daraltabiliriz. Alan mevcut olduğunda ise `alistirmaIhlalleri`
+ * görsel, beceri ve çeldirici bağını otomatik denetler.
+ */
+export interface OgretimselSozlesme {
+  /** Soru içindeki birincil öğrenme hedefi; `skillIds` içinde bulunmalıdır. */
+  readonly hedefBeceri: SkillId;
+  /** Yanıtın hangi görsel matematik kanıtına dayanacağı. */
+  readonly temsilKaniti: OgretimselTemsilKaniti;
+  /** Çocuğun kanıt üzerinde yapacağı gözlenebilir eylem. */
+  readonly cocukEylemi: CocukMatematikEylemi;
+  /** Bu maddede hedeflenmiş tüm yanlış şık tanıları; yanlış etiketleri kapsamalıdır. */
+  readonly hataDestekEtiketleri: readonly HataEtiketi[];
+}
+
 // ------------------------------------------------------- görsel sözlük tipleri
 
 /** Ses kliği bulunan nesne sprite'ları (`nesne.*` ad alanıyla birebir). */
@@ -563,6 +606,12 @@ interface ExerciseBase {
   readonly estimatedSec: number;
   readonly prompt: Prompt;
   readonly hints: HintSet;
+  /**
+   * Pilot şablonlarda görsel kanıt, çocuk eylemi ve hedef hata desteği.
+   * Kademeli yayılım bilinçlidir: fiziksel çocuk testi tamamlanmadan tüm
+   * şablonları yeni davranışa zorlamayız.
+   */
+  readonly ogretimselSozlesme?: OgretimselSozlesme;
   /** Görsel TARİFLERİ — çizim değil. */
   readonly assets: readonly AssetSpec[];
   /** Üretimde kullanılan tohum; hata ayıklamada soruyu birebir yeniden kurar. */
@@ -747,17 +796,39 @@ export function alistirmaIhlalleri(ex: Exercise): string[] {
   }
 
   const idler = new Set<string>();
+  const gorulenHataEtiketleri = new Set<HataEtiketi>();
   for (const o of ex.options) {
     if (idler.has(o.id)) ihlaller.push(`Yinelenen şık id: ${o.id}`);
     idler.add(o.id);
     if (o.correct !== true && o.diagnosticTag == null) {
       ihlaller.push(`Yanlış şıkta tanı etiketi yok: ${o.id} (ürün kısıtı #4).`);
     }
+    if (o.correct !== true && o.diagnosticTag != null) {
+      gorulenHataEtiketleri.add(o.diagnosticTag);
+    }
     if (o.deger.tur === 'metin' && ex.readingLoad === 0) {
       ihlaller.push(`Metinli şık readingLoad 0 alıştırmada: ${o.id}`);
     }
     if (o.deger.tur === 'sayi' && !Number.isInteger(o.deger.sayi)) {
       ihlaller.push(`Tam sayı olmayan şık değeri: ${o.id}`);
+    }
+  }
+
+  const sozlesme = ex.ogretimselSozlesme;
+  if (sozlesme != null) {
+    if (!ex.skillIds.includes(sozlesme.hedefBeceri)) {
+      ihlaller.push('Öğretimsel sözleşmedeki hedef beceri skillIds içinde yok.');
+    }
+    if (sozlesme.hataDestekEtiketleri.length === 0) {
+      ihlaller.push('Öğretimsel sözleşmede hata-destek etiketi yok.');
+    }
+    for (const etiket of gorulenHataEtiketleri) {
+      if (!sozlesme.hataDestekEtiketleri.includes(etiket)) {
+        ihlaller.push(`Görülen hata etiketi sözleşme desteğinde yok: ${etiket}`);
+      }
+    }
+    if (ex.prompt.gorsel == null) {
+      ihlaller.push('Öğretimsel sözleşmeli soruda görsel kanıt yok.');
     }
   }
 

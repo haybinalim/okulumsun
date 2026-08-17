@@ -7,6 +7,7 @@ import { Sprite } from '../svg/Sprite';
 import { nesneKonumlari } from '../svg/positions';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { randomPraise, randomRetry } from '../../audio/speech';
+import { hataDestekKarari, type HataDestekKarari } from '../../exercises/hataDestek';
 import type { TapCountExercise, Renk } from '../../exercises/types';
 import type { Accent } from '../../design/tokens';
 import { ACCENTS } from '../../design/tokens';
@@ -38,6 +39,7 @@ export function TapCountScreen({
   const [dokunulan, setDokunulan] = useState<Set<string>>(new Set());
   const [seciliId, setSeciliId] = useState<string | null>(null);
   const [cozum, setCozum] = useState<'bos' | 'dogru' | 'tekrar'>('bos');
+  const [hataDestegi, setHataDestegi] = useState<HataDestekKarari | null>(null);
 
   // Sahne bir nesneKumesi olmalı (M-SAY her zaman öyle üretir).
   const sahne = exercise.prompt.gorsel;
@@ -66,6 +68,7 @@ export function TapCountScreen({
   const stateOf = (id: string): ChoiceState => {
     if (cozum === 'dogru' && id === dogruId) return 'dogru';
     if (cozum === 'tekrar' && id === seciliId) return 'tekrar';
+    if (cozum === 'tekrar' && hataDestegi?.solukOptionIds.includes(id)) return 'soluk';
     if (id === seciliId && cozum === 'bos') return 'secili';
     return 'bos';
   };
@@ -78,11 +81,15 @@ export function TapCountScreen({
       void speak(randomPraise());
       window.setTimeout(() => onDone(true), 900);
     } else {
+      const destek = hataDestekKarari(exercise, seciliId);
+      setHataDestegi(destek);
       setCozum('tekrar');
       void speak(randomRetry());
+      if (destek != null) void speak(destek.destek.ses);
       window.setTimeout(() => {
         setCozum('bos');
         setSeciliId(null);
+        setHataDestegi(null);
       }, 1600);
     }
   };

@@ -10,7 +10,7 @@ import type { Option, OptionDeger } from '../../exercises/types';
  * Asla KIRMIZI: yanlış cevap cezalandırıcı gösterilmez; yanlış "tekrar dene"
  * anlamında amber renkle soluklaşır (plan §7.1, §9).
  */
-export type ChoiceState = 'bos' | 'secili' | 'dogru' | 'tekrar';
+export type ChoiceState = 'bos' | 'secili' | 'dogru' | 'tekrar' | 'soluk';
 
 export interface ChoiceCardProps {
   option: Option;
@@ -23,6 +23,7 @@ export function ChoiceCard({ option, size, state, onSelect }: ChoiceCardProps) {
   const selected = state === 'secili';
   const isCorrect = state === 'dogru';
   const isRetry = state === 'tekrar';
+  const isDimmed = state === 'soluk';
 
   const style: CSSProperties = {
     width: size,
@@ -34,7 +35,7 @@ export function ChoiceCard({ option, size, state, onSelect }: ChoiceCardProps) {
       : isRetry
         ? `0 0 0 calc(4px * var(--scale)) var(--color-retry-soft)`
         : undefined,
-    opacity: isRetry ? 0.5 : 1,
+    opacity: isRetry ? 0.5 : isDimmed ? 0.35 : 1,
     transition: `transform var(--tap) var(--ease), opacity var(--tap)`,
     transform: selected ? 'scale(1.06)' : 'scale(1)',
     // CSS değişkenleri --tap/--ease burada inline olarak verilmezse varsayılan
