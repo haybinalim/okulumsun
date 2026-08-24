@@ -26,10 +26,10 @@ describe('resmî banknot varlıkları', () => {
       const goreliYol = yol?.replace(/^\.?\//, '');
       expect(existsSync(resolve(process.cwd(), 'public', goreliYol ?? ''))).toBe(true);
     }
-    expect(RESMI_BANKNOT_GORSELLERI[1]).toBeUndefined();
+    expect(Object.keys(RESMI_BANKNOT_GORSELLERI).map(Number).sort((a, b) => a - b)).toEqual(RESMI_KUPURLER);
   });
 
-  it('para tanıma ve sıralama şablonlarında 1 TL kartı üretmez', () => {
+  it('para tanıma ve sıralama şablonlarında yalnız gerçek banknot kupürleri üretir', () => {
     for (let seed = 0; seed < 128; seed++) {
       const taniDegerleri = banknotDegerleri(
         paraTaniUret({ seed, difficulty: 5 }, createRng(seed)),

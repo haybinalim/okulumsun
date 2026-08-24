@@ -144,8 +144,8 @@ export type SekilAdi = (typeof SEKILLER)[number];
 /** MAT.1.3.3'ün birincil ayrımı: önce yuvarlak/köşeli, sonra şekil adı. */
 export type SekilKategorisi = 'yuvarlak' | 'koseli';
 
-/** MAT.1.1.9 — yalnızca banknot. Madeni para ve kuruş 1. sınıfta yok. */
-export const BANKNOTLAR = [1, 5, 10, 20, 50, 100, 200] as const;
+/** MAT.1.1.9 — yalnızca gerçek, dolaşımdaki banknot kupürleri. */
+export const BANKNOTLAR = [5, 10, 20, 50, 100, 200] as const;
 export type BanknotDegeri = (typeof BANKNOTLAR)[number];
 
 /** Normalize koordinat (0..1) — piksel yazmak yasak, bkz. src/design/tokens.ts. */
