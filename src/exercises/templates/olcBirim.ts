@@ -8,7 +8,7 @@
  */
 
 import { makeItemId, varsayilanIpuclari, type Difficulty, type KazanimKodu, type SkillId, type Option, type VisualSpec, type AssetSpec, type Prompt, type Renk } from '../types';
-import type { AudioToImageExercise, ExerciseGenerator } from '../types';
+import type { AudioToImageExercise, ExerciseGenerator, OgretimselSozlesme } from '../types';
 import type { Rng } from '../rng';
 import { HATA_ETIKETLERI, type HataEtiketi } from '../distractors';
 
@@ -111,16 +111,24 @@ export function olcBirimUret(params: OlcBirimParams, rng: Rng): AudioToImageExer
     vurgulaIds: [`sik-d-${birimSayisi}`],
   });
 
+  const skillIds = ['mat.olcme.birimle-olcme'] as const satisfies readonly SkillId[];
+  const ogretimselSozlesme: OgretimselSozlesme = {
+    hedefBeceri: skillIds[0],
+    temsilKaniti: 'birimlerle-olcme',
+    cocukEylemi: 'birimleri-say',
+    hataDestekEtiketleri: [HATA_ETIKETLERI.EKSIK_SAYMA, HATA_ETIKETLERI.FAZLA_SAYMA],
+  };
+
   return {
     kind: 'AUDIO_TO_IMAGE',
     itemId: makeItemId(OLC_BIRIM_TEMPLATE_ID, seed, `${baglam.nesne}|${baglam.birim}|${birimSayisi}`),
     templateId: OLC_BIRIM_TEMPLATE_ID,
-    skillIds: ['mat.olcme.birimle-olcme'] as readonly SkillId[],
+    skillIds,
     kazanimKodlari: ['MAT.1.1.8'] as readonly KazanimKodu[],
     readingLoad: 0,
     difficulty,
     estimatedSec: 12,
-    prompt, hints, assets, options,
+    prompt, hints, ogretimselSozlesme, assets, options,
     validation: { mod: 'tekSecim', dogruOptionId: `sik-d-${birimSayisi}` },
     seed,
   };

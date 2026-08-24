@@ -109,6 +109,7 @@ import {
 import type {
   AssetSpec,
   AudioToImageExercise,
+  OgretimselSozlesme,
   Difficulty,
   Exercise,
   ExerciseGenerator,
@@ -552,6 +553,26 @@ export function uretSay(params: SayParams, rng: Rng): Exercise {
     k3Gorsel: ipucuGorseli,
   });
 
+  const maddeSkillleri = skillIdleri(adet, yerlesim, cevapModu);
+  const hedefBeceri = maddeSkillleri[0];
+  if (hedefBeceri == null) {
+    throw new Error('M-SAY: öğretimsel sözleşme için hedef beceri üretilemedi.');
+  }
+  const ogretimselSozlesme: OgretimselSozlesme = {
+    hedefBeceri,
+    temsilKaniti: 'nesneleri-say',
+    cocukEylemi: cevapModu === 'tapThenPick' ? 'nesneye-dokunarak-say' : 'nesneleri-say',
+    // Dokunma evresindeki BIREBIR_ESLESME tanısı şıkta görünmese de bu
+    // şablonun destek sözleşmesine bilinçli olarak dahildir.
+    hataDestekEtiketleri: [
+      'BIREBIR_ESLESME',
+      'KARDINALITE',
+      'FAZLA_SAYMA',
+      'EKSIK_SAYMA',
+      'ONLUK_BOZMA',
+    ],
+  };
+
   const ortak = {
     // İMZA, MADDENİN TÜM DEĞİŞKEN ALANLARINI KAPSAR.
     // `difficulty` de imzadadır ve bu şart: zorluk bantları KASITLI OLARAK
@@ -566,7 +587,7 @@ export function uretSay(params: SayParams, rng: Rng): Exercise {
       `n${adet}|y${yerlesim}|s${sprite}|m${cevapModu}|o${sikSayisi}|d${difficulty}`,
     ),
     templateId: M_SAY_TEMPLATE_ID,
-    skillIds: skillIdleri(adet, yerlesim, cevapModu),
+    skillIds: maddeSkillleri,
     kazanimKodlari: ['MAT.1.1.1', 'MAT.1.1.2'] as readonly KazanimKodu[],
     readingLoad: 0 as const,
     difficulty,
@@ -577,6 +598,7 @@ export function uretSay(params: SayParams, rng: Rng): Exercise {
       gorsel: sahne,
     },
     hints,
+    ogretimselSozlesme,
     assets,
     seed,
   };

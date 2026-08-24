@@ -28,10 +28,12 @@ import type { SpeechKey } from '../../audio/audioManifest.generated';
 import type { SpeakSource } from '../../audio/speech';
 import { TUM_HATA_ETIKETLERI, type HataEtiketi } from '../../exercises/distractors';
 import {
+  COCUK_MATEMATIK_EYLEMLERI,
   INTERACTION_KINDS,
   KONUM_ILISKILERI,
   KONUM_REFERANSLARI,
   NESNE_SPRITELARI,
+  OGRETIMSEL_TEMSIL_KANITLARI,
   RENKLER,
   SEKILLER,
   YON_KART_YONLER,
@@ -392,6 +394,14 @@ export const PromptSchema = z.object({
   metin: z.string().optional(),
 });
 
+/** Pilot şablonlarda görsel kanıt, çocuk eylemi ve hata desteği bildirimi. */
+export const OgretimselSozlesmeSchema = z.object({
+  hedefBeceri: SkillIdSchema,
+  temsilKaniti: z.enum(OGRETIMSEL_TEMSIL_KANITLARI),
+  cocukEylemi: z.enum(COCUK_MATEMATIK_EYLEMLERI),
+  hataDestekEtiketleri: z.array(HataEtiketiSchema).min(1).readonly(),
+});
+
 // ------------------------------------------------------------ alıştırma şeması
 
 const ExerciseBaseSchema = z.object({
@@ -404,6 +414,7 @@ const ExerciseBaseSchema = z.object({
   estimatedSec: z.number().positive(),
   prompt: PromptSchema,
   hints: HintSetSchema,
+  ogretimselSozlesme: OgretimselSozlesmeSchema.optional(),
   assets: z.array(AssetSpecSchema),
   seed: z.number().int(),
 });

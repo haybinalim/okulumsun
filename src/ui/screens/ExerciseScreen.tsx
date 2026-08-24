@@ -6,6 +6,7 @@ import { BigButton } from '../primitives/BigButton';
 import { Visual } from '../svg/Visual';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { randomPraise, randomRetry } from '../../audio/speech';
+import { hataDestekKarari, type HataDestekKarari } from '../../exercises/hataDestek';
 import type { Exercise } from '../../exercises/types';
 import type { Accent } from '../../design/tokens';
 import { TapCountScreen } from './TapCountScreen';
@@ -72,12 +73,14 @@ function AudioToImageFlow({
 
   const [seciliId, setSeciliId] = useState<string | null>(null);
   const [cozum, setCozum] = useState<'bos' | 'dogru' | 'tekrar'>('bos');
+  const [hataDestegi, setHataDestegi] = useState<HataDestekKarari | null>(null);
 
   const dogruId = exercise.validation.dogruOptionId;
 
   const stateOf = (id: string): ChoiceState => {
     if (cozum === 'dogru' && id === dogruId) return 'dogru';
     if (cozum === 'tekrar' && id === seciliId) return 'tekrar';
+    if (cozum === 'tekrar' && hataDestegi?.solukOptionIds.includes(id)) return 'soluk';
     if (id === seciliId && cozum === 'bos') return 'secili';
     if (id === seciliId && cozum === 'tekrar') return 'tekrar';
     return 'bos';
@@ -100,12 +103,18 @@ function AudioToImageFlow({
       // Plan §6: doğru cevap sonra oturum motoruna bildirilecek; şimdilik bitir.
       window.setTimeout(() => onDone(true), 900);
     } else {
+      const destek = hataDestekKarari(exercise, seciliId);
+      setHataDestegi(destek);
       setCozum('tekrar');
+      // Önce yargılamayan tekrar mesajı, ardından K2'nin YÖNTEM sesi gelir.
+      // K2 cevabı söylemez; yalnız görsel kanıtla yapılacak eylemi hatırlatır.
       void speak(randomRetry());
+      if (destek != null) void speak(destek.destek.ses);
       // Biraz sonra seçimi sıfırla — çocuk tekrar denesin, ama doğruyu öğrenmeden.
       window.setTimeout(() => {
         setCozum('bos');
         setSeciliId(null);
+        setHataDestegi(null);
       }, 1600);
     }
   };
