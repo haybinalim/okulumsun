@@ -1,8 +1,6 @@
 /*
- * VELİ PANELİ EKRANI — plan §11 [9].
- *
- * Geliştirme sürümünde öğrenci veya veli verisi saklanmaz. Yetişkin ayarları
- * yalnız açık sayfa süresince bellek durumunda kalır ve yenilemede sıfırlanır.
+ * VELİ PANELİ EKRANI — bu sürüm öğrenci veya veli verisi saklamaz.
+ * Ayarlar yalnız açık uygulama oturumunda bellekte kalır; yenilemede sıfırlanır.
  */
 
 import { useAppStore } from '../../store/appStore';
@@ -25,6 +23,7 @@ export function VeliPaneli() {
 
   return (
     <main
+      aria-labelledby="veli-paneli-baslik"
       style={{
         height: '100%',
         display: 'flex',
@@ -36,28 +35,36 @@ export function VeliPaneli() {
         overflow: 'auto',
       }}
     >
-      <header style={{ flex: '0 0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <BigButton label="Geri" size="control" variant="ghost" onPress={() => ekranGit('anaEkran')}>
+      <header style={{ flex: '0 0 auto', display: 'flex', gap: 12, alignItems: 'center' }}>
+        <BigButton label="Çocuk ekranına dön" size="control" variant="ghost" onPress={() => ekranGit('anaEkran')}>
           ←
         </BigButton>
-        <h2 style={{ fontSize: 'var(--text-adult)', color: COLOR.ink, margin: 0 }}>
-          Veli Paneli
-        </h2>
+        <div>
+          <h1 id="veli-paneli-baslik" style={{ fontSize: 'var(--text-adult)', color: COLOR.ink, margin: 0 }}>
+            Yetişkin alanı
+          </h1>
+          <p style={{ ...bilgiMetniStili, marginTop: 2 }}>Ayarlar bu açık uygulama oturumu içindir.</p>
+        </div>
       </header>
 
-      <Bolum baslik="1. Veri Saklama Durumu">
-        <p style={bilgiMetniStili}>{VERI_SAKLAMA_BILDIRIMI}</p>
-        <p style={{ ...bilgiMetniStili, marginTop: 10 }}>
-          Önceki geliştirme sürümlerinden kalmış yerel profil, ilerleme, oturum ve yanıt kayıtları uygulama açıldığında silinir. Dışa ve içe aktarma bu sürümde kapalıdır.
-        </p>
+      <Bolum baslik="Bu sürümde kayıt tutulmaz">
+        <div role="status" aria-live="polite" style={mahremiyetKutusuStili}>
+          <strong style={{ color: COLOR.ink }}>Henüz öğrenci geçmişi gösterilmiyor.</strong>
+          <p style={{ ...bilgiMetniStili, marginTop: 8 }}>{VERI_SAKLAMA_BILDIRIMI}</p>
+          <p style={{ ...bilgiMetniStili, marginTop: 8 }}>
+            Çocuk profili, yanıtlar, ilerleme özeti ve oturum geçmişi bu cihazda ya da çevrim içi ortamda tutulmaz.
+            Uygulama açılırken önceki geliştirme kayıtları temizlenir.
+          </p>
+        </div>
       </Bolum>
 
-      <Bolum baslik="2. Geçici Ayarlar">
+      <Bolum baslik="Geçici ayarlar">
         <p style={{ ...bilgiMetniStili, marginBottom: 12 }}>
-          Bu ayarlar yalnız bu sayfa açıkken kullanılır; tarayıcı yenilendiğinde varsayılan değerlere döner.
+          Bu değişiklikler yalnız uygulama açıkken etkilidir; tarayıcı yenilendiğinde varsayılan değerlere döner.
         </p>
-        <AyarSatir etiket="Okuma seviyesi">
+        <AyarSatir etiket="Okuma seviyesi" htmlFor="okuma-seviyesi">
           <select
+            id="okuma-seviyesi"
             value={readingLevel}
             onChange={(e) => readingLevelAyarla(Number(e.target.value) as ReadingLevel)}
             style={selectStyle}
@@ -69,8 +76,9 @@ export function VeliPaneli() {
           </select>
         </AyarSatir>
 
-        <AyarSatir etiket="Okul ayı">
+        <AyarSatir etiket="Okul ayı" htmlFor="okul-ayi">
           <select
+            id="okul-ayi"
             value={okulAyiIndex}
             onChange={(e) => okulAyiAyarla(Number(e.target.value))}
             style={selectStyle}
@@ -83,8 +91,9 @@ export function VeliPaneli() {
           </select>
         </AyarSatir>
 
-        <AyarSatir etiket="Ses hızı">
+        <AyarSatir etiket="Ses hızı" htmlFor="ses-hizi">
           <input
+            id="ses-hizi"
             type="range"
             min={0.5}
             max={1.5}
@@ -97,20 +106,23 @@ export function VeliPaneli() {
         </AyarSatir>
       </Bolum>
 
-      <Bolum baslik="3. Açık Konular">
-        <TemaIlerleme okulAyiIndex={okulAyiIndex} />
+      <Bolum baslik="Bu ay açık konular">
+        <p style={{ ...bilgiMetniStili, marginBottom: 12 }}>
+          Aşağıdaki liste kişiye özel ilerleme değildir; seçili okul ayına göre uygulamada kullanılabilen konuları gösterir.
+        </p>
+        <TemaDurumu okulAyiIndex={okulAyiIndex} />
       </Bolum>
 
-      <Bolum baslik="4. Kaynaklar ve Gizlilik">
+      <Bolum baslik="Gizlilik ve kaynaklar">
         <p style={bilgiMetniStili}>
           Müfredat kaynağı: MEB 2024 Türkiye Yüzyılı Maarif Modeli, İlkokul Matematik Dersi Öğretim Programı.
         </p>
         <p style={{ ...bilgiMetniStili, margin: '8px 0 12px' }}>
-          Ses klipleri: Piper TTS. Banknot görselleri: TCMB örnek banknotları. Uygulama bu geliştirme sürümünde öğrenci veya veli verisi toplamaz ya da saklamaz.
+          Ses klipleri Piper TTS ile önceden üretilir; banknot görselleri TCMB örnek banknotlarıdır. Uygulama öğrenci veya veli verisi toplamaz ya da saklamaz.
         </p>
         <button
           type="button"
-          onClick={() => useAppStore.getState().ekranGit('kaynaklar')}
+          onClick={() => ekranGit('kaynaklar')}
           style={aktifButtonStyle}
         >
           Lisanslar ve gizlilik →
@@ -131,26 +143,34 @@ function Bolum({ baslik, children }: { baslik: string; children: React.ReactNode
         border: `1px solid ${COLOR.border}`,
       }}
     >
-      <h3 style={{ fontSize: 'var(--text-adult)', color: COLOR.ink, margin: '0 0 12px' }}>
+      <h2 style={{ fontSize: 'var(--text-adult)', color: COLOR.ink, margin: '0 0 12px' }}>
         {baslik}
-      </h3>
+      </h2>
       {children}
     </section>
   );
 }
 
-function AyarSatir({ etiket, children }: { etiket: string; children: React.ReactNode }) {
+function AyarSatir({
+  etiket,
+  htmlFor,
+  children,
+}: {
+  etiket: string;
+  htmlFor: string;
+  children: React.ReactNode;
+}) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-      <span style={{ fontSize: 'var(--text-adult)', color: COLOR.ink, minWidth: 120 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
+      <label htmlFor={htmlFor} style={{ fontSize: 'var(--text-adult)', color: COLOR.ink, minWidth: 120 }}>
         {etiket}
-      </span>
+      </label>
       {children}
     </div>
   );
 }
 
-function TemaIlerleme({ okulAyiIndex }: { okulAyiIndex: number }) {
+function TemaDurumu({ okulAyiIndex }: { okulAyiIndex: number }) {
   const acikTemalar = acilanTemalar(okulAyiIndex);
   const temalar = [
     'Yön ve Yerler',
@@ -180,9 +200,7 @@ function TemaIlerleme({ okulAyiIndex }: { okulAyiIndex: number }) {
             }}
           >
             <span>{ad}</span>
-            <span style={{ opacity: acik ? 1 : 0.4 }}>
-              {acik ? 'Açık' : 'Kilitli'}
-            </span>
+            <span style={{ opacity: acik ? 1 : 0.7 }}>{acik ? 'Açık' : 'Henüz açık değil'}</span>
           </div>
         );
       })}
@@ -194,6 +212,13 @@ const bilgiMetniStili: React.CSSProperties = {
   fontSize: 'var(--text-adult)',
   color: COLOR.inkSoft,
   margin: 0,
+};
+
+const mahremiyetKutusuStili: React.CSSProperties = {
+  padding: 12,
+  borderRadius: 8,
+  background: '#f3ede3',
+  border: `1px solid ${COLOR.border}`,
 };
 
 const selectStyle: React.CSSProperties = {

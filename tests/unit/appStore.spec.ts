@@ -241,7 +241,7 @@ describe('Ekran akışı — tüm ekranlar reachable', () => {
 describe('Veli paneli — geçici saklama politikası', () => {
   beforeEach(sifirla);
 
-  it('VeliPaneli 4 kalem içermeli (kaynak kod kontrolü)', async () => {
+  it('VeliPaneli mahremiyet, ayar, konu ve kaynak bölümlerini içermeli (kaynak kod kontrolü)', async () => {
     // VeliPaneli kaynak kodunu oku ve 4 Bolum bileşeni olduğunu doğrula
     const fs = await import('node:fs');
     const path = await import('node:path');
@@ -253,17 +253,19 @@ describe('Veli paneli — geçici saklama politikası', () => {
     expect(bolumSayisi).toBe(4);
   });
 
-  it('VeliPaneli bölümleri saklamama politikasını ve geçici ayarları açıklar', async () => {
+  it('VeliPaneli saklamama politikasını ve geçici ayarları açıklar', async () => {
     const fs = await import('node:fs');
     const path = await import('node:path');
     const kaynak = fs.readFileSync(
       path.resolve(__dirname, '../../src/ui/screens/VeliPaneli.tsx'),
       'utf-8',
     );
-    expect(kaynak).toContain('Veri Saklama Durumu');
-    expect(kaynak).toContain('Geçici Ayarlar');
-    expect(kaynak).toContain('Açık Konular');
-    expect(kaynak).toContain('Kaynaklar ve Gizlilik');
+    expect(kaynak).toContain('Bu sürümde kayıt tutulmaz');
+    expect(kaynak).toContain('Henüz öğrenci geçmişi gösterilmiyor.');
+    expect(kaynak).toContain('Geçici ayarlar');
+    expect(kaynak).toContain('Bu ay açık konular');
+    expect(kaynak).toContain('Gizlilik ve kaynaklar');
+    expect(kaynak).toContain('tarayıcı yenilendiğinde varsayılan değerlere döner');
     expect(kaynak).not.toContain('Dışa Aktar');
     expect(kaynak).not.toContain('İçe Aktar');
   });
