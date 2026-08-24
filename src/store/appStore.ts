@@ -2,11 +2,11 @@
  * UYGULAMA DURUMU — Zustand store (plan §10, §11).
  *
  * Tüm navigasyon, profil ve ayar durumu burada.
- * Kalıcılık (Adım 9): ayarlar repository.ts üzerinden IndexedDB'ye yazılır.
+ * Geliştirme sürümünde öğrenci/veli ayarları yalnız bellek durumunda tutulur.
  * Navigasyon durumu kalıcı DEĞİL — ekran geçici, yenilemede sıfırlanır.
  *
  * TAHTA MODU KURALI (plan §3.3, §11):
- *  · Tahta modunda HİÇBİR ŞEY IndexedDB'ye yazılmaz (`events` dahil).
+ *  · Geliştirme sürümünde hiçbir mod öğrenci/veli verisini IndexedDB'ye yazmaz.
  *  · Bu, `persistenceEnabled` bayrağıyla kod düzeyinde garanti edilir.
  *    repository.ts tüm yazma fonksiyonlarında bu bayrağı kontrol eder.
  *  · Tahta modunda avatar/renk seçilmez, çıkartma/bahçe atlanır.
@@ -14,6 +14,7 @@
 
 import { create } from 'zustand';
 import { ACCENTS, type Accent } from '../design/tokens';
+import { OGRENCI_VERISI_SAKLANIR_MI } from '../persistence/veriSaklamaPolitikasi';
 
 // ---------------------------------------------------------------- tipler
 
@@ -36,9 +37,13 @@ export type Ekran =
 /** Kullanım modu — plan §3.3. */
 export type Mod = 'tahta' | 'kisisel';
 
-/** Tahta modunda kalıcılık devre dışıdır (§3.3). */
+/**
+ * Geliştirme sürümünde öğrenci ve veli verisi hiçbir modda saklanmaz.
+ * Ürün sahibi saklama modelini onayladığında bu karar merkezi politika modülünden
+ * ayrıca ele alınacaktır.
+ */
 export function persistenceEnabled(mod: Mod | null): boolean {
-  return mod === 'kisisel';
+  return OGRENCI_VERISI_SAKLANIR_MI && mod === 'kisisel';
 }
 
 /** Okuma seviyesi — plan §6.3. 0=Eylül varsayımı (okumıyor). */

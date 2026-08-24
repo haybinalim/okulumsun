@@ -145,9 +145,9 @@ describe('Tahta modu — kalıcılık kuralları', () => {
     expect(persistenceEnabled(useAppStore.getState().mod)).toBe(false);
   });
 
-  it('kişisel modda persistenceEnabled true', () => {
+  it('kişisel modda da geliştirme sürümünde persistenceEnabled false', () => {
     useAppStore.getState().modSec('kisisel');
-    expect(persistenceEnabled(useAppStore.getState().mod)).toBe(true);
+    expect(persistenceEnabled(useAppStore.getState().mod)).toBe(false);
   });
 
   it('mod null iken persistenceEnabled false', () => {
@@ -238,11 +238,11 @@ describe('Ekran akışı — tüm ekranlar reachable', () => {
   });
 });
 
-describe('Veli paneli — 5 kalem', () => {
+describe('Veli paneli — geçici saklama politikası', () => {
   beforeEach(sifirla);
 
-  it('VeliPaneli 5 kalem içermeli (kaynak kod kontrolü)', async () => {
-    // VeliPaneli kaynak kodunu oku ve 5 Bolum bileşeni olduğunu doğrula
+  it('VeliPaneli 4 kalem içermeli (kaynak kod kontrolü)', async () => {
+    // VeliPaneli kaynak kodunu oku ve 4 Bolum bileşeni olduğunu doğrula
     const fs = await import('node:fs');
     const path = await import('node:path');
     const kaynak = fs.readFileSync(
@@ -250,21 +250,22 @@ describe('Veli paneli — 5 kalem', () => {
       'utf-8',
     );
     const bolumSayisi = (kaynak.match(/<Bolum/g) || []).length;
-    expect(bolumSayisi).toBe(5);
+    expect(bolumSayisi).toBe(4);
   });
 
-  it('VeliPaneli bölümleri: ilerleme, zorlandığı konular, ayarlar, yedekleme, kaynaklar', async () => {
+  it('VeliPaneli bölümleri saklamama politikasını ve geçici ayarları açıklar', async () => {
     const fs = await import('node:fs');
     const path = await import('node:path');
     const kaynak = fs.readFileSync(
       path.resolve(__dirname, '../../src/ui/screens/VeliPaneli.tsx'),
       'utf-8',
     );
-    expect(kaynak).toContain('İlerleme');
-    expect(kaynak).toContain('Zorlandığı Konular');
-    expect(kaynak).toContain('Ayarlar');
-    expect(kaynak).toContain('Yedekleme');
-    expect(kaynak).toContain('Kaynaklar');
+    expect(kaynak).toContain('Veri Saklama Durumu');
+    expect(kaynak).toContain('Geçici Ayarlar');
+    expect(kaynak).toContain('Açık Konular');
+    expect(kaynak).toContain('Kaynaklar ve Gizlilik');
+    expect(kaynak).not.toContain('Dışa Aktar');
+    expect(kaynak).not.toContain('İçe Aktar');
   });
 });
 

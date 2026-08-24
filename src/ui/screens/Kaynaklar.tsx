@@ -36,10 +36,11 @@ export function Kaynaklar() {
             color: '#333',
           }}
         >
-          Bu uygulama ad-soyad, fotoğraf, konum veya hesap bilgisi İSTEMEZ.
-          Tüm veri yalnızca cihazda saklanır, hiçbir sunucuya gönderilmez.
-          Uygulamayı kaldırdığınızda tüm veri silinir. İnternet bağlantısı
-          gerekmez — ilk yüklemeden sonra çevrimdışı çalışır.
+          Bu geliştirme sürümü ad-soyad, fotoğraf, konum, hesap bilgisi,
+          öğrenci ilerlemesi veya veli bilgisi İSTEMEZ ve SAKLAMAZ. Önceki
+          geliştirme sürümlerinden kalmış yerel öğrenci/veli kayıtları uygulama
+          açıldığında silinir. İnternet bağlantısı gerekmez — ilk yüklemeden
+          sonra çevrimdışı çalışır.
         </p>
       </section>
 
@@ -85,9 +86,9 @@ export function Kaynaklar() {
       <section style={{ marginBottom: '2rem' }}>
         <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Para Görselleri</h2>
         <p style={{ fontSize: '0.9rem', lineHeight: 1.6, color: '#333' }}>
-          Türk Lirası banknot görselleri TCMB koruması altındadır.
-          Uygulamada gerçek banknot görselleri kullanılmaz — stilize temsil
-          çizilir (doğru renk ve rakam, gerçekçi değil).
+          Türk Lirası banknot görselleri, TCMB'nin kamuya açık örnek banknot
+          görsellerinden türetilmiştir. Uygulama yalnız 5, 10, 20, 50, 100 ve
+          200 TL kupürleri için bu resmî örnek görselleri kullanır.
         </p>
       </section>
 

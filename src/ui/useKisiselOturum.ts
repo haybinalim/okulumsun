@@ -17,6 +17,7 @@ import {
   oturumOzetiYaz,
   profilOku,
   profilYaz,
+  kaliciOgrenciVerileriniSil,
 } from '../persistence/repository';
 import { useAppStore, type Mod } from '../store/appStore';
 
@@ -55,12 +56,14 @@ export function useKisiselOturum(ekran: string, mod: Mod | null): KisiselOturumD
   const oturumuTamamla = useAppStore((s) => s.oturumuTamamla);
   const profildenYukle = useAppStore((s) => s.profildenYukle);
 
-  // İlk yüklemede profil, ustalık haritası ve henüz taze bir yarım oturum alınır.
+  // İlk yüklemede önce eski öğrenci/veli kayıtları silinir; ardından yalnız bellek
+  // için varsayılan profil ve boş oturum durumu hazırlanır.
   useEffect(() => {
     let iptal = false;
 
     async function yukle(): Promise<void> {
       try {
+        await kaliciOgrenciVerileriniSil();
         const [profil, kaliciKayitlar, eskiOturum] = await Promise.all([
           profilOku(),
           masteryOku(),
@@ -93,8 +96,8 @@ export function useKisiselOturum(ekran: string, mod: Mod | null): KisiselOturumD
     return () => { iptal = true; };
   }, [profildenYukle]);
 
-  // Kişisel profil ayarlarını seçildiği anda sakla. Tahta modu bu hook'a girmediği
-  // için repository'nin no-op korumasına ek bir uygulama katmanı koruması sağlanır.
+  // Ayarlar yalnız bu sayfa açık kaldığı sürece bellek durumunda yaşar. Repository
+  // katmanı geliştirme sürümünde tüm kalıcı yazmaları no-op olarak uygular.
   useEffect(() => {
     if (yukleniyor || mod !== 'kisisel') return;
     void profilYaz({

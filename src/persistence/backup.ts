@@ -17,6 +17,7 @@
 
 import { db, MEVCUT_SEMA_SURUMU, type LearnerProfileRecord, type EventRecord, type SessionRecord } from './db';
 import type { MasteryRecord } from '../progress/mastery';
+import { OGRENCI_VERISI_SAKLANIR_MI, VERI_SAKLAMA_KAPALI_HATA } from './veriSaklamaPolitikasi';
 
 // ---------------------------------------------------------------- tipler
 
@@ -44,12 +45,14 @@ export type IceAktarimHatasi =
   | 'gecersiz-format'
   | 'format-eslesmiyor'
   | 'db-surumu-buyuk'
-  | 'veri-eksik';
+  | 'veri-eksik'
+  | 'saklama-kapali';
 
 // ---------------------------------------------------------------- dışa aktarım
 
 /** Tüm veriyi topla ve yedek objesi oluştur. */
 export async function yedekOlustur(uygulamaSurumu: string): Promise<YedekDosyasi> {
+  if (!OGRENCI_VERISI_SAKLANIR_MI) throw new Error(VERI_SAKLAMA_KAPALI_HATA);
   const [learner_profile, learner_mastery, sessions, events] = await Promise.all([
     db.learner_profile.get('aktif'),
     db.learner_mastery.toArray(),
@@ -141,6 +144,7 @@ export function yedekDogrula(yedek: YedekDosyasi): IceAktarimSonuc {
 
 /** Yedeği içe aktar — mevcut veriyi DEĞİŞTİRİR. */
 export async function yedeIceAktar(yedek: YedekDosyasi): Promise<IceAktarimSonuc> {
+  if (!OGRENCI_VERISI_SAKLANIR_MI) return { ok: false, sebep: 'saklama-kapali' };
   const dogrulama = yedekDogrula(yedek);
   if (!dogrulama.ok) return dogrulama;
 

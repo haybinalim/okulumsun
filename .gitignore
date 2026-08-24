@@ -30,3 +30,13 @@ playwright-report
 
 # Yerel TTS modelleri; yalnız üretim aracı, uygulama varlığı değildir.
 .tools/
+
+# Öğrenci/veli verisi ve yerel yedekler hiçbir koşulda depoya eklenmez.
+*.db
+*.sqlite
+*.sqlite3
+*.bak
+*.backup
+*.jsonl
+*.ndjson
+okulumsun-yedek-*.json

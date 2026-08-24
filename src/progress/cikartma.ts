@@ -32,13 +32,13 @@ export type Sahne = (typeof SAHNE_ADLARI)[number];
 
 // ---------------------------------------------------------------- tipler
 
-/** Çıkartma koleksiyonu durumu — IndexedDB'ye yazılır (Adım 9). */
+/** Çıkartma koleksiyonu durumu — bu geliştirme sürümünde yalnız bellek içinde yaşar. */
 export interface CikartmaKoleksiyonu {
   /** Toplam çıkartma sayısı (biriken, harcanmaz). */
   readonly toplam: number;
   /** Mevcut sahne indeksi (0'dan başlar). */
   readonly sahneIndeksi: number;
-  /** Son kazanılan çıkartma zaman damgası (epoch ms, kalıcılık için). */
+  /** Son kazanılan çıkartma zaman damgası (epoch ms, geçici oturum için). */
   readonly sonKazancMs: number | null;
 }
 

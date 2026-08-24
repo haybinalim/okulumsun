@@ -4,8 +4,9 @@
  * İlk açılışta (ses kilidinden sonra) sorulur: Tahta / Kişisel.
  * İki büyük ikonlu kart. Ayarlardan değiştirilebilir.
  *
- * Tahta modu (§3.3): profil yok, ilerleme kaydedilmez, içerik elle seçilir.
- * Kişisel mod: avatar + renk, IndexedDB'ye yazılır, adaptif motor seçer.
+ * Tahta modu (§3.3): ilerleme kaydedilmez, içerik elle seçilir.
+ * Kişisel mod: avatar + renk yalnız bellek durumunda kalır; adaptif motor seçer.
+ * Geliştirme sürümünde öğrenci/veli verisi hiçbir modda kalıcı olarak yazılmaz.
  */
 
 import { useAppStore } from '../../store/appStore';

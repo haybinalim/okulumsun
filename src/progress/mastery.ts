@@ -69,7 +69,7 @@ export type MasteryDurumu =
 /** Çocuğa gösterilen 4 seviye. */
 export type BuyumeSeviyesi = 'tohum' | 'filiz' | 'ciçek' | 'meyve';
 
-/** Düğüm başına ustalık kaydı — IndexedDB'ye yazılır (plan §10). */
+/** Düğüm başına ustalık kaydı — bu geliştirme sürümünde yalnız bellek içinde yaşar. */
 export interface MasteryRecord {
   readonly skillId: SkillId;
   readonly strength: number; // 0..1

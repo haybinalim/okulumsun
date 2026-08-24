@@ -25,8 +25,8 @@ import type { Exercise } from './exercises/types';
  * Uygulama kabuğu — plan §11 ekran akışını yönetir.
  *
  * Kişisel modda sekiz soruluk adaptif oturum `useKisiselOturum` üzerinden
- * çalışır ve her cevap IndexedDB'ye kalıcı biçimde yazılır. Tahta modunda
- * kalıcılık yoktur; öğretmen seçimi için seçilen konu üzerinden egzersiz üretilir.
+ * çalışır. Geliştirme sürümünde öğrenci/veli verisi hiçbir modda kalıcı olarak
+ * yazılmaz; öğretmen seçimi için seçilen konu üzerinden egzersiz üretilir.
  */
 export default function App() {
   const { profile } = useDeviceProfile();
