@@ -29,6 +29,8 @@ export interface BigButtonProps {
   variant?: 'solid' | 'ghost' | 'accent';
   style?: CSSProperties;
   className?: string;
+  /** Tek seçimli kartlarda seçili durumu yardımcı teknolojilere iletir. */
+  ariaPressed?: boolean;
 }
 
 /**
@@ -52,6 +54,7 @@ export function BigButton({
   variant = 'solid',
   style,
   className,
+  ariaPressed,
 }: BigButtonProps) {
   // -Infinity, 0 DEĞİL. `performance.now()` sayfa yüklenmesinden bu yana geçen
   // süredir; 0 ile başlatılırsa ilk 250 ms içindeki dokunuş "çok hızlı tekrar"
@@ -74,6 +77,7 @@ export function BigButton({
     <button
       type="button"
       aria-label={label}
+      aria-pressed={ariaPressed}
       // Devre dışı buton yine de dokunulabilir olmalı ki sesli açıklama yapabilsin.
       // `aria-disabled` durumu bildirir, `disabled` niteliği olayı öldürürdü.
       aria-disabled={disabled || undefined}
