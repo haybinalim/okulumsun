@@ -10,10 +10,12 @@
  * Akıllı tahta erişim bölgesi: dişli 32px (çocuk hedefi değil), alt %65'te.
  */
 
+import { useState } from 'react';
 import { useAppStore, TEMALAR, accentBul, avatarBul } from '../../store/appStore';
 import { temaAcikMi } from '../../content/okulAyi';
 import { BigButton } from '../primitives/BigButton';
 import { Maskot } from '../feedback/Maskot';
+import { YonlendirmeSeridi } from '../feedback/YonlendirmeSeridi';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { motion, useReducedMotion } from 'framer-motion';
 import { COLOR, MOTION, SIZE } from '../../design/tokens';
@@ -23,14 +25,24 @@ export function AnaEkran() {
   const accent = accentBul(useAppStore((s) => s.accentId));
   const avatar = avatarBul(useAppStore((s) => s.avatarId));
   const reducedMotion = useReducedMotion();
+  const [kilitliTema, setKilitliTema] = useState<string | null>(null);
 
-  // Ana ekranda hoş geldin mesajı — sadece ilk girişte
-  useScreenSpeech(null, []);
+  // Konu seçimi, çocuk için sesli yönlendirmeyle başlar; şerit ses çalmazsa
+  // ekranda sıradaki hareketi göstermeye devam eder.
+  useScreenSpeech({ kind: 'key', key: 'ui.tema-sec' }, [mod]);
 
   const handleTema = (temaNo: number) => {
-    // Tema adını seslendir
     const tema = TEMALAR.find((t) => t.no === temaNo);
-    if (tema) void speak({ kind: 'key', key: tema.speechKey as never });
+    if (!tema) return;
+
+    if (!temaAcikMi(okulAyiIndex, tema.no)) {
+      setKilitliTema(tema.ad);
+      void speak({ kind: 'key', key: 'ui.kilitli-acik-konu' });
+      return;
+    }
+
+    setKilitliTema(null);
+    void speak({ kind: 'key', key: tema.speechKey as never });
     temaSec(temaNo);
   };
 
@@ -116,32 +128,57 @@ export function AnaEkran() {
         </button>
       </header>
 
-      {/* Orta: tema kartları + maskot */}
+      {/* Tahta modunda etkileşimler, fiziksel erişim için alt %65'e yerleşir. */}
       <section
         style={{
           flex: 1,
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
-          gap: 'var(--size-gap)',
+          justifyContent: mod === 'tahta' ? 'flex-end' : 'center',
+          gap: 'var(--size-gap-tight)',
           minHeight: 0,
+          paddingTop: mod === 'tahta' ? '8%' : 0,
         }}
       >
-        {/* Maskot — sol tarafta, sabit */}
-        <div style={{ flex: '0 0 auto' }}>
-          <Maskot durum="sakin" size={SIZE.mascot} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--size-gap-tight)', width: '100%' }}>
+          <div style={{ flex: '0 0 auto' }}>
+            <Maskot durum={kilitliTema ? 'cesaretlendiriyor' : 'sakin'} size={SIZE.mascot} />
+          </div>
+          <YonlendirmeSeridi metin={kilitliTema ? `${kilitliTema} daha sonra açılacak.` : 'Dinle, sonra renkli açık konu kartına dokun.'} />
         </div>
 
-        {/* 7 tema kartı — 4+3 ızgara */}
+        {kilitliTema && (
+          <div
+            role="status"
+            aria-live="polite"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              padding: '8px 16px',
+              borderRadius: 16,
+              background: 'var(--color-retry-soft)',
+              color: 'var(--color-ink)',
+              fontSize: 'var(--text-adult)',
+            }}
+          >
+            <span aria-hidden="true" style={{ fontSize: 24 }}>🔒</span>
+            <span>Önce renkli açık karttan başlayalım.</span>
+          </div>
+        )}
+
+        {/* Tahtada 4+3 kart, küçük ekranda satıra taşar. */}
         <motion.div
           initial={reducedMotion ? {} : { opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: reducedMotion ? 0 : MOTION.screen / 1000 }}
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
+            gridTemplateColumns: `repeat(4, minmax(${mod === 'tahta' ? 150 : 120}px, 1fr))`,
             gap: 'var(--size-gap-tight)',
-            maxWidth: 600,
+            width: 'min(100%, 960px)',
+            maxWidth: mod === 'tahta' ? 960 : 600,
           }}
         >
           {TEMALAR.map((tema, i) => {
@@ -153,7 +190,9 @@ export function AnaEkran() {
                 acik={acik}
                 index={i}
                 reducedMotion={reducedMotion}
+                boardMode={mod === 'tahta'}
                 onSelect={() => handleTema(tema.no)}
+                onBlockedPress={() => handleTema(tema.no)}
               />
             );
           })}
@@ -191,14 +230,18 @@ function TemaKart({
   index,
   reducedMotion,
   onSelect,
+  onBlockedPress,
+  boardMode,
 }: {
   tema: { no: number; ad: string; renk: string; speechKey: string };
   acik: boolean;
   index: number;
   reducedMotion: boolean | null;
   onSelect: () => void;
+  onBlockedPress: () => void;
+  boardMode: boolean;
 }) {
-  const kartSize = 120;
+  const kartSize = boardMode ? 180 : 120;
   return (
     <motion.div
       initial={reducedMotion ? {} : { scale: 0.8, opacity: 0 }}
@@ -213,73 +256,77 @@ function TemaKart({
         size="tapMin"
         variant="solid"
         disabled={!acik}
-        onBlockedPress={() => { /* kilitli tema — sesli geri bildirim yok */ }}
+        onBlockedPress={onBlockedPress}
         onPress={onSelect}
         style={{
           width: kartSize,
           height: kartSize,
-          background: acik ? tema.renk : COLOR.border,
-          color: '#fff',
+          background: acik ? tema.renk : '#f3ede3',
+          color: acik ? '#fff' : COLOR.ink,
           flexDirection: 'column',
           gap: 4,
-          opacity: acik ? 1 : 0.4,
+          opacity: 1,
+          boxShadow: acik ? undefined : '0 3px 0 #d9cfbf',
         }}
       >
-        <TemaIkon no={tema.no} size={kartSize * 0.3} />
-        <span style={{ fontSize: 11, textAlign: 'center' }}>
-          {tema.ad}
-        </span>
-      </BigButton>
+          <TemaIkon no={tema.no} size={kartSize * 0.3} color={acik ? '#fff' : COLOR.ink} />
+          <span style={{ fontSize: boardMode ? 16 : 11, textAlign: 'center', fontWeight: 700 }}>
+            {tema.ad}
+          </span>
+          {!acik && (
+            <span aria-hidden="true" style={{ position: 'absolute', top: 10, right: 10, fontSize: 22 }}>🔒</span>
+          )}
+        </BigButton>
     </motion.div>
   );
 }
 
 /** Tema ikonu — her tema için basit SVG. */
-function TemaIkon({ no, size }: { no: number; size: number }) {
+function TemaIkon({ no, size, color }: { no: number; size: number; color: string }) {
   switch (no) {
     case 1: // Yön ve Yerler
       return (
-        <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden="true" fill="#fff">
+        <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden="true" fill={color}>
           <path d="M20 4 L26 16 L20 12 L14 16 Z" />
           <path d="M20 36 L14 24 L20 28 L26 24 Z" />
         </svg>
       );
     case 2: // Sayılar
       return (
-        <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden="true" fill="#fff">
-          <text x="20" y="28" fontSize="22" textAnchor="middle" fill="#fff">123</text>
+        <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden="true" fill={color}>
+          <text x="20" y="28" fontSize="22" textAnchor="middle" fill={color}>123</text>
         </svg>
       );
     case 3: // Ölçme
       return (
-        <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden="true" fill="none" stroke="#fff" strokeWidth="3">
+        <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden="true" fill="none" stroke={color} strokeWidth="3">
           <rect x="6" y="18" width="28" height="8" rx="1" />
           <path d="M12 18 V22 M18 18 V21 M24 18 V22 M30 18 V21" />
         </svg>
       );
     case 4: // Toplama ve Çıkarma
       return (
-        <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden="true" fill="none" stroke="#fff" strokeWidth="3">
+        <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden="true" fill="none" stroke={color} strokeWidth="3">
           <path d="M20 8 V32 M8 20 H32" />
         </svg>
       );
     case 5: // Paralarımız
       return (
-        <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden="true" fill="#fff">
+        <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden="true" fill={color}>
           <circle cx="20" cy="20" r="14" />
           <text x="20" y="25" fontSize="12" textAnchor="middle" fill={COLOR.mascot}>₺</text>
         </svg>
       );
     case 6: // Şekiller
       return (
-        <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden="true" fill="none" stroke="#fff" strokeWidth="3">
+        <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden="true" fill="none" stroke={color} strokeWidth="3">
           <rect x="8" y="8" width="16" height="16" />
           <circle cx="28" cy="28" r="8" />
         </svg>
       );
     case 7: // Sayalım ve Gösterelim
       return (
-        <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden="true" fill="#fff">
+        <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden="true" fill={color}>
           <rect x="6" y="24" width="6" height="12" />
           <rect x="16" y="16" width="6" height="20" />
           <rect x="26" y="8" width="6" height="28" />

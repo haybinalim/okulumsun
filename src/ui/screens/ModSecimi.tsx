@@ -11,6 +11,7 @@
 
 import { useAppStore } from '../../store/appStore';
 import { BigButton } from '../primitives/BigButton';
+import { YonlendirmeSeridi } from '../feedback/YonlendirmeSeridi';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { motion, useReducedMotion } from 'framer-motion';
 import { COLOR, MOTION, SIZE } from '../../design/tokens';
@@ -19,7 +20,7 @@ export function ModSecimi() {
   const modSec = useAppStore((s) => s.modSec);
   const reducedMotion = useReducedMotion();
 
-  useScreenSpeech(null, []);
+  useScreenSpeech({ kind: 'key', key: 'ui.mod-sec' }, []);
 
   const handleTahta = () => {
     void speak({ kind: 'key', key: 'ui.mod-tahta' });
@@ -38,13 +39,15 @@ export function ModSecimi() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-end',
         background: COLOR.bg,
         gap: 'var(--size-gap)',
         padding: 'var(--size-edge)',
-        paddingBottom: 'var(--size-edge-bottom)',
+        paddingBottom: 'calc(var(--size-edge-bottom) + 4%)',
       }}
     >
+      <YonlendirmeSeridi metin="Dinle, sonra birlikte ya da tek başına çalışmayı seç." />
+
       <motion.div
         initial={reducedMotion ? {} : { scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
