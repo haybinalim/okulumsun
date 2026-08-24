@@ -2,6 +2,7 @@ import type { CSSProperties, ReactNode } from 'react';
 import { BigButton } from './BigButton';
 import { Visual } from '../svg/Visual';
 import type { Option, OptionDeger } from '../../exercises/types';
+import { secenekErisimEtiketi } from './choiceErisim';
 
 /**
  * Cevap kartı — bir şıkkın değerini çizer ve seç-onayla (§7.3) durumlarını taşır.
@@ -46,7 +47,8 @@ export function ChoiceCard({ option, size, state, onSelect }: ChoiceCardProps) {
 
   return (
     <BigButton
-      label={ariaLabel(option.deger)}
+      label={secenekErisimEtiketi(option.deger)}
+      ariaPressed={selected || isCorrect}
       size="choice"
       shape="rounded"
       variant="solid"
@@ -134,23 +136,4 @@ function SekilKategori({ kategori, size }: { kategori: 'yuvarlak' | 'koseli'; si
       )}
     </svg>
   );
-}
-
-function ariaLabel(deger: OptionDeger): string {
-  switch (deger.tur) {
-    case 'sayi':
-      return String(deger.sayi);
-    case 'gorsel':
-      return 'görsel seçenek';
-    case 'sekil':
-      return deger.sekil;
-    case 'sekilKategorisi':
-      return deger.kategori === 'yuvarlak' ? 'yuvarlak' : 'köşeli';
-    case 'banknot':
-      return `${deger.deger} lira banknotu, örnek görsel`;
-    case 'terim':
-      return deger.terim.replace('-', ' ');
-    case 'metin':
-      return deger.metin;
-  }
 }

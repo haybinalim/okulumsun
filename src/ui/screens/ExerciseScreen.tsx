@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { GameShell } from '../layout/GameShell';
 import { ChoiceCard, type ChoiceState } from '../primitives/ChoiceCard';
+import { secenekErisimEtiketi } from '../primitives/choiceErisim';
 import { SpeakButton } from '../primitives/SpeakButton';
 import { BigButton } from '../primitives/BigButton';
 import { Visual } from '../svg/Visual';
@@ -120,6 +121,11 @@ function AudioToImageFlow({
   };
 
   const scene = exercise.prompt.gorsel;
+  const seciliSecenek = exercise.options.find((option) => option.id === seciliId);
+  const secimDurumu =
+    cozum === 'bos' && seciliSecenek
+      ? `Seçildi: ${secenekErisimEtiketi(seciliSecenek.deger)}`
+      : '';
   const sceneSize = 380; // px; deviceProfile ölçeklemesine göre büyür/küçülür
 
   return (
@@ -140,6 +146,7 @@ function AudioToImageFlow({
           onSelect={handleSelect}
           onConfirm={handleConfirm}
           canConfirm={seciliId !== null && cozum === 'bos'}
+          secimDurumu={secimDurumu}
         />
       }
     />
@@ -153,6 +160,7 @@ function InteractionArea({
   onSelect,
   onConfirm,
   canConfirm,
+  secimDurumu,
 }: {
   options: readonly Exercise['options'][number][];
   choiceSize: number;
@@ -160,9 +168,27 @@ function InteractionArea({
   onSelect: (id: string) => void;
   onConfirm: () => void;
   canConfirm: boolean;
+  secimDurumu: string;
 }): ReactNode {
   return (
     <>
+      <div
+        role="status"
+        aria-live="polite"
+        style={{
+          position: 'absolute',
+          width: 1,
+          height: 1,
+          padding: 0,
+          margin: -1,
+          overflow: 'hidden',
+          clip: 'rect(0, 0, 0, 0)',
+          whiteSpace: 'nowrap',
+          border: 0,
+        }}
+      >
+        {secimDurumu}
+      </div>
       <div style={{ display: 'flex', gap: 'var(--size-gap)', flexWrap: 'wrap', justifyContent: 'center' }}>
         {options.map((o) => (
           <ChoiceCard
