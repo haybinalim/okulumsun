@@ -6,6 +6,8 @@
  * 3. navigator.storage.estimate() — veli panelinde gösterilir.
  */
 
+import { OGRENCI_VERISI_SAKLANIR_MI } from './veriSaklamaPolitikasi';
+
 // ---------------------------------------------------------------- persist
 
 /**
@@ -17,6 +19,7 @@
  * @returns true = izin verildi, false = reddedildi, null = API yok
  */
 export async function persistIste(): Promise<boolean | null> {
+  if (!OGRENCI_VERISI_SAKLANIR_MI) return null;
   if (typeof navigator === 'undefined' || !navigator.storage?.persist) {
     return null;
   }
@@ -32,6 +35,7 @@ export async function persistIste(): Promise<boolean | null> {
  * Kalıcı depolama zaten verilmiş mi?
  */
 export async function persistDurumu(): Promise<boolean | null> {
+  if (!OGRENCI_VERISI_SAKLANIR_MI) return null;
   if (typeof navigator === 'undefined' || !navigator.storage?.persisted) {
     return null;
   }
@@ -57,6 +61,7 @@ export interface DepolamaTahmini {
  * @returns null = API yok
  */
 export async function depolamaTahmini(): Promise<DepolamaTahmini | null> {
+  if (!OGRENCI_VERISI_SAKLANIR_MI) return null;
   if (typeof navigator === 'undefined' || !navigator.storage?.estimate) {
     return null;
   }

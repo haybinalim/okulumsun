@@ -1,32 +1,50 @@
-# React + TypeScript + Vite
+# Okulumsun
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+**Okulumsun**, MEB 2024 İlkokul Matematik Dersi Öğretim Programı ile uyumlu, 1. sınıf için tasarlanmış çevrimdışı öncelikli bir matematik PWA'sıdır. React, TypeScript, Vite, Zustand, Dexie ve Piper TTS kullanır. Çocuk arayüzünde görsel ve sesli yönlendirme; yetişkin arayüzünde ise yapılandırma ve gizlilik bilgisi sunar.
 
-Currently, two official plugins are available:
+## Geliştirme sürümünde veri saklama politikası
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+> **Bu geliştirme sürümünde öğrenci veya veli verisi toplanmaz, depoya gönderilmez ya da tarayıcıda saklanmaz.**
 
-## React Compiler
+Uygulama; ad-soyad, fotoğraf, konum, hesap bilgisi, öğrenci ilerlemesi, oturum özeti ve yanıt olayı istemez. Önceki geliştirme sürümlerinden kalmış yerel öğrenci/veli kayıtları uygulama açıldığında silinir. İlerleme özeti, yedekleme ve içe/dışa aktarma geçici olarak devre dışıdır.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Öğrenci verisinin gelecekte **nerede, ne kadar süreyle, hangi amaçla ve hangi izinle** saklanacağı; ürün gereksinimleri, çocukların gizliliği ve ilgili mevzuat birlikte değerlendirilerek ayrıca kararlaştırılacaktır. Bu karar alınmadan kalıcı saklama özelliği yeniden etkinleştirilmemelidir.
 
-## Expanding the Oxlint configuration
+## Çalıştırma
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm ci
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Üretim derlemesi için:
+
+```bash
+npm run build
+```
+
+## Kalite kontrolleri
+
+```bash
+npm run lint
+npm run test
+npm run validate
+npm run audio:audit
+npm run build
+npm run e2e
+```
+
+## Mimari notlar
+
+| Alan | Yaklaşım |
+|---|---|
+| Çocuk deneyimi | Ses öncelikli, görsel destekli, akıllı tahta erişim bölgesine uygun |
+| İçerik | MEB 2024 kazanımları ve beceri düğümleri |
+| Para görselleri | TCMB örnek banknot görselleri; 5–200 TL kupürleri |
+| Çevrimdışı çalışma | PWA + önbelleğe alınan statik varlıklar |
+| Öğrenci/veli verisi | Bu geliştirme sürümünde saklanmaz |
+| Yayın | GitHub Actions ile GitHub Pages |
+
+## Lisanslar ve kaynaklar
+
+Müfredat, banknot görselleri, ses üretimi ve açık kaynak lisanslarına ilişkin ayrıntılar uygulamadaki **Kaynaklar ve Gizlilik** ekranında ve `LICENSES.md` dosyasında bulunur.
