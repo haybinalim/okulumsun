@@ -904,8 +904,9 @@ açıkken poz değişir ama animasyon yoktur (anlık geçiş).
 |---|---|---|
 | **K1** | Programatik SVG (React) | ~%90: onluk çerçeve, sayı doğrusu, şekiller, rakam glifleri, çetele, nesne grafiği, ızgara, terazi |
 | **K2** | **Noto Color Emoji (SIL OFL)** | Sayılacak nesneler, çıkartmalar |
-| **K3** | Özel SVG (10–20 varlık) | Maskot, bahçe sahnesi, banknotlar (stilize), ölçme araçları |
+| **K3** | Özel SVG (10–20 varlık) | Maskot, bahçe sahnesi, ölçme araçları |
 | **K4** | Özel UI ikon seti (10–12) | Geri, ses, yardım, onay, ev |
+| **K5** | TCMB resmî örnek görselleri | MAT.1.1.9 için 5, 10, 20, 50, 100 ve 200 TL banknot ön yüzleri |
 
 **K1 neden ağırlık merkezi** — projenin en yüksek getirili tek kararı: soru üreteci ile **aynı veriden** çizilir (`{tip:'sayma', nesne:'elma', adet:7}` hem soruyu hem görseli üretir), sonsuz varyasyon sıfır varlık maliyetiyle. **7 elma her zaman 7 elmadır** — bu bir sayma uygulamasında pazarlık konusu değil. <2KB/dosya, temaya otomatik uyar, telifi temiz.
 
@@ -919,7 +920,7 @@ açıkken poz değişir ama animasyon yoktur (anlık geçiş).
 
 - **Noto Color Emoji — SIL OFL 1.1.** Birinci tercih, ShareAlike yok.
 - **OpenMoji — CC BY-SA 4.0.** ShareAlike **bulaşıcı**, kapalı kaynak üründe hukuki yük. **Kaçın.**
-- **Türk Lirası: gerçek banknot görseli kullanılamaz** (TCMB koruması). `MAT.1.1.9` için stilize temsil çizilir — doğru renk ve rakam, gerçekçi değil. Bu kazanımın tek varlık riski.
+- **Türk Lirası:** `MAT.1.1.9` için TCMB'nin yayımladığı, üzerinde `ORNEKTIR GECMEZ` ibaresi bulunan resmî ön yüz örnekleri kullanılır. Görseller yalnız eğitim amaçlıdır; TCMB kaynak bağlantıları [`docs/BANKNOT_GORSEL_KAYNAKLARI.md`](BANKNOT_GORSEL_KAYNAKLARI.md) içinde tutulur. Ticari kullanım planlanırsa TCMB'den yazılı izin alınmalıdır.
 - **MEB:** kazanım kodları referans alınabilir; ders kitabı görselleri **kullanılamaz.**
 - Ticari karakterler (Pepee, Rafadan Tayfa vb.) kullanılamaz.
 - İlk sürümden itibaren `LICENSES.md` + uygulama içinde "Kaynaklar" ekranı.

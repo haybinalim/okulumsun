@@ -65,11 +65,16 @@ export function olcTahminUret(params: OlcTahminParams, rng: Rng): AudioToImageEx
   const karistirilmis = siraRng.shuffle([...options]);
   options.splice(0, options.length, ...karistirilmis);
 
-  // Sahne: birim bloklar + ölçülen nesne (bloklar görünmez, sadece nesne)
-  // Tahmin şablonunda bloklar GÖSTERİLMEZ — çocuk tahmin eder
+  // Çocuk, nesnenin altında verilen TEK referans birimi kullanarak uzunluğu
+  // tahmin eder. Birimler gizli olsa da tahmin rastgele değildir: çubuğun
+  // başlangıcı ile referans birim aynı hizadadır ve uzunluk onun katıdır.
   const sahneGorsel: VisualSpec = {
-    type: 'sekil',
-    sekil: 'dikdortgen',
+    type: 'olcumSahnesi',
+    nesne: 'kalem',
+    birim: 'yildiz',
+    birimAdedi: birimSayisi,
+    boyut: 'uzunluk',
+    gorunum: 'tahmin',
     renk,
   };
 

@@ -29,9 +29,12 @@ import type { SpeakSource } from '../../audio/speech';
 import { TUM_HATA_ETIKETLERI, type HataEtiketi } from '../../exercises/distractors';
 import {
   INTERACTION_KINDS,
+  KONUM_ILISKILERI,
+  KONUM_REFERANSLARI,
   NESNE_SPRITELARI,
   RENKLER,
   SEKILLER,
+  YON_KART_YONLER,
   alistirmaIhlalleri,
 } from '../../exercises/types';
 import type { Exercise, ItemId, VisualSpec } from '../../exercises/types';
@@ -167,16 +170,58 @@ export const VisualSpecSchema: z.ZodType<VisualSpec> = z.lazy(() =>
     z.object({ type: z.literal('rakam'), sayi: z.number().int() }),
     z.object({ type: z.literal('banknot'), deger: BanknotDegeriSchema }),
     z.object({
+      type: z.literal('islemSahnesi'),
+      nesne: NesneSpriteSchema,
+      ilkAdet: z.number().int().positive(),
+      degisimAdedi: z.number().int().positive(),
+      islem: z.union([z.literal('+'), z.literal('-')]),
+      renk: RenkSchema.optional(),
+    }),
+    z.object({
+      type: z.literal('islemKarti'),
+      ilkSayi: z.number().int().min(0).max(20),
+      ikinciSayi: z.number().int().min(0).max(20),
+      sonuc: z.number().int().min(0).max(20),
+      islem: z.union([z.literal('+'), z.literal('-')]),
+    }),
+    z.object({
       type: z.literal('olcumSahnesi'),
       nesne: NesneSpriteSchema,
       birim: NesneSpriteSchema,
       birimAdedi: z.number().int().positive(),
+      boyut: z.literal('uzunluk'),
+      gorunum: z.union([z.literal('birimlerleOlcum'), z.literal('tahmin')]),
+      renk: RenkSchema.optional(),
+    }),
+    z.object({
+      type: z.literal('olcumKarsilastirma'),
       boyut: z.union([z.literal('uzunluk'), z.literal('kutle')]),
+      sol: z.object({
+        nesne: NesneSpriteSchema,
+        renk: RenkSchema,
+        deger: z.number().int().positive(),
+      }),
+      sag: z.object({
+        nesne: NesneSpriteSchema,
+        renk: RenkSchema,
+        deger: z.number().int().positive(),
+      }),
     }),
     z.object({
       type: z.literal('oruntu'),
       ogeler: z.array(VisualSpecSchema).readonly(),
       eksikIndeksler: z.array(z.number().int().nonnegative()).readonly(),
+    }),
+    z.object({
+      type: z.literal('yonKarti'),
+      yon: z.enum(YON_KART_YONLER),
+      adim: z.number().int().min(1).max(5),
+    }),
+    z.object({
+      type: z.literal('konumSahnesi'),
+      iliski: z.enum(KONUM_ILISKILERI),
+      hedef: NesneSpriteSchema,
+      referans: z.enum(KONUM_REFERANSLARI),
     }),
     z.object({
       type: z.literal('sahne'),

@@ -100,6 +100,27 @@ export const NESNE_SPRITELARI = [
 ] as const;
 export type NesneSprite = (typeof NESNE_SPRITELARI)[number];
 
+/** Konum sorularında sesle sorulan ilişki; görsel sahnede de birebir temsil edilir. */
+export const KONUM_ILISKILERI = [
+  'altinda',
+  'ustunde',
+  'icinde',
+  'onunde',
+  'arkasinda',
+  'arasinda',
+  'yaninda',
+  'disinda',
+] as const;
+export type KonumIliskisi = (typeof KONUM_ILISKILERI)[number];
+
+/** Konum ilişkisini anlaşılır kılan kapsayıcı/referans çizimleri. */
+export const KONUM_REFERANSLARI = ['kutu', 'sepet'] as const;
+export type KonumReferansi = (typeof KONUM_REFERANSLARI)[number];
+
+/** Yönerge kartlarında hem sesle hem okla gösterilen temel yönler. */
+export const YON_KART_YONLER = ['ileri', 'geri', 'saga', 'sola'] as const;
+export type YonKartiYonu = (typeof YON_KART_YONLER)[number];
+
 /** Sprite'ın adını söyleyen ses anahtarı. */
 export function nesneSesAnahtari(sprite: NesneSprite): SpeechKey {
   return `nesne.${sprite}`;
@@ -196,19 +217,77 @@ export type VisualSpec =
   | { readonly type: 'rakam'; readonly sayi: number }
   /** Banknot (MAT.1.1.9 — yalnızca tanıma). */
   | { readonly type: 'banknot'; readonly deger: BanknotDegeri }
-  /** Uzunluk/kütle karşılaştırması, standart olmayan birimle (MAT.1.1.8). */
+  /**
+   * Toplama/çıkarma hikâyesinin görünür miktar modeli.
+   * İlk küme, eklenen/ayrılan küme ve sonuç aynı nesneyle birlikte gösterilir;
+   * böylece işlem ifadesi görselden izlenebilir.
+   */
+  | {
+      readonly type: 'islemSahnesi';
+      readonly nesne: NesneSprite;
+      readonly ilkAdet: number;
+      readonly degisimAdedi: number;
+      readonly islem: '+' | '-';
+      readonly renk?: Renk;
+    }
+  /**
+   * Eşleştirme ve işlem sorularında aritmetik ilişkiyi eksiksiz gösteren kart.
+   * Sayıların arasındaki işlem ve eşitlik sembolleri yoksa çocuk doğru ters işlemi
+   * yalnız sayı sırasından çıkarmaya zorlanır; bu tür o belirsizliği kapatır.
+   */
+  | {
+      readonly type: 'islemKarti';
+      readonly ilkSayi: number;
+      readonly ikinciSayi: number;
+      readonly sonuc: number;
+      readonly islem: '+' | '-';
+    }
+  /**
+   * Bir nesnenin uzunluğu için ölçme/tahmin sahnesi.
+   * `gorunum:'birimlerleOlcum'` her birimi nesnenin altında hizalı gösterir;
+   * `gorunum:'tahmin'` yalnız bir referans birim göstererek makul tahmini ölçer.
+   */
   | {
       readonly type: 'olcumSahnesi';
       readonly nesne: NesneSprite;
       readonly birim: NesneSprite;
       readonly birimAdedi: number;
+      readonly boyut: 'uzunluk';
+      readonly gorunum: 'birimlerleOlcum' | 'tahmin';
+      readonly renk?: Renk;
+    }
+  /**
+   * İki nesnenin ölçülebilir özelliğini aynı görsel kanıtla karşılaştırır.
+   * Uzunlukta ortak başlangıç çizgisi, kütlede ise aşağı inen kefeli terazi vardır.
+   * Seçeneklerdeki renk/nesne, sahnedeki adayla birebir eşleşir.
+   */
+  | {
+      readonly type: 'olcumKarsilastirma';
       readonly boyut: 'uzunluk' | 'kutle';
+      readonly sol: { readonly nesne: NesneSprite; readonly renk: Renk; readonly deger: number };
+      readonly sag: { readonly nesne: NesneSprite; readonly renk: Renk; readonly deger: number };
     }
   /** Sıralanacak/örüntü kuran kart dizisi (MAT.1.2.4, örüntü). */
   | {
       readonly type: 'oruntu';
       readonly ogeler: readonly VisualSpec[];
       readonly eksikIndeksler: readonly number[];
+    }
+  /** Yönerge adım kartı; ok yönü ve adım sayısı görselde birlikte sunulur. */
+  | {
+      readonly type: 'yonKarti';
+      readonly yon: YonKartiYonu;
+      readonly adim: number;
+    }
+  /**
+   * Konum bildirimi sorusu için anlamı doğrudan görünür sahne.
+   * Hedef nesne, referans kutu/sepet ile belirtilen ilişki içinde çizilir.
+   */
+  | {
+      readonly type: 'konumSahnesi';
+      readonly iliski: KonumIliskisi;
+      readonly hedef: NesneSprite;
+      readonly referans: KonumReferansi;
     }
   /** Birden çok görselin tek sahnede bileşimi. */
   | {

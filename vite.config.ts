@@ -43,7 +43,7 @@ export default defineConfig({
       },
       workbox: {
         // Tüm varlıklar precache → tam çevrimdışı.
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,m4a}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2,m4a}'],
         // Önbellek sürümü — içerik değişince otomatik güncellenir.
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB (ses klipleri)
       },
@@ -52,7 +52,9 @@ export default defineConfig({
   // Sunucu yok; çıktı tamamen statik ve göreli yollarla çalışır.
   // Bu sayede okul sunucusundan, alt dizinden veya USB'den açılabilir.
   base: './',
-  server: { host: true },
+  // Geçici Manus önizleme alan adları dinamik olduğundan geliştirme sunucusu
+  // bunları kabul eder. Bu ayar üretim çıktısına taşınmaz; uygulama statiktir.
+  server: { host: true, allowedHosts: true },
   test: {
     /**
      * YALNIZ birim testleri. `tests/e2e/**` Playwright'a aittir ve vitest

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState, useMemo } from 'react';
 import { BoardHarness } from './dev/BoardHarness';
 import { AudioUnlock } from './ui/screens/AudioUnlock';
 import { ExerciseScreen } from './ui/screens/ExerciseScreen';
@@ -16,30 +16,68 @@ import { Bahcem } from './ui/screens/Bahcem';
 import { useAppStore, accentBul } from './store/appStore';
 import { useDeviceProfile } from './design/useDeviceProfile';
 import { createRng } from './exercises/rng';
-import { karsilastirUret } from './exercises/templates/karsilastir';
 import { useKisiselOturum } from './ui/useKisiselOturum';
+import { skillsData } from './content/skillsData';
+import { REGISTRY } from './exercises/registry';
+import type { Exercise } from './exercises/types';
 
 /**
  * Uygulama kabuğu — plan §11 ekran akışını yönetir.
  *
  * Kişisel modda sekiz soruluk adaptif oturum `useKisiselOturum` üzerinden
  * çalışır ve her cevap IndexedDB'ye kalıcı biçimde yazılır. Tahta modunda
- * kalıcılık yoktur; öğretmen seçimi için önceki güvenli tek-soru önizlemesi
- * korunur.
+ * kalıcılık yoktur; öğretmen seçimi için seçilen konu üzerinden egzersiz üretilir.
  */
 export default function App() {
   const { profile } = useDeviceProfile();
   const ekran = useAppStore((s) => s.ekran);
   const mod = useAppStore((s) => s.mod);
   const accent = accentBul(useAppStore((s) => s.accentId));
-  const oturumTamamlandi = useAppStore((s) => s.oturumTamamlandi);
   const ekranGit = useAppStore((s) => s.ekranGit);
+  const secilenDugumId = useAppStore((s) => s.secilenDugumId);
   const [tahtaTohumu, setTahtaTohumu] = useState(7);
 
-  const tahtaExercise = useMemo(
-    () => karsilastirUret({ seed: tahtaTohumu, difficulty: 2, mod: 'tahta' }, createRng(tahtaTohumu)),
-    [tahtaTohumu],
-  );
+  // Tahta modunda seçilen konuya göre (veya varsayılan ilk hazır konuya göre) egzersiz üret
+  const tahtaExercise = useMemo<Exercise>(() => {
+    const hedefDugum = skillsData.find((d) => d.id === secilenDugumId)
+      ?? skillsData.find((d) => d.durum === 'hazir')
+      ?? skillsData[0];
+
+    const templateId = hedefDugum.exerciseTemplates.find((t) => REGISTRY.has(t))
+      ?? 'M-SAY';
+
+    const generator = REGISTRY.get(templateId);
+    if (!generator) {
+      const fallbackGen = REGISTRY.values().next().value!;
+      return fallbackGen.uret({ seed: tahtaTohumu, difficulty: hedefDugum.difficulty, mod: 'tahta' }, createRng(tahtaTohumu));
+    }
+
+    const hedefParametreleri = templateId === 'M-ORUNTU-SAYI'
+      ? {
+          yon: hedefDugum.id === 'mat.oruntu.artan-sayi'
+            ? 'artan' as const
+            : hedefDugum.id === 'mat.oruntu.azalan-sayi'
+              ? 'azalan' as const
+              : undefined,
+        }
+      : templateId === 'M-CIKAR-GORSEL' && (
+        hedefDugum.id === 'mat.cikarma.ayirma' ||
+        hedefDugum.id === 'mat.cikarma.geriye-sayarak'
+      )
+        ? { hedefSkillId: hedefDugum.id }
+        : templateId === 'M-CIKAR-SEMBOL' && (
+          hedefDugum.id === 'mat.cikarma.fark-bulma' ||
+          hedefDugum.id === 'mat.cikarma.onluk-bozmadan-20'
+        )
+          ? { hedefSkillId: hedefDugum.id }
+          : {};
+
+    return generator.uret(
+      { seed: tahtaTohumu, difficulty: hedefDugum.difficulty, mod: 'tahta', ...hedefParametreleri },
+      createRng(tahtaTohumu),
+    );
+  }, [secilenDugumId, tahtaTohumu]);
+
   const kisiselOturum = useKisiselOturum(ekran, mod);
 
   // Ses kilidi ekranı — her zaman en başta
@@ -53,6 +91,128 @@ export default function App() {
     );
   }
 
+  // Mod seçimi
+  if (ekran === 'modSecimi') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <ModSecimi />
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Avatar seçimi (kişisel mod)
+  if (ekran === 'avatarSecimi') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <AvatarSecimi />
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Renk seçimi (kişisel mod)
+  if (ekran === 'renkSecimi') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <RenkSecimi />
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Veli kapısı
+  if (ekran === 'veliKapisi') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <VeliKapisi />
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Veli paneli
+  if (ekran === 'veliPaneli') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <VeliPaneli />
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Kaynaklar
+  if (ekran === 'kaynaklar') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <Kaynaklar />
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Ana ekran
+  if (ekran === 'anaEkran') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <AnaEkran />
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Tema girişi
+  if (ekran === 'temaGirisi') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <TemaGirisi />
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Konu seçimi (tahta modu)
+  if (ekran === 'konuSecimi') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <KonuSecimi />
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Oturum sonu
+  if (ekran === 'oturumSonu') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <OturumSonu oturumTamamlandi={true} onBahcem={() => ekranGit('bahcem')} />
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Bahçem
+  if (ekran === 'bahcem') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <Bahcem koleksiyon={{ toplam: 3, sahneIndeksi: 0, sonKazancMs: null }} onEv={() => ekranGit('anaEkran')} />
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Alıştırma ekranı
   const alistirmaIcerigi = mod === 'kisisel'
     ? kisiselOturum.hata
       ? <OturumHatasi mesaj={kisiselOturum.hata} onAnaEkran={() => ekranGit('anaEkran')} />
@@ -68,7 +228,7 @@ export default function App() {
         )
     : (
       <ExerciseScreen
-        key={tahtaExercise.itemId}
+        key={`${secilenDugumId}-${tahtaExercise.itemId}`}
         exercise={tahtaExercise}
         accent={accent}
         onDone={() => setTahtaTohumu((tohum) => tohum + 1)}
@@ -88,53 +248,18 @@ export default function App() {
               display: 'flex',
               gap: 6,
               zIndex: 9999,
+              background: 'rgba(255,255,255,0.9)',
+              padding: 4,
+              borderRadius: 8,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+              fontSize: 12,
             }}
           >
-            <button
-              onClick={() => useAppStore.getState().sifirla()}
-              style={{ fontSize: 10, padding: '2px 6px', cursor: 'pointer' }}
-            >
-              sıfırla
-            </button>
-            {mod !== 'kisisel' && (
-              <button
-                onClick={() => setTahtaTohumu((tohum) => tohum + 1)}
-                style={{ fontSize: 10, padding: '2px 6px', cursor: 'pointer' }}
-              >
-                yeni soru
-              </button>
-            )}
+            <span>Ekran: {ekran}</span>
+            <span>| Mod: {mod ?? '-'}</span>
           </div>
         )}
-
-        {ekran === 'modSecimi' && <ModSecimi />}
-        {ekran === 'avatarSecimi' && <AvatarSecimi />}
-        {ekran === 'renkSecimi' && <RenkSecimi />}
-        {ekran === 'anaEkran' && <AnaEkran />}
-        {ekran === 'temaGirisi' && <TemaGirisi />}
-        {ekran === 'konuSecimi' && <KonuSecimi />}
-        {ekran === 'veliKapisi' && <VeliKapisi />}
-        {ekran === 'veliPaneli' && <VeliPaneli />}
-        {ekran === 'kaynaklar' && <Kaynaklar />}
-        {ekran === 'alistirma' && alistirmaIcerigi}
-
-        {ekran === 'oturumSonu' && (
-          <OturumSonu
-            oturumTamamlandi={oturumTamamlandi}
-            onBahcem={() => ekranGit('bahcem')}
-          />
-        )}
-
-        {ekran === 'bahcem' && (
-          <Bahcem
-            koleksiyon={{
-              toplam: 1,
-              sahneIndeksi: 0,
-              sonKazancMs: Date.now(),
-            }}
-            onEv={() => ekranGit('anaEkran')}
-          />
-        )}
+        {alistirmaIcerigi}
       </div>
     </BoardHarness>
   );
@@ -142,17 +267,23 @@ export default function App() {
 
 function OturumYukleniyor() {
   return (
-    <main style={{ height: '100%', display: 'grid', placeItems: 'center', background: '#F8FAFC' }}>
-      <p aria-live="polite" style={{ fontSize: 'var(--text-ui)', color: '#334155' }}>Oturum hazırlanıyor…</p>
-    </main>
+    <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, fontWeight: 'bold' }}>
+      Oturum hazırlanıyor...
+    </div>
   );
 }
 
-function OturumHatasi({ mesaj, onAnaEkran }: { mesaj: string; onAnaEkran: () => void }) {
+function OturumHatasi({ mesaj, onAnaEkran }: { readonly mesaj: string; readonly onAnaEkran: () => void }) {
   return (
-    <main style={{ height: '100%', display: 'grid', placeItems: 'center', gap: 16, padding: 24, background: '#F8FAFC' }}>
-      <p role="alert" style={{ fontSize: 'var(--text-ui)', color: '#991B1B', textAlign: 'center' }}>{mesaj}</p>
-      <button onClick={onAnaEkran}>Ana ekrana dön</button>
-    </main>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24, textAlign: 'center' }}>
+      <div style={{ fontSize: 24, color: '#DC2626', fontWeight: 'bold' }}>Oturum Hatası</div>
+      <div style={{ fontSize: 16, opacity: 0.8 }}>{mesaj}</div>
+      <button
+        onClick={onAnaEkran}
+        style={{ padding: '12px 24px', background: '#7C3AED', color: '#FFF', borderRadius: 12, fontSize: 18, fontWeight: 'bold', cursor: 'pointer' }}
+      >
+        Ana Ekrana Dön
+      </button>
+    </div>
   );
 }

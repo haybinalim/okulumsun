@@ -69,12 +69,14 @@ export function islemHikayeUret(params: IslemHikayeParams, rng: Rng): AudioToIma
   );
   const siklar = celdiricileriSikaCevir(sonuc, celdiriciler, celdiriciRng);
 
-  // Sahne — nesne kümesi
+  // Sahne: ilk miktar, eklenen/ayrılan miktar ve sonuç aynı nesneyle görünür.
+  // Çıkarma için ayrılan nesneler soluk ve çarpı işaretli gösterilir.
   const sahneGorsel: VisualSpec = {
-    type: 'nesneKumesi',
-    sprite: senaryo.nesne,
-    adet: a,
-    layout: 'sira',
+    type: 'islemSahnesi',
+    nesne: senaryo.nesne,
+    ilkAdet: a,
+    degisimAdedi: b,
+    islem: senaryo.islem,
   };
 
   // Talimat: hikaye + işlem ifadesi

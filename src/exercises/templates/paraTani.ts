@@ -1,7 +1,7 @@
 /**
  * M-PARA-TANI — BANKNOT TANIMA
  * ====================================================================
- * KAZANIM: MAT.1.1.9 — Banknot tanıma (1, 5, 10, 20, 50, 100, 200 TL).
+ * KAZANIM: MAT.1.1.9 — Banknot tanıma (5, 10, 20, 50, 100, 200 TL).
  * Toplama YASAK — kazanım sadece tanıma.
  * ÇELDİRİCİ: PARA_BOYUT_DEGER (büyük banknot = daha değerli sanma)
  * ETKİLEŞİM: AUDIO_TO_IMAGE — sesli "Kaç lira?" sorusu, banknot görseli seç.
@@ -16,12 +16,12 @@ import type { SpeechKey } from '../../audio/audioManifest.generated';
 
 export const PARA_TANI_TEMPLATE_ID = 'M-PARA-TANI' as const;
 
-const BANKNOTLAR = [1, 5, 10, 20, 50, 100, 200] as const;
+// 1 TL madeni paradır; bu şablon yalnız resmî örnek görseli bulunan banknotları üretir.
+const BANKNOTLAR = [5, 10, 20, 50, 100, 200] as const;
 type BanknotDeger = (typeof BANKNOTLAR)[number];
 
-function banknotKey(n: number): SpeechKey {
-  // sayi.N klip'leri 0-100 arası mevcut; 200 için ayrı klip yok
-  // ama tip güvenliği için SpeechKey cast yeterli
+function banknotKey(n: BanknotDeger): SpeechKey {
+  // Tüm hedef değerler (200 dahil) üretim hattında `sayi.N` ses klibine sahiptir.
   return `sayi.${n}` as SpeechKey;
 }
 
@@ -77,9 +77,10 @@ export function paraTaniUret(params: ParaTaniParams, rng: Rng): AudioToImageExer
     const id = `secenek-${i}`;
     const gorsel: VisualSpec = { type: 'banknot', deger: sec.deger };
     const etiket: HataEtiketi = HATA_ETIKETLERI.PARA_BOYUT_DEGER;
+    const ses = { kind: 'sequence' as const, keys: [banknotKey(sec.deger), 'para.lira'] as SpeechKey[] };
     return sec.dogru
-      ? { id, deger: { tur: 'gorsel', gorsel }, correct: true }
-      : { id, deger: { tur: 'gorsel', gorsel }, correct: false, diagnosticTag: etiket };
+      ? { id, deger: { tur: 'gorsel', gorsel }, ses, correct: true }
+      : { id, deger: { tur: 'gorsel', gorsel }, ses, correct: false, diagnosticTag: etiket };
   });
 
   const dogruOptionId = options.find((o) => 'correct' in o && o.correct)?.id ?? options[0].id;

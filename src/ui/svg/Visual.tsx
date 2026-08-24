@@ -19,6 +19,7 @@ import type {
 } from '../../exercises/types';
 import { ACCENTS } from '../../design/tokens';
 import { Sprite } from './Sprite';
+import { RESMI_BANKNOT_GORSELLERI } from './banknotAssets';
 import { nesneKonumlari } from './positions';
 
 /** Renk adını hex'e çevirir — ACCENTS tek kaynak (mor=turuncu=… haritaları çift tutmaz). */
@@ -42,6 +43,10 @@ export function Visual({
       return <Sekil spec={spec} width={width} height={height} />;
     case 'banknot':
       return <Banknot deger={spec.deger} width={width} height={height} />;
+    case 'islemSahnesi':
+      return <IslemSahnesi spec={spec} width={width} height={height} />;
+    case 'islemKarti':
+      return <IslemKarti spec={spec} width={width} height={height} />;
     case 'nesneKumesi':
       return <NesneKumesi spec={spec} width={width} height={height} />;
     case 'onlukCerceve':
@@ -50,10 +55,16 @@ export function Visual({
       return <SayiDogrusu spec={spec} width={width} height={height} />;
     case 'oruntu':
       return <Oruntu spec={spec} width={width} height={height} />;
+    case 'yonKarti':
+      return <YonKarti spec={spec} width={width} height={height} />;
     case 'sahne':
       return <Sahne spec={spec} width={width} height={height} />;
+    case 'konumSahnesi':
+      return <KonumSahnesi spec={spec} width={width} height={height} />;
     case 'olcumSahnesi':
       return <OlcumSahnesi spec={spec} width={width} height={height} />;
+    case 'olcumKarsilastirma':
+      return <OlcumKarsilastirma spec={spec} width={width} height={height} />;
   }
 }
 
@@ -125,6 +136,35 @@ function Rakam({ sayi, width, height }: { sayi: number; width: number; height: n
 }
 
 /** Tek geometrik şekil. Döndürme prototip etkisini kırar (SEKIL_PROTOTIP hatası). */
+/** Dört terimli işlem kartı: rakam + işlem sembolü + rakam = sonuç.
+ * Semboller sayılardan ayrı çizilir; böylece çocuk yalnız sayı dizisini değil
+ * toplama/çıkarma yönünü de eşleştirir. */
+function IslemKarti({
+  spec,
+  width,
+  height,
+}: {
+  spec: Extract<VisualSpec, { type: 'islemKarti' }>;
+  width: number;
+  height: number;
+}) {
+  const merkezY = height / 2;
+  const sembolBoyutu = Math.min(width, height) * 0.18;
+  const rakamGenislik = width * 0.19;
+  const konumlar = [0.04, 0.29, 0.5, 0.77] as const;
+  const sembol = spec.islem === '+' ? '+' : '−';
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
+      <rect x={3} y={3} width={width - 6} height={height - 6} rx={Math.min(width, height) * 0.12} fill="#f8fafc" stroke="#cbd5e1" strokeWidth={3} />
+      <g transform={`translate(${konumlar[0] * width} ${(height - rakamGenislik) / 2})`}><Rakam sayi={spec.ilkSayi} width={rakamGenislik} height={rakamGenislik} /></g>
+      <text x={konumlar[1] * width} y={merkezY + sembolBoyutu * 0.34} textAnchor="middle" fontFamily="'Andika', sans-serif" fontWeight={700} fontSize={sembolBoyutu} fill="#1d4ed8">{sembol}</text>
+      <g transform={`translate(${(konumlar[1] + 0.06) * width} ${(height - rakamGenislik) / 2})`}><Rakam sayi={spec.ikinciSayi} width={rakamGenislik} height={rakamGenislik} /></g>
+      <text x={konumlar[2] * width} y={merkezY + sembolBoyutu * 0.34} textAnchor="middle" fontFamily="'Andika', sans-serif" fontWeight={700} fontSize={sembolBoyutu} fill="#475569">=</text>
+      <g transform={`translate(${konumlar[3] * width} ${(height - rakamGenislik) / 2})`}><Rakam sayi={spec.sonuc} width={rakamGenislik} height={rakamGenislik} /></g>
+    </svg>
+  );
+}
+
 function Sekil({
   spec,
   width,
@@ -161,8 +201,59 @@ function sekilYolu(sekil: SekilAdi, cx: number, cy: number, r: number) {
   }
 }
 
-/** Banknot — TCMB koruması nedeniyle STİLİZE temsil (gerçek banknot çizilmez).
- * Rakamlar MEB dik temel SVG glifleri (§3.4). */
+/**
+ * Banknot — dolaşımdaki kupürler için TCMB'nin yayımladığı, üzerinde
+ * `ORNEKTIR GECMEZ` ibaresi bulunan resmî ön yüz örneklerini gösterir.
+ * 1 TL gerçek bir banknot olmadığı için şablonlar yalnız 5–200 TL kupür üretir;
+ * bu koruyucu fallback eski ya da haricî içeriklerdeki 1 TL değeri içindir.
+ */
+const BANKNOT_STILLERI: Readonly<Record<BanknotDegeri, {
+  readonly zemin: string;
+  readonly kenar: string;
+  readonly acik: string;
+  readonly vurgu: string;
+  readonly motif: 'yildiz' | 'yaprak' | 'damla' | 'gunes' | 'bulut' | 'kalp' | 'cicek';
+}>> = {
+  1: { zemin: '#bbf7d0', kenar: '#15803d', acik: '#dcfce7', vurgu: '#166534', motif: 'yaprak' },
+  5: { zemin: '#ddd6fe', kenar: '#6d28d9', acik: '#ede9fe', vurgu: '#5b21b6', motif: 'yildiz' },
+  10: { zemin: '#bae6fd', kenar: '#0369a1', acik: '#e0f2fe', vurgu: '#075985', motif: 'damla' },
+  20: { zemin: '#fed7aa', kenar: '#c2410c', acik: '#ffedd5', vurgu: '#9a3412', motif: 'gunes' },
+  50: { zemin: '#fecdd3', kenar: '#be123c', acik: '#ffe4e6', vurgu: '#9f1239', motif: 'kalp' },
+  100: { zemin: '#bfdbfe', kenar: '#1d4ed8', acik: '#dbeafe', vurgu: '#1e40af', motif: 'bulut' },
+  200: { zemin: '#f5d0fe', kenar: '#a21caf', acik: '#fae8ff', vurgu: '#86198f', motif: 'cicek' },
+};
+
+function BanknotMotifi({
+  motif,
+  cx,
+  cy,
+  boyut,
+  renk,
+}: {
+  motif: (typeof BANKNOT_STILLERI)[BanknotDegeri]['motif'];
+  cx: number;
+  cy: number;
+  boyut: number;
+  renk: string;
+}) {
+  switch (motif) {
+    case 'yildiz':
+      return <path d={`M${cx} ${cy - boyut} L${cx + boyut * 0.24} ${cy - boyut * 0.24} L${cx + boyut} ${cy} L${cx + boyut * 0.24} ${cy + boyut * 0.24} L${cx} ${cy + boyut} L${cx - boyut * 0.24} ${cy + boyut * 0.24} L${cx - boyut} ${cy} L${cx - boyut * 0.24} ${cy - boyut * 0.24} Z`} fill={renk} />;
+    case 'yaprak':
+      return <path d={`M${cx - boyut * 0.72} ${cy + boyut * 0.35} C${cx - boyut * 0.7} ${cy - boyut * 0.75} ${cx + boyut * 0.76} ${cy - boyut * 0.82} ${cx + boyut * 0.64} ${cy + boyut * 0.24} C${cx + boyut * 0.18} ${cy + boyut * 0.78} ${cx - boyut * 0.3} ${cy + boyut * 0.72} ${cx - boyut * 0.72} ${cy + boyut * 0.35} Z`} fill={renk} />;
+    case 'damla':
+      return <path d={`M${cx} ${cy - boyut} C${cx - boyut * 0.78} ${cy - boyut * 0.1} ${cx - boyut * 0.68} ${cy + boyut * 0.78} ${cx} ${cy + boyut * 0.84} C${cx + boyut * 0.68} ${cy + boyut * 0.78} ${cx + boyut * 0.78} ${cy - boyut * 0.1} ${cx} ${cy - boyut} Z`} fill={renk} />;
+    case 'gunes':
+      return <><circle cx={cx} cy={cy} r={boyut * 0.46} fill={renk} />{Array.from({ length: 8 }, (_, i) => { const a = i * Math.PI / 4; return <line key={i} x1={cx + Math.cos(a) * boyut * 0.66} y1={cy + Math.sin(a) * boyut * 0.66} x2={cx + Math.cos(a) * boyut} y2={cy + Math.sin(a) * boyut} stroke={renk} strokeWidth={Math.max(2, boyut * 0.12)} strokeLinecap="round" />; })}</>;
+    case 'kalp':
+      return <path d={`M${cx} ${cy + boyut * 0.82} C${cx - boyut * 1.35} ${cy - boyut * 0.1} ${cx - boyut * 0.76} ${cy - boyut * 0.9} ${cx} ${cy - boyut * 0.38} C${cx + boyut * 0.76} ${cy - boyut * 0.9} ${cx + boyut * 1.35} ${cy - boyut * 0.1} ${cx} ${cy + boyut * 0.82} Z`} fill={renk} />;
+    case 'bulut':
+      return <path d={`M${cx - boyut} ${cy + boyut * 0.36} C${cx - boyut * 1.12} ${cy - boyut * 0.32} ${cx - boyut * 0.43} ${cy - boyut * 0.65} ${cx - boyut * 0.06} ${cy - boyut * 0.27} C${cx + boyut * 0.28} ${cy - boyut * 0.84} ${cx + boyut * 1.1} ${cy - boyut * 0.54} ${cx + boyut * 0.86} ${cy + boyut * 0.36} Z`} fill={renk} />;
+    case 'cicek':
+      return <><circle cx={cx} cy={cy - boyut * 0.48} r={boyut * 0.42} fill={renk} /><circle cx={cx + boyut * 0.48} cy={cy} r={boyut * 0.42} fill={renk} /><circle cx={cx} cy={cy + boyut * 0.48} r={boyut * 0.42} fill={renk} /><circle cx={cx - boyut * 0.48} cy={cy} r={boyut * 0.42} fill={renk} /><circle cx={cx} cy={cy} r={boyut * 0.26} fill="#fff" /></>;
+  }
+}
+
 function Banknot({
   deger,
   width,
@@ -172,30 +263,83 @@ function Banknot({
   width: number;
   height: number;
 }) {
-  const rakamStr = String(deger);
-  const basamak = rakamStr.length;
-  const basamakGenislik = Math.min(width * 0.6 / (basamak + 0.5), height * 0.5);
-  const basamakYukseklik = basamakGenislik * 0.9;
-  const toplamGenislik = basamak * basamakGenislik + basamakGenislik * 0.4; // ₺ için ek
-  const startX = (width - toplamGenislik) / 2;
-  const startY = (height - basamakYukseklik) / 2;
+  const resmiGorsel = RESMI_BANKNOT_GORSELLERI[deger];
+
+  if (resmiGorsel) {
+    const kartGenislik = width * 0.93;
+    const kartYukseklik = Math.min(height * 0.7, kartGenislik * 0.5);
+    const x = (width - kartGenislik) / 2;
+    const y = (height - kartYukseklik) / 2;
+    const clipId = `banknot-${deger}-${width}-${height}`;
+
+    return (
+      <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
+        <defs>
+          <clipPath id={clipId}>
+            <rect x={x} y={y} width={kartGenislik} height={kartYukseklik} rx={kartYukseklik * 0.045} />
+          </clipPath>
+        </defs>
+        <rect
+          x={x + 3}
+          y={y + 4}
+          width={kartGenislik}
+          height={kartYukseklik}
+          rx={kartYukseklik * 0.045}
+          fill="#0f172a"
+          opacity="0.16"
+        />
+        <image
+          href={resmiGorsel}
+          x={x}
+          y={y}
+          width={kartGenislik}
+          height={kartYukseklik}
+          preserveAspectRatio="xMidYMid meet"
+          clipPath={`url(#${clipId})`}
+        />
+        <rect
+          x={x}
+          y={y}
+          width={kartGenislik}
+          height={kartYukseklik}
+          rx={kartYukseklik * 0.045}
+          fill="none"
+          stroke="#334155"
+          strokeWidth={Math.max(1.5, kartYukseklik * 0.018)}
+        />
+      </svg>
+    );
+  }
+
+  const stil = BANKNOT_STILLERI[deger];
+  const kartGenislik = width * 0.9;
+  const kartYukseklik = Math.min(height * 0.62, kartGenislik * 0.54);
+  const x = (width - kartGenislik) / 2;
+  const y = (height - kartYukseklik) / 2;
+  const rozetR = kartYukseklik * 0.19;
+  const rakamGenislik = Math.min(kartGenislik * 0.23, kartYukseklik * 0.48);
+  const rakamBasamak = String(deger).length;
+  const rakamToplam = rakamGenislik * rakamBasamak;
+  const rakamX = x + kartGenislik / 2 - rakamToplam / 2;
+  const rakamY = y + (kartYukseklik - rakamGenislik) / 2;
 
   return (
     <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
-      <rect x="3" y="3" width={width - 6} height={height - 6} rx={14} fill="#fef9c3" stroke="#ca8a04" strokeWidth="4" />
-      {rakamStr.split('').map((rakam, i) => {
-        const path = RAKAM_PATHS[rakam];
-        if (!path) return null;
-        return (
-          <g key={i} transform={`translate(${startX + i * basamakGenislik}, ${startY}) scale(${basamakGenislik / 100}, ${basamakYukseklik / 100})`}>
-            <path d={path} fill="none" stroke="#854d0e" strokeWidth={6} strokeLinecap="round" strokeLinejoin="round" />
-          </g>
-        );
-      })}
-      {/* ₺ sembolü — basit SVG path */}
-      <g transform={`translate(${startX + basamak * basamakGenislik}, ${startY}) scale(${basamakGenislik / 100}, ${basamakYukseklik / 100})`}>
-        <path d="M30 30 L70 30 M30 40 L70 40 M50 15 C40 15 35 25 35 50 C35 70 40 82 50 82 C58 82 62 75 62 68 C62 60 57 55 50 55" fill="none" stroke="#854d0e" strokeWidth={6} strokeLinecap="round" strokeLinejoin="round" />
-      </g>
+      <rect x={x + 4} y={y + 5} width={kartGenislik} height={kartYukseklik} rx={kartYukseklik * 0.12} fill="#0f172a" opacity="0.12" />
+      <rect x={x} y={y} width={kartGenislik} height={kartYukseklik} rx={kartYukseklik * 0.12} fill={stil.zemin} stroke={stil.kenar} strokeWidth={Math.max(2, kartYukseklik * 0.045)} />
+      <rect x={x + kartGenislik * 0.055} y={y + kartYukseklik * 0.09} width={kartGenislik * 0.89} height={kartYukseklik * 0.82} rx={kartYukseklik * 0.08} fill="none" stroke={stil.acik} strokeWidth={Math.max(2, kartYukseklik * 0.035)} />
+      <rect x={x + kartGenislik * 0.13} y={y + kartYukseklik * 0.11} width={kartGenislik * 0.07} height={kartYukseklik * 0.78} rx={kartYukseklik * 0.03} fill={stil.acik} opacity={0.96} />
+      <circle cx={x + kartGenislik * 0.72} cy={y + kartYukseklik * 0.5} r={kartYukseklik * 0.31} fill={stil.acik} opacity={0.78} />
+      <BanknotMotifi motif={stil.motif} cx={x + kartGenislik * 0.72} cy={y + kartYukseklik * 0.5} boyut={kartYukseklik * 0.2} renk={stil.vurgu} />
+      <circle cx={x + kartGenislik * 0.1} cy={y + kartYukseklik * 0.18} r={rozetR * 0.55} fill={stil.vurgu} />
+      <text x={x + kartGenislik * 0.1} y={y + kartYukseklik * 0.2 + rozetR * 0.22} textAnchor="middle" fontFamily="sans-serif" fontWeight={800} fontSize={rozetR * 0.9} fill="#fff">TL</text>
+      {String(deger).split('').map((rakam, index) => (
+        <g key={index} transform={`translate(${rakamX + index * rakamGenislik} ${rakamY}) scale(${rakamGenislik / 100})`}>
+          <path d={RAKAM_PATHS[rakam]} fill="none" stroke={stil.vurgu} strokeWidth={7} strokeLinecap="round" strokeLinejoin="round" />
+        </g>
+      ))}
+      <text x={x + kartGenislik * 0.5} y={y + kartYukseklik * 0.84} textAnchor="middle" fontFamily="sans-serif" fontWeight={800} fontSize={Math.max(9, kartYukseklik * 0.11)} fill={stil.vurgu} letterSpacing={kartYukseklik * 0.025}>OKULUMSUN</text>
+      <circle cx={x + kartGenislik * 0.89} cy={y + kartYukseklik * 0.8} r={kartYukseklik * 0.055} fill={stil.vurgu} opacity={0.7} />
     </svg>
   );
 }
@@ -346,6 +490,135 @@ function Oruntu({
   );
 }
 
+/**
+ * Konum sorularının açıklayıcı sahnesi.
+ * Her ilişkide aynı hedef nesne ile aynı kutu/sepet kullanılır; yalnızca ilişkisel
+ * düzen değişir. Böylece sesli yönerge, görülen düzen ve doğru şık aynı kavramı ölçer.
+ */
+function KonumSahnesi({
+  spec,
+  width,
+  height,
+}: {
+  spec: Extract<VisualSpec, { type: 'konumSahnesi' }>;
+  width: number;
+  height: number;
+}) {
+  const sahneBoyutu = Math.min(width, height);
+  const hedefBoyutu = sahneBoyutu * 0.42;
+  const refGenislik = width * 0.58;
+  const refYukseklik = height * 0.46;
+
+  const hedef = (cx: number, cy: number, boyut = hedefBoyutu) => (
+    <g transform={`translate(${cx * width - boyut / 2} ${cy * height - boyut / 2})`}>
+      <Sprite name={spec.hedef} size={boyut} />
+    </g>
+  );
+
+  const referans = (cx: number, cy: number, doluluk = 0.16) => (
+    <KonumReferansi
+      tur={spec.referans}
+      cx={cx * width}
+      cy={cy * height}
+      genislik={refGenislik}
+      yukseklik={refYukseklik}
+      doluluk={doluluk}
+    />
+  );
+
+  switch (spec.iliski) {
+    case 'altinda':
+      return <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">{referans(0.5, 0.36)}{hedef(0.5, 0.76)}</svg>;
+    case 'ustunde':
+      return <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">{hedef(0.5, 0.24)}{referans(0.5, 0.64)}</svg>;
+    case 'yaninda':
+      return <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">{referans(0.32, 0.54)}{hedef(0.78, 0.54)}</svg>;
+    case 'disinda':
+      return <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">{referans(0.31, 0.54)}{hedef(0.82, 0.54)}</svg>;
+    case 'icinde':
+      return <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">{referans(0.5, 0.55, 0.09)}{hedef(0.5, 0.56, hedefBoyutu * 0.76)}{referans(0.5, 0.55, 0)}</svg>;
+    case 'arasinda':
+      return <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">{referans(0.24, 0.55)}{referans(0.76, 0.55)}{hedef(0.5, 0.55, hedefBoyutu * 0.76)}</svg>;
+    case 'onunde':
+      return <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">{referans(0.5, 0.51, 0.12)}{hedef(0.5, 0.65)}{referans(0.5, 0.51, 0)}</svg>;
+    case 'arkasinda':
+      return <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">{hedef(0.5, 0.42)}{referans(0.5, 0.55, 0.72)}</svg>;
+  }
+}
+
+/** Konum sorularında ortak referans: açık kutu veya sepet. */
+function KonumReferansi({
+  tur,
+  cx,
+  cy,
+  genislik,
+  yukseklik,
+  doluluk,
+}: {
+  tur: Extract<VisualSpec, { type: 'konumSahnesi' }>['referans'];
+  cx: number;
+  cy: number;
+  genislik: number;
+  yukseklik: number;
+  doluluk: number;
+}) {
+  const x = cx - genislik / 2;
+  const y = cy - yukseklik / 2;
+  const kenar = '#64748b';
+  const dolgu = tur === 'kutu' ? '#dbeafe' : '#fef3c7';
+
+  if (tur === 'sepet') {
+    return (
+      <g>
+        <path d={`M${x + genislik * 0.22} ${y + yukseklik * 0.34} Q${cx} ${y - yukseklik * 0.12} ${x + genislik * 0.78} ${y + yukseklik * 0.34}`} fill="none" stroke={kenar} strokeWidth={Math.max(3, genislik * 0.035)} strokeLinecap="round" />
+        <path d={`M${x + genislik * 0.12} ${y + yukseklik * 0.3} L${x + genislik * 0.88} ${y + yukseklik * 0.3} L${x + genislik * 0.76} ${y + yukseklik * 0.9} L${x + genislik * 0.24} ${y + yukseklik * 0.9} Z`} fill={dolgu} fillOpacity={doluluk} stroke={kenar} strokeWidth={Math.max(3, genislik * 0.035)} strokeLinejoin="round" />
+      </g>
+    );
+  }
+
+  return (
+    <g>
+      <path d={`M${x + genislik * 0.12} ${y + yukseklik * 0.16} L${x + genislik * 0.12} ${y + yukseklik * 0.88} L${x + genislik * 0.88} ${y + yukseklik * 0.88} L${x + genislik * 0.88} ${y + yukseklik * 0.16}`} fill={dolgu} fillOpacity={doluluk} stroke={kenar} strokeWidth={Math.max(3, genislik * 0.035)} strokeLinecap="round" strokeLinejoin="round" />
+      <path d={`M${x + genislik * 0.12} ${y + yukseklik * 0.16} L${x + genislik * 0.88} ${y + yukseklik * 0.16}`} fill="none" stroke={kenar} strokeWidth={Math.max(3, genislik * 0.035)} strokeLinecap="round" strokeDasharray={doluluk === 0 ? undefined : '0'} />
+    </g>
+  );
+}
+
+/** Sesli yönergedeki yön ve adımı aynı karta bağlayan görsel işaret. */
+function YonKarti({
+  spec,
+  width,
+  height,
+}: {
+  spec: Extract<VisualSpec, { type: 'yonKarti' }>;
+  width: number;
+  height: number;
+}) {
+  const okRengi = '#2563eb';
+  const ok = (() => {
+    const cx = width * 0.3;
+    const cy = height * 0.5;
+    const uz = Math.min(width, height) * 0.22;
+    switch (spec.yon) {
+      case 'ileri': return `M${cx} ${cy + uz} L${cx} ${cy - uz} M${cx - uz * 0.52} ${cy - uz * 0.42} L${cx} ${cy - uz} L${cx + uz * 0.52} ${cy - uz * 0.42}`;
+      case 'geri': return `M${cx} ${cy - uz} L${cx} ${cy + uz} M${cx - uz * 0.52} ${cy + uz * 0.42} L${cx} ${cy + uz} L${cx + uz * 0.52} ${cy + uz * 0.42}`;
+      case 'saga': return `M${cx - uz} ${cy} L${cx + uz} ${cy} M${cx + uz * 0.42} ${cy - uz * 0.52} L${cx + uz} ${cy} L${cx + uz * 0.42} ${cy + uz * 0.52}`;
+      case 'sola': return `M${cx + uz} ${cy} L${cx - uz} ${cy} M${cx - uz * 0.42} ${cy - uz * 0.52} L${cx - uz} ${cy} L${cx - uz * 0.42} ${cy + uz * 0.52}`;
+    }
+  })();
+
+  const sayiBoyutu = Math.min(width * 0.44, height * 0.72);
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
+      <rect x={4} y={4} width={width - 8} height={height - 8} rx={Math.min(width, height) * 0.12} fill="#eff6ff" stroke="#93c5fd" strokeWidth={3} />
+      <path d={ok} fill="none" stroke={okRengi} strokeWidth={Math.max(5, sayiBoyutu * 0.12)} strokeLinecap="round" strokeLinejoin="round" />
+      <g transform={`translate(${width * 0.51} ${(height - sayiBoyutu) / 2})`}>
+        <Rakam sayi={spec.adim} width={sayiBoyutu} height={sayiBoyutu} />
+      </g>
+    </svg>
+  );
+}
+
 /** Birden çok görselin tek sahnedeki bileşimi. Konumlar normalize (0..1). */
 function Sahne({
   spec,
@@ -373,7 +646,44 @@ function Sahne({
   );
 }
 
-/** Ölçme sahnesi: nesne, birimleri yan yana dizerek ölçülür. */
+/** İşlem hikâyesindeki başlangıç, değişim ve sonuç miktarlarını aynı bağlamda gösterir. */
+function IslemSahnesi({
+  spec,
+  width,
+  height,
+}: {
+  spec: Extract<VisualSpec, { type: 'islemSahnesi' }>;
+  width: number;
+  height: number;
+}) {
+  const sonuc = spec.islem === '+' ? spec.ilkAdet + spec.degisimAdedi : spec.ilkAdet - spec.degisimAdedi;
+  const renk = spec.renk ? RENK_HEX[spec.renk] : '#60a5fa';
+  const grup = (adet: number, x: number, y: number, soluk = false) => {
+    const boyut = Math.min(width * 0.065, height * 0.22);
+    const sutun = Math.max(1, Math.ceil(Math.sqrt(adet)));
+    return Array.from({ length: adet }).map((_, i) => (
+      <g key={`${x}-${y}-${i}`} transform={`translate(${x + (i % sutun) * boyut} ${y + Math.floor(i / sutun) * boyut})`} opacity={soluk ? 0.3 : 1}>
+        <Sprite name={spec.nesne} fill={renk} size={boyut * 0.82} />
+        {soluk && <path d={`M${boyut * 0.1} ${boyut * 0.1} L${boyut * 0.72} ${boyut * 0.72} M${boyut * 0.72} ${boyut * 0.1} L${boyut * 0.1} ${boyut * 0.72}`} stroke="#dc2626" strokeWidth={3} />}
+      </g>
+    ));
+  };
+  const ilkX = width * 0.04;
+  const degisimX = width * 0.42;
+  const sonucX = width * 0.72;
+  const y = height * 0.25;
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
+      {grup(spec.ilkAdet, ilkX, y)}
+      <text x={width * 0.34} y={height * 0.57} textAnchor="middle" fontSize={height * 0.26} fontWeight="700" fill="#334155">{spec.islem}</text>
+      {grup(spec.degisimAdedi, degisimX, y, spec.islem === '-')}
+      <text x={width * 0.65} y={height * 0.57} textAnchor="middle" fontSize={height * 0.26} fontWeight="700" fill="#334155">=</text>
+      {grup(sonuc, sonucX, y)}
+    </svg>
+  );
+}
+
+/** Ölçme sahnesi: ölçülen çubuk ile eş birimler aynı başlangıç çizgisinden hizalanır. */
 function OlcumSahnesi({
   spec,
   width,
@@ -383,18 +693,81 @@ function OlcumSahnesi({
   width: number;
   height: number;
 }) {
-  const birimSize = Math.min(width, height) * 0.18;
-  const nesneSize = Math.min(width, height) * 0.6;
+  const birim = Math.min(width / Math.max(spec.birimAdedi + 2, 6), height * 0.18);
+  const olculenGenislik = Math.min(width * 0.78, birim * spec.birimAdedi);
+  const baslangicX = (width - olculenGenislik) / 2;
+  const cubukY = height * 0.28;
+  const birimY = height * 0.66;
+  const renk = spec.renk ? RENK_HEX[spec.renk] : 'var(--color-accent)';
+  const gorunenBirimler = spec.gorunum === 'birimlerleOlcum' ? spec.birimAdedi : 1;
+
   return (
     <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
-      <g transform={`translate(${width * 0.06} ${(height - nesneSize) / 2})`}>
-        <Sprite name={spec.nesne} size={nesneSize} />
+      <line x1={baslangicX} y1={height * 0.16} x2={baslangicX} y2={height * 0.86} stroke="#64748b" strokeWidth={3} strokeDasharray="5 5" />
+      <rect x={baslangicX} y={cubukY} width={olculenGenislik} height={height * 0.17} rx={height * 0.07} fill={renk} stroke="#334155" strokeWidth={3} />
+      <g transform={`translate(${baslangicX + Math.min(olculenGenislik * 0.08, height * 0.12)} ${cubukY - height * 0.025})`}>
+        <Sprite name={spec.nesne} size={Math.min(height * 0.22, olculenGenislik * 0.22)} />
       </g>
-      {Array.from({ length: spec.birimAdedi }).map((_, i) => (
-        <g key={i} transform={`translate(${width * 0.5 + i * birimSize * 0.9} ${(height - birimSize) / 2})`}>
-          <Sprite name={spec.birim} size={birimSize} />
-        </g>
-      ))}
+      {Array.from({ length: gorunenBirimler }).map((_, i) => {
+        // Tahminde yalnız ilk gerçek birim görünür; genişliği ölçülen çubuğun
+        // tamamı değil, çubuğun `birimAdedi` kadar bölünmüş tek parçasıdır.
+        const birimGenisligi = olculenGenislik / spec.birimAdedi;
+        const x = baslangicX + i * birimGenisligi;
+        return (
+          <g key={i}>
+            <rect x={x + 2} y={birimY} width={birimGenisligi - 4} height={height * 0.16} rx={8} fill="#fef3c7" stroke="#d97706" strokeWidth={2} />
+            <g transform={`translate(${x + birimGenisligi * 0.25} ${birimY + height * 0.025})`}>
+              <Sprite name={spec.birim} size={Math.min(birimGenisligi * 0.5, height * 0.1)} />
+            </g>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+/** Karşılaştırma sahnesi: uzunlukta ortak başlangıç, kütlede görünür terazi kullanılır. */
+function OlcumKarsilastirma({
+  spec,
+  width,
+  height,
+}: {
+  spec: Extract<VisualSpec, { type: 'olcumKarsilastirma' }>;
+  width: number;
+  height: number;
+}) {
+  const solRenk = RENK_HEX[spec.sol.renk];
+  const sagRenk = RENK_HEX[spec.sag.renk];
+  const solDahaAgir = spec.sol.deger > spec.sag.deger;
+
+  if (spec.boyut === 'uzunluk') {
+    const baslangicX = width * 0.16;
+    const enBuyuk = Math.max(spec.sol.deger, spec.sag.deger);
+    const olcek = (width * 0.68) / enBuyuk;
+    return (
+      <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
+        <line x1={baslangicX} y1={height * 0.12} x2={baslangicX} y2={height * 0.88} stroke="#64748b" strokeWidth={4} strokeDasharray="6 5" />
+        <rect x={baslangicX} y={height * 0.24} width={spec.sol.deger * olcek} height={height * 0.18} rx={12} fill={solRenk} stroke="#334155" strokeWidth={3} />
+        <rect x={baslangicX} y={height * 0.58} width={spec.sag.deger * olcek} height={height * 0.18} rx={12} fill={sagRenk} stroke="#334155" strokeWidth={3} />
+        <g transform={`translate(${baslangicX + 8} ${height * 0.13})`}><Sprite name={spec.sol.nesne} fill={solRenk} size={height * 0.18} /></g>
+        <g transform={`translate(${baslangicX + 8} ${height * 0.47})`}><Sprite name={spec.sag.nesne} fill={sagRenk} size={height * 0.18} /></g>
+      </svg>
+    );
+  }
+
+  const ortaX = width / 2;
+  const kolAcisi = solDahaAgir ? 10 : -10;
+  const solY = solDahaAgir ? height * 0.68 : height * 0.46;
+  const sagY = solDahaAgir ? height * 0.46 : height * 0.68;
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
+      <path d={`M${ortaX} ${height * 0.34} L${ortaX - width * 0.32} ${solY} M${ortaX} ${height * 0.34} L${ortaX + width * 0.32} ${sagY}`} stroke="#475569" strokeWidth={7} strokeLinecap="round" />
+      <path d={`M${ortaX - width * 0.12} ${height * 0.84} L${ortaX} ${height * 0.34} L${ortaX + width * 0.12} ${height * 0.84} Z`} fill="#e2e8f0" stroke="#475569" strokeWidth={5} />
+      <line x1={ortaX - width * 0.1} y1={height * 0.84} x2={ortaX + width * 0.1} y2={height * 0.84} stroke="#475569" strokeWidth={7} strokeLinecap="round" />
+      <rect x={width * 0.08} y={solY - height * 0.08} width={width * 0.24} height={height * 0.08} rx={8} fill="#f8fafc" stroke="#64748b" strokeWidth={3} transform={`rotate(${kolAcisi} ${width * 0.2} ${solY})`} />
+      <rect x={width * 0.68} y={sagY - height * 0.08} width={width * 0.24} height={height * 0.08} rx={8} fill="#f8fafc" stroke="#64748b" strokeWidth={3} transform={`rotate(${kolAcisi} ${width * 0.8} ${sagY})`} />
+      <g transform={`translate(${width * 0.15} ${solY - height * 0.24})`}><Sprite name={spec.sol.nesne} fill={solRenk} size={height * 0.22} /></g>
+      <g transform={`translate(${width * 0.73} ${sagY - height * 0.24})`}><Sprite name={spec.sag.nesne} fill={sagRenk} size={height * 0.22} /></g>
     </svg>
   );
 }
