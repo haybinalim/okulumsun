@@ -7,10 +7,11 @@
  * Sadece tahta modunda kullanılır. Kişisel modda adaptif motor seçer.
  */
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useAppStore } from '../../store/appStore';
 import { BigButton } from '../primitives/BigButton';
-import { useScreenSpeech } from '../../audio/useSpeak';
+import { YonlendirmeSeridi } from '../feedback/YonlendirmeSeridi';
+import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { motion, useReducedMotion } from 'framer-motion';
 import { COLOR } from '../../design/tokens';
 import { skillsData } from '../../content/skillsData';
@@ -21,8 +22,9 @@ const DUGUMLER: readonly SkillNode[] = skillsData;
 export function KonuSecimi() {
   const { secilenTemaNo, ekranGit } = useAppStore();
   const reducedMotion = useReducedMotion();
+  const [kilitliEtiket, setKilitliEtiket] = useState<string | null>(null);
 
-  useScreenSpeech(null, []);
+  useScreenSpeech({ kind: 'key', key: 'ui.konu-sec' }, [secilenTemaNo]);
 
   // Seçilen temanın düğümlerini filtrele
   const temaDugumleri = useMemo(
@@ -32,8 +34,14 @@ export function KonuSecimi() {
 
   const dugumSec = useAppStore((s) => s.dugumSec);
 
-  const handleKonuSec = (dugumId: string) => {
-    dugumSec(dugumId);
+  const handleKonuSec = (dugum: SkillNode) => {
+    if (dugum.durum !== 'hazir') {
+      setKilitliEtiket(dugum.childLabel);
+      void speak({ kind: 'key', key: 'ui.kilitli-acik-konu' });
+      return;
+    }
+    setKilitliEtiket(null);
+    dugumSec(dugum.id);
   };
 
   const handleGeri = () => {
@@ -60,53 +68,89 @@ export function KonuSecimi() {
         </BigButton>
       </header>
 
-      {/* Orta: konu kartları */}
+      {/* Etkileşimler tahta erişimi için alt %65'e yerleşir. */}
       <section
         style={{
           flex: 1,
           display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          alignContent: 'center',
-          gap: 'var(--size-gap)',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          gap: 'var(--size-gap-tight)',
           minHeight: 0,
+          paddingTop: '8%',
           overflow: 'auto',
         }}
       >
-        {temaDugumleri.map((dugum, i) => (
-          <motion.div
-            key={dugum.id}
-            initial={reducedMotion ? {} : { scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{
-              duration: reducedMotion ? 0 : 0.2,
-              delay: reducedMotion ? 0 : i * 0.05,
+        <YonlendirmeSeridi metin={kilitliEtiket ? `${kilitliEtiket} daha sonra açılacak.` : 'Dinle, sonra renkli açık etkinlik kartına dokun.'} />
+
+        {kilitliEtiket && (
+          <div
+            role="status"
+            aria-live="polite"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              padding: '8px 16px',
+              borderRadius: 16,
+              background: 'var(--color-retry-soft)',
+              color: 'var(--color-ink)',
+              fontSize: 'var(--text-adult)',
             }}
           >
-            <BigButton
-              label={dugum.childLabel}
-              size="choice"
-              variant="solid"
-              disabled={dugum.durum !== 'hazir'}
-              onBlockedPress={() => { /* yakında */ }}
-              onPress={() => handleKonuSec(dugum.id)}
-              style={{
-                width: 160,
-                height: 120,
-                flexDirection: 'column',
-                gap: 8,
-                opacity: dugum.durum === 'hazir' ? 1 : 0.4,
+            <span aria-hidden="true" style={{ fontSize: 24 }}>🔒</span>
+            <span>Önce renkli açık karttan başlayalım.</span>
+          </div>
+        )}
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+            gap: 'var(--size-gap)',
+            width: 'min(100%, 960px)',
+          }}
+        >
+          {temaDugumleri.map((dugum, i) => (
+            <motion.div
+              key={dugum.id}
+              initial={reducedMotion ? {} : { scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{
+                duration: reducedMotion ? 0 : 0.2,
+                delay: reducedMotion ? 0 : i * 0.05,
               }}
             >
-              <span style={{ fontSize: 'var(--text-ui)', textAlign: 'center' }}>
-                {dugum.childLabel}
-              </span>
-              {dugum.durum !== 'hazir' && (
-                <span style={{ fontSize: 11, opacity: 0.6 }}>yakında</span>
-              )}
-            </BigButton>
-          </motion.div>
-        ))}
+              <BigButton
+                label={dugum.childLabel}
+                size="choice"
+                variant="solid"
+                disabled={dugum.durum !== 'hazir'}
+                onBlockedPress={() => handleKonuSec(dugum)}
+                onPress={() => handleKonuSec(dugum)}
+                style={{
+                  width: '100%',
+                  minHeight: 160,
+                  flexDirection: 'column',
+                  gap: 8,
+                  opacity: dugum.durum === 'hazir' ? 1 : 0.45,
+                  position: 'relative',
+                }}
+              >
+                <span style={{ fontSize: 'var(--text-ui)', textAlign: 'center', fontWeight: 700 }}>
+                  {dugum.childLabel}
+                </span>
+                {dugum.durum !== 'hazir' && (
+                  <>
+                    <span aria-hidden="true" style={{ position: 'absolute', top: 12, right: 12, fontSize: 24 }}>🔒</span>
+                    <span style={{ fontSize: 'var(--text-adult)', opacity: 0.8 }}>daha sonra</span>
+                  </>
+                )}
+              </BigButton>
+            </motion.div>
+          ))}
+        </div>
       </section>
     </main>
   );

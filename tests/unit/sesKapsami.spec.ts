@@ -48,3 +48,17 @@ describe('soru ses kapsamı', () => {
     expect(eksikler).toEqual([]);
   });
 });
+
+
+describe('P0 karar ekranı yönlendirme sesleri', () => {
+  it('mod, tema, etkinlik ve kilitli içerik yönergeleri çevrimdışı manifestte bulunur', () => {
+    const gerekliAnahtarlar: SpeechKey[] = [
+      'ui.mod-sec',
+      'ui.tema-sec',
+      'ui.konu-sec',
+      'ui.kilitli-acik-konu',
+    ];
+
+    expect(gerekliAnahtarlar.filter((key) => AUDIO_MANIFEST[key] == null)).toEqual([]);
+  });
+});
