@@ -32,8 +32,8 @@
  *
  * Ortam değişkenleri:
  *   ANTHROPIC_API_KEY      zorunlu (dry-run hariç)
- *   ANTHROPIC_MODEL_SONNET varsayılan: claude-sonnet-5
- *   ANTHROPIC_MODEL_HAIKU  varsayılan: claude-haiku-4-5
+ *   ANTHROPIC_MODEL_SONNET varsayılan: claude-sonnet-5-5
+ *   ANTHROPIC_MODEL_HAIKU  varsayılan: claude-haiku-5-5
  *   (Güncel model ID'leri için: https://platform.claude.com/docs/en/about-claude/models/overview)
  *
  * Maliyet notu: 15 etiket (5 çağrı, çağrı başına 3 etiket) + 1 övgü çağrısı =
@@ -54,8 +54,8 @@ const API_URL = 'https://api.anthropic.com/v1/messages';
 const API_VERSION = '2023-06-01';
 
 const API_KEY = process.env.ANTHROPIC_API_KEY ?? '';
-const MODEL_SONNET = process.env.ANTHROPIC_MODEL_SONNET ?? 'claude-sonnet-5';
-const MODEL_HAIKU = process.env.ANTHROPIC_MODEL_HAIKU ?? 'claude-haiku-4-5';
+const MODEL_SONNET = process.env.ANTHROPIC_MODEL_SONNET ?? 'claude-sonnet-5-5';
+const MODEL_HAIKU = process.env.ANTHROPIC_MODEL_HAIKU ?? 'claude-haiku-5-5';
 
 const DRY_RUN = process.argv.includes('--dry-run');
 const ETIKET_FILTRE = (() => {
