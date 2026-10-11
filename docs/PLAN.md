@@ -1199,6 +1199,7 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 11 | **Dağıtım:** statik host (GitHub Pages veya Netlify) + `LICENSES.md` + "Kaynaklar" ekranı (§8) | ✅ | Ürün herkese açık URL'de; çevrimdışı ikinci ziyaret çalışır; USB'den `file://` ile açılış denendi (PWA hariç çalışmalı) |
 | 12 | Erişilebilirlik denetimi + **5 gerçek çocukla tablet testi** + düzeltme | ✅ | §15 elle doğrulama listesi işlenmiş; bulgular `docs/`e not edilmiş |
 | 13 | *(2. ay)* Fiziksel akıllı tahta doğrulaması + ölçek ayarı | ✅ | §13'teki fiziksel test listesi; gerekirse yalnız `tokens.ts` ayarı |
+| 14 | PR #14: erişilebilir seçim kartları (`choiceErisim.ts`) + veli kapısı/paneli + `adult-area` e2e | ✅ | Rebase çakışmasız; lint/test (193)/validate/audio:audit/build/e2e yeşil. Adım 15–58: `reports/gelistirme-plani-v2.md` (depo dışı plan) |
 
 Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **35 şablon / ~3 haftaya** büyüdü
 (şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**
