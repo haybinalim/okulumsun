@@ -42,9 +42,25 @@ describe('PWA manifesti (Adım 25)', () => {
     expect(html).toContain('href="./apple-touch-icon.png"');
   });
 
+  it('maskable motifi %80 güvenli dairenin içinde kalır', () => {
+    const r = 512 * 0.4;
+    for (const k of ikonSekilleri({ yuvarlak: false, olcek: 0.8 }).slice(1)) {
+      const noktalar =
+        k.t === 'circle'
+          ? [[k.cx, k.cy, k.r]]
+          : k.t === 'ellipse'
+            ? [[k.cx, k.cy, Math.max(k.rx, k.ry)]]
+            : k.t === 'line'
+              ? [
+                  [k.x1, k.y1, k.sw / 2],
+                  [k.x2, k.y2, k.sw / 2],
+                ]
+              : [];
+      for (const [x, y, ek] of noktalar) expect(Math.hypot(x - 256, y - 256) + ek).toBeLessThanOrEqual(r);
+    }
+  });
+
   it('favicon.svg üreticiyle güncel (npm run ikon:uret)', () => {
-    expect(readFileSync(join(pub, 'favicon.svg'), 'utf8')).toBe(
-      svgYaz(ikonSekilleri({ yuvarlak: true, icerikOrani: 0.8 })),
-    );
+    expect(readFileSync(join(pub, 'favicon.svg'), 'utf8')).toBe(svgYaz(ikonSekilleri({ yuvarlak: true, olcek: 1 })));
   });
 });

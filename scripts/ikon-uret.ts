@@ -1,7 +1,8 @@
 /**
- * PWA ikonlarını üretir (plan v2 Adım 25, KG-36). `npm run ikon:uret`
+ * PWA ikonlarını üretir (plan v2 Adım 25, KG-36, KG-37). `npm run ikon:uret`
  *
- * Motif: onluk çerçeve (2×5), 7 dolu göz — 1. sınıf sayma modeli. Renkler
+ * Motif: Bahçem çiçeği — beş renkli yaprak (öğrenci vurgu renkleri), beş
+ * noktalı göbek (beşi sayma), yeşil gövde ve yaprak. Renkler
  * `src/design/tokens.ts`'ten (sabit kopyalama yok). Tek geometri iki çiziciye
  * gider: SVG (favicon) ve ImageMagick `-draw` (PNG; SVG çözücüsü gerekmez).
  * PNG'ler depoya işlenir — çalışma anında veya CI'da araç gerekmez.
@@ -14,88 +15,41 @@ import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ACCENTS, COLOR } from '../src/design/tokens.ts';
 
-const MOR = ACCENTS.find((a) => a.id === 'mor')!.hex;
+const vurgu = (id: (typeof ACCENTS)[number]['id']) => ACCENTS.find((a) => a.id === id)!.hex;
 
 export type Sekil =
-  | {
-      t: 'rect';
-      x: number;
-      y: number;
-      w: number;
-      h: number;
-      rx: number;
-      fill: string;
-      stroke?: string;
-      sw?: number;
-    }
-  | {
-      t: 'line';
-      x1: number;
-      y1: number;
-      x2: number;
-      y2: number;
-      stroke: string;
-      sw: number;
-    }
-  | { t: 'circle'; cx: number; cy: number; r: number; fill: string };
+  | { t: 'rect'; x: number; y: number; w: number; h: number; rx: number; fill: string }
+  | { t: 'line'; x1: number; y1: number; x2: number; y2: number; stroke: string; sw: number }
+  | { t: 'circle'; cx: number; cy: number; r: number; fill: string }
+  | { t: 'ellipse'; cx: number; cy: number; rx: number; ry: number; fill: string };
 
-/** 512 birimlik tuvalde şekiller. @param icerikOrani çerçevenin kenara oranı. */
-export function ikonSekilleri(opts: { yuvarlak: boolean; icerikOrani: number }): Sekil[] {
+/**
+ * 512 birimlik tuvalde şekiller.
+ * @param olcek motifin (zemin hariç) merkez etrafında ölçeği; maskable için küçültülür.
+ */
+export function ikonSekilleri(opts: { yuvarlak: boolean; olcek: number }): Sekil[] {
   const K = 512;
-  const icerik = K * opts.icerikOrani;
-  const x0 = (K - icerik) / 2;
-  const h = icerik / 5;
-  const y0 = K / 2 - h;
-  const s: Sekil[] = [
-    {
-      t: 'rect',
-      x: 0,
-      y: 0,
-      w: K,
-      h: K,
-      rx: opts.yuvarlak ? K * 0.22 : 0,
-      fill: COLOR.bg,
-    },
-    {
-      t: 'rect',
-      x: x0,
-      y: y0,
-      w: icerik,
-      h: 2 * h,
-      rx: h * 0.18,
-      fill: COLOR.surface,
-      stroke: COLOR.ink,
-      sw: h * 0.07,
-    },
-    {
-      t: 'line',
-      x1: x0,
-      y1: y0 + h,
-      x2: x0 + icerik,
-      y2: y0 + h,
-      stroke: COLOR.border,
-      sw: h * 0.05,
-    },
-  ];
-  for (let i = 1; i < 5; i++)
-    s.push({
-      t: 'line',
-      x1: x0 + i * h,
-      y1: y0,
-      x2: x0 + i * h,
-      y2: y0 + 2 * h,
-      stroke: COLOR.border,
-      sw: h * 0.05,
-    });
-  for (let i = 0; i < 7; i++) {
-    const sat = Math.floor(i / 5);
-    s.push({
-      t: 'circle',
-      cx: x0 + ((i % 5) + 0.5) * h,
-      cy: y0 + (sat + 0.5) * h,
-      r: h * 0.34,
-      fill: sat === 0 ? MOR : COLOR.mascot,
-    });
+  const m = K / 2;
+  const o = opts.olcek;
+  const X = (v: number) => m + (v - m) * o;
+  const L = (v: number) => v * o;
+  const s: Sekil[] = [{ t: 'rect', x: 0, y: 0, w: K, h: K, rx: opts.yuvarlak ? K * 0.22 : 0, fill: COLOR.bg }];
+  // Gövde ve yaprak
+  s.push({ t: 'line', x1: X(256), y1: X(280), x2: X(256), y2: X(440), stroke: COLOR.correct, sw: L(18) });
+  s.push({ t: 'ellipse', cx: X(302), cy: X(384), rx: L(46), ry: L(22), fill: COLOR.correct });
+  // Beş yaprak
+  const renkler = [vurgu('mor'), vurgu('turuncu'), vurgu('pembe'), vurgu('mavi'), vurgu('sari')];
+  const gx = 256;
+  const gy = 205;
+  renkler.forEach((fill, i) => {
+    const a = ((-90 + i * 72) * Math.PI) / 180;
+    s.push({ t: 'circle', cx: X(gx + 80 * Math.cos(a)), cy: X(gy + 80 * Math.sin(a)), r: L(54), fill });
+  });
+  // Göbek: beş nokta
+  s.push({ t: 'circle', cx: X(gx), cy: X(gy), r: L(48), fill: COLOR.surface });
+  for (let i = 0; i < 5; i++) {
+    const a = ((-90 + i * 72) * Math.PI) / 180;
+    s.push({ t: 'circle', cx: X(gx + 24 * Math.cos(a)), cy: X(gy + 24 * Math.sin(a)), r: L(9), fill: COLOR.ink });
   }
   return s;
 }
@@ -106,9 +60,11 @@ export function svgYaz(sekiller: readonly Sekil[]): string {
   const govde = sekiller
     .map((k) => {
       if (k.t === 'rect')
-        return `<rect x="${n(k.x)}" y="${n(k.y)}" width="${n(k.w)}" height="${n(k.h)}" rx="${n(k.rx)}" fill="${k.fill}"${k.stroke ? ` stroke="${k.stroke}" stroke-width="${n(k.sw!)}"` : ''}/>`;
+        return `<rect x="${n(k.x)}" y="${n(k.y)}" width="${n(k.w)}" height="${n(k.h)}" rx="${n(k.rx)}" fill="${k.fill}"/>`;
       if (k.t === 'line')
         return `<line x1="${n(k.x1)}" y1="${n(k.y1)}" x2="${n(k.x2)}" y2="${n(k.y2)}" stroke="${k.stroke}" stroke-width="${n(k.sw)}"/>`;
+      if (k.t === 'ellipse')
+        return `<ellipse cx="${n(k.cx)}" cy="${n(k.cy)}" rx="${n(k.rx)}" ry="${n(k.ry)}" fill="${k.fill}"/>`;
       return `<circle cx="${n(k.cx)}" cy="${n(k.cy)}" r="${n(k.r)}" fill="${k.fill}"/>`;
     })
     .join('');
@@ -119,7 +75,7 @@ function magickArgumanlari(sekiller: readonly Sekil[]): string[] {
   const a: string[] = [];
   for (const k of sekiller) {
     if (k.t === 'rect') {
-      a.push('-fill', k.fill, '-stroke', k.stroke ?? 'none', '-strokewidth', String(n(k.sw ?? 0)));
+      a.push('-fill', k.fill, '-stroke', 'none');
       a.push(
         '-draw',
         `roundrectangle ${n(k.x)},${n(k.y)} ${n(k.x + k.w - 1)},${n(k.y + k.h - 1)} ${n(k.rx)},${n(k.rx)}`,
@@ -135,6 +91,8 @@ function magickArgumanlari(sekiller: readonly Sekil[]): string[] {
         '-draw',
         `line ${n(k.x1)},${n(k.y1)} ${n(k.x2)},${n(k.y2)}`,
       );
+    } else if (k.t === 'ellipse') {
+      a.push('-fill', k.fill, '-stroke', 'none', '-draw', `ellipse ${n(k.cx)},${n(k.cy)} ${n(k.rx)},${n(k.ry)} 0,360`);
     } else {
       a.push('-fill', k.fill, '-stroke', 'none', '-draw', `circle ${n(k.cx)},${n(k.cy)} ${n(k.cx + k.r)},${n(k.cy)}`);
     }
@@ -144,9 +102,9 @@ function magickArgumanlari(sekiller: readonly Sekil[]): string[] {
 
 function main(): void {
   const pub = join(process.cwd(), 'public');
-  const normal = ikonSekilleri({ yuvarlak: true, icerikOrani: 0.8 });
-  const kare = ikonSekilleri({ yuvarlak: false, icerikOrani: 0.8 });
-  const maskable = ikonSekilleri({ yuvarlak: false, icerikOrani: 0.64 });
+  const normal = ikonSekilleri({ yuvarlak: true, olcek: 1 });
+  const kare = ikonSekilleri({ yuvarlak: false, olcek: 1 });
+  const maskable = ikonSekilleri({ yuvarlak: false, olcek: 0.8 });
   writeFileSync(join(pub, 'favicon.svg'), svgYaz(normal));
   const png = (sekiller: Sekil[], ad: string, boyut: number) =>
     execFileSync('magick', [
