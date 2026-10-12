@@ -910,6 +910,8 @@ açıkken poz değişir ama animasyon yoktur (anlık geçiş).
 | **K4** | Özel UI ikon seti (10–12) | Geri, ses, yardım, onay, ev |
 | **K5** | TCMB resmî örnek görselleri | MAT.1.1.9 için 5, 10, 20, 50, 100 ve 200 TL banknot ön yüzleri |
 
+> **Lisans notu (Adım 21, 12 Eki 2026).** Her üçüncü taraf varlık `src/content/ucuncuTarafVarliklar.ts` envanterindedir; LICENSES ve Kaynaklar ondan üretilir, `npm run lisans:denetle` (K10) CI'da denetler. K2: emoji yazı tipi **paketlenmez**, emojiler cihazın yazı tipiyle çizilir (envantere girmez). K5: TCMB'ye başvurulmaz (KG-19); kâğıt ve arşiv `SematikBanknot` kullanır, ekran Adım 29'da şematiğe geçer.
+
 **K1 neden ağırlık merkezi** — projenin en yüksek getirili tek kararı: soru üreteci ile **aynı veriden** çizilir (`{tip:'sayma', nesne:'elma', adet:7}` hem soruyu hem görseli üretir), sonsuz varyasyon sıfır varlık maliyetiyle. **7 elma her zaman 7 elmadır** — bu bir sayma uygulamasında pazarlık konusu değil. <2KB/dosya, temaya otomatik uyar, telifi temiz.
 
 **Nesne yerleşim algoritması kritik:** 1–4 düzenli sıra, 5–10 gruplu (5+2), 10+ onluk çerçeve. Rastgele dağıtım sayma öğrenimini bozar — ama `MAT.1.1.2` **bilerek dağınık** düzen istiyor, o yüzden `layout` bir parametre ve dağınık düzen bir tanılama aracı (§6.6).
@@ -1219,7 +1221,7 @@ Her adımın **"Bitti tanımı"** vardır: listedeki her madde doğrulanmadan ad
 ve bir sonraki adıma geçilemez. Durum sütunu bu repodaki gerçeği yansıtır; bir adımı
 bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 
-<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=25 durum:e2e_dosya=2 durum:adr=14 -->
+<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=27 durum:e2e_dosya=2 durum:adr=14 -->
 
 | # | İş | Durum | Bitti tanımı |
 |---|---|---|---|
@@ -1246,6 +1248,7 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 18 | Ses kaynağı kararı (ADR-0004): şartlar birincil kaynaktan alıntılı, `sesKaynagi.json` `bekleyen` = Google Chirp 3 HD, `scripts/ses/googleTts.ts`, `npm run audio -- --ornek` | 🔄 | Eksik: GCP projesi + bütçe uyarısı + kısıtlı anahtar (kullanıcı, KG-20), örneklerin dinlenmesi ve ses seçimi (KG-04, 6 Kas 2026) → ADR-0004 `Kabul` |
 | 19 | Bayatlık kapısı K8: `scripts/durum.ts`, `npm run durum [-- --denetle | --agac]`, §14 durum bloğu, §12 üretilmiş ağaç, CI adımı | ✅ | `--denetle` CI'da yeşil; PROGRESS'e kasıtlı `ses=288` yazınca çıkış 1 (PR #19 açıklamasında çıktı); `durum.spec.ts` |
 | 20 | Uygulama lisansı (ADR-0013 Kabul): tüm hakları saklı — `LICENSE`, `CONTENT-LICENSE`, `package.json` `UNLICENSED`, Kaynaklar ekranında lisans satırı | ✅ | Bağımlılık uyumu temiz (license-checker); `belgeTutarliligi.spec.ts` LICENSE ↔ package.json |
+| 21 | Lisans envanteri K10 (`ucuncuTarafVarliklar.ts`, `npm run lisans:denetle`, LICENSES/Kaynaklar envanterden), `paraGorseli.ts` + `SematikBanknot`, ADR-0014 Kabul (ilk 12 ay satış yok → okul/kurum lisansı); TCMB başvurusu yok (KG-19) | ✅ | K10 CI'da yeşil, tuzak testte kırmızı; şematik banknot testli |
 
 Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **35 şablon / ~3 haftaya** büyüdü
 (şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**

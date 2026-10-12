@@ -3,13 +3,18 @@
  *
  * İçerik:
  *   - Gizlilik beyanı (KVKK — tek paragraf)
- *   - Açık kaynak lisansları
+ *   - Uygulama lisansı (ADR-0013)
+ *   - Üçüncü taraf lisansları (src/content/ucuncuTarafVarliklar.ts'ten)
  *   - TTS sağlayıcı bilgisi
  *
  * Çocuk bu ekrana veli kapısından ulaşır — çocuk arayüzünde değil.
  */
 
+import { UCUNCU_TARAF_VARLIKLAR } from '../../content/ucuncuTarafVarliklar';
 import { useAppStore } from '../../store/appStore';
+
+/** Kullanıcıya dağıtılan varlıklar; geliştirme araçları LICENSES.md'de listelenir. */
+const DAGITILAN = UCUNCU_TARAF_VARLIKLAR.filter((v) => v.dagitimdaVar);
 
 export function Kaynaklar() {
   const ekranGit = useAppStore((s) => s.ekranGit);
@@ -52,33 +57,16 @@ export function Kaynaklar() {
         </p>
       </section>
 
-      {/* Açık kaynak lisansları */}
+      {/* Üçüncü taraf lisansları — envanterden çizilir (Adım 21, K10). Dış bağlantı yok. */}
       <section style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Açık Kaynak Lisansları</h2>
+        <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Üçüncü Taraf Lisansları</h2>
         <ul style={{ listStyle: 'none', padding: 0, fontSize: '0.9rem', lineHeight: 1.8 }}>
-          <li>
-            <strong>React</strong> — MIT Lisansı · Copyright (c) Meta Platforms, Inc.
-          </li>
-          <li>
-            <strong>Vite</strong> — MIT Lisansı · Copyright (c) Evan You
-          </li>
-          <li>
-            <strong>Dexie.js</strong> — Apache-2.0 Lisansı · Copyright (c) David Fahlander
-          </li>
-          <li>
-            <strong>Zustand</strong> — MIT Lisansı · Copyright (c) Paul Henschel
-          </li>
-          <li>
-            <strong>vite-plugin-pwa</strong> — MIT Lisansı
-          </li>
-          <li>
-            <strong>Noto Color Emoji</strong> — SIL OFL 1.1
-          </li>
-          <li>
-            <strong>Ses klipleri</strong> — kaynak lisans incelemesinde (ADR-0004); ticari dağıtım
-            öncesi değiştirilecek. Üretim aracı: Piper (GPL-3.0, yalnız geliştirme makinesinde;
-            çıktıya lisans geçirmez)
-          </li>
+          {DAGITILAN.map((v) => (
+            <li key={v.ad}>
+              <strong>{v.ad}</strong> — {v.lisans} · {v.sahip}
+              {v.kosul ? ` · ${v.kosul}` : ''}
+            </li>
+          ))}
         </ul>
       </section>
 
