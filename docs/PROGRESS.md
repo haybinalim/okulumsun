@@ -40,6 +40,7 @@ Sıradaki iş **Adım 13** — Fiziksel akıllı tahta doğrulaması (2. ay).
 | 12 | Erişilebilirlik + 5 çocukla tablet testi | ✅ denetim + protokol (fiziksel test bekliyor) |
 | 13 | (2. ay) Fiziksel tahta doğrulaması | ⬜ |
 | 14 | PR #14 birleştirildi — erişilebilir şık etiketleri, veli kapısı/panel; birim test sayısı 193 (18 dosya), e2e 5 geçti + 1 bilinçli atlandı | ✅ |
+| 15 | Ses kökeni envanteri + acil lisans beyanı düzeltmesi + `audio:audit` köken denetimi (`scripts/ses/klipler.ts`, `scripts/ses/sesKaynagi.ts`, `src/content/sesKaynagi.json`); birim test 210 (21 dosya), e2e 5 geçti + 1 bilinçli atlandı | ✅ |
 
 ## Teknik doğrulama (son çalıştırma: 6 Ağustos 2026)
 
@@ -50,6 +51,11 @@ Sıradaki iş **Adım 13** — Fiziksel akıllı tahta doğrulaması (2. ay).
 - CI → ⬜ yok (Adım 2b)
 
 ## Bilinen sapmalar / notlar
+
+- **Ses kaynağı değişikliği yapılıyor (Adım 15, 12 Ekim 2026).** Mevcut 287 klip `piper:` önekiyle üretildi,
+  modeli bilinmiyor; Türkçe Piper sesleri ticari dağıtıma uygun değil (`docs/ses/SES_KAYNAKLARI.md`).
+  `npm run audio:audit` artık ticari izinsiz aktif kaynakta çıkış 1 verir; yerelde ve CI'da
+  `SES_GECIS_MODU=1` ile çalıştırılır. Klipler Adım 31'de Google Cloud TTS Chirp 3 HD ile yeniden üretilecek.
 
 - PLAN §5.2 artık `skills.json` ile senkron: **39 şablon** (ilk taslaktaki 17'nin
   incelmiş hâli). Şablon durumları oradaki tabloda işaretli.

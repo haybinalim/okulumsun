@@ -10,41 +10,88 @@
  * (çevrimdışı sessizlik), 15sn üstü konuşmalarda motor donuyor. Bu yüzden
  * ses bir çalışma zamanı bağımlılığı değil, derleme zamanı varlığı.
  *
- * SAĞLAYICI SEÇİMİ (TTS_PROVIDER):
- *   say   — macOS Yelda. Bedava, sınırsız, çevrimdışı, hesap gerekmez.
- *           Prototip varsayılanı; kalite orta ama akışı bugün test ettirir.
- *   piper — Piper TTS (MIT). Üretim hedefi: yerel, bedava, dağıtım lisansı net.
- *   eleven— ElevenLabs. Ücretsiz kredi sınırlı; yalnız maskot replikleri için.
- *           UYARI: ücretsiz katmanın ticari dağıtım şartları yayın öncesi
- *           doğrulanmalı. Doğrulanamazsa piper tek başına yeterli.
+ * SES KAYNAĞI (Adım 15, KG-01/KG-08/KG-15):
+ *   Aktif kaynak src/content/sesKaynagi.json'da tanımlıdır; TTS_PROVIDER verilmezse
+ *   betik o kaynağın sağlayıcısını kullanır. Özet, sağlayıcıya ek olarak MODEL
+ *   KİMLİĞİNİ de içerir: model değişince tüm klipler yenilenir ve audio:audit
+ *   kökeni denetleyebilir. Ayrıntı: docs/ses/SES_KAYNAKLARI.md
+ *   piper — yalnız geliştirme aracı (GPL-3.0). Türkçe tr_TR-dfki modeli CC BY-NC-SA
+ *           (ticari değil), fahrettin/fettah kaldırıldı → üretimde KULLANILMAZ.
+ *   say   — macOS Yelda; YALNIZ `--prototip` bayrağıyla, çıktı public/audio-prototip/
+ *           (gitignore). Apple lisansı ticari dağıtıma izin vermez.
+ *   eleven— KG-01 gereği kullanılmaz; çağrılırsa hata fırlatır.
+ *   google— Google Cloud TTS Chirp 3 HD tr-TR (KG-01); Adım 31'de bağlanacak.
  *
  * ARTIMLI ÜRETİM: yalnız metni değişen anahtarlar yeniden sentezlenir (hash
  * karşılaştırması). Ücretli sağlayıcılarda bu, maliyeti sıfıra yakın tutar.
  *
  * Kullanım:
- *   npm run audio            (varsayılan: say)
- *   TTS_PROVIDER=piper npm run audio
- *   npm run audio -- --force (hash'i yoksay, hepsini yeniden üret)
+ *   npm run audio                       (aktif kaynak: src/content/sesKaynagi.json)
+ *   npm run audio -- --prototip         (macOS say; çıktı public/audio-prototip/, dağıtılmaz)
+ *   npm run audio -- --force            (hash'i yoksay, hepsini yeniden üret)
  */
 
 import { execFile } from 'node:child_process';
-import { createHash } from 'node:crypto';
 import { promisify } from 'node:util';
 import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { klipleriTopla, type Clip } from './ses/klipler.ts';
+import {
+  klipOzeti,
+  ozetDosyasiniOku,
+  sesKaynaginiDogrula,
+  type SesKaynagi,
+} from './ses/sesKaynagi.ts';
 
 const exec = promisify(execFile);
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CONTENT = path.join(ROOT, 'src/content/tr.json');
-const OUT_AUDIO = path.join(ROOT, 'public/audio');
+const SES_KAYNAGI = path.join(ROOT, 'src/content/sesKaynagi.json');
 const OUT_MANIFEST = path.join(ROOT, 'src/audio/audioManifest.generated.ts');
-const CACHE = path.join(ROOT, 'public/audio/.hashes.json');
 
 const FORCE = process.argv.includes('--force');
-const PROVIDER = (process.env.TTS_PROVIDER ?? 'say') as 'say' | 'piper' | 'eleven';
+/** macOS `say` yalnız prototip içindir; çıktısı dağıtılan klasöre asla yazılmaz. */
+const PROTOTIP = process.argv.includes('--prototip');
+const OUT_AUDIO = path.join(ROOT, PROTOTIP ? 'public/audio-prototip' : 'public/audio');
+const CACHE = path.join(OUT_AUDIO, '.hashes.json');
+
+type Provider = 'say' | 'piper' | 'eleven' | 'google';
+
+/** Aktif kaynağı okur; `--prototip` → say. `TTS_PROVIDER` yalnız kaynağın sağlayıcısını geçersiz kılar. */
+async function aktifKaynagiOku(): Promise<{ kaynak: SesKaynagi; provider: Provider }> {
+  if (PROTOTIP) {
+    return {
+      kaynak: {
+        saglayici: 'say',
+        modelKimligi: `say:${SAY_VOICE}@${SAY_RATE}`,
+        lisansUrl: 'https://www.apple.com/legal/sla/',
+        ticariDagitimIzni: false,
+        cocukUrunundeKullanim: 'bilinmiyor',
+        atifSarti: null,
+      },
+      provider: 'say',
+    };
+  }
+  const { $not: _not, ...ham } = JSON.parse(await readFile(SES_KAYNAGI, 'utf8')) as Record<string, unknown>;
+  const kaynak = sesKaynaginiDogrula(ham);
+  const istenen = process.env.TTS_PROVIDER ?? kaynak.saglayici;
+  if (istenen === 'say') {
+    throw new Error('macOS say yalnız --prototip bayrağıyla kullanılabilir (çıktı public/audio-prototip/).');
+  }
+  if (istenen !== 'piper' && istenen !== 'eleven' && istenen !== 'google') {
+    throw new Error(`Desteklenmeyen TTS_PROVIDER: ${istenen}`);
+  }
+  if (istenen !== kaynak.saglayici) {
+    throw new Error(
+      `TTS_PROVIDER=${istenen} aktif kaynakla (${kaynak.saglayici}) uyuşmuyor. ` +
+        'Önce src/content/sesKaynagi.json güncellenmeli (model kimliği özete girer).',
+    );
+  }
+  return { kaynak, provider: istenen };
+}
 
 /**
  * Konuşma hızı: normalden ~%10 yavaş.
@@ -59,69 +106,6 @@ const SAY_VOICE = 'Yelda';
  * `PIPER_MODEL` ile başka bir ses/model yolu da verilebilir.
  */
 const DEFAULT_PIPER_MODEL = path.join(ROOT, '.tools', 'piper', 'tr_TR-dfki-medium.onnx');
-
-/** Service worker'ın önden önbelleğe alacağı ad alanları. */
-const CORE_NAMESPACES = ['ui', 'geri', 'yardim', 'soru', 'op', 'sayi'];
-
-interface Clip {
-  key: string;
-  text: string;
-  file: string;
-  core: boolean;
-}
-
-// ---------------------------------------------------------------- içerik okuma
-
-/** Türkçe sayı adları — ritmik sayma 0-100, banknot kazanımı için ayrıca 200. */
-function turkishNumber(n: number): string {
-  const ones = ['sıfır', 'bir', 'iki', 'üç', 'dört', 'beş', 'altı', 'yedi', 'sekiz', 'dokuz'];
-  const tens = [
-    '',
-    'on',
-    'yirmi',
-    'otuz',
-    'kırk',
-    'elli',
-    'altmış',
-    'yetmiş',
-    'seksen',
-    'doksan',
-  ];
-  if (n === 100) return 'yüz';
-  if (n === 200) return 'iki yüz';
-  if (n < 10) return ones[n];
-  const t = Math.floor(n / 10);
-  const o = n % 10;
-  return o === 0 ? tens[t] : `${tens[t]} ${ones[o]}`;
-}
-
-async function collectClips(): Promise<Clip[]> {
-  const raw = JSON.parse(await readFile(CONTENT, 'utf8')) as Record<string, unknown>;
-  const clips: Clip[] = [];
-
-  for (const [ns, value] of Object.entries(raw)) {
-    // '$' ile başlayan anahtarlar insan için not; ses üretilmez.
-    if (ns.startsWith('$') || typeof value !== 'object' || value === null) continue;
-    const core = CORE_NAMESPACES.includes(ns);
-    const group = value as Record<string, string>;
-
-    // Sayılar elle yazılmaz, üretilir.
-    if (group.$uret === 'sayilar') {
-      for (let n = 0; n <= 100; n++) {
-        clips.push({ key: `sayi.${n}`, text: turkishNumber(n), file: `sayi/${n}.m4a`, core });
-      }
-      // MAT.1.1.9 banknot tanımada 200 TL de sesli okunmalıdır.
-      clips.push({ key: 'sayi.200', text: turkishNumber(200), file: 'sayi/200.m4a', core });
-      continue;
-    }
-
-    for (const [k, text] of Object.entries(group)) {
-      if (k.startsWith('$') || typeof text !== 'string') continue;
-      clips.push({ key: `${ns}.${k}`, text, file: `${ns}/${k}.m4a`, core });
-    }
-  }
-  return clips;
-}
 
 // ------------------------------------------------------------------ sentezleme
 
@@ -167,23 +151,22 @@ async function synthPiper(text: string, out: string): Promise<void> {
   await rm(tmp, { force: true });
 }
 
-async function synth(text: string, out: string): Promise<void> {
-  switch (PROVIDER) {
+async function synth(provider: Provider, text: string, out: string): Promise<void> {
+  switch (provider) {
     case 'say':
       return synthSay(text, out);
     case 'piper':
       return synthPiper(text, out);
     case 'eleven':
-      throw new Error(
-        'ElevenLabs sağlayıcısı henüz bağlanmadı. Bağlamadan önce ücretsiz katmanın\n' +
-          'üretilen sesi bir uygulamada dağıtma iznini verdiği doğrulanmalı.',
-      );
+      throw new Error('ElevenLabs kullanılmaz (KG-01, ADR-0004).');
+    case 'google':
+      throw new Error('Google Cloud TTS sağlayıcısı Adım 31\'de bağlanacak (KG-01).');
   }
 }
 
 // ------------------------------------------------------------------- manifesto
 
-function buildManifest(clips: Clip[]): string {
+function buildManifest(clips: readonly Clip[]): string {
   const lines = clips
     .map((c) => `  '${c.key}': { file: '${c.file}', core: ${c.core} },`)
     .join('\n');
@@ -219,11 +202,20 @@ export const CORE_KEYS: readonly SpeechKey[] = Object.entries(AUDIO_MANIFEST)
 // ------------------------------------------------------------------------ ana
 
 async function main(): Promise<void> {
-  const clips = await collectClips();
-  console.log(`${clips.length} klip · sağlayıcı: ${PROVIDER}${FORCE ? ' · --force' : ''}`);
+  const { kaynak, provider } = await aktifKaynagiOku();
+  const clips = klipleriTopla(JSON.parse(await readFile(CONTENT, 'utf8')) as Record<string, unknown>);
+  console.log(
+    `${clips.length} klip · kaynak: ${kaynak.modelKimligi}${PROTOTIP ? ' · --prototip' : ''}${FORCE ? ' · --force' : ''}`,
+  );
+  if (!kaynak.ticariDagitimIzni) {
+    console.warn('UYARI LİSANS: aktif ses kaynağının ticari dağıtım izni yok (ADR-0004).');
+  }
 
+  // Geriye uyum: eski düz biçim de okunur; yazarken yeni biçim ({ $kaynak, ... }) kullanılır.
   const hashes: Record<string, string> =
-    !FORCE && existsSync(CACHE) ? JSON.parse(await readFile(CACHE, 'utf8')) : {};
+    !FORCE && existsSync(CACHE)
+      ? { ...ozetDosyasiniOku(JSON.parse(await readFile(CACHE, 'utf8'))).ozetler }
+      : {};
 
   let made = 0;
   let skipped = 0;
@@ -231,8 +223,8 @@ async function main(): Promise<void> {
 
   for (const clip of clips) {
     const out = path.join(OUT_AUDIO, clip.file);
-    // Hash'e sağlayıcıyı da kat: sağlayıcı değişince tüm klipler yenilenmeli.
-    const hash = createHash('sha256').update(`${PROVIDER}:${clip.text}`).digest('hex').slice(0, 16);
+    // Özete sağlayıcı + model kimliği girer: model değişince tüm klipler yenilenir.
+    const hash = klipOzeti(kaynak, clip.text);
 
     if (hashes[clip.key] === hash && existsSync(out)) {
       skipped++;
@@ -241,7 +233,7 @@ async function main(): Promise<void> {
 
     await mkdir(path.dirname(out), { recursive: true });
     try {
-      await synth(clip.text, out);
+      await synth(provider, clip.text, out);
       hashes[clip.key] = hash;
       made++;
       if (made % 25 === 0) console.log(`  ${made} üretildi...`);
@@ -250,9 +242,13 @@ async function main(): Promise<void> {
     }
   }
 
-  await writeFile(CACHE, JSON.stringify(hashes, null, 2));
-  await mkdir(path.dirname(OUT_MANIFEST), { recursive: true });
-  await writeFile(OUT_MANIFEST, buildManifest(clips));
+  await mkdir(OUT_AUDIO, { recursive: true });
+  await writeFile(CACHE, JSON.stringify({ $kaynak: kaynak, ...hashes }, null, 2));
+  // Prototip çıktısı dağıtılmadığı için manifesto yalnız gerçek üretimde yazılır.
+  if (!PROTOTIP) {
+    await mkdir(path.dirname(OUT_MANIFEST), { recursive: true });
+    await writeFile(OUT_MANIFEST, buildManifest(clips));
+  }
 
   console.log(`\nüretilen: ${made} · atlanan: ${skipped} · toplam: ${clips.length}`);
   console.log(`manifesto: ${path.relative(ROOT, OUT_MANIFEST)}`);

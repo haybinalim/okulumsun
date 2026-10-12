@@ -10,6 +10,9 @@
  *   - Dosya makul boyutta mı (çok küçük = sentez sessiz üretmiş)
  *   - Süre metin uzunluğuyla tutarlı mı (çok kısa = kelime yutulmuş)
  *   - Diskte manifestoda olmayan yetim dosya var mı
+ *   - KÖKEN (Adım 15): her klibin özeti aktif ses kaynağıyla (sağlayıcı + model
+ *     kimliği) üretilmiş mi; aktif kaynağın ticari dağıtım izni var mı.
+ *     İzin yoksa SES_GECIS_MODU=1 olmadıkça çıkış 1 (ADR-0004; Adım 31 kaldırır).
  *
  * Kullanım: npm run audio:audit
  */
@@ -20,12 +23,18 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { klipleriTopla } from './ses/klipler.ts';
+import { kokenDenetle, ozetDosyasiniOku, sesKaynaginiDogrula } from './ses/sesKaynagi.ts';
 
 const exec = promisify(execFile);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const AUDIO = path.join(ROOT, 'public/audio');
 const MANIFEST = path.join(ROOT, 'src/audio/audioManifest.generated.ts');
 const CONTENT = path.join(ROOT, 'src/content/tr.json');
+const SES_KAYNAGI = path.join(ROOT, 'src/content/sesKaynagi.json');
+const HASHES = path.join(AUDIO, '.hashes.json');
+/** Açık, PR'da görünür geçiş istisnası: ticari izinsiz kaynakta denetimi kırmızıya çevirmez. */
+const SES_GECIS_MODU = process.env.SES_GECIS_MODU === '1';
 
 /** Bu boyutun altı neredeyse kesin sessizlik (AAC başlığı bile daha büyük). */
 const MIN_BYTES = 800;
@@ -97,17 +106,12 @@ async function main(): Promise<void> {
     ([, key, file]) => ({ key, file }),
   );
 
-  // Süre kontrolü için özgün metinleri geri bul.
-  const content = JSON.parse(await readFile(CONTENT, 'utf8')) as Record<
-    string,
-    Record<string, string>
-  >;
+  // Klip metinleri üreticiyle AYNI modülden gelir (ikinci düzleştirme yazmak yasak).
+  const clips = klipleriTopla(JSON.parse(await readFile(CONTENT, 'utf8')) as Record<string, unknown>);
+  const metinler = new Map(clips.map((c) => [c.key, c.text]));
   const textOf = (key: string): string | null => {
-    const [ns, ...rest] = key.split('.');
-    const k = rest.join('.');
-    if (ns === 'sayi') return null; // sayı adları üretiliyor, ayrı doğrulanıyor
-    const v = content[ns]?.[k];
-    return typeof v === 'string' ? v : null;
+    if (key.startsWith('sayi.')) return null; // sayı adları üretiliyor, süre denetimi dışı
+    return metinler.get(key) ?? null;
   };
 
   const problems: string[] = [];
@@ -154,7 +158,32 @@ async function main(): Promise<void> {
   const known = new Set(entries.map((e) => e.file));
   const orphans = onDisk.filter((f) => !known.has(f));
 
+  // Manifest ile içerik aynı klip kümesini tanımlamalı.
+  const manifestAnahtarlari = new Set(entries.map((e) => e.key));
+  for (const c of clips) if (!manifestAnahtarlari.has(c.key)) problems.push(`MANİFESTSİZ ${c.key}`);
+  for (const k of manifestAnahtarlari) if (!metinler.has(k)) problems.push(`İÇERİKSİZ  ${k}`);
+
+  // Köken denetimi.
+  const { $not: _not, ...kaynakHam } = JSON.parse(await readFile(SES_KAYNAGI, 'utf8')) as Record<string, unknown>;
+  const aktif = sesKaynaginiDogrula(kaynakHam);
+  const ozetDosyasi = existsSync(HASHES)
+    ? ozetDosyasiniOku(JSON.parse(await readFile(HASHES, 'utf8')))
+    : { kaynak: null, ozetler: {} };
+  const koken = kokenDenetle(aktif, clips, ozetDosyasi.ozetler);
+  for (const k of koken.ozetsiz) problems.push(`ÖZETSİZ    ${k} (.hashes.json'da yok)`);
+  for (const k of koken.eslesmeyen) problems.push(`KÖKEN      ${k} — özet aktif kaynakla (${aktif.modelKimligi}) eşleşmiyor`);
+
   console.log(`${checked}/${entries.length} klip denetlendi · ${(totalBytes / 1048576).toFixed(2)} MB`);
+  console.log(
+    `köken: ${aktif.modelKimligi} · yeni özet ${koken.yeniEslesen} · eski 'piper:' özeti ${koken.eskiEslesen}`,
+  );
+  if (koken.lisansUyarisi) {
+    if (SES_GECIS_MODU) {
+      console.warn(`\n${koken.lisansUyarisi}\n  SES_GECIS_MODU=1 → geçiş istisnası (Adım 31'de kaldırılacak).`);
+    } else {
+      problems.push(`${koken.lisansUyarisi} (geçiş için SES_GECIS_MODU=1)`);
+    }
+  }
   if (orphans.length) {
     console.log(`\n${orphans.length} yetim dosya (manifestoda yok):`);
     for (const o of orphans.slice(0, 10)) console.log(`  ${o}`);
