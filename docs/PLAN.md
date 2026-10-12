@@ -1113,13 +1113,15 @@ Ağaç, hedef son durumu gösterir; `(✓)` bugün repoda var, `(⬜)` planland�
 
 ```
 okulumsun/
-├── .github/workflows/ci.yml        # (⬜) lint+test+validate+build, PR'da e2e (§14 adım 2b)
+├── .github/workflows/ci.yml        # (✓) lint+test+validate+audio:audit+build, PR'da e2e (§14 adım 2b)
 ├── docs/
 │   ├── meb-ilkokul-matematik-2024.pdf  # (✓) resmî kaynak
 │   ├── meb-matematik-2024-metin.txt    # (✓) çıkarılmış metin, sayfa bölümlü
 │   ├── mufredat-kisitlari.md           # (✓) İHLAL EDİLEMEZ sınırlar
 │   ├── PLAN.md                         # (✓) bu belge
-│   └── PROGRESS.md                     # (✓) plan ↔ kod durum raporu
+│   ├── PROGRESS.md                     # (✓) plan ↔ kod durum raporu (makine okunur durum bloğu)
+│   ├── TEST-PROTOKOLU.md               # (✓) erişilebilirlik denetimi + çocuk test protokolü
+│   └── ses/                            # (✓) SES_KAYNAKLARI.md (köken envanteri), dinleme-testi.md
 ├── src/
 │   ├── content/                    # SAF VERİ (✓)
 │   │   ├── kazanimlar.json         # 19 resmî çıktı + tema/saat
@@ -1132,8 +1134,8 @@ okulumsun/
 │   │   └── schema/                 # (✓) Zod sınır doğrulayıcıları
 │   ├── exercises/                  # DETERMİNİSTİK JENERATÖRLER
 │   │   ├── types.ts rng.ts distractors.ts   # (✓) sözleşme + tohumlu RNG + çeldirici
-│   │   ├── registry.ts             # (⬜) şablon kimliği → jeneratör haritası
-│   │   └── templates/              # 4/39 şablon (✓ say, karsilastir, ritmik, toplaGorsel)
+│   │   ├── registry.ts             # (✓) şablon kimliği → jeneratör haritası
+│   │   └── templates/              # (✓) 39/39 şablon
 │   ├── progress/                   # (✓) mastery.ts scheduler.ts session.ts itemLifecycle.ts cikartma.ts (§6, §7)
 │   ├── persistence/                # (✓) db.ts repository.ts backup.ts persist.ts migrations/ (§10)
 │   ├── audio/                      # (✓) speech.ts useSpeak.ts audioManifest.generated.ts
@@ -1146,11 +1148,11 @@ okulumsun/
 │   │   └── screens/                # (✓) AudioUnlock ExerciseScreen TapCount TapToPlace OturumSonu Bahcem AnaEkran ModSecimi AvatarSecimi RenkSecimi TemaGirisi KonuSecimi VeliKapisi VeliPaneli
 │   ├── store/                      # (✓) appStore.ts — Zustand: navigasyon, profil, ayarlar + profildenYukle (Adım 9)
 │   └── dev/                        # (✓) BoardHarness.tsx AudioProbe.tsx (§13)
-├── scripts/                        # (✓) generate-audio, audit-audio, validate-content, fetch-fonts · (⬜) generate-content
+├── scripts/                        # (✓) generate-audio, audit-audio, validate-content, fetch-fonts, ses/ (klipler, sesKaynagi) · (⬜) generate-content
 ├── public/
-│   ├── audio/{sayi,op,nesne,renk,soru,tema,ui,geri,yardim}/   # (✓) 171 klip
+│   ├── audio/                      # (✓) 287 klip, 29 klasör (kaynak değişiyor → plan v2 Adım 31)
 │   └── fonts/                      # (✓) Andika latin + latin-ext
-└── tests/{unit,e2e}/               # (✓) generators.spec, board-geometry.spec
+└── tests/{unit,e2e}/               # (✓) 22 birim test dosyası, 2 e2e dosyası (board-geometry, adult-area)
 ```
 
 **İçerik ayrı JSON'da.** Bir öğretmen/editör/script JSON üretebilir, TypeScript üretemez · `validate-content.ts` çapraz referansları doğrular · **kod deploy etmeden içerik güncellenebilir** · tip güvenliği Zod `z.infer` + üretilen union tipleriyle korunur.
@@ -1184,23 +1186,24 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | # | İş | Durum | Bitti tanımı |
 |---|---|---|---|
 | 0 | Vite iskeleti, `tokens.ts`, `deviceProfile.ts`, `BoardHarness`, tek `BigButton` | ✅ | `npm run build` geçer; `?device=board` üç profili değiştirir; BoardHarness erişim bölgesini çizer |
-| 1 | **Ses altyapısı:** `generate-audio.ts`, `SpeechService`, ses kilidi, 0–100 sayı klipleri | ✅ | 171 klip diskte; `npm run audio:audit` temiz; `speak({kind:'sequence'})` çalışır; ekran değişiminde ses kesilir |
+| 1 | **Ses altyapısı:** `generate-audio.ts`, `SpeechService`, ses kilidi, 0–100 sayı klipleri | ✅ | 287 klip diskte (§4.5 kümeleri dâhil); `npm run audio:audit` temiz; `speak({kind:'sequence'})` çalışır; ekran değişiminde ses kesilir |
 | 2 | **İlk 4 jeneratör, saf TS, UI yok:** `M-SAY`, `M-KARSILASTIR`, `M-TOPLA-GORSEL`, `M-RITMIK` | ✅ | Property-based testler geçer (determinizm, tek doğru, ≤20, müfredat üçlüleri); `npm run validate` temiz |
 | 2b | **CI kurulumu** (`.github/workflows/ci.yml`): push'ta `lint + test + validate + build`, PR'da ek olarak `e2e` (tahta geometrisi) | ✅ | CI yeşil; geometri ihlali içeren kasıtlı commit CI'da KIRMIZI yanar (tuzak testiyle kanıtla) |
 | 2c | **Kayıt defteri** (`src/exercises/registry.ts`, §5.4) + `validate-content.ts`'e "hazır düğümün şablonu defterde mi" denetimi | ✅ | 4 şablon defterde; `durum:"hazir"` bir düğümün şablonunu defterden silmek `npm run validate`'i KIRAR (kanıtla); defterde olmayan şablon `assetReady = 0` alır |
-| 3 | SVG manipülatifler: `NesneKümesi` (yerleşim algoritması §8), `OnlukÇerçeve`, `SayıDoğrusu`, `Rakam` (10 özel glif §3.4), `SeçenekKartı` | ✅ | 4 şablonun ihtiyacı karşılandı (`Visual.tsx`, `positions.ts`); Rakam glifleri MEB dik temel formuna uygun SVG path'lerle çizildi (kancalı `1`, çizgisiz `7`) |
+| 3 | SVG manipülatifler: `NesneKümesi` (yerleşim algoritması §8), `OnlukÇerçeve`, `SayıDoğrusu`, `Rakam` (10 özel glif §3.4), `SeçenekKartı` | ✅/⚠ | 4 şablonun ihtiyacı karşılandı (`Visual.tsx`, `positions.ts`); Rakam glifleri MEB dik temel formuna uygun SVG path'lerle çizildi (kancalı `1`, çizgisiz `7`). ⚠ Rakam glifleri MEB onayı bekliyor → Adım 30 |
 | 4 | **Alıştırma ekranı** — uyaran + seçenek + seç/onayla + geri bildirim (§11 anatomi) | ✅ | 4 şablon ekranda oynanır; e2e tahta geometri testi geçer; **ilk gerçek çocuk testi burada yapılabilir** |
 | 5 | **Oturum motoru:** `src/progress/` → `mastery.ts` (§6.1 formüller + Leitner + yakınlık `q`), `scheduler.ts` (§6.4 kovalar + 5 sert kural), `session.ts` (8 soru yaşam döngüsü) | ✅ | §15'teki ustalık senaryo testleri geçer; kova oranları 1000 simüle oturumda ±%5 tutar; sert kuralların her biri birim testli; `mastery.ts` ve `scheduler.ts` SAF (içlerinde `Date.now`, Dexie, `Math.random` yok — grep ile kanıtla) |
 | 6 | **Yardım akışı:** 3 kademe (§7.2) + hareketsizlik sayacı + hata taksonomisi bağlama (`diagnosticTag` → `remediation` kovası §6.6) | ✅ | K1/K2/K3 senaryo testli (23 test); `GOREV_ANLASILMADI` ustalığı ETKİLEMEZ (testle kanıtla ✓); 15/30/30 sn zamanlayıcılar ekran değişiminde sıfırlanır (`useHelpTimer` hook); `TaniTakipcisi` remediation tetikleme |
 | 7 | Maskot durumları (6 poz §7.5) + kutlama + Bahçem (§7.4) | ✅ | Maskot 6 duruma geçer (17 test); kutlama ≤2 sn ve atlanabilir (`Celebration.tsx`); çıkartma oturum SONUNA bağlı (doğru sayısına değil, 13 testle kanıtla ✓); `cikartma.ts` SAF + 30 çıkartma→yeni sahne |
-| 8 | İlk açılış, mod seçimi, avatar, ana ekran (7 tema), tahta modu konu seçimi ([4b] §11), veli kapısı + panel (§11 liste) | ✅ | §11 akışının tamamı gezilebilir; veli paneli 5 kalemi içerir; tahta modunda IndexedDB'ye yazılmadığı testle kanıtlı |
-| 9 | **Kalıcılık + PWA:** `src/persistence/` (§10 store'lar, `active_session`, migrasyon iskeleti, yedek), `vite-plugin-pwa` precache, `storage.persist()` | ✅ | Çevrimdışı tam oturum e2e geçer; yedek dışa/içe aktarım e2e geçer; sayfa yenilenince duraklatılmış oturum kaldığı sorudan sürer; Lighthouse PWA kurulabilir raporu |
+| 8 | İlk açılış, mod seçimi, avatar, ana ekran (7 tema), tahta modu konu seçimi ([4b] §11), veli kapısı + panel (§11 liste) | 🔄 kısmi — veli paneli 5 kalemden 2'si: ayarlar kısmen (cihaz profili ayarı yok → Adım 27), Kaynaklar bağlantısı; ilerleme/zorlanılan konular/yedekleme Seçenek A gereği kapalı → Adım 52 | §11 akışının tamamı gezilebilir; veli paneli 5 kalemi içerir; tahta modunda IndexedDB'ye yazılmadığı testle kanıtlı |
+| 9 | **Kalıcılık + PWA:** `src/persistence/` (§10 store'lar, `active_session`, migrasyon iskeleti, yedek), `vite-plugin-pwa` precache, `storage.persist()` | 🔄 kısmi — çevrimdışı tam oturum e2e yok → Adım 26; yedek dışa/içe aktarım e2e yok → Adım 52; Lighthouse PWA kurulabilir değil → Adım 25 | Çevrimdışı tam oturum e2e geçer; yedek dışa/içe aktarım e2e geçer; sayfa yenilenince duraklatılmış oturum kaldığı sorudan sürer; Lighthouse PWA kurulabilir raporu |
 | 10 | **Kalan 35 şablon** (§5.2'de ⬜ olanlar) + gerektirdikleri ses kümeleri (§4.5) + SVG varlıklar (banknot, terazi, ızgara, çetele) | ✅ | Tema sırasına göre parti parti: **T1 (3) → T2 kalanı (7) → T4 (9) → T3 (4) → T5 (2) → T6 (6) → T7 (4) = 35.** Her şablon §5.5'teki 8 adımı tamamlar. 19 kazanımın TAMAMI kapsanınca kapanır |
-| 11 | **Dağıtım:** statik host (GitHub Pages veya Netlify) + `LICENSES.md` + "Kaynaklar" ekranı (§8) | ✅ | Ürün herkese açık URL'de; çevrimdışı ikinci ziyaret çalışır; USB'den `file://` ile açılış denendi (PWA hariç çalışmalı) |
-| 12 | Erişilebilirlik denetimi + **5 gerçek çocukla tablet testi** + düzeltme | ✅ | §15 elle doğrulama listesi işlenmiş; bulgular `docs/`e not edilmiş |
-| 13 | *(2. ay)* Fiziksel akıllı tahta doğrulaması + ölçek ayarı | ✅ | §13'teki fiziksel test listesi; gerekirse yalnız `tokens.ts` ayarı |
+| 11 | **Dağıtım:** statik host (GitHub Pages veya Netlify) + `LICENSES.md` + "Kaynaklar" ekranı (§8) | 🔄 kısmi — ürün okulumsun-tc.vercel.app'te yayında; USB/`file://` açılış kanıtı yok → Adım 49; yayın hedefi kararı (ADR-0003) → Adım 22 | Ürün herkese açık URL'de; çevrimdışı ikinci ziyaret çalışır; USB'den `file://` ile açılış denendi (PWA hariç çalışmalı) |
+| 12 | Erişilebilirlik denetimi + **5 gerçek çocukla tablet testi** + düzeltme | 🔄 kısmi — erişilebilirlik denetimi ✅ (`docs/TEST-PROTOKOLU.md`); 5 çocukla tablet testi yapılmadı → Adım 32 | §15 elle doğrulama listesi işlenmiş; bulgular `docs/`e not edilmiş |
+| 13 | *(2. ay)* Fiziksel akıllı tahta doğrulaması + ölçek ayarı | ⬜ — fiziksel tahta doğrulaması yapılmadı → Adım 33, 41 | §13'teki fiziksel test listesi; gerekirse yalnız `tokens.ts` ayarı |
 | 14 | PR #14: erişilebilir seçim kartları (`choiceErisim.ts`) + veli kapısı/paneli + `adult-area` e2e | ✅ | Rebase çakışmasız; lint/test (193)/validate/audio:audit/build/e2e yeşil. Adım 15–58: `reports/gelistirme-plani-v2.md` (depo dışı plan) |
 | 15 | Ses kökeni envanteri (`docs/ses/SES_KAYNAKLARI.md`), Kaynaklar/LICENSES acil lisans beyanı düzeltmesi, `scripts/ses/` (klip çıkarımı + `SesKaynagi` sözleşmesi), model kimliği özete, `audio:audit` köken denetimi, dinleme testi protokolü | ✅ | 287/287 özet `piper:` önekli, model bilinmiyor; `audio:audit` ticari izinsiz kaynakta kırmızı, CI'da `SES_GECIS_MODU=1` (Adım 31 kaldırır); `say` yalnız `--prototip`; 210 birim test |
+| 16 | Durumu gerçeğe döndürme: Adım 3/8/9/11/12/13 kanıta göre yeniden açıldı; PROGRESS yeniden yazıldı (makine okunur blok); TEST-PROTOKOLU numaralama + ekran bağlama düzeltmesi; LICENSES gizlilik = `VERI_SAKLAMA_BILDIRIMI`; README yayın satırı; §12 ağacı | ✅ | `tests/unit/belgeTutarliligi.spec.ts` geçer (LICENSES ↔ politika, PROGRESS bloğu ↔ test dosya sayısı, TEST-PROTOKOLU'nda "bağlanmadı" yok); yalnız belge, kod davranışı değişmedi |
 
 Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **35 şablon / ~3 haftaya** büyüdü
 (şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**
@@ -1354,6 +1357,7 @@ ve kodla birlikte AYNI commit'te düzeltilir (§0 kural 1).
 | 5 | Her `speechKey` ses manifestinde var | `validate-content.ts` |
 | 6 | Ön-koşul grafiğinde çevrim yok | `validate-content.ts` |
 | 7 | Ritmik sayma üçlüleri yalnız `RITMIK_SAYMA_BICIMLERI` içinde | `types.ts` tip düzeyi + property testi |
+| 8 | `PROGRESS.md` makine okunur bloğundaki `birim_dosya` = `tests/unit` dosya sayısı; LICENSES gizlilik paragrafı = `VERI_SAKLAMA_BILDIRIMI` (durum tablosu kanıtla yeniden açıldı — Adım 16, 12 Eki 2026) | `tests/unit/belgeTutarliligi.spec.ts` |
 
 **Bayatlık kontrolü — her adımın sonunda 60 saniye:** `npm run validate` çıktısındaki
 sayıları (kazanım · beceri · etiket · jeneratör) §5.2, §14 ve `PROGRESS.md` ile karşılaştır.

@@ -59,6 +59,5 @@ Kaynak sayfaları ve kupür eşlemesi [`docs/BANKNOT_GORSEL_KAYNAKLARI.md`](docs
 ## Gizlilik beyanı
 
 Bu uygulama ad-soyad, fotoğraf, konum veya hesap bilgisi İSTEMEZ.
-Tüm veri yalnızca cihazda saklanır (IndexedDB), hiçbir sunucuya
-gönderilmez. Uygulamayı kaldırdığınızda tüm veri silinir. İnternet
-bağlantısı gerekmez — ilk yüklemeden sonra çevrimdışı çalışır.
+Bu geliştirme sürümünde öğrenci veya veli verisi saklanmaz; sayfa yenilendiğinde oturum bilgileri silinir.
+İnternet bağlantısı ilk yüklemeden sonra gerekmez.
