@@ -17,6 +17,7 @@
  */
 
 import { AUDIO_MANIFEST, type SpeechKey } from './audioManifest.generated';
+import { kayitEkle } from '../hata/hataKaydi';
 
 export type { SpeechKey };
 
@@ -251,13 +252,18 @@ class SpeechService {
       if (!entry) return null;
       try {
         const res = await fetch(`${AUDIO_BASE}${entry.file}`);
-        if (!res.ok) return null;
+        if (!res.ok) {
+          kayitEkle({ tur: 'ses', mesaj: `klip yüklenemedi: ${key} (HTTP ${res.status})` });
+          return null;
+        }
         const bytes = await res.arrayBuffer();
         const buffer = await this.#ctx!.decodeAudioData(bytes);
         this.#buffers.set(key, buffer);
         return buffer;
       } catch {
         // Ses indirilemezse ekran görsel yönergesiyle çalışmaya devam eder.
+        // Anahtar içerik kimliğidir, kişisel değil (Adım 23).
+        kayitEkle({ tur: 'ses', mesaj: `klip yüklenemedi: ${key}` });
         return null;
       } finally {
         this.#inflight.delete(key);

@@ -3,8 +3,16 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import { guvenlikBasliklari } from './scripts/yayin/basliklar.ts';
+import pkg from './package.json' with { type: 'json' };
+
+// Adım 23: sürüm kimliği. GitHub Actions → GITHUB_SHA, Vercel → VERCEL_GIT_COMMIT_SHA.
+const derlemeSha = process.env.GITHUB_SHA ?? process.env.VERCEL_GIT_COMMIT_SHA;
 
 export default defineConfig({
+  define: {
+    __UYGULAMA_SURUMU__: JSON.stringify(pkg.version),
+    __DERLEME_KIMLIGI__: JSON.stringify(derlemeSha ? derlemeSha.slice(0, 7) : 'yerel'),
+  },
   plugins: [
     react(),
     tailwindcss(),

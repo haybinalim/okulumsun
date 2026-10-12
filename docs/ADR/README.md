@@ -12,7 +12,7 @@ Geri dönüş maliyeti olan her karar burada numaralı bir kayıtla tutulur. Kur
 | [0002](0002-ogrenci-verisi-saklama.md) | Öğrenci verisi saklama | Önerildi | 39, 52 |
 | [0003](0003-yayin-tek-kaynak.md) | Tek yayın kaynağı ve güvenlik başlıkları | Kabul | 22 |
 | [0004](0004-ses-kaynagi-ve-lisans.md) | Ses kaynağı ve lisans | Önerildi | 15, 18, 31, 54, 58 |
-| [0005](0005-yerel-hata-gunlugu.md) | Yerel hata günlüğü | Önerildi | 23 |
+| [0005](0005-yerel-hata-gunlugu.md) | Yerel hata günlüğü | Kabul | 23 |
 | [0006](0006-calisma-kagidi-pdf.md) | Çalışma kâğıdı: HTML ve yazdırma | Taslak | 35, 48 |
 | [0007](0007-isinma-kesfi-plan-6-5.md) | Isınma Keşfi ve PLAN §6.5 | Taslak | 47 |
 | [0008](0008-sinif-turu-isbirlikci-gosterim.md) | Sınıf Turu: iş birlikçi gösterim | Taslak | 36 |

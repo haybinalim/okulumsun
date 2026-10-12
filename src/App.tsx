@@ -11,6 +11,7 @@ import { KonuSecimi } from './ui/screens/KonuSecimi';
 import { VeliKapisi } from './ui/screens/VeliKapisi';
 import { VeliPaneli } from './ui/screens/VeliPaneli';
 import { Kaynaklar } from './ui/screens/Kaynaklar';
+import { SorunBildir } from './ui/screens/SorunBildir';
 import { OturumSonu } from './ui/screens/OturumSonu';
 import { Bahcem } from './ui/screens/Bahcem';
 import { useAppStore, accentBul } from './store/appStore';
@@ -141,6 +142,17 @@ export default function App() {
       <BoardHarness profile={profile}>
         <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <VeliPaneli />
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Sorun bildir (Adım 23)
+  if (ekran === 'sorunBildir') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <SorunBildir cihaz={profile} />
         </div>
       </BoardHarness>
     );

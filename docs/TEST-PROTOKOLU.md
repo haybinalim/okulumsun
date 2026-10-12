@@ -161,3 +161,14 @@ bulgu yok**. Aşağıdakiler fiziksel test sonrası değerlendirilecek:
 2. **Akıllı tahta doğrulaması** (PLAN §14 Adım 13 → plan v2 Adım 33, 41)
 3. **Yeni ekranların elle testi** (HOTSPOT_FIND, MATCH_PAIRS, SEQUENCE_ORDER) —
    ekranlar bağlı; fiziksel test sırasında denenecek
+
+
+## Sorun bildirme (Adım 23)
+
+Uygulama sınıfta takılır veya beklenmedik davranırsa:
+
+1. Sayfayı **yenilemeden** yetişkin alanına girin (Ayarlar → sayı sırası kapısı).
+2. "Sorun bildir →" düğmesine dokunun. Ekranda sürüm (`v0.1.0 · abc1234`) ve bu oturumdaki son 20 hata görünür.
+3. "Panoya kopyala" ile metni kopyalayıp geliştiriciye iletin (e-posta, mesaj). Pano çalışmazsa metin seçili kalır; elle kopyalayın.
+4. Kayıtlar yalnız bellektedir: sayfa yenilenince silinir, cihaza yazılmaz, hiçbir yere gönderilmez. Öğrenci adı veya cevap içermez.
+5. Gözlem formuna sürüm metnini ve sorunun yaşandığı ekranı not edin.

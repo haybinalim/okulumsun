@@ -32,7 +32,8 @@ export type Ekran =
   | 'konuSecimi'
   | 'veliKapisi'
   | 'veliPaneli'
-  | 'kaynaklar';
+  | 'kaynaklar'
+  | 'sorunBildir';
 
 /** Kullanım modu — plan §3.3. */
 export type Mod = 'tahta' | 'kisisel';
