@@ -14,7 +14,7 @@ import { ChoiceCard, type ChoiceState } from '../primitives/ChoiceCard';
 import { SpeakButton } from '../primitives/SpeakButton';
 import { Visual } from '../svg/Visual';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
-import { randomPraise, randomRetry } from '../../audio/speech';
+import { useGeriBildirim } from '../useGeriBildirim';
 import type { MatchPairsExercise, EslesmeKarti } from '../../exercises/types';
 import type { Accent } from '../../design/tokens';
 
@@ -28,6 +28,7 @@ export function MatchPairsScreen({
   onDone: (dogruMu: boolean) => void;
 }) {
   useScreenSpeech(exercise.prompt.ses, [exercise.itemId]);
+  const geriBildirim = useGeriBildirim(exercise.itemId);
 
   const [eslesenCiftler, setEslesenCiftler] = useState<Set<string>>(new Set());
   const [seciliSol, setSeciliSol] = useState<string | null>(null);
@@ -74,14 +75,14 @@ export function MatchPairsScreen({
       // Tüm çiftler bulundu mu?
       if (eslesenCiftler.size + 1 === ciftler.length) {
         setCozum('dogru');
-        void speak(randomPraise());
+        void speak(geriBildirim.ovgu());
         window.setTimeout(() => onDone(true), 900);
       }
     } else {
       // Yanlış eşleşme
       setHataCifti([seciliSol, id]);
       setCozum('tekrar');
-      void speak(randomRetry());
+      void speak(geriBildirim.tekrar());
       window.setTimeout(() => {
         setCozum('bos');
         setSeciliSol(null);

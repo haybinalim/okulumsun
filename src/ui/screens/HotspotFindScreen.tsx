@@ -15,7 +15,7 @@ import { SpeakButton } from '../primitives/SpeakButton';
 import { BigButton } from '../primitives/BigButton';
 import { Visual } from '../svg/Visual';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
-import { randomPraise, randomRetry } from '../../audio/speech';
+import { useGeriBildirim } from '../useGeriBildirim';
 import type { HotspotFindExercise, HotspotOption } from '../../exercises/types';
 import type { Accent } from '../../design/tokens';
 
@@ -29,6 +29,7 @@ export function HotspotFindScreen({
   onDone: (dogruMu: boolean) => void;
 }) {
   useScreenSpeech(exercise.prompt.ses, [exercise.itemId]);
+  const geriBildirim = useGeriBildirim(exercise.itemId);
 
   const [dokunulan, setDokunulan] = useState<Set<string>>(new Set());
   const [hatalar, setHatalar] = useState<Set<string>>(new Set());
@@ -51,14 +52,14 @@ export function HotspotFindScreen({
       if (tamamlandi || (hepsiGerekli && dogruIds.every((d) => d === id || dokunulan.has(d)))) {
         // Tamamlandı — tüm doğrular bulundu
         setCozum('dogru');
-        void speak(randomPraise());
+        void speak(geriBildirim.ovgu());
         window.setTimeout(() => onDone(true), 900);
       }
     } else {
       // Yanlış bölge
       setHatalar((onceki) => new Set([...onceki, id]));
       setCozum('tekrar');
-      void speak(randomRetry());
+      void speak(geriBildirim.tekrar());
       window.setTimeout(() => {
         setCozum('bos');
         setHatalar(new Set());
@@ -145,7 +146,7 @@ export function HotspotFindScreen({
                 variant="accent"
                 onPress={() => {
                   setCozum('dogru');
-                  void speak(randomPraise());
+                  void speak(geriBildirim.ovgu());
                   window.setTimeout(() => onDone(true), 900);
                 }}
               >

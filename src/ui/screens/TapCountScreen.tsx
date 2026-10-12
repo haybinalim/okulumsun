@@ -6,7 +6,7 @@ import { BigButton } from '../primitives/BigButton';
 import { Sprite } from '../svg/Sprite';
 import { nesneKonumlari } from '../svg/positions';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
-import { randomPraise, randomRetry } from '../../audio/speech';
+import { useGeriBildirim } from '../useGeriBildirim';
 import { hataDestekKarari, type HataDestekKarari } from '../../exercises/hataDestek';
 import type { TapCountExercise, Renk } from '../../exercises/types';
 import type { Accent } from '../../design/tokens';
@@ -35,6 +35,7 @@ export function TapCountScreen({
   onDone: (dogruMu: boolean) => void;
 }) {
   useScreenSpeech(exercise.prompt.ses, [exercise.itemId]);
+  const geriBildirim = useGeriBildirim(exercise.itemId);
 
   const [dokunulan, setDokunulan] = useState<Set<string>>(new Set());
   const [seciliId, setSeciliId] = useState<string | null>(null);
@@ -78,13 +79,13 @@ export function TapCountScreen({
     const dogruMu = seciliId === dogruId;
     if (dogruMu) {
       setCozum('dogru');
-      void speak(randomPraise());
+      void speak(geriBildirim.ovgu());
       window.setTimeout(() => onDone(true), 900);
     } else {
       const destek = hataDestekKarari(exercise, seciliId);
       setHataDestegi(destek);
       setCozum('tekrar');
-      void speak(randomRetry());
+      void speak(geriBildirim.tekrar());
       if (destek != null) void speak(destek.destek.ses);
       window.setTimeout(() => {
         setCozum('bos');

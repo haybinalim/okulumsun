@@ -11,11 +11,12 @@
  *   3. Otomatik tespit            (son çare)
  */
 
+import { CIHAZ_PROFILI_ANAHTARI } from '../persistence/depolamaIzinListesi';
 import { SCALE, SIZE, TEXT, COLOR, REACH, type DeviceProfile } from './tokens';
 
 export type { DeviceProfile };
 
-const STORAGE_KEY = 'okulumsun.deviceOverride';
+const STORAGE_KEY = CIHAZ_PROFILI_ANAHTARI;
 const VALID: readonly DeviceProfile[] = ['board', 'tablet', 'phone'];
 
 function isValid(v: string | null): v is DeviceProfile {
@@ -44,7 +45,7 @@ export function readStoredOverride(): DeviceProfile | null {
 export function storeOverride(profile: DeviceProfile | null): void {
   try {
     if (profile === null) window.localStorage.removeItem(STORAGE_KEY);
-    else window.localStorage.setItem(STORAGE_KEY, profile);
+    else window.localStorage.setItem(CIHAZ_PROFILI_ANAHTARI, profile);
   } catch {
     // Sessizce geç — geçersiz kılma kaydedilemezse otomatik tespit devreye girer.
   }

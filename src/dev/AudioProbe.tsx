@@ -54,15 +54,15 @@ export function AudioProbe() {
         <Probe
           label="Aferin"
           onPress={() => {
-            note('rastgele övgü');
-            void speech.speak(randomPraise());
+            note('övgü (tohum: probe)');
+            void speech.speak(randomPraise('probe'));
           }}
         />
         <Probe
           label="Tekrar dene"
           onPress={() => {
-            note('rastgele tekrar daveti');
-            void speech.speak(randomRetry());
+            note('tekrar daveti (tohum: probe)');
+            void speech.speak(randomRetry('probe'));
           }}
         />
         <Probe
