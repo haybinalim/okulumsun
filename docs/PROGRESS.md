@@ -39,6 +39,7 @@ Sıradaki iş **Adım 13** — Fiziksel akıllı tahta doğrulaması (2. ay).
 | 11 | Dağıtım + LICENSES + gizlilik beyanı | ✅ |
 | 12 | Erişilebilirlik + 5 çocukla tablet testi | ✅ denetim + protokol (fiziksel test bekliyor) |
 | 13 | (2. ay) Fiziksel tahta doğrulaması | ⬜ |
+| 14 | PR #14 birleştirildi — erişilebilir şık etiketleri, veli kapısı/panel; birim test sayısı 193 (18 dosya), e2e 5 geçti + 1 bilinçli atlandı | ✅ |
 
 ## Teknik doğrulama (son çalıştırma: 6 Ağustos 2026)
 
