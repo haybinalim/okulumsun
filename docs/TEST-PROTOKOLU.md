@@ -90,7 +90,7 @@ Uygulama bir dokunmatik arayüz olarak tasarlandı — klavye navigasyonu birinc
 ### 2.5 5 gerçek 1. sınıf öğrencisiyle test
 
 - [ ] **Fiziksel test gerekli:** Planın en değerli doğrulama adımı
-- Test protokolü §3'te
+- Test protokolü §3'te; plan v2 Adım 32'de (pilot, KG-20) uygulanacak
 
 ## 3. Çocuk test protokolü
 
@@ -128,10 +128,11 @@ Her öğrenci için aşağıdakiler not edilir:
 
 ### 3.4 Bulguların kaydı
 
-Test sonrası bulgular bu dosyaya eklenir:
+Test sonrası bulgular bu dosyanın sonuna, yeni bir numaralı bölüm olarak eklenir
+(ör. `## 6. Test bulguları`):
 
 ```
-## 4. Test bulguları
+## 6. Test bulguları
 
 ### Öğrenci 1 (yaş, cinsiyet)
 - Tarih: ...
@@ -149,12 +150,14 @@ bulgu yok**. Aşağıdakiler fiziksel test sonrası değerlendirilecek:
 
 1. `--color-retry` kontrastı — küçük metinde kullanılmıyorsa sorun yok
 2. HOTSPOT_FIND, MATCH_PAIRS, SEQUENCE_ORDER ekranlarının erişilebilirliği —
-   bu ekranlar henüz ExerciseScreen'e bağlanmadı (Adım 10 notu)
+   üçü de `ExerciseScreen.tsx` satır 15–17'de içe aktarılıp bağlı (11 Eki 2026
+   doğrulandı); elle test ihtiyacı: sürükle/eşleştir/dokun etkileşimlerinin
+   tablette parmakla ve klavyeyle denenmesi
 3. TAP_COUNT ekranının dokunma geri bildirimi — fiziksel test gerekli
 
 ## 5. Öncelik sırası
 
 1. **Fiziksel tablet testi** (5 öğrenci) — en yüksek öncelik
-2. **Akıllı tahta doğrulaması** (Adım 13, 2. ay)
-3. **Ekran bağlama** (HOTSPOT_FIND, MATCH_PAIRS, SEQUENCE_ORDER) —
-   fiziksel test öncesi tamamlanmalı
+2. **Akıllı tahta doğrulaması** (PLAN §14 Adım 13 → plan v2 Adım 33, 41)
+3. **Yeni ekranların elle testi** (HOTSPOT_FIND, MATCH_PAIRS, SEQUENCE_ORDER) —
+   ekranlar bağlı; fiziksel test sırasında denenecek
