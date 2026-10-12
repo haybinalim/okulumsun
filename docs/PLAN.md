@@ -234,7 +234,7 @@ Tüm sabit metinler geliştirme anında sentezlenip `public/audio/` altına göm
 | Sağlayıcı | Durum | Kullanım |
 |---|---|---|
 | **macOS `say -v Yelda`** | ✅ Bu makinede doğrulandı | **Gün 1 prototipi.** Anında, bedava, sınırsız, çevrimdışı. Kalite orta ama akışı hemen test ettirir. |
-| **Piper TTS** (`tr_TR-fahrettin-medium`) | Kurulacak, MIT | **Üretim varsayılanı.** Yerel, sınırsız, ücretsiz, **dağıtım lisansı net.** |
+| **Piper TTS** (`tr_TR-fahrettin-medium`) | ⚠ İnceleniyor — ADR-0004 | **Üretimde kullanılmaz** (Adım 15): `fahrettin`/`fettah` 30 Ara 2025'te katkı verenlerin isteğiyle kaldırıldı, `dfki` CC BY-NC-SA. Mevcut 287 klibin kökeni bilinmiyor; Google Cloud TTS Chirp 3 HD ile yeniden üretilecek (Adım 31). Bkz. `docs/ses/SES_KAYNAKLARI.md`, §16 risk 2–3 |
 | **ElevenLabs ücretsiz kredi** | Hesap gerekir | **Sadece maskot replikleri** (~60 klip). Kredi sınırlı → en çok duyulan, kişilik taşıyan cümlelere ayrılır. ⚠️ Ücretsiz katmanın dağıtım şartları yayın öncesi doğrulanmalı. |
 
 Hat, `src/content/tr.json`'u tarar, yalnız **hash'i değişen** anahtarları yeniden üretir, `audioManifest.generated.ts` + `SpeechKey` union tipini yazar. Sağlayıcı değişimi tek env değişkeni.
@@ -1200,6 +1200,7 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 12 | Erişilebilirlik denetimi + **5 gerçek çocukla tablet testi** + düzeltme | ✅ | §15 elle doğrulama listesi işlenmiş; bulgular `docs/`e not edilmiş |
 | 13 | *(2. ay)* Fiziksel akıllı tahta doğrulaması + ölçek ayarı | ✅ | §13'teki fiziksel test listesi; gerekirse yalnız `tokens.ts` ayarı |
 | 14 | PR #14: erişilebilir seçim kartları (`choiceErisim.ts`) + veli kapısı/paneli + `adult-area` e2e | ✅ | Rebase çakışmasız; lint/test (193)/validate/audio:audit/build/e2e yeşil. Adım 15–58: `reports/gelistirme-plani-v2.md` (depo dışı plan) |
+| 15 | Ses kökeni envanteri (`docs/ses/SES_KAYNAKLARI.md`), Kaynaklar/LICENSES acil lisans beyanı düzeltmesi, `scripts/ses/` (klip çıkarımı + `SesKaynagi` sözleşmesi), model kimliği özete, `audio:audit` köken denetimi, dinleme testi protokolü | ✅ | 287/287 özet `piper:` önekli, model bilinmiyor; `audio:audit` ticari izinsiz kaynakta kırmızı, CI'da `SES_GECIS_MODU=1` (Adım 31 kaldırır); `say` yalnız `--prototip`; 210 birim test |
 
 Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **35 şablon / ~3 haftaya** büyüdü
 (şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**
@@ -1288,8 +1289,8 @@ npm run dev
 ## 16. Açık Riskler
 
 1. **Fiziksel tahta doğrulanmamış** (1 ay). §13'teki üç katman geometriyi korur, dokunma isabetini kanıtlamaz. `tokens.ts` tek noktadan ayarlanabilir tutuluyor.
-2. **ElevenLabs ücretsiz katmanı**nın üretilen sesi uygulamada dağıtma iznini veriyor mu — yayın öncesi şartlar okunmalı. Vermiyorsa Piper tek başına yeterli (lisansı net).
-3. **Piper kurulumu** Python 3.9 ile uyumlu mu; değilse `python3.11` veya `edge-tts` alternatifi.
+2. **ElevenLabs ücretsiz katmanı**nın üretilen sesi uygulamada dağıtma iznini veriyor mu — yayın öncesi şartlar okunmalı. Vermiyorsa Piper tek başına yeterli (lisansı net). *(Adım 15 notu: bu varsayım geçersiz — Türkçe Piper sesleri ticari dağıtım için uygun değil; ElevenLabs kullanılmaz. Bkz. `docs/ses/SES_KAYNAKLARI.md`.)*
+3. **Piper kurulumu** Python 3.9 ile uyumlu mu; değilse `python3.11` veya `edge-tts` alternatifi. *(Adım 15 notu: Piper ve `edge-tts` üretim kaynağı olmaktan çıktı — `docs/ses/SES_KAYNAKLARI.md`; ses kaynağı ADR-0004'te kararlaştırılır.)*
 4. **`MAT.1.1.9` banknot görselleri** — TCMB koruması nedeniyle stilize temsil çizilmeli. Projedeki tek gerçek varlık riski.
 5. **`MAT.1.4.1` (veriye dayalı araştırma)** doğası gereği çok adımlı ve sınıf ortamına dönük — tek kişilik dijital alıştırmaya indirgenmesi programın ruhunu tam karşılamayabilir. Sadeleştirilmiş bir versiyon yapılıp sınırı açıkça kaydedilecek.
 6. **Tarayıcı depolama tahliyesi.** `storage.persist()` + PWA kurulumu + yedek (§10) riski azaltır ama sıfırlamaz; özellikle kurulmamış iOS Safari'de 7 gün kuralı yılın verisini silebilir. Karşı önlem davranışsal: veli panelindeki yedek uyarısı ve "ana ekrana ekle" yönergesi.

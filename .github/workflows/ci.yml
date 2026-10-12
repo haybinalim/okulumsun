@@ -16,6 +16,9 @@ jobs:
       - run: npm test
       - run: npm run validate
       - run: npm run audio:audit
+        env:
+          # ADR-0004 / Adım 31'de kaldırılacak: mevcut kliplerin ticari dağıtım izni yok (geçiş istisnası).
+          SES_GECIS_MODU: '1'
       - run: npm run build
   e2e:
     runs-on: ubuntu-latest

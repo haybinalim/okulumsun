@@ -67,7 +67,9 @@ export function Kaynaklar() {
             <strong>Noto Color Emoji</strong> — SIL OFL 1.1
           </li>
           <li>
-            <strong>Piper TTS</strong> (tr_TR-fahrettin-medium) — MIT Lisansı
+            <strong>Ses klipleri</strong> — kaynak lisans incelemesinde (ADR-0004); ticari dağıtım
+            öncesi değiştirilecek. Üretim aracı: Piper (GPL-3.0, yalnız geliştirme makinesinde;
+            çıktıya lisans geçirmez)
           </li>
         </ul>
       </section>

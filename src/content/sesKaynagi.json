@@ -1,0 +1,9 @@
+{
+  "$not": "Aktif ses kaynağı (Adım 15). Geçiş durumu: mevcut 287 klibin kökeni bilinmiyor (KG-15); Adım 31'de Google Cloud TTS Chirp 3 HD ile değiştirilecek (KG-01). Ayrıntı: docs/ses/SES_KAYNAKLARI.md",
+  "saglayici": "piper",
+  "modelKimligi": "piper:bilinmiyor",
+  "lisansUrl": "docs/ses/SES_KAYNAKLARI.md",
+  "ticariDagitimIzni": false,
+  "cocukUrunundeKullanim": "bilinmiyor",
+  "atifSarti": null
+}
