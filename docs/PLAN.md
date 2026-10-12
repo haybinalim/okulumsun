@@ -1184,6 +1184,7 @@ okulumsun/
 │   ├── design/
 │   ├── dev/
 │   ├── exercises/
+│   ├── hata/
 │   ├── persistence/
 │   ├── progress/
 │   ├── store/

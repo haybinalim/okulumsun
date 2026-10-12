@@ -26,8 +26,8 @@ test.describe('sorun bildir', () => {
     }
 
     await expect(page.getByText(/^v0\.1\.0 · /)).toBeVisible();
-    // Playwright Chromium m4a çözemediği için klip hataları tamponu doldurur (20 sınırı);
-    // bu yüzden ikinci kasıtlı hata yetişkin alanındayken, sessiz ekranda üretilir.
+    // Bazı Chromium derlemeleri m4a çözemez; klip hataları tamponu (20) doldurabilir.
+    // Bu yüzden ikinci kasıtlı hata yetişkin alanındayken, sessiz ekranda üretilir.
     await page.evaluate(() => {
       setTimeout(() => void Promise.reject(new Error('deneme hatası (e2e)')), 0);
     });
@@ -47,7 +47,6 @@ test.describe('sorun bildir', () => {
     expect(JSON.stringify(depolama)).not.toContain('hataTetikle');
     expect(await page.evaluate(() => JSON.stringify({ ...localStorage }))).not.toContain('deneme hatası');
 
-    await expect(rapor).toHaveValue(/klip yüklenemedi: /);
     await page.getByRole('button', { name: 'Kayıtları temizle' }).click();
     await expect(rapor).toHaveValue(/Kayıt sayısı: 0/);
     expect(disIstekler).toEqual([]);
