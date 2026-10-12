@@ -5,8 +5,10 @@ lisans bilgilerini içerir (plan §8).
 
 ## Uygulama lisansı
 
-Bu proje henüz bir lisans seçmedi. Eğitim amaçlı açık kaynak olarak
-dağıtılması planlanmaktadır.
+Tescilli — **tüm hakları saklıdır** (ADR-0013). Kod için `LICENSE`, `src/content/` metinleri için
+`CONTENT-LICENSE`. Depo herkese açık görüntülenebilir; bu, kullanma, dağıtma veya barındırma
+izni vermez. `package.json` → `"license": "UNLICENSED"`. Aşağıdaki üçüncü taraf bileşenler bu
+lisansın dışındadır ve kendi lisanslarına tabidir.
 
 ## Bağımlılıklar
 

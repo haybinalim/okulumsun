@@ -43,6 +43,18 @@ describe('belge tutarlılığı', () => {
     expect(durum.e2e_dosya).toBe(e2eDosya);
   });
 
+  it('LICENSE dosyası var ve package.json license alanı ile uyumlu (ADR-0013)', () => {
+    const paket = JSON.parse(oku('package.json')) as { license?: string; private?: boolean };
+    expect(paket.license).toBe('UNLICENSED');
+    expect(paket.private).toBe(true);
+    expect(oku('LICENSE')).toMatch(/Tüm hakları saklıdır/);
+    expect(oku('CONTENT-LICENSE')).toMatch(/src\/content\//);
+  });
+
+  it("LICENSES 'henüz bir lisans seçmedi' içermez", () => {
+    expect(oku('LICENSES.md')).not.toMatch(/henüz bir lisans seçmedi/);
+  });
+
   it("TEST-PROTOKOLU 'bağlanmadı' ifadesi içermez", () => {
     expect(oku('docs/TEST-PROTOKOLU.md')).not.toMatch(/bağlanmadı/);
   });
