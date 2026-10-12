@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { kayitEkle } from '../hata/hataKaydi';
 
 /**
  * HATA SINIRI — "beyaz ekran" sınıfını ortadan kaldırır.
@@ -19,8 +20,8 @@ import { Component, type ErrorInfo, type ReactNode } from 'react';
  *  - Teknik ayrıntı `<details>` içinde KAPALI durur; veli/öğretmen açıp
  *    kopyalayabilir (plan §16'daki "sorun bildir" akışının çekirdeği).
  *
- * ADIM 9 NOTU: Kalıcılık geldiğinde `componentDidCatch` gövdesindeki kayıt
- * `events` store'una yazılacak. Şimdilik konsola yazar; sessiz kalmaz.
+ * ADIM 23: `componentDidCatch` hatayı bellekteki yerel günlüğe de yazar
+ * (`src/hata/hataKaydi.ts`, ADR-0005); yetişkin "Sorun bildir"den görür.
  */
 
 interface Props {
@@ -42,6 +43,11 @@ export class ErrorBoundary extends Component<Props, State> {
     // Çevrimdışı üründe uzak telemetri YOK (plan §16 risk 7 — KVKK ve okul ağı).
     // Yerel görünürlük şart: en azından konsolda ve ekranda iz bırakır.
     console.error('[okulumsun] Ekran çizilemedi:', hata, bilgi.componentStack);
+    kayitEkle({
+      tur: 'render',
+      mesaj: hata.message,
+      yigin: hata.stack ?? bilgi.componentStack ?? undefined,
+    });
   }
 
   private yenidenDene = (): void => {

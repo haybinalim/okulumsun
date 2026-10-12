@@ -10,6 +10,7 @@
  * Çocuk bu ekrana veli kapısından ulaşır — çocuk arayüzünde değil.
  */
 
+import { SURUM_METNI } from '../../hata/surum';
 import { UCUNCU_TARAF_VARLIKLAR } from '../../content/ucuncuTarafVarliklar';
 import { useAppStore } from '../../store/appStore';
 
@@ -105,6 +106,7 @@ export function Kaynaklar() {
       >
         ← Geri
       </button>
+      <p style={{ marginTop: '1.5rem', fontSize: '0.85rem', color: '#6b6b6b', textAlign: 'center' }}>{SURUM_METNI}</p>
     </div>
   );
 }

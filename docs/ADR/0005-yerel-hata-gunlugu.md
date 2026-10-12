@@ -1,6 +1,6 @@
 # ADR-0005: Yerel hata günlüğü
 
-- **Durum:** Önerildi
+- **Durum:** Kabul
 - **Tarih:** 2026-10-12
 - **Karar sahibi:** Geliştirici · **Kullanıcı onayı:** Gerekmez (Sıfır Veri Sözleşmesi'ni değiştirmiyor)
 - **İlgili:** Adım 23, `OturumHatasi`
@@ -17,7 +17,7 @@ Pilot ve sınıf kullanımında hatalar görünmez kalıyor; uzaktan hata raporl
 
 ## Karar
 
-Önerilen: **Seçenek 1**. Günlük yalnız bellekte tutulur (sayfa yenilenince silinir), kişisel veri içermez (yalnız hata türü, ekran, sürüm kimliği, şablon kodu), dışarıya gönderilmez; yetişkin alanındaki "Sorun bildir" metni panoya kopyalar.
+**Seçenek 1** (Adım 23'te uygulandı). Günlük yalnız bellekte tutulur (sayfa yenilenince silinir), kişisel veri içermez (yalnız hata türü, ekran, sürüm kimliği, şablon kodu), dışarıya gönderilmez; yetişkin alanındaki "Sorun bildir" metni panoya kopyalar.
 
 ## Sonuçlar
 
@@ -38,5 +38,5 @@ Düşük.
 
 ## Kabul koşulları
 
-- [ ] Günlük şeması kişisel alan içermiyor (birim test).
-- [ ] Ağ ve depolama denetimi yeşil.
+- [x] Günlük şeması kişisel alan içermiyor (`tests/unit/hataKaydi.spec.ts`).
+- [x] Ağ ve depolama denetimi yeşil (birim casus + e2e `sorun-bildir.spec.ts`).

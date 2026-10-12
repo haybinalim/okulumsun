@@ -9,6 +9,7 @@ import { OKUL_AYLARI, acilanTemalar } from '../../content/okulAyi';
 import { COLOR } from '../../design/tokens';
 import type { ReadingLevel } from '../../store/appStore';
 import { VERI_SAKLAMA_BILDIRIMI } from '../../persistence/veriSaklamaPolitikasi';
+import { SURUM_METNI } from '../../hata/surum';
 
 export function VeliPaneli() {
   const {
@@ -128,6 +129,17 @@ export function VeliPaneli() {
           Lisanslar ve gizlilik →
         </button>
       </Bolum>
+
+      <Bolum baslik="Sorun bildir">
+        <p style={{ ...bilgiMetniStili, marginBottom: 12 }}>
+          Uygulama bu oturumda takıldıysa hata özetini görüp kopyalayabilirsiniz. Bilgiler cihazdan çıkmaz.
+        </p>
+        <button type="button" onClick={() => ekranGit('sorunBildir')} style={aktifButtonStyle}>
+          Sorun bildir →
+        </button>
+      </Bolum>
+
+      <footer style={{ ...bilgiMetniStili, textAlign: 'center' }}>{SURUM_METNI}</footer>
     </main>
   );
 }

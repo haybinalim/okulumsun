@@ -4,6 +4,14 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { ErrorBoundary } from './ui/ErrorBoundary.tsx'
+import { ekranSaglayicisiAyarla } from './hata/hataKaydi.ts'
+import { useAppStore } from './store/appStore.ts'
+import { gelistirmeHatasiTetikle, hataDinleyicileriniKur } from './hata/dinleyiciler.ts'
+
+// Adım 23: yakalanmamış hatalar yalnız bellekteki yerel günlüğe (ADR-0005).
+ekranSaglayicisiAyarla(() => useAppStore.getState().ekran)
+hataDinleyicileriniKur()
+gelistirmeHatasiTetikle()
 
 /*
  * Hata sınırı EN DIŞTA. Bir render hatası aksi hâlde #root'u tamamen boşaltır

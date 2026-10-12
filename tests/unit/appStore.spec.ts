@@ -241,8 +241,8 @@ describe('Ekran akışı — tüm ekranlar reachable', () => {
 describe('Veli paneli — geçici saklama politikası', () => {
   beforeEach(sifirla);
 
-  it('VeliPaneli mahremiyet, ayar, konu ve kaynak bölümlerini içermeli (kaynak kod kontrolü)', async () => {
-    // VeliPaneli kaynak kodunu oku ve 4 Bolum bileşeni olduğunu doğrula
+  it('VeliPaneli mahremiyet, ayar, konu, kaynak ve sorun bildir bölümlerini içermeli (kaynak kod kontrolü)', async () => {
+    // VeliPaneli kaynak kodunu oku ve 5 Bolum (Adım 23: Sorun bildir) bileşeni olduğunu doğrula
     const fs = await import('node:fs');
     const path = await import('node:path');
     const kaynak = fs.readFileSync(
@@ -250,7 +250,7 @@ describe('Veli paneli — geçici saklama politikası', () => {
       'utf-8',
     );
     const bolumSayisi = (kaynak.match(/<Bolum/g) || []).length;
-    expect(bolumSayisi).toBe(4);
+    expect(bolumSayisi).toBe(5);
   });
 
   it('VeliPaneli saklamama politikasını ve geçici ayarları açıklar', async () => {
