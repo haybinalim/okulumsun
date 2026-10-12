@@ -168,7 +168,7 @@ Standart "responsive" yaklaşımıyla çözülmez — ayrı bir cihaz profili ge
 | `tablet` | `768–1599px` | 1.0× |
 | `phone` | `<768px` | 0.75×, seçenekler 2×2 |
 
-Ayarlarda **elle geçersiz kılma zorunlu**: bazı tahtalar 1920×1080 bildirir ama fiziksel olarak 86"; otomatik tespit güvenilmez. Ayrıca geliştirme için `?device=board` URL parametresi.
+Ayarlarda **elle geçersiz kılma zorunlu**: bazı tahtalar 1920×1080 bildirir ama fiziksel olarak 86"; otomatik tespit güvenilmez. Ayrıca geliştirme için `?device=board` URL parametresi. Elle geçersiz kılma ✓ (Adım 27): yetişkin alanı → "Ekran boyutu" (Otomatik / Akıllı tahta / Tablet / Telefon), tek izinli `localStorage` anahtarı `okulumsun.deviceOverride`, yenilemede kalıcı; URL parametresi ayardan önce gelir.
 
 ### 3.2 Tahtaya özgü kurallar
 
@@ -1082,7 +1082,7 @@ Yan dal: [4] → dişli → Veli kapısı → [9] Veli paneli
 2. "Zorlandığı konular": `struggling` durumundaki düğümlerin `childLabel` listesi +
    evde ne yapılabileceğine dair tek cümlelik öneri (içeriği `tr.json`'dan).
 3. Ayarlar: `readingLevel` (§6.3) · okul ayı (§6.5) · cihaz profili geçersiz kılma
-   (§3.1) · ses hızı.
+   (§3.1, ✓ Adım 27 "Ekran boyutu") · ses hızı.
 4. Yedekleme: dışa/içe aktar (§10) + kalıcılık uyarı rozeti + depolama alanı.
 5. "Kaynaklar" ekranı bağlantısı (§8 lisanslar).
 
@@ -1224,7 +1224,7 @@ Her adımın **"Bitti tanımı"** vardır: listedeki her madde doğrulanmadan ad
 ve bir sonraki adıma geçilemez. Durum sütunu bu repodaki gerçeği yansıtır; bir adımı
 bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 
-<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=34 durum:e2e_dosya=9 durum:adr=14 -->
+<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=35 durum:e2e_dosya=10 durum:adr=14 -->
 
 | # | İş | Durum | Bitti tanımı |
 |---|---|---|---|
@@ -1238,7 +1238,7 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 5 | **Oturum motoru:** `src/progress/` → `mastery.ts` (§6.1 formüller + Leitner + yakınlık `q`), `scheduler.ts` (§6.4 kovalar + 5 sert kural), `session.ts` (8 soru yaşam döngüsü) | ✅ | §15'teki ustalık senaryo testleri geçer; kova oranları 1000 simüle oturumda ±%5 tutar; sert kuralların her biri birim testli; `mastery.ts` ve `scheduler.ts` SAF (içlerinde `Date.now`, Dexie, `Math.random` yok — grep ile kanıtla) |
 | 6 | **Yardım akışı:** 3 kademe (§7.2) + hareketsizlik sayacı + hata taksonomisi bağlama (`diagnosticTag` → `remediation` kovası §6.6) | ✅ | K1/K2/K3 senaryo testli (23 test); `GOREV_ANLASILMADI` ustalığı ETKİLEMEZ (testle kanıtla ✓); 15/30/30 sn zamanlayıcılar ekran değişiminde sıfırlanır (`useHelpTimer` hook); `TaniTakipcisi` remediation tetikleme |
 | 7 | Maskot durumları (6 poz §7.5) + kutlama + Bahçem (§7.4) | ✅ | Maskot 6 duruma geçer (17 test); kutlama ≤2 sn ve atlanabilir (`Celebration.tsx`); çıkartma oturum SONUNA bağlı (doğru sayısına değil, 13 testle kanıtla ✓); `cikartma.ts` SAF + 30 çıkartma→yeni sahne |
-| 8 | İlk açılış, mod seçimi, avatar, ana ekran (7 tema), tahta modu konu seçimi ([4b] §11), veli kapısı + panel (§11 liste) | 🔄 kısmi — veli paneli 5 kalemden 2'si: ayarlar kısmen (cihaz profili ayarı yok → Adım 27), Kaynaklar bağlantısı; ilerleme/zorlanılan konular/yedekleme Seçenek A gereği kapalı → Adım 52 | §11 akışının tamamı gezilebilir; veli paneli 5 kalemi içerir; tahta modunda IndexedDB'ye yazılmadığı testle kanıtlı |
+| 8 | İlk açılış, mod seçimi, avatar, ana ekran (7 tema), tahta modu konu seçimi ([4b] §11), veli kapısı + panel (§11 liste) | 🔄 kısmi — veli paneli 5 kalemden 2'si: ayarlar (cihaz profili ayarı ✓ Adım 27), Kaynaklar bağlantısı; ilerleme/zorlanılan konular/yedekleme Seçenek A gereği kapalı → Adım 52 | §11 akışının tamamı gezilebilir; veli paneli 5 kalemi içerir; tahta modunda IndexedDB'ye yazılmadığı testle kanıtlı |
 | 9 | **Kalıcılık + PWA:** `src/persistence/` (§10 store'lar, `active_session`, migrasyon iskeleti, yedek), `vite-plugin-pwa` precache, `storage.persist()` | 🔄 kısmi — çevrimdışı tam oturum e2e ✅ (Adım 26, `onizleme-cevrimdisi.spec.ts`); yedek dışa/içe aktarım e2e yok → Adım 52; manifest/ikon/yön Adım 25'te düzeldi, Lighthouse "Installable" raporu canlı yayın onarılınca (KG-34) | Çevrimdışı tam oturum e2e geçer; yedek dışa/içe aktarım e2e geçer; sayfa yenilenince duraklatılmış oturum kaldığı sorudan sürer; Lighthouse PWA kurulabilir raporu |
 | 10 | **Kalan 35 şablon** (§5.2'de ⬜ olanlar) + gerektirdikleri ses kümeleri (§4.5) + SVG varlıklar (banknot, terazi, ızgara, çetele) | ✅ | Tema sırasına göre parti parti: **T1 (3) → T2 kalanı (7) → T4 (9) → T3 (4) → T5 (2) → T6 (6) → T7 (4) = 35.** Her şablon §5.5'teki 8 adımı tamamlar. 19 kazanımın TAMAMI kapsanınca kapanır |
 | 11 | **Dağıtım:** statik host (GitHub Pages veya Netlify) + `LICENSES.md` + "Kaynaklar" ekranı (§8) | 🔄 kısmi — ürün okulumsun-tc.vercel.app'te yayında; USB/`file://` açılış kanıtı yok → Adım 49; yayın hedefi Vercel (ADR-0003 Kabul, Adım 22) | Ürün herkese açık URL'de; çevrimdışı ikinci ziyaret çalışır; USB'den `file://` ile açılış denendi (PWA hariç çalışmalı) |
@@ -1257,6 +1257,7 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 24 | Deterministik geri bildirim sesi (`randomPraise(tohum)`/`randomRetry(tohum, denemeNo)`, `useGeriBildirim`; `Math.random` 0) + K9 gizlilik statik taraması (`npm run gizlilik:tara`, `scripts/gizlilik/kurallar.ts`, `depolamaIzinListesi.ts`) CI'da | ✅ PR #24 (`ae7f0d9`) | `geriBildirimSesi.spec.ts` (dağılım, ardışık farklı), `gizlilikTarama.spec.ts` (tuzak) |
 | 25 | PWA kurulabilirlik: kendi ikonumuz (Bahçem çiçeği, KG-37, `npm run ikon:uret`; 192/512/maskable/apple-touch), `orientation: 'any'`, tema ve arka plan rengi `COLOR.bg` (krem, KG-36), manifest tek kaynak `scripts/yayin/pwaAyari.ts`, göreli favicon; Vite şablon logosu ve `icons.svg` kaldırıldı | ✅ PR #25 (`511c93c`); Lighthouse ve cihazda kurulum denemesi canlı yayın bekliyor (KG-34) | `manifest.spec.ts`, e2e `onizleme-pwa.spec.ts` |
 | 26 | E2E genişletme ve gizlilik kanıtı: Playwright `onizleme` projesi (e2e kancalı test derlemesi `dist-e2e/` + `vite preview`, KG-38), tablet kişisel tam oturum, tahta sınıfça akış, çevrimdışı tam oturum + SW önbelleğinden ses, manifest/ikon 200, iki modda ağ/depolama gizlilik kanıtı (tuzaklı); ortak geometri yardımcısı; `depolamaIzinListesi` (`izinliMi`), birim `depolamaCasusu`; K5 boyut bütçesi (`npm run boyut`, `docs/boyut-butcesi.json`); e2e `main` push + PR, 3 projeli matris | ✅ | 9 e2e dosyası (board/tablet/onizleme), `depolamaIzinListesi.spec.ts`, `boyutButcesi.spec.ts` |
+| 27 | Cihaz profili ayar ekranı: yetişkin alanında "Ekran boyutu" (Otomatik / Akıllı tahta / Tablet / Telefon, 4 büyük düğme, gerçek boyutta önizleme kartı), `CihazProfiliBaglami` + `useCihazProfili`, `useDeviceProfile` `elleSecilen` döndürür ve seçimi aynı karede uygular; yalnız `okulumsun.deviceOverride` yazılır; birim depolama casusu happy-dom bağlı yöntem açığı kapatıldı | ✅ | `cihazProfiliAyari.spec.ts`, e2e `cihaz-ayari.spec.ts` (tahta → `--scale` 1.6 → yenilemede kalıcı → Otomatik → tablet), gizlilik e2e akışında ayar seçimi |
 
 Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **35 şablon / ~3 haftaya** büyüdü
 (şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**

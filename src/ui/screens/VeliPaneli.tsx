@@ -10,6 +10,12 @@ import { COLOR } from '../../design/tokens';
 import type { ReadingLevel } from '../../store/appStore';
 import { VERI_SAKLAMA_BILDIRIMI } from '../../persistence/veriSaklamaPolitikasi';
 import { SURUM_METNI } from '../../hata/surum';
+import { useCihazProfili } from '../../design/CihazProfiliBaglami';
+import type { DeviceProfile } from '../../design/tokens';
+import { EKRAN_BOYUTU_SECENEKLERI } from '../../design/ekranBoyutu';
+
+
+const PROFIL_ADI: Record<DeviceProfile, string> = { board: 'akıllı tahta', tablet: 'tablet', phone: 'telefon' };
 
 export function VeliPaneli() {
   const {
@@ -58,6 +64,8 @@ export function VeliPaneli() {
           </p>
         </div>
       </Bolum>
+
+      <EkranBoyutuAyari />
 
       <Bolum baslik="Geçici ayarlar">
         <p style={{ ...bilgiMetniStili, marginBottom: 12 }}>
@@ -141,6 +149,71 @@ export function VeliPaneli() {
 
       <footer style={{ ...bilgiMetniStili, textAlign: 'center' }}>{SURUM_METNI}</footer>
     </main>
+  );
+}
+
+/**
+ * Cihaz profili elle geçersiz kılma (PLAN §3.1 "zorunlu"). Cihaz özelliğidir, öğrenci
+ * verisi değil: iki modda aynı, yenilemede kalıcı (tek izinli localStorage anahtarı).
+ */
+function EkranBoyutuAyari() {
+  const { profil, elleSecilen, sec } = useCihazProfili();
+  return (
+    <Bolum baslik="Ekran boyutu">
+      <p id="cihaz-profili-aciklama" style={{ ...bilgiMetniStili, marginBottom: 12 }}>
+        Tahtada düğmeler küçük görünüyorsa &apos;Akıllı tahta&apos;yı seçin. Bu tercih bu cihazda kalır; öğrenci bilgisi
+        değildir.
+      </p>
+      <div
+        id="cihaz-profili"
+        role="group"
+        aria-label="Ekran boyutu"
+        aria-describedby="cihaz-profili-aciklama"
+        style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 12 }}
+      >
+        {EKRAN_BOYUTU_SECENEKLERI.map((s) => {
+          const secili = elleSecilen === s.deger;
+          return (
+            <BigButton
+              key={s.etiket}
+              label={s.etiket}
+              size="control"
+              variant={secili ? 'accent' : 'ghost'}
+              ariaPressed={secili}
+              onPress={() => sec(s.deger)}
+              style={{ minHeight: 'max(64px, var(--size-control))', padding: '0 16px', fontSize: 'var(--text-adult)' }}
+            >
+              {s.etiket}
+            </BigButton>
+          );
+        })}
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+        <div
+          data-testid="cihaz-profili-onizleme"
+          aria-hidden="true"
+          style={{
+            width: 'var(--size-choice)',
+            height: 'var(--size-choice)',
+            borderRadius: 16,
+            border: `3px solid ${COLOR.border}`,
+            background: COLOR.surface,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 'var(--text-choice-label)',
+            fontWeight: 700,
+            color: COLOR.ink,
+          }}
+        >
+          7
+        </div>
+        <p role="status" style={bilgiMetniStili}>
+          Şu an: {PROFIL_ADI[profil]}
+          {elleSecilen === null ? ' (otomatik)' : ' (elle seçildi)'}. Örnek seçenek kartı gerçek boyuttadır.
+        </p>
+      </div>
+    </Bolum>
   );
 }
 

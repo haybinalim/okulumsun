@@ -69,6 +69,8 @@ Uygulama bir dokunmatik arayüz olarak tasarlandı — klavye navigasyonu birinc
 - [x] Dokunma hedeflerinin gerçek boyutu gösteriliyor
 - [x] %20'ye küçültme ile okunabilirlik kontrolü
 - [ ] **Fiziksel test gerekli:** 1920×1080 tam ekranda geometri ihlali kontrolü
+- [x] Elle geçersiz kılma: yetişkin alanı → "Ekran boyutu" → "Akıllı tahta" ölçeği 1.6 yapar, yenilemede kalır, "Otomatik" tespite döner (e2e `cihaz-ayari.spec.ts`, Adım 27)
+- [ ] **Fiziksel test gerekli:** 65–86" tahtada otomatik tespit yetmezse öğretmen "Akıllı tahta"yı seçebiliyor mu (Adım 33)
 
 ### 2.2 Ses
 

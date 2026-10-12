@@ -16,6 +16,7 @@ import { OturumSonu } from './ui/screens/OturumSonu';
 import { Bahcem } from './ui/screens/Bahcem';
 import { useAppStore, accentBul } from './store/appStore';
 import { useDeviceProfile } from './design/useDeviceProfile';
+import { CihazProfiliBaglami } from './design/CihazProfiliBaglami';
 import { createRng } from './exercises/rng';
 import { useKisiselOturum } from './ui/useKisiselOturum';
 import { skillsData } from './content/skillsData';
@@ -30,7 +31,11 @@ import type { Exercise } from './exercises/types';
  * yazılmaz; öğretmen seçimi için seçilen konu üzerinden egzersiz üretilir.
  */
 export default function App() {
-  const { profile } = useDeviceProfile();
+  const { profile, elleSecilen, setOverride } = useDeviceProfile();
+  const cihazProfili = useMemo(
+    () => ({ profil: profile, elleSecilen, sec: setOverride }),
+    [profile, elleSecilen, setOverride],
+  );
   const ekran = useAppStore((s) => s.ekran);
   const mod = useAppStore((s) => s.mod);
   const accent = accentBul(useAppStore((s) => s.accentId));
@@ -141,7 +146,9 @@ export default function App() {
     return (
       <BoardHarness profile={profile}>
         <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <VeliPaneli />
+          <CihazProfiliBaglami.Provider value={cihazProfili}>
+            <VeliPaneli />
+          </CihazProfiliBaglami.Provider>
         </div>
       </BoardHarness>
     );
