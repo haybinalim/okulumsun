@@ -45,7 +45,7 @@ npm run e2e
 | Para görselleri | TCMB örnek banknot görselleri; 5–200 TL kupürleri |
 | Çevrimdışı çalışma | PWA + önbelleğe alınan statik varlıklar |
 | Öğrenci/veli verisi | Bu geliştirme sürümünde saklanmaz |
-| Yayın | Şu an Vercel (okulumsun-tc.vercel.app); kalıcı yayın hedefi karar bekliyor (ADR-0003, plan v2 Adım 22) |
+| Yayın | Tek kaynak Vercel: https://okulumsun-tc.vercel.app — yalnız yeşil CI sonrası yayınlanır, PR'lara önizleme; CSP ile dış ağ isteği tarayıcıda engellenir (`docs/yayin.md`, ADR-0003) |
 
 ## Lisanslar ve kaynaklar
 

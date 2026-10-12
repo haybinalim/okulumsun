@@ -5,7 +5,7 @@
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
 > Tarih: 12 Ekim 2026 (Adım 17 — karar kayıtları)
 
-<!-- durum:birim_test=250 durum:birim_dosya=27 durum:e2e_dosya=2 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
+<!-- durum:birim_test=259 durum:birim_dosya=28 durum:e2e_dosya=3 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
 
 ## Yönetici özeti
 
@@ -18,7 +18,7 @@ yardım akışı, maskot ve Bahçem çalışıyor. Ürün okulumsun-tc.vercel.ap
 Açık işler: ticari kullanıma uygun ses kaynağı (Adım 31), gerçek çocuk ve fiziksel tahta
 testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25, 26).
 
-**Adım 18 sürüyor:** ses kaynağı kararı (Google Cloud TTS Chirp 3 HD) şartlarıyla ADR-0004'e işlendi, istemci ve örnek üretim hattı hazır. ADR-0004 `Kabul` için kalan: kullanıcının GCP projesi ve anahtarı, örneklerin dinlenip sesin seçilmesi. Adım 19 (K8 bayatlık kapısı) ve Adım 20 (lisans: tüm hakları saklı) bitti; Adım 21'de K10 lisans envanteri, şematik banknot ve iş modeli kararı (ADR-0014) tamam.
+**Adım 18 sürüyor:** ses kaynağı kararı (Google Cloud TTS Chirp 3 HD) şartlarıyla ADR-0004'e işlendi, istemci ve örnek üretim hattı hazır. ADR-0004 `Kabul` için kalan: kullanıcının GCP projesi ve anahtarı, örneklerin dinlenip sesin seçilmesi. Adım 19 (K8 bayatlık kapısı) ve Adım 20 (lisans: tüm hakları saklı) bitti; Adım 21'de K10 lisans envanteri, şematik banknot ve iş modeli kararı (ADR-0014) tamam. Adım 22'de yayın başlıkları (CSP) ve yeşil-CI-sonrası Vercel yayını hazır; Vercel Git bağlantısı ve Deployment Checks ayarlanıyor.
 
 ## Yol haritası durumu (plan §14)
 
@@ -37,7 +37,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 8 | Kabuk ekranları + veli kapısı/paneli | 🔄 kısmi — veli paneli 5 kalemden 2'si (ayarlar kısmen: cihaz profili ayarı yok → Adım 27; Kaynaklar bağlantısı). İlerleme, zorlanılan konular, yedekleme Seçenek A (veri saklanmaz) gereği kapalı → Adım 52 |
 | 9 | Kalıcılık + PWA + yedekleme | 🔄 kısmi — çevrimdışı tam oturum e2e yok → Adım 26; yedek dışa/içe aktarım e2e yok → Adım 52; Lighthouse PWA kurulabilir değil → Adım 25 |
 | 10 | Kalan 35 şablon + ses kümeleri (§4.5) + SVG varlıklar | ✅ 39/39 şablon; §4.5 ses kümeleri üretildi |
-| 11 | Dağıtım + LICENSES + Kaynaklar ekranı | 🔄 kısmi — Vercel'de yayında; USB/`file://` açılış kanıtı yok → Adım 49; kalıcı yayın hedefi kararı (ADR-0003) → Adım 22 |
+| 11 | Dağıtım + LICENSES + Kaynaklar ekranı | 🔄 kısmi — Vercel'de yayında; USB/`file://` açılış kanıtı yok → Adım 49; yayın hedefi Vercel (ADR-0003 Kabul, Adım 22) |
 | 12 | Erişilebilirlik + 5 çocukla tablet testi | 🔄 kısmi — erişilebilirlik denetimi ✅; 5 çocukla tablet testi yapılmadı → Adım 32 |
 | 13 | (2. ay) Fiziksel tahta doğrulaması | ⬜ — yapılmadı → Adım 33, 41 |
 | 14 | PR #14 — erişilebilir şık etiketleri, veli kapısı/panel, `adult-area` e2e | ✅ |
@@ -48,8 +48,9 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 19 | Bayatlık kapısı K8: `npm run durum -- --denetle` (CI), PLAN §14 durum bloğu, PLAN §12 üretilmiş ağaç | ✅ |
 | 20 | Uygulama lisansı: tüm hakları saklı (ADR-0013 Kabul), `LICENSE` + `CONTENT-LICENSE` | ✅ |
 | 21 | Lisans envanteri K10 + şematik banknot; ADR-0014 Kabul (ilk 12 ay satış yok, sonra okul/kurum lisansı) | ✅ |
+| 22 | Tek yayın kaynağı Vercel + CSP + yayın kapısı K11 (ADR-0003 Kabul) | 🔄 kısmi — Vercel Git bağlantısı + Deployment Checks ve ilk yayın bekliyor |
 
-Adım 22–58: depo dışındaki geliştirme planı v2.
+Adım 23–58: depo dışındaki geliştirme planı v2.
 
 ## Karar kayıtları (ADR tablosu)
 
@@ -74,15 +75,16 @@ Ayrıntı ve durum sözlüğü: `docs/ADR/README.md`.
 
 ## Teknik doğrulama (son çalıştırma: 12 Ekim 2026)
 
-- `npm test` → ✅ 250/250, 27 dosya
-- `npm run e2e` → ✅ 2 dosya: 5 geçti, 1 bilinçli atlandı
+- `npm test` → ✅ 259/259, 28 dosya
+- `npm run e2e` → ✅ 3 dosya: 6 geçti, 2 bilinçli atlandı (CSP testi üretim derlemesi + `vite preview` başlıklarıyla)
 - `npm run durum -- --denetle` → ✅ PROGRESS ve PLAN blokları + §12 ağacı kodla eşleşiyor
 - `npm run lisans:denetle` → ✅ envanter, LICENSES ve node_modules lisansları eşleşiyor
 - `npm run validate` → ✅ 19 kazanım · 57 beceri · 15/15 hata etiketi · 39 jeneratör
 - `SES_GECIS_MODU=1 npm run audio:audit` → ✅ 287/287 klip, köken eşleşmesi tam
 - `npm run build` → ✅ PWA service worker, 305 precache girdisi (~5,9 MB)
 - `npm run lint` → ✅ 0 uyarı 0 hata
-- CI → ✅ `.github/workflows/ci.yml` (push: lint, test, validate, durum --denetle, audio:audit, build; PR: + e2e)
+- CI → ✅ `.github/workflows/ci.yml` (push: lint, test, validate, durum --denetle, lisans:denetle, audio:audit, build; PR: + e2e)
+- Yayın → Vercel Git entegrasyonu; üretim `Vercel - okulumsun-tc: dogrula` (vercel-kontrol.yml) geçmeden alınmaz (Deployment Checks, K11; `docs/yayin.md`)
 
 ## Bilinen sapmalar / notlar
 

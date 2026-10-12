@@ -1,6 +1,6 @@
 # ADR-0003: Tek yayın kaynağı ve güvenlik başlıkları
 
-- **Durum:** Önerildi
+- **Durum:** Kabul
 - **Tarih:** 2026-10-12
 - **Karar sahibi:** Kullanıcı · **Kullanıcı onayı:** Barındırıcı kararı verildi: Vercel, 11 Eki 2026 (KG-18); güvenlik başlıkları Adım 22'de
 - **İlgili:** PLAN §14 Adım 11, Adım 22, 25, 26, 38, README yayın satırı
@@ -17,7 +17,7 @@ README bir süre GitHub Pages diyordu, ürün ise Vercel'de (`okulumsun-tc.verce
 
 ## Karar
 
-Önerilen: **Seçenek 1, Vercel tek yayın kaynağı**; kanonik adres şimdilik `okulumsun-tc.vercel.app`, özel alan adı ayrı kararla (KG-18). GitHub Pages iş akışı varsa kaldırılır. CSP: `default-src 'self'; connect-src 'self'`; CSP rapor uç noktası kurulmaz.
+**Seçenek 1, Vercel tek yayın kaynağı** (KG-18); kanonik adres `okulumsun-tc.vercel.app`, özel alan adı ayrı kararla. Yayın Vercel Git entegrasyonuyla yapılır; üretim, Vercel Deployment Checks ile `vercel-kontrol.yml`'ın yazdığı `Vercel - okulumsun-tc: dogrula` durumu geçene kadar bekletilir (K11); Git Fork Protection ve önizleme koruması açık (KG-31, KG-30'un token tabanlı yayın kısmının yerine geçer). GitHub Pages iş akışı silinmez, yalnız elle tetiklenen yedek olur. Başlıklar `vercel.json`'da (ayrıntı `docs/yayin.md`); CSP rapor uç noktası kurulmaz. `style-src 'unsafe-inline'` geçici; zod `jitless` ile `script-src`'de eval gerekmez (KG-30).
 
 ## Sonuçlar
 
@@ -39,5 +39,6 @@ Düşük: statik çıktı her statik barındırıcıya taşınabilir.
 ## Kabul koşulları
 
 - [x] Barındırıcı seçildi (KG-18).
-- [ ] `vercel.json` güvenlik başlıkları ve K11 kapısı yeşil (Adım 22).
-- [ ] README ve Kaynaklar ekranı tek adresi gösteriyor.
+- [x] `vercel.json` güvenlik başlıkları; birim + e2e CSP testleri yeşil (Adım 22).
+- [x] README tek adresi gösteriyor.
+- [ ] Vercel projesi depoya bağlandı, Deployment Checks `Vercel - okulumsun-tc: dogrula`'yı istiyor, ilk üretim yayını yapıldı, securityheaders.com A.

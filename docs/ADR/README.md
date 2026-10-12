@@ -10,7 +10,7 @@ Geri dönüş maliyeti olan her karar burada numaralı bir kayıtla tutulur. Kur
 | [0000](0000-sablon.md) | Şablon | Şablon | 17 |
 | [0001](0001-karar-kayitlari.md) | Karar kayıtları ve birleştirme yöntemi | Kabul | 17 |
 | [0002](0002-ogrenci-verisi-saklama.md) | Öğrenci verisi saklama | Önerildi | 39, 52 |
-| [0003](0003-yayin-tek-kaynak.md) | Tek yayın kaynağı ve güvenlik başlıkları | Önerildi | 22 |
+| [0003](0003-yayin-tek-kaynak.md) | Tek yayın kaynağı ve güvenlik başlıkları | Kabul | 22 |
 | [0004](0004-ses-kaynagi-ve-lisans.md) | Ses kaynağı ve lisans | Önerildi | 15, 18, 31, 54, 58 |
 | [0005](0005-yerel-hata-gunlugu.md) | Yerel hata günlüğü | Önerildi | 23 |
 | [0006](0006-calisma-kagidi-pdf.md) | Çalışma kâğıdı: HTML ve yazdırma | Taslak | 35, 48 |

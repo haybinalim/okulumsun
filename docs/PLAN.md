@@ -1175,7 +1175,8 @@ okulumsun/
 │   └── images/
 ├── screenshots/
 ├── scripts/
-│   └── ses/
+│   ├── ses/
+│   └── yayin/
 ├── src/
 │   ├── assets/
 │   ├── audio/
@@ -1221,7 +1222,7 @@ Her adımın **"Bitti tanımı"** vardır: listedeki her madde doğrulanmadan ad
 ve bir sonraki adıma geçilemez. Durum sütunu bu repodaki gerçeği yansıtır; bir adımı
 bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 
-<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=27 durum:e2e_dosya=2 durum:adr=14 -->
+<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=28 durum:e2e_dosya=3 durum:adr=14 -->
 
 | # | İş | Durum | Bitti tanımı |
 |---|---|---|---|
@@ -1238,7 +1239,7 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 8 | İlk açılış, mod seçimi, avatar, ana ekran (7 tema), tahta modu konu seçimi ([4b] §11), veli kapısı + panel (§11 liste) | 🔄 kısmi — veli paneli 5 kalemden 2'si: ayarlar kısmen (cihaz profili ayarı yok → Adım 27), Kaynaklar bağlantısı; ilerleme/zorlanılan konular/yedekleme Seçenek A gereği kapalı → Adım 52 | §11 akışının tamamı gezilebilir; veli paneli 5 kalemi içerir; tahta modunda IndexedDB'ye yazılmadığı testle kanıtlı |
 | 9 | **Kalıcılık + PWA:** `src/persistence/` (§10 store'lar, `active_session`, migrasyon iskeleti, yedek), `vite-plugin-pwa` precache, `storage.persist()` | 🔄 kısmi — çevrimdışı tam oturum e2e yok → Adım 26; yedek dışa/içe aktarım e2e yok → Adım 52; Lighthouse PWA kurulabilir değil → Adım 25 | Çevrimdışı tam oturum e2e geçer; yedek dışa/içe aktarım e2e geçer; sayfa yenilenince duraklatılmış oturum kaldığı sorudan sürer; Lighthouse PWA kurulabilir raporu |
 | 10 | **Kalan 35 şablon** (§5.2'de ⬜ olanlar) + gerektirdikleri ses kümeleri (§4.5) + SVG varlıklar (banknot, terazi, ızgara, çetele) | ✅ | Tema sırasına göre parti parti: **T1 (3) → T2 kalanı (7) → T4 (9) → T3 (4) → T5 (2) → T6 (6) → T7 (4) = 35.** Her şablon §5.5'teki 8 adımı tamamlar. 19 kazanımın TAMAMI kapsanınca kapanır |
-| 11 | **Dağıtım:** statik host (GitHub Pages veya Netlify) + `LICENSES.md` + "Kaynaklar" ekranı (§8) | 🔄 kısmi — ürün okulumsun-tc.vercel.app'te yayında; USB/`file://` açılış kanıtı yok → Adım 49; yayın hedefi kararı (ADR-0003) → Adım 22 | Ürün herkese açık URL'de; çevrimdışı ikinci ziyaret çalışır; USB'den `file://` ile açılış denendi (PWA hariç çalışmalı) |
+| 11 | **Dağıtım:** statik host (GitHub Pages veya Netlify) + `LICENSES.md` + "Kaynaklar" ekranı (§8) | 🔄 kısmi — ürün okulumsun-tc.vercel.app'te yayında; USB/`file://` açılış kanıtı yok → Adım 49; yayın hedefi Vercel (ADR-0003 Kabul, Adım 22) | Ürün herkese açık URL'de; çevrimdışı ikinci ziyaret çalışır; USB'den `file://` ile açılış denendi (PWA hariç çalışmalı) |
 | 12 | Erişilebilirlik denetimi + **5 gerçek çocukla tablet testi** + düzeltme | 🔄 kısmi — erişilebilirlik denetimi ✅ (`docs/TEST-PROTOKOLU.md`); 5 çocukla tablet testi yapılmadı → Adım 32 | §15 elle doğrulama listesi işlenmiş; bulgular `docs/`e not edilmiş |
 | 13 | *(2. ay)* Fiziksel akıllı tahta doğrulaması + ölçek ayarı | ⬜ — fiziksel tahta doğrulaması yapılmadı → Adım 33, 41 | §13'teki fiziksel test listesi; gerekirse yalnız `tokens.ts` ayarı |
 | 14 | PR #14: erişilebilir seçim kartları (`choiceErisim.ts`) + veli kapısı/paneli + `adult-area` e2e | ✅ | Rebase çakışmasız; lint/test (193)/validate/audio:audit/build/e2e yeşil. Adım 15–58: `reports/gelistirme-plani-v2.md` (depo dışı plan) |
@@ -1249,6 +1250,7 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 19 | Bayatlık kapısı K8: `scripts/durum.ts`, `npm run durum [-- --denetle | --agac]`, §14 durum bloğu, §12 üretilmiş ağaç, CI adımı | ✅ | `--denetle` CI'da yeşil; PROGRESS'e kasıtlı `ses=288` yazınca çıkış 1 (PR #19 açıklamasında çıktı); `durum.spec.ts` |
 | 20 | Uygulama lisansı (ADR-0013 Kabul): tüm hakları saklı — `LICENSE`, `CONTENT-LICENSE`, `package.json` `UNLICENSED`, Kaynaklar ekranında lisans satırı | ✅ | Bağımlılık uyumu temiz (license-checker); `belgeTutarliligi.spec.ts` LICENSE ↔ package.json |
 | 21 | Lisans envanteri K10 (`ucuncuTarafVarliklar.ts`, `npm run lisans:denetle`, LICENSES/Kaynaklar envanterden), `paraGorseli.ts` + `SematikBanknot`, ADR-0014 Kabul (ilk 12 ay satış yok → okul/kurum lisansı); TCMB başvurusu yok (KG-19) | ✅ | K10 CI'da yeşil, tuzak testte kırmızı; şematik banknot testli |
+| 22 | Tek yayın kaynağı Vercel (ADR-0003 Kabul): `vercel.json` güvenlik başlıkları (CSP `connect-src 'self'`), Vercel Git entegrasyonu + Deployment Checks (`vercel-kontrol.yml` → `Vercel - okulumsun-tc: dogrula` geçmeden üretim yok, K11) + PR önizleme, `deploy-pages.yml` elle yedek, `robots.txt`, `docs/yayin.md` | 🔄 kısmi — kod ve testler hazır; Vercel ayarları (Git bağlantısı, Deployment Checks) ve ilk yayın + securityheaders.com raporu | Birim + e2e CSP testleri yeşil; tuzak `fetch` dış alan engellendi |
 
 Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **35 şablon / ~3 haftaya** büyüdü
 (şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**
