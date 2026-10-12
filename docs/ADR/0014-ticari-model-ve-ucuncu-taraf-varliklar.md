@@ -1,8 +1,8 @@
 # ADR-0014: Ticari model ve üçüncü taraf varlık izinleri
 
-- **Durum:** Önerildi
+- **Durum:** Kabul
 - **Tarih:** 2026-10-12
-- **Karar sahibi:** Kullanıcı · **Kullanıcı onayı:** TCMB kararı verildi 11 Eki 2026 (KG-19); iş modeli bekliyor (KG-06)
+- **Karar sahibi:** Kullanıcı · **Kullanıcı onayı:** TCMB kararı verildi 11 Eki 2026 (KG-19); iş modeli 12 Eki 2026, sohbette ("evet uygun") — plan v2 KG-29
 - **İlgili:** Adım 21, 29, 35, 48, 56, LICENSES, `docs/BANKNOT_GORSEL_KAYNAKLARI.md`
 
 ## Bağlam
@@ -27,7 +27,7 @@ Plan önerisi: ilk 12 ay satış yok; hibe + pilot okul ilişkisi (d), ardından
 
 ## Karar
 
-Önerilen: TCMB için **(b) her yerde şematik** — kullanıcı kararı KG-19: TCMB'ye başvurulmaz, TCMB görselleri ürünün hiçbir yerinde kullanılmaz, kırmızı "ÖRNEKTİR" istisnası gereksizleşir. İş modeli **kullanıcı kararı bekliyor** (12 Eki 2026'da soruldu; §16 K-5); ticari lansmandan önce avukat incelemesi (KVKK ile birlikte).
+Önerilen: TCMB için **(b) her yerde şematik** — kullanıcı kararı KG-19: TCMB'ye başvurulmaz, TCMB görselleri ürünün hiçbir yerinde kullanılmaz, kırmızı "ÖRNEKTİR" istisnası gereksizleşir. **İş modeli (kullanıcı kararı, 12 Eki 2026):** ilk 12 ay **satış yok** — ücretsiz, hibe/sponsorluk ve pilot okul ilişkisi (d); ardından **okul/kurum lisansı** (c: kurulum, eğitim, destek hizmeti). Veli aboneliği, reklam ve uygulama içi satın alma yapılmaz. Ticari lansmandan (c) önce avukat incelemesi (KVKK ile birlikte) şarttır.
 
 Uygulandı (Adım 21): `src/content/paraGorseli.ts` (`TCMB_YAZILI_IZIN = false`, strateji fonksiyonu), `src/ui/svg/SematikBanknot.tsx`, lisans envanteri `src/content/ucuncuTarafVarliklar.ts` ve K10 (`npm run lisans:denetle`). TCMB görselleri Adım 29'da kaldırılır.
 
@@ -51,5 +51,5 @@ Orta.
 ## Kabul koşulları
 
 - [x] TCMB yolu seçildi (KG-19).
-- [ ] İş modeli seçildi.
-- [ ] Avukat incelemesi.
+- [x] İş modeli seçildi (12 Eki 2026, KG-29).
+- [ ] Avukat incelemesi — okul/kurum lisansı satışından önce (Adım 56); Kabul'ü engellemez, ticari lansmanı engeller.
