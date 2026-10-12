@@ -46,10 +46,19 @@ export default defineConfig({
       testIgnore: BOARD_ONLY,
     },
   ],
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:5173',
-    reuseExistingServer: true,
-    timeout: 60_000,
-  },
+  webServer: [
+    {
+      command: 'npm run dev',
+      url: 'http://localhost:5173',
+      reuseExistingServer: true,
+      timeout: 60_000,
+    },
+    {
+      // Adım 22: üretim derlemesi + vercel.json güvenlik başlıkları (onizleme-csp.spec.ts).
+      command: 'npm run build && npx vite preview --port 4173 --strictPort',
+      url: 'http://localhost:4173',
+      reuseExistingServer: true,
+      timeout: 180_000,
+    },
+  ],
 });

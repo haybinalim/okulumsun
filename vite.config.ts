@@ -2,6 +2,7 @@ import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import { guvenlikBasliklari } from './scripts/yayin/basliklar.ts';
 
 export default defineConfig({
   plugins: [
@@ -55,6 +56,13 @@ export default defineConfig({
   // Geçici Manus önizleme alan adları dinamik olduğundan geliştirme sunucusu
   // bunları kabul eder. Bu ayar üretim çıktısına taşınmaz; uygulama statiktir.
   server: { host: true, allowedHosts: true },
+  // `vite preview` üretim güvenlik başlıklarını (vercel.json) sunar; e2e CSP denetimi bunu kullanır.
+  // HSTS yerel http'de anlamsız, çıkarılır.
+  preview: {
+    headers: Object.fromEntries(
+      Object.entries(guvenlikBasliklari()).filter(([k]) => k !== 'Strict-Transport-Security'),
+    ),
+  },
   test: {
     /**
      * YALNIZ birim testleri. `tests/e2e/**` Playwright'a aittir ve vitest

@@ -1,8 +1,9 @@
+# YEDEK — kanonik yayın Vercel'dir (ADR-0003, plan v2 Adım 22; deploy-vercel.yml).
+# Yalnız elle tetiklenir (ör. Vercel kesintisinde). GitHub Pages özel başlık
+# desteklemediği için bu yedekte CSP yoktur.
 name: deploy-pages
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
