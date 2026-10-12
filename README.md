@@ -29,6 +29,7 @@ npm run build
 npm run lint
 npm run test
 npm run validate
+npm run durum -- --denetle   # belgelerdeki sayılar ve PLAN §12 ağacı kodla eşleşiyor mu (K8)
 npm run audio:audit
 npm run build
 npm run e2e
