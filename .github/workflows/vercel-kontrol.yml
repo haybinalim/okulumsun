@@ -38,6 +38,7 @@ jobs:
       - run: npm run validate
       - run: npm run durum -- --denetle
       - run: npm run lisans:denetle
+      - run: npm run gizlilik:tara
       - run: npm run audio:audit
         env:
           SES_GECIS_MODU: '1'

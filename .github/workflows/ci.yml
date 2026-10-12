@@ -19,6 +19,7 @@ jobs:
       - run: npm run durum -- --denetle
       # K10 lisans envanteri (plan v2 Adım 21): bağımlılık/font/ses ↔ envanter ↔ LICENSES.md.
       - run: npm run lisans:denetle
+      - run: npm run gizlilik:tara
       - run: npm run audio:audit
         env:
           # ADR-0004 / Adım 31'de kaldırılacak: mevcut kliplerin ticari dağıtım izni yok (geçiş istisnası).

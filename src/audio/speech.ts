@@ -18,6 +18,7 @@
 
 import { AUDIO_MANIFEST, type SpeechKey } from './audioManifest.generated';
 import { kayitEkle } from '../hata/hataKaydi';
+import { hash32 } from '../exercises/rng';
 
 export type { SpeechKey };
 
@@ -305,14 +306,25 @@ export function sayExpression(a: number, op: '+' | '-', b: number): SpeakSource 
   };
 }
 
-/** Doğru cevap onayı — 6 varyant arasından rastgele, monotonluk kırıcı. */
-export function randomPraise(): SpeakSource {
-  const n = 1 + Math.floor(Math.random() * 6);
+export const OVGU_SAYISI = 6;
+export const TEKRAR_SAYISI = 3;
+
+/**
+ * Doğru cevap sonrası övgü — tohumdan (madde kimliği) DETERMİNİSTİK seçilir
+ * (PLAN §0: `Math.random` YASAK; Adım 24). Yeni madde = yeni tohum, monotonluk yok.
+ */
+export function randomPraise(tohum: string): SpeakSource {
+  const n = 1 + (hash32(`ovgu:${tohum}`) % OVGU_SAYISI);
   return { kind: 'key', key: `geri.dogru-${n}` as SpeechKey };
 }
 
-/** "Tekrar dene" — 'yanlış' kelimesi hiçbir varyantta geçmez. */
-export function randomRetry(): SpeakSource {
-  const n = 1 + Math.floor(Math.random() * 3);
+/**
+ * "Tekrar dene" — 'yanlış' kelimesi hiçbir varyantta geçmez. Deterministik:
+ * başlangıç klibi madde kimliğinden, sonraki her deneme bir sonraki klip
+ * (aynı maddede ardışık iki yanlışta aynı klip ÇALMAZ).
+ */
+export function randomRetry(tohum: string, denemeNo = 1): SpeakSource {
+  const baslangic = hash32(`tekrar:${tohum}`) % TEKRAR_SAYISI;
+  const n = 1 + ((baslangic + Math.max(0, denemeNo - 1)) % TEKRAR_SAYISI);
   return { kind: 'key', key: `geri.tekrar-${n}` as SpeechKey };
 }

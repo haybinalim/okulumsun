@@ -6,7 +6,7 @@ import { SpeakButton } from '../primitives/SpeakButton';
 import { BigButton } from '../primitives/BigButton';
 import { Visual } from '../svg/Visual';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
-import { randomPraise, randomRetry } from '../../audio/speech';
+import { useGeriBildirim } from '../useGeriBildirim';
 import { hataDestekKarari, type HataDestekKarari } from '../../exercises/hataDestek';
 import type { Exercise } from '../../exercises/types';
 import type { Accent } from '../../design/tokens';
@@ -71,6 +71,7 @@ function AudioToImageFlow({
   onDone: (dogruMu: boolean) => void;
 }) {
   useScreenSpeech(exercise.prompt.ses, [exercise.itemId]);
+  const geriBildirim = useGeriBildirim(exercise.itemId);
 
   const [seciliId, setSeciliId] = useState<string | null>(null);
   const [cozum, setCozum] = useState<'bos' | 'dogru' | 'tekrar'>('bos');
@@ -100,7 +101,7 @@ function AudioToImageFlow({
     const dogruMu = seciliId === dogruId;
     if (dogruMu) {
       setCozum('dogru');
-      void speak(randomPraise());
+      void speak(geriBildirim.ovgu());
       // Plan §6: doğru cevap sonra oturum motoruna bildirilecek; şimdilik bitir.
       window.setTimeout(() => onDone(true), 900);
     } else {
@@ -109,7 +110,7 @@ function AudioToImageFlow({
       setCozum('tekrar');
       // Önce yargılamayan tekrar mesajı, ardından K2'nin YÖNTEM sesi gelir.
       // K2 cevabı söylemez; yalnız görsel kanıtla yapılacak eylemi hatırlatır.
-      void speak(randomRetry());
+      void speak(geriBildirim.tekrar());
       if (destek != null) void speak(destek.destek.ses);
       // Biraz sonra seçimi sıfırla — çocuk tekrar denesin, ama doğruyu öğrenmeden.
       window.setTimeout(() => {

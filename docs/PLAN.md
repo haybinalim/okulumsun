@@ -49,7 +49,7 @@ varsayımıyla yazılmıştır. Oturumlar arasında hafıza **yoktur**; bağlam 
 4. **Her değişiklikte doğrulama zinciri:** `npm run lint && npm test && npm run validate
    && npm run build`. Şablon veya ekran eklerken ayrıca `npm run e2e` (tahta geometrisi).
    Bunlardan biri kırıkken adım "bitti" **sayılamaz**.
-5. **Yasaklar (özet — gerekçeleri ilgili bölümlerde):** `Math.random()` (§5.3) ·
+5. **Yasaklar (özet — gerekçeleri ilgili bölümlerde):** `Math.random()` (§5.3; K9 ile CI'da: `npm run gizlilik:tara`) ·
    sürükle-bırak (§3.2) · kırmızı renk / `X` / buzzer / "yanlış" kelimesi (§7.1) ·
    çalışma anında yapay zeka çağrısı (Context) · `<` `>` karşılaştırma sembolleri,
    saat okuma, çarpma/bölme/kesir (mufredat-kisitlari §3) · TÜMÜ BÜYÜK HARF ve
@@ -1175,6 +1175,7 @@ okulumsun/
 │   └── images/
 ├── screenshots/
 ├── scripts/
+│   ├── gizlilik/
 │   ├── ses/
 │   └── yayin/
 ├── src/
@@ -1223,7 +1224,7 @@ Her adımın **"Bitti tanımı"** vardır: listedeki her madde doğrulanmadan ad
 ve bir sonraki adıma geçilemez. Durum sütunu bu repodaki gerçeği yansıtır; bir adımı
 bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 
-<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=29 durum:e2e_dosya=4 durum:adr=14 -->
+<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=31 durum:e2e_dosya=4 durum:adr=14 -->
 
 | # | İş | Durum | Bitti tanımı |
 |---|---|---|---|
@@ -1252,7 +1253,8 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 20 | Uygulama lisansı (ADR-0013 Kabul): tüm hakları saklı — `LICENSE`, `CONTENT-LICENSE`, `package.json` `UNLICENSED`, Kaynaklar ekranında lisans satırı | ✅ | Bağımlılık uyumu temiz (license-checker); `belgeTutarliligi.spec.ts` LICENSE ↔ package.json |
 | 21 | Lisans envanteri K10 (`ucuncuTarafVarliklar.ts`, `npm run lisans:denetle`, LICENSES/Kaynaklar envanterden), `paraGorseli.ts` + `SematikBanknot`, ADR-0014 Kabul (ilk 12 ay satış yok → okul/kurum lisansı); TCMB başvurusu yok (KG-19) | ✅ | K10 CI'da yeşil, tuzak testte kırmızı; şematik banknot testli |
 | 22 | Tek yayın kaynağı Vercel (ADR-0003 Kabul): `vercel.json` güvenlik başlıkları (CSP `connect-src 'self'`), Vercel Git entegrasyonu + Deployment Checks (`vercel-kontrol.yml` → `Vercel - okulumsun-tc: dogrula` geçmeden üretim yok, K11) + PR önizleme, `deploy-pages.yml` elle yedek, `robots.txt`, `docs/yayin.md` | ✅ PR #22 (`3bf9877`); zorunlu Deployment Check eklendi, canlı adreste 6 güvenlik başlığı doğrulandı | Birim + e2e CSP testleri yeşil; tuzak `fetch` dış alan engellendi |
-| 23 | Yerel hata günlüğü (ADR-0005 Kabul): `src/hata/hataKaydi.ts` bellekte 20 kayıtlık halka tampon, `ErrorBoundary` + `error`/`unhandledrejection` + ses klibi hataları; yetişkin alanında "Sorun bildir" (kopyala/temizle, gönderim yok); sürüm kimliği `v0.1.0 · <sha>` | 🔄 kısmi — PR bekliyor | `hataKaydi.spec.ts` (depolama/ağ casusu), e2e `sorun-bildir.spec.ts` |
+| 23 | Yerel hata günlüğü (ADR-0005 Kabul): `src/hata/hataKaydi.ts` bellekte 20 kayıtlık halka tampon, `ErrorBoundary` + `error`/`unhandledrejection` + ses klibi hataları; yetişkin alanında "Sorun bildir" (kopyala/temizle, gönderim yok); sürüm kimliği `v0.1.0 · <sha>` | ✅ PR #23 (`ad0e235`); canlıya alma ertelendi (Vercel tetiği ulaşmıyor, KG-34) | `hataKaydi.spec.ts` (depolama/ağ casusu), e2e `sorun-bildir.spec.ts` |
+| 24 | Deterministik geri bildirim sesi (`randomPraise(tohum)`/`randomRetry(tohum, denemeNo)`, `useGeriBildirim`; `Math.random` 0) + K9 gizlilik statik taraması (`npm run gizlilik:tara`, `scripts/gizlilik/kurallar.ts`, `depolamaIzinListesi.ts`) CI'da | 🔄 kısmi — PR bekliyor | `geriBildirimSesi.spec.ts` (dağılım, ardışık farklı), `gizlilikTarama.spec.ts` (tuzak) |
 
 Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **35 şablon / ~3 haftaya** büyüdü
 (şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**

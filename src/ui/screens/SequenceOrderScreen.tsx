@@ -15,7 +15,7 @@ import { SpeakButton } from '../primitives/SpeakButton';
 import { BigButton } from '../primitives/BigButton';
 import { Visual } from '../svg/Visual';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
-import { randomPraise, randomRetry } from '../../audio/speech';
+import { useGeriBildirim } from '../useGeriBildirim';
 import type { SequenceOrderExercise } from '../../exercises/types';
 import type { Accent } from '../../design/tokens';
 
@@ -29,6 +29,7 @@ export function SequenceOrderScreen({
   onDone: (dogruMu: boolean) => void;
 }) {
   useScreenSpeech(exercise.prompt.ses, [exercise.itemId]);
+  const geriBildirim = useGeriBildirim(exercise.itemId);
 
   const [dokunmaSirasi, setDokunmaSirasi] = useState<string[]>([]);
   const [cozum, setCozum] = useState<'bos' | 'dogru' | 'tekrar'>('bos');
@@ -48,11 +49,11 @@ export function SequenceOrderScreen({
     const dogruMu = dokunmaSirasi.every((id, i) => id === dogruSira[i]);
     if (dogruMu) {
       setCozum('dogru');
-      void speak(randomPraise());
+      void speak(geriBildirim.ovgu());
       window.setTimeout(() => onDone(true), 900);
     } else {
       setCozum('tekrar');
-      void speak(randomRetry());
+      void speak(geriBildirim.tekrar());
       window.setTimeout(() => {
         setCozum('bos');
         setDokunmaSirasi([]);
