@@ -22,3 +22,14 @@ Görseller, görünüm değiştirilmeden WebP biçimine dönüştürülmüştür
 ## Kullanım koşulu
 
 TCMB’nin [Kullanım Şartları](https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Bottom+Menu/Diger/Kullanim+Sartlari) sayfasına göre içerik kaynak gösterilerek yayımlanabilir. Uygulamanın ticari olarak dağıtılması, tanıtımda kullanılması veya görsellerin bu eğitim bağlamının dışında yeniden kullanılması planlanırsa, dağıtımdan önce TCMB’den yazılı izin alınmalıdır.
+
+## İzin süreci (12 Ekim 2026)
+
+**TCMB'ye yazılı izin başvurusu yapılmaz** (kullanıcı kararı, plan v2 KG-19; ADR-0014). Sonuçlar:
+
+- `src/content/paraGorseli.ts` → `TCMB_YAZILI_IZIN = false` kalıcıdır; çalışma kâğıdı (Adım 35) ve
+  arşiv (Adım 48) her zaman `SematikBanknot` kullanır.
+- Ekran Adım 29'a kadar bu sayfadaki örnek görselleri eğitim amaçlı, kaynak göstererek kullanır;
+  Adım 29'da ekran da şematiğe geçer ve `public/images/banknotlar/` depodan kaldırılır.
+- `SematikBanknot` TCMB tasarımını taklit etmez: portre, filigran, seri numarası, imza veya TCMB adı
+  yoktur; değer rakamı, kupüre özgü renk, desen ve boy oranı ile "OYUN PARASI" ibaresi taşır.

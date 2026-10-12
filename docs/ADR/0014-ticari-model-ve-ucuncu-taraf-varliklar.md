@@ -13,11 +13,23 @@
 
 **TCMB banknotları:** (a) TCMB'den yazılı izin · (b) her yerde şematik banknot (`SematikBanknot`) · (c) ekranda TCMB, kâğıtta şematik.
 
-**İş modeli:** (a) abonelik · (b) tek seferlik fiyat · (c) okul/kurum lisansı · (d) ücretsiz.
+**İş modeli** (Sıfır Veri Sözleşmesi'yle uyumu ve gerektirdiği izinlerle):
+
+| Seçenek | Veriyle uyum | Gerektirdiği izinler / koşullar |
+|---|---|---|
+| (a) Veli aboneliği | Zayıf — hesap ve ödeme kişisel veri ister (Y4) | Ödeme altyapısı için yeni ADR, KVKK, mağaza politikaları |
+| (b) Tek seferlik fiyat (mağaza veya web) | Orta — ödeme sağlayıcısında kalır | Mağaza aile politikaları; ses (ADR-0004) ticari izinli |
+| (c) Okul/kurum lisansı: kurulum, eğitim, destek hizmeti | Güçlü — uygulama yine veri tutmaz | ADR-0013 yazılı izin metni; ses (ADR-0004) |
+| (d) Ücretsiz + hibe/sponsorluk, basılı çalışma kitabı, öğretmen atölyesi | Güçlü | Kâğıtta şematik banknot (KG-19), Andika OFL |
+| Uyumsuz: reklam, uygulama içi satın alma | Yok (Y4/Y12) | — |
+
+Plan önerisi: ilk 12 ay satış yok; hibe + pilot okul ilişkisi (d), ardından okul/kurum lisansı (c).
 
 ## Karar
 
-Önerilen: TCMB için **(b) her yerde şematik** — kullanıcı kararı KG-19: TCMB'ye başvurulmaz, TCMB görselleri ürünün hiçbir yerinde kullanılmaz, kırmızı "ÖRNEKTİR" istisnası gereksizleşir. İş modeli açık; ticari lansmandan önce avukat incelemesi (KVKK ile birlikte).
+Önerilen: TCMB için **(b) her yerde şematik** — kullanıcı kararı KG-19: TCMB'ye başvurulmaz, TCMB görselleri ürünün hiçbir yerinde kullanılmaz, kırmızı "ÖRNEKTİR" istisnası gereksizleşir. İş modeli **kullanıcı kararı bekliyor** (12 Eki 2026'da soruldu; §16 K-5); ticari lansmandan önce avukat incelemesi (KVKK ile birlikte).
+
+Uygulandı (Adım 21): `src/content/paraGorseli.ts` (`TCMB_YAZILI_IZIN = false`, strateji fonksiyonu), `src/ui/svg/SematikBanknot.tsx`, lisans envanteri `src/content/ucuncuTarafVarliklar.ts` ve K10 (`npm run lisans:denetle`). TCMB görselleri Adım 29'da kaldırılır.
 
 ## Sonuçlar
 

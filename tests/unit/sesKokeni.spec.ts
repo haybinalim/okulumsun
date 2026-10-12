@@ -9,6 +9,7 @@ import {
   ozetDosyasiniOku,
   type SesKaynagi,
 } from '../../scripts/ses/sesKaynagi';
+import { UCUNCU_TARAF_VARLIKLAR } from '../../src/content/ucuncuTarafVarliklar';
 import tr from '../../src/content/tr.json';
 
 const klipler = klipleriTopla(tr as Record<string, unknown>);
@@ -59,8 +60,13 @@ describe('kullanıcıya gösterilen lisans beyanı', () => {
   const lisanslar = readFileSync(new URL('../../LICENSES.md', import.meta.url), 'utf8');
 
   it('Kaynaklar ekranı kaldırılmış fahrettin sesini MIT diye beyan etmez', () => {
+    // Adım 21: Kaynaklar listesi envanterden çizilir; ses satırı ADR-0004'e bağlıdır.
     expect(kaynaklar).not.toMatch(/fahrettin/i);
-    expect(kaynaklar).toMatch(/ADR-0004/);
+    expect(kaynaklar).toMatch(/UCUNCU_TARAF_VARLIKLAR/);
+    const ses = UCUNCU_TARAF_VARLIKLAR.find((v) => v.tur === 'ses');
+    expect(ses?.dagitimdaVar).toBe(true);
+    expect(`${ses?.lisans} ${ses?.kosul ?? ''}`).toMatch(/ADR-0004/);
+    expect(JSON.stringify(UCUNCU_TARAF_VARLIKLAR)).not.toMatch(/fahrettin/i);
   });
 
   it('LICENSES.md fahrettin\'i üretim sağlayıcısı diye listelemez', () => {
