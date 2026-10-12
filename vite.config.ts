@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import { guvenlikBasliklari } from './scripts/yayin/basliklar.ts';
 import pkg from './package.json' with { type: 'json' };
+import { PWA_EK_VARLIKLAR, PWA_MANIFESTI } from './scripts/yayin/pwaAyari.ts';
 
 // Adım 23: sürüm kimliği. GitHub Actions → GITHUB_SHA, Vercel → VERCEL_GIT_COMMIT_SHA.
 const derlemeSha = process.env.GITHUB_SHA ?? process.env.VERCEL_GIT_COMMIT_SHA;
@@ -19,37 +20,8 @@ export default defineConfig({
     VitePWA({
       // Tam çevrimdışı — tüm varlıklar precache.
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'robots.txt'],
-      manifest: {
-        name: 'okulumsun',
-        short_name: 'okulumsun',
-        description: 'MEB ilkokul matematik müfredatına yönelik eğitim uygulaması',
-        theme_color: '#7C3AED',
-        background_color: '#FAF9F6',
-        display: 'standalone',
-        orientation: 'portrait',
-        // Scope ve start_url göreli — USB'den file:// açılışta çalışır.
-        start_url: './',
-        scope: './',
-        icons: [
-          {
-            src: 'icon-192.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: 'icon-512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-          {
-            src: 'icon-512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'maskable',
-          },
-        ],
-      },
+      includeAssets: PWA_EK_VARLIKLAR,
+      manifest: PWA_MANIFESTI,
       workbox: {
         // Tüm varlıklar precache → tam çevrimdışı.
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2,m4a}'],
