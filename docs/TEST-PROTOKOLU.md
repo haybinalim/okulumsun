@@ -172,3 +172,18 @@ Uygulama sınıfta takılır veya beklenmedik davranırsa:
 3. "Panoya kopyala" ile metni kopyalayıp geliştiriciye iletin (e-posta, mesaj). Pano çalışmazsa metin seçili kalır; elle kopyalayın.
 4. Kayıtlar yalnız bellektedir: sayfa yenilenince silinir, cihaza yazılmaz, hiçbir yere gönderilmez. Öğrenci adı veya cevap içermez.
 5. Gözlem formuna sürüm metnini ve sorunun yaşandığı ekranı not edin.
+
+## 7. Otomatik uçtan uca testler (Playwright, plan v2 Adım 26)
+
+`npm run e2e` üç projeyi koşar; CI'da PR'larda ve `main`'e push'ta matris olarak çalışır.
+
+| Proje | Sunucu | Dosyalar | Kanıtladığı |
+| --- | --- | --- | --- |
+| `board` (1920×1080, dokunmatik) | `npm run dev` | `board-geometry`, `board-tahta-akis` | Tahta erişim bölgesi (üst %35) + 102 px hedef; sınıfça mod tema → konu → 5 soru |
+| `tablet` (1080×810, dokunmatik) | `npm run dev` | `tablet-akis`, `adult-area`, `sorun-bildir` | Kişisel mod tam oturum → oturum sonu → Bahçem; yetişkin alanı; sorun bildir |
+| `onizleme` | e2e kancalı test derlemesi (`dist-e2e/`) + `vite preview` :4173 | `onizleme-csp`, `onizleme-pwa`, `onizleme-cevrimdisi`, `onizleme-gizlilik-ag` | Üretim başlıkları/CSP; manifest ve ikonlar 200; ağ kesikken tam oturum + SW önbelleğinden ses; iki modda tüm istekler aynı köken + GET, WebSocket yok, localStorage ⊆ izin listesi, sessionStorage/çerez boş, IndexedDB yalnız boş `okulumsun` |
+
+- **E2E kancası** (`src/dev/e2eKanca.ts`, KG-38): yalnız geliştirme sunucusunda veya `VITE_E2E_KANCASI=1` test derlemesinde; ekrandaki alıştırmayı "doğru" sayıp ilerletir, böylece her etkileşim türünün çözümü taklit edilmeden tam oturum sınanır. Üretim derlemesinde yoktur (CI `dist/` içinde `__okulumsunE2E` arar).
+- **Geometri**: her akış ekranında `tests/e2e/yardimci/geometri.ts`; `data-yetiskin` işaretli yetişkin girişleri (Ayarlar dişlisi) ve öğretmen ekranı (konu seçimi) çocuk erişim kuralından muaftır.
+- **Yayın doğrulaması**: `E2E_HEDEF_URL=https://… npx playwright test --project=onizleme` (kanca gerektiren testler atlanır).
+- Yerel koşu notu: proxy'li ortamda `NO_PROXY=localhost,127.0.0.1,::1`.

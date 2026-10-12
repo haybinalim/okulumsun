@@ -43,3 +43,4 @@ public/audio-prototip/
 *.jsonl
 *.ndjson
 okulumsun-yedek-*.json
+dist-e2e

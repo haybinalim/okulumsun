@@ -2,6 +2,16 @@ import { defineConfig, devices } from '@playwright/test';
 
 /** Yalnız akıllı tahta profilinde anlamlı olan testler. */
 const BOARD_ONLY = '**/board-*.spec.ts';
+/** Üretim derlemesi + `vite preview` üzerinde koşan testler (Adım 22, 26). */
+const ONIZLEME = '**/onizleme-*.spec.ts';
+
+/**
+ * Önizleme sunucusu: e2e kancası açık test derlemesi (`VITE_E2E_KANCASI=1`, ayrı
+ * `dist-e2e/` klasörü; üretim `dist/` etkilenmez) + vercel.json güvenlik başlıkları.
+ * `E2E_HEDEF_URL` verilirse onizleme testleri o adrese koşar (yayın doğrulaması;
+ * kanca gerektiren testler orada kendini atlar).
+ */
+export const ONIZLEME_URL = process.env.E2E_HEDEF_URL ?? 'http://localhost:4173/';
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -27,6 +37,7 @@ export default defineConfig({
         viewport: { width: 1920, height: 1080 },
         hasTouch: true,
       },
+      testIgnore: ONIZLEME,
     },
     {
       /*
@@ -43,7 +54,20 @@ export default defineConfig({
         viewport: { width: 1080, height: 810 },
         hasTouch: true,
       },
-      testIgnore: BOARD_ONLY,
+      testIgnore: [BOARD_ONLY, ONIZLEME],
+    },
+    {
+      /* Üretim derlemesi: CSP, service worker, çevrimdışı, manifest, gizlilik (Adım 26). */
+      name: 'onizleme',
+      testMatch: ONIZLEME,
+      retries: 1, // SW kayıt zamanlaması kararsız olabilir (plan v2 Adım 26 riskleri)
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1080, height: 810 },
+        hasTouch: true,
+        baseURL: ONIZLEME_URL,
+        serviceWorkers: 'allow',
+      },
     },
   ],
   webServer: [
@@ -53,12 +77,16 @@ export default defineConfig({
       reuseExistingServer: true,
       timeout: 60_000,
     },
-    {
-      // Adım 22: üretim derlemesi + vercel.json güvenlik başlıkları (onizleme-csp.spec.ts).
-      command: 'npm run build && npx vite preview --port 4173 --strictPort',
-      url: 'http://localhost:4173',
-      reuseExistingServer: true,
-      timeout: 180_000,
-    },
+    ...(process.env.E2E_HEDEF_URL
+      ? []
+      : [
+          {
+            command:
+              'VITE_E2E_KANCASI=1 npx vite build --outDir dist-e2e && npx vite preview --outDir dist-e2e --port 4173 --strictPort',
+            url: 'http://localhost:4173',
+            reuseExistingServer: true,
+            timeout: 180_000,
+          },
+        ]),
   ],
 });
