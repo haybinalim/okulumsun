@@ -59,6 +59,11 @@ describe('yayın başlıkları (vercel.json)', () => {
     expect(v.git?.deploymentEnabled).not.toBe(false);
     expect(existsSync('.github/workflows/deploy-vercel.yml')).toBe(false);
     expect(readFileSync('.github/workflows/ci.yml', 'utf8')).toMatch(/^\s{2}dogrula:/m);
+    // K11: Vercel derlemesi bitince doğrulama koşar ve Deployment Checks'in beklediği durumu yazar.
+    const kontrol = readFileSync('.github/workflows/vercel-kontrol.yml', 'utf8');
+    expect(kontrol).toMatch(/vercel\.deployment\.ready/);
+    expect(kontrol).toContain("name: 'Vercel - okulumsun-tc: dogrula'");
+    for (const adim of ['npm run lint', 'npm test', 'npm run validate', 'npm run build']) expect(kontrol).toContain(adim);
   });
 
   it('GitHub Pages yalnız elle tetiklenen yedek', () => {

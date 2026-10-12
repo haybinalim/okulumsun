@@ -84,7 +84,7 @@ Ayrıntı ve durum sözlüğü: `docs/ADR/README.md`.
 - `npm run build` → ✅ PWA service worker, 305 precache girdisi (~5,9 MB)
 - `npm run lint` → ✅ 0 uyarı 0 hata
 - CI → ✅ `.github/workflows/ci.yml` (push: lint, test, validate, durum --denetle, lisans:denetle, audio:audit, build; PR: + e2e)
-- Yayın → Vercel Git entegrasyonu; üretim `ci / dogrula` geçmeden alınmaz (Deployment Checks, K11; `docs/yayin.md`)
+- Yayın → Vercel Git entegrasyonu; üretim `Vercel - okulumsun-tc: dogrula` (vercel-kontrol.yml) geçmeden alınmaz (Deployment Checks, K11; `docs/yayin.md`)
 
 ## Bilinen sapmalar / notlar
 

@@ -12,8 +12,11 @@ Yayın **Vercel Git entegrasyonuyla** yapılır (KG-31; token/sır gerekmez):
 1. Vercel projesi `okulumsun-tc` GitHub deposu `haybinalim/okulumsun`'a bağlıdır; Vercel GitHub uygulaması
    yalnız bu depoya erişebilir.
 2. `main`'e her push → üretim derlemesi; her PR → önizleme adresi (Vercel PR'a yazar).
-3. **Deployment Checks:** üretim derlemesi, GitHub'daki `ci / dogrula` kontrolü geçene kadar üretim adresine
-   alınmaz. Kırmızı CI'da yayın olmaz (K11).
+3. **Deployment Checks (K11):** Vercel derlemeyi bitirince `vercel.deployment.ready` olayıyla
+   `.github/workflows/vercel-kontrol.yml`'ı tetikler; iş akışı o commit'te lint, test, validate, K8, K10, ses denetimi
+   ve build koşar, sonucu **`Vercel - okulumsun-tc: dogrula`** commit durumu olarak yazar. Vercel'de bu durum zorunlu
+   kontroldür: kırmızıysa derleme üretim adresine alınmaz. (Vercel'in GitHub kontrol listesi `ci` iş akışını
+   göstermediği için bu yol seçildi, KG-32.)
 4. **Git Fork Protection** açık: fork'tan gelen PR'lar sahibin onayı olmadan derlenmez.
 5. **Deployment Protection** (Vercel Authentication) önizlemelerde açık; üretim herkese açık.
 

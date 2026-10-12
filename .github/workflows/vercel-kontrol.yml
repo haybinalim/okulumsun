@@ -1,0 +1,44 @@
+# K11 yayın kapısı (plan v2 Adım 22, ADR-0003, KG-32).
+# Vercel her derlemeyi bitirince (vercel.deployment.ready) bu iş akışını tetikler.
+# İş akışı o derlemenin commit'ini doğrular ve sonucu "Vercel - okulumsun-tc: dogrula"
+# commit durumu olarak yazar. Vercel → Deployment Checks bu durumu zorunlu tutar:
+# kontrol yeşil olmadan derleme üretim adresine alınmaz.
+# Not: repository_dispatch iş akışları yalnız varsayılan daldaki (main) dosyadan çalışır.
+name: vercel-kontrol
+
+on:
+  repository_dispatch:
+    types: ['vercel.deployment.ready']
+
+run-name: Vercel kontrol — ${{ github.event.client_payload.git.shortSha }} (${{ github.event.client_payload.environment }})
+
+permissions:
+  contents: read
+  actions: read
+  statuses: write
+
+jobs:
+  dogrula:
+    if: github.event.client_payload.project.name == 'okulumsun-tc'
+    runs-on: ubuntu-latest
+    steps:
+      # Önce durum: "beklemede" yazar, iş bitince (post) sonucu yazar.
+      - uses: vercel/repository-dispatch/actions/status@v1
+        with:
+          name: 'Vercel - okulumsun-tc: dogrula'
+      # Derlenen commit'i çıkarır (repository_dispatch varsayılan olarak main'in ucunu verir).
+      - uses: vercel/repository-dispatch/actions/checkout@v1
+      - uses: actions/setup-node@v4
+        with: { node-version: '24', cache: 'npm' }
+      - run: npm ci
+      - name: ffmpeg kur (ses denetimi için)
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: npm run lint
+      - run: npm test
+      - run: npm run validate
+      - run: npm run durum -- --denetle
+      - run: npm run lisans:denetle
+      - run: npm run audio:audit
+        env:
+          SES_GECIS_MODU: '1'
+      - run: npm run build
