@@ -1,0 +1,23 @@
+Okulumsun — İçerik Lisansı / Content License
+
+Copyright (c) 2026 haybinalim (Okulumsun). Tüm hakları saklıdır. All rights reserved.
+
+KAPSAM
+
+`src/content/` altındaki metin ve veri dosyaları: beceri grafiği (skills.json),
+kazanım eşlemesi ve açıklamaları (kazanimlar.json), hata etiketi kataloğu
+(misconceptions.json), arayüz ve seslendirme metinleri (tr.json) ve bunlardan üretilen
+alıştırma içeriği. Bu içerik LICENSE dosyasındaki koşullarla aynı biçimde korunur:
+önceden yazılı izin olmadan kopyalanamaz, çoğaltılamaz, uyarlanamaz veya dağıtılamaz.
+
+KAPSAM DIŞI (kendi koşullarına tabidir)
+
+- MEB 2024 İlkokul Matematik Dersi Öğretim Programı'nın kendisi ve ondan alınan resmî
+  kazanım kodları/metinleri (docs/meb-ilkokul-matematik-2024.pdf ve çıkarılmış metni):
+  Millî Eğitim Bakanlığı'na aittir; yalnız kaynak gösterilerek atıf yapılır.
+- Ses klipleri (public/audio/): ses kaynağının lisansına tabidir (ADR-0004, LICENSES.md).
+- Banknot ve para görselleri: kendi kaynaklarının koşullarına tabidir (LICENSES.md); TCMB
+  görselleri yerine şematik çizimlere geçiş planlıdır (plan v2 KG-19).
+- Yazı tipleri (public/fonts/, Andika — SIL OFL 1.1) ve emoji/görseller: kendi lisansları.
+
+İzin talepleri için depo sahibiyle GitHub üzerinden iletişime geçin.

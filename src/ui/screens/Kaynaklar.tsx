@@ -44,6 +44,14 @@ export function Kaynaklar() {
         </p>
       </section>
 
+      {/* Uygulama lisansı (ADR-0013) */}
+      <section style={{ marginBottom: '2rem' }}>
+        <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Uygulama Lisansı</h2>
+        <p style={{ fontSize: '0.9rem', lineHeight: 1.6 }}>
+          © 2026 Okulumsun. Tüm hakları saklıdır. Okul veya kurum kullanımı için yazılı izin gerekir.
+        </p>
+      </section>
+
       {/* Açık kaynak lisansları */}
       <section style={{ marginBottom: '2rem' }}>
         <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Açık Kaynak Lisansları</h2>

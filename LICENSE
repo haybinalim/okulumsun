@@ -1,0 +1,50 @@
+Okulumsun — Tescilli Yazılım Lisansı / Proprietary Software License
+
+Copyright (c) 2026 haybinalim (Okulumsun). Tüm hakları saklıdır. All rights reserved.
+
+TÜRKÇE
+
+Bu depodaki kaynak kod, yapılandırma, betikler ve belgeler (bundan sonra "Yazılım")
+telif hakkı sahibinin mülkiyetindedir. Depo herkese açık olarak görüntülenebilir; bu,
+yalnızca kaynak kodun incelenmesine izin verir.
+
+Telif hakkı sahibinin önceden verilmiş yazılı izni olmadan Yazılım'ın tamamı veya bir
+bölümü kopyalanamaz, çoğaltılamaz, değiştirilemez, türev çalışmaya dönüştürülemez,
+dağıtılamaz, alt lisanslanamaz, satılamaz, barındırılamaz veya hizmet olarak sunulamaz.
+
+GitHub Hizmet Şartları'nın herkese açık depolar için tanıdığı görüntüleme ve "fork"
+etme hakları saklıdır; bu haklar yukarıdaki kullanım, dağıtım veya barındırma iznini
+kapsamaz.
+
+Üçüncü taraf bileşenler (bağımlılıklar, yazı tipleri, görseller, ses klipleri) kendi
+lisanslarına tabidir ve bu lisansın kapsamı dışındadır; ayrıntılar LICENSES.md'dedir.
+İçerik dosyaları için CONTENT-LICENSE dosyasına bakın.
+
+Yazılım "olduğu gibi" sunulur; açık veya örtülü hiçbir garanti verilmez. Telif hakkı
+sahibi, Yazılım'ın kullanımından doğan hiçbir zarardan sorumlu tutulamaz.
+
+Okul, kurum veya ticari kullanım izni için depo sahibiyle GitHub üzerinden iletişime geçin.
+
+ENGLISH
+
+The source code, configuration, scripts and documentation in this repository (the
+"Software") are the property of the copyright holder. The repository is publicly
+viewable; this permits inspection of the source code only.
+
+Without the copyright holder's prior written permission, you may not copy, reproduce,
+modify, create derivative works of, distribute, sublicense, sell, host, or offer as a
+service the Software, in whole or in part.
+
+The viewing and forking rights granted by the GitHub Terms of Service for public
+repositories are preserved; they do not include any permission to use, distribute or
+host the Software as described above.
+
+Third-party components (dependencies, fonts, images, audio clips) are subject to their
+own licenses and are excluded from this license; see LICENSES.md. For content files
+see CONTENT-LICENSE.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. IN
+NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
+ARISING FROM THE USE OF THE SOFTWARE.
+
+For school, institutional or commercial licensing, contact the repository owner via GitHub.

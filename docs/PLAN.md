@@ -1245,6 +1245,7 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 17 | ADR altyapısı: `docs/ADR/` (README dizini + durum sözlüğü + "ne zaman zorunlu" kuralı, 0000 şablon, 0001–0014), `.github/pull_request_template.md`, §0 kural 1'e "kabul edilmiş ADR'ler" | ✅ | 15 dosya + README; 0001 Kabul, 0002/0003/0004/0005/0013/0014 Önerildi, 0006–0012 Taslak; `tests/unit/adrBicimi.spec.ts` geçer; ADR-0004 seçenek matrisi kullanıcıya sunuldu |
 | 18 | Ses kaynağı kararı (ADR-0004): şartlar birincil kaynaktan alıntılı, `sesKaynagi.json` `bekleyen` = Google Chirp 3 HD, `scripts/ses/googleTts.ts`, `npm run audio -- --ornek` | 🔄 | Eksik: GCP projesi + bütçe uyarısı + kısıtlı anahtar (kullanıcı, KG-20), örneklerin dinlenmesi ve ses seçimi (KG-04, 6 Kas 2026) → ADR-0004 `Kabul` |
 | 19 | Bayatlık kapısı K8: `scripts/durum.ts`, `npm run durum [-- --denetle | --agac]`, §14 durum bloğu, §12 üretilmiş ağaç, CI adımı | ✅ | `--denetle` CI'da yeşil; PROGRESS'e kasıtlı `ses=288` yazınca çıkış 1 (PR #19 açıklamasında çıktı); `durum.spec.ts` |
+| 20 | Uygulama lisansı (ADR-0013 Kabul): tüm hakları saklı — `LICENSE`, `CONTENT-LICENSE`, `package.json` `UNLICENSED`, Kaynaklar ekranında lisans satırı | ✅ | Bağımlılık uyumu temiz (license-checker); `belgeTutarliligi.spec.ts` LICENSE ↔ package.json |
 
 Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **35 şablon / ~3 haftaya** büyüdü
 (şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**

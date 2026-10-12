@@ -48,4 +48,6 @@ npm run e2e
 
 ## Lisanslar ve kaynaklar
 
+**Lisans:** Tescilli, tüm hakları saklıdır (`LICENSE`, `CONTENT-LICENSE`, ADR-0013). Kaynak kod görüntülenebilir; kullanım, dağıtım veya barındırma için yazılı izin gerekir.
+
 Müfredat, banknot görselleri, ses üretimi ve açık kaynak lisanslarına ilişkin ayrıntılar uygulamadaki **Kaynaklar ve Gizlilik** ekranında ve `LICENSES.md` dosyasında bulunur.
