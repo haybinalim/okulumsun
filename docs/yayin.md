@@ -7,23 +7,17 @@
 
 ## Yayın akışı (K11)
 
-1. Her push ve PR'da `ci` iş akışı çalışır (lint, test, validate, K8, K10, ses denetimi, build; PR'da + e2e).
-2. `ci` **başarıyla** biterse `deploy-vercel` (`workflow_run`) tetiklenir:
-   - `main`'e push → **üretim** (`vercel deploy --prebuilt --prod`).
-   - Aynı depodan açılan PR → **önizleme**; adres PR'a yorum olarak yazılır.
-   - Fork'tan gelen PR'lar yayınlanmaz (sırlar fork koduyla kullanılmaz).
-3. Kırmızı CI'da yayın olmaz. Vercel'in kendi Git otomatik yayını `vercel.json` içinde kapalıdır
-   (`"git": { "deploymentEnabled": false }`), böylece CI'ı atlayan ikinci bir yol kalmaz.
+Yayın **Vercel Git entegrasyonuyla** yapılır (KG-31; token/sır gerekmez):
 
-### Gerekli depo sırları (GitHub → Settings → Secrets and variables → Actions)
+1. Vercel projesi `okulumsun-tc` GitHub deposu `haybinalim/okulumsun`'a bağlıdır; Vercel GitHub uygulaması
+   yalnız bu depoya erişebilir.
+2. `main`'e her push → üretim derlemesi; her PR → önizleme adresi (Vercel PR'a yazar).
+3. **Deployment Checks:** üretim derlemesi, GitHub'daki `ci / dogrula` kontrolü geçene kadar üretim adresine
+   alınmaz. Kırmızı CI'da yayın olmaz (K11).
+4. **Git Fork Protection** açık: fork'tan gelen PR'lar sahibin onayı olmadan derlenmez.
+5. **Deployment Protection** (Vercel Authentication) önizlemelerde açık; üretim herkese açık.
 
-| Sır | Nereden |
-|---|---|
-| `VERCEL_TOKEN` | vercel.com → Account Settings → Tokens (yalnız bu proje için, süreli) |
-| `VERCEL_ORG_ID` | Proje → Settings → General → "Team ID" (kişisel hesapta kullanıcı kimliği) |
-| `VERCEL_PROJECT_ID` | Proje → Settings → General → "Project ID" |
-
-Sırlar tanımlı değilse `deploy-vercel` uyarı yazıp atlar; CI kırmızıya dönmez.
+`vercel.json` içinde `git.deploymentEnabled` yalnız `main` için açık bırakılır; diğer dallara push'lar PR üzerinden önizlenir.
 
 ### Yedek
 
@@ -55,7 +49,7 @@ CSP raporlama uç noktası kurulmaz (veri toplamama ilkesi).
 
 ## Kanıt
 
-- `tests/unit/yayinBasliklari.spec.ts`: politika kuralları (connect-src yalnız `'self'`, harici alan yok, mikrofon/kamera kapalı, `form-action 'none'`, Git otomatik yayını kapalı, Pages yalnız elle).
+- `tests/unit/yayinBasliklari.spec.ts`: politika kuralları (connect-src yalnız `'self'`, harici alan yok, mikrofon/kamera kapalı, `form-action 'none'`, token tabanlı yayın iş akışı yok, Pages yalnız elle).
 - `tests/e2e/onizleme-csp.spec.ts`: üretim derlemesi + başlıklar altında CSP ihlali yok; Andika fontu yüklü, service worker hazır, ses klibi `fetch` ile alınabiliyor. `E2E_HEDEF_URL=https://… npm run e2e -- onizleme-csp` ile canlı adrese karşı koşar.
 - Tuzak (12 Eki 2026, yerel): sayfadan `fetch('https://example.com/')` → CSP tarafından engellendi.
 - securityheaders.com raporu: sırlar tanımlanıp ilk üretim yayını yapılınca buraya eklenecek.

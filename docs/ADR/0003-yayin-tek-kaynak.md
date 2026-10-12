@@ -17,7 +17,7 @@ README bir süre GitHub Pages diyordu, ürün ise Vercel'de (`okulumsun-tc.verce
 
 ## Karar
 
-**Seçenek 1, Vercel tek yayın kaynağı** (KG-18); kanonik adres `okulumsun-tc.vercel.app`, özel alan adı ayrı kararla. Yayın GitHub Actions'tan (`deploy-vercel.yml`, `workflow_run` ← `ci` başarılı) Vercel CLI ile yapılır; Vercel Git otomatik yayını kapalı (K11). GitHub Pages iş akışı silinmez, yalnız elle tetiklenen yedek olur. Başlıklar `vercel.json`'da (ayrıntı `docs/yayin.md`); CSP rapor uç noktası kurulmaz. `style-src 'unsafe-inline'` geçici; zod `jitless` ile `script-src`'de eval gerekmez (KG-30).
+**Seçenek 1, Vercel tek yayın kaynağı** (KG-18); kanonik adres `okulumsun-tc.vercel.app`, özel alan adı ayrı kararla. Yayın Vercel Git entegrasyonuyla yapılır; üretim, Vercel Deployment Checks ile `ci / dogrula` geçene kadar bekletilir (K11); Git Fork Protection ve önizleme koruması açık (KG-31, KG-30'un token tabanlı yayın kısmının yerine geçer). GitHub Pages iş akışı silinmez, yalnız elle tetiklenen yedek olur. Başlıklar `vercel.json`'da (ayrıntı `docs/yayin.md`); CSP rapor uç noktası kurulmaz. `style-src 'unsafe-inline'` geçici; zod `jitless` ile `script-src`'de eval gerekmez (KG-30).
 
 ## Sonuçlar
 
@@ -41,4 +41,4 @@ Düşük: statik çıktı her statik barındırıcıya taşınabilir.
 - [x] Barındırıcı seçildi (KG-18).
 - [x] `vercel.json` güvenlik başlıkları; birim + e2e CSP testleri yeşil (Adım 22).
 - [x] README tek adresi gösteriyor.
-- [ ] Depo sırları (`VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`) tanımlandı, ilk üretim yayını CI'dan yapıldı, securityheaders.com A (kullanıcı, O8).
+- [ ] Vercel projesi depoya bağlandı, Deployment Checks `dogrula`'yı istiyor, ilk üretim yayını yapıldı, securityheaders.com A.

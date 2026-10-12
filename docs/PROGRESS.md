@@ -18,7 +18,7 @@ yardım akışı, maskot ve Bahçem çalışıyor. Ürün okulumsun-tc.vercel.ap
 Açık işler: ticari kullanıma uygun ses kaynağı (Adım 31), gerçek çocuk ve fiziksel tahta
 testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25, 26).
 
-**Adım 18 sürüyor:** ses kaynağı kararı (Google Cloud TTS Chirp 3 HD) şartlarıyla ADR-0004'e işlendi, istemci ve örnek üretim hattı hazır. ADR-0004 `Kabul` için kalan: kullanıcının GCP projesi ve anahtarı, örneklerin dinlenip sesin seçilmesi. Adım 19 (K8 bayatlık kapısı) ve Adım 20 (lisans: tüm hakları saklı) bitti; Adım 21'de K10 lisans envanteri, şematik banknot ve iş modeli kararı (ADR-0014) tamam. Adım 22'de yayın başlıkları (CSP) ve yeşil-CI-sonrası Vercel yayını hazır; Vercel depo sırları bekleniyor.
+**Adım 18 sürüyor:** ses kaynağı kararı (Google Cloud TTS Chirp 3 HD) şartlarıyla ADR-0004'e işlendi, istemci ve örnek üretim hattı hazır. ADR-0004 `Kabul` için kalan: kullanıcının GCP projesi ve anahtarı, örneklerin dinlenip sesin seçilmesi. Adım 19 (K8 bayatlık kapısı) ve Adım 20 (lisans: tüm hakları saklı) bitti; Adım 21'de K10 lisans envanteri, şematik banknot ve iş modeli kararı (ADR-0014) tamam. Adım 22'de yayın başlıkları (CSP) ve yeşil-CI-sonrası Vercel yayını hazır; Vercel Git bağlantısı ve Deployment Checks ayarlanıyor.
 
 ## Yol haritası durumu (plan §14)
 
@@ -48,7 +48,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 19 | Bayatlık kapısı K8: `npm run durum -- --denetle` (CI), PLAN §14 durum bloğu, PLAN §12 üretilmiş ağaç | ✅ |
 | 20 | Uygulama lisansı: tüm hakları saklı (ADR-0013 Kabul), `LICENSE` + `CONTENT-LICENSE` | ✅ |
 | 21 | Lisans envanteri K10 + şematik banknot; ADR-0014 Kabul (ilk 12 ay satış yok, sonra okul/kurum lisansı) | ✅ |
-| 22 | Tek yayın kaynağı Vercel + CSP + yayın kapısı K11 (ADR-0003 Kabul) | 🔄 kısmi — Vercel depo sırları ve ilk CI yayını bekliyor |
+| 22 | Tek yayın kaynağı Vercel + CSP + yayın kapısı K11 (ADR-0003 Kabul) | 🔄 kısmi — Vercel Git bağlantısı + Deployment Checks ve ilk yayın bekliyor |
 
 Adım 23–58: depo dışındaki geliştirme planı v2.
 
@@ -84,7 +84,7 @@ Ayrıntı ve durum sözlüğü: `docs/ADR/README.md`.
 - `npm run build` → ✅ PWA service worker, 305 precache girdisi (~5,9 MB)
 - `npm run lint` → ✅ 0 uyarı 0 hata
 - CI → ✅ `.github/workflows/ci.yml` (push: lint, test, validate, durum --denetle, lisans:denetle, audio:audit, build; PR: + e2e)
-- Yayın → `.github/workflows/deploy-vercel.yml` yalnız `ci` başarılıysa (K11); sırlar tanımlı değilse atlar (`docs/yayin.md`)
+- Yayın → Vercel Git entegrasyonu; üretim `ci / dogrula` geçmeden alınmaz (Deployment Checks, K11; `docs/yayin.md`)
 
 ## Bilinen sapmalar / notlar
 

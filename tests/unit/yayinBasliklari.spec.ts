@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { cspYonergeleri, guvenlikBasliklari, vercelBasliklari } from '../../scripts/yayin/basliklar';
 
@@ -54,12 +54,11 @@ describe('yayın başlıkları (vercel.json)', () => {
     expect(assets?.headers[0].value).toContain('immutable');
   });
 
-  it('Vercel Git otomatik yayını kapalı: yayın yalnız yeşil CI sonrası (K11)', () => {
-    const v = JSON.parse(readFileSync('vercel.json', 'utf8')) as { git?: { deploymentEnabled?: boolean } };
-    expect(v.git?.deploymentEnabled).toBe(false);
-    const wf = readFileSync('.github/workflows/deploy-vercel.yml', 'utf8');
-    expect(wf).toMatch(/workflow_run:/);
-    expect(wf).toMatch(/conclusion == 'success'/);
+  it('yayın Vercel Git entegrasyonuyla; token tabanlı iş akışı yok (KG-31)', () => {
+    const v = JSON.parse(readFileSync('vercel.json', 'utf8')) as { git?: { deploymentEnabled?: unknown } };
+    expect(v.git?.deploymentEnabled).not.toBe(false);
+    expect(existsSync('.github/workflows/deploy-vercel.yml')).toBe(false);
+    expect(readFileSync('.github/workflows/ci.yml', 'utf8')).toMatch(/^\s{2}dogrula:/m);
   });
 
   it('GitHub Pages yalnız elle tetiklenen yedek', () => {
