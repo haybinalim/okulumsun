@@ -3,9 +3,9 @@
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
-> Tarih: 12 Ekim 2026 (Adım 16 — durum tablosu kanıtla hizalandı)
+> Tarih: 12 Ekim 2026 (Adım 17 — karar kayıtları)
 
-<!-- durum:birim_test=214 durum:birim_dosya=22 durum:e2e_dosya=2 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 -->
+<!-- durum:birim_test=218 durum:birim_dosya=23 durum:e2e_dosya=2 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 -->
 
 ## Yönetici özeti
 
@@ -18,7 +18,7 @@ yardım akışı, maskot ve Bahçem çalışıyor. Ürün okulumsun-tc.vercel.ap
 Açık işler: ticari kullanıma uygun ses kaynağı (Adım 31), gerçek çocuk ve fiziksel tahta
 testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25, 26).
 
-Sıradaki iş **Adım 17** (geliştirme planı v2).
+Sıradaki iş **Adım 18** (geliştirme planı v2): ses kaynağı kararı, ADR-0004 `Kabul`.
 
 ## Yol haritası durumu (plan §14)
 
@@ -43,12 +43,34 @@ Sıradaki iş **Adım 17** (geliştirme planı v2).
 | 14 | PR #14 — erişilebilir şık etiketleri, veli kapısı/panel, `adult-area` e2e | ✅ |
 | 15 | Ses kökeni envanteri + acil lisans beyanı düzeltmesi + `audio:audit` köken denetimi | ✅ |
 | 16 | Durumu gerçeğe döndürme (PLAN §14, PROGRESS, TEST-PROTOKOLU, README, LICENSES) + `belgeTutarliligi.spec.ts` | ✅ |
+| 17 | ADR altyapısı (`docs/ADR/` 0000–0014 + dizin), PR şablonu, `adrBicimi.spec.ts` | ✅ |
 
-Adım 17–58: depo dışındaki geliştirme planı v2.
+Adım 18–58: depo dışındaki geliştirme planı v2.
+
+## Karar kayıtları (ADR tablosu)
+
+Ayrıntı ve durum sözlüğü: `docs/ADR/README.md`.
+
+| No | Başlık | Durum | Bağlı adım |
+|---|---|---|---|
+| 0001 | Karar kayıtları ve birleştirme yöntemi | Kabul | 17 |
+| 0002 | Öğrenci verisi saklama | Önerildi | 39, 52 |
+| 0003 | Tek yayın kaynağı ve güvenlik başlıkları | Önerildi | 22 |
+| 0004 | Ses kaynağı ve lisans | Önerildi | 15, 18, 31, 54, 58 |
+| 0005 | Yerel hata günlüğü | Önerildi | 23 |
+| 0006 | Çalışma kâğıdı: HTML ve yazdırma | Taslak | 35, 48 |
+| 0007 | Isınma Keşfi ve PLAN §6.5 | Taslak | 47 |
+| 0008 | Sınıf Turu: iş birlikçi gösterim | Taslak | 36 |
+| 0009 | Mağaza varlığı | Taslak | 50, 51 |
+| 0010 | Eve link URL sözleşmesi | Taslak | 42 |
+| 0011 | Çok ders mimarisi | Taslak | 57 |
+| 0012 | Çok dilli ses | Taslak | 58 |
+| 0013 | Uygulama lisansı | Önerildi | 20 |
+| 0014 | Ticari model ve üçüncü taraf varlık izinleri | Önerildi | 21, 29, 35, 48, 56 |
 
 ## Teknik doğrulama (son çalıştırma: 12 Ekim 2026)
 
-- `npm test` → ✅ 214/214, 22 dosya
+- `npm test` → ✅ 218/218, 23 dosya
 - `npm run e2e` → ✅ 2 dosya: 5 geçti, 1 bilinçli atlandı
 - `npm run validate` → ✅ 19 kazanım · 57 beceri · 15/15 hata etiketi · 39 jeneratör
 - `SES_GECIS_MODU=1 npm run audio:audit` → ✅ 287/287 klip, köken eşleşmesi tam

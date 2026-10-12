@@ -38,6 +38,7 @@ varsayımıyla yazılmıştır. Oturumlar arasında hafıza **yoktur**; bağlam 
    `docs/mufredat-kisitlari.md` (müfredat sınırları — ihlal edilemez)
    → `src/content/skills.json` (beceri düğümleri + şablon eşlemesi)
    → `src/exercises/types.ts` (veri modeli sözleşmesi)
+   → kabul edilmiş ADR'ler (`docs/ADR/`, durumu `Kabul` olanlar)
    → bu plan → diğer her şey.
    Plan ile kod çelişiyorsa **sessizce sapma; planı düzelt ve düzeltmeyi commit'e yaz.**
 2. **Anahtar kelimeler.** ZORUNLU = yapılmadan adım kapanamaz. YASAK = hiçbir koşulda
@@ -1204,6 +1205,7 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 14 | PR #14: erişilebilir seçim kartları (`choiceErisim.ts`) + veli kapısı/paneli + `adult-area` e2e | ✅ | Rebase çakışmasız; lint/test (193)/validate/audio:audit/build/e2e yeşil. Adım 15–58: `reports/gelistirme-plani-v2.md` (depo dışı plan) |
 | 15 | Ses kökeni envanteri (`docs/ses/SES_KAYNAKLARI.md`), Kaynaklar/LICENSES acil lisans beyanı düzeltmesi, `scripts/ses/` (klip çıkarımı + `SesKaynagi` sözleşmesi), model kimliği özete, `audio:audit` köken denetimi, dinleme testi protokolü | ✅ | 287/287 özet `piper:` önekli, model bilinmiyor; `audio:audit` ticari izinsiz kaynakta kırmızı, CI'da `SES_GECIS_MODU=1` (Adım 31 kaldırır); `say` yalnız `--prototip`; 210 birim test |
 | 16 | Durumu gerçeğe döndürme: Adım 3/8/9/11/12/13 kanıta göre yeniden açıldı; PROGRESS yeniden yazıldı (makine okunur blok); TEST-PROTOKOLU numaralama + ekran bağlama düzeltmesi; LICENSES gizlilik = `VERI_SAKLAMA_BILDIRIMI`; README yayın satırı; §12 ağacı | ✅ | `tests/unit/belgeTutarliligi.spec.ts` geçer (LICENSES ↔ politika, PROGRESS bloğu ↔ test dosya sayısı, TEST-PROTOKOLU'nda "bağlanmadı" yok); yalnız belge, kod davranışı değişmedi |
+| 17 | ADR altyapısı: `docs/ADR/` (README dizini + durum sözlüğü + "ne zaman zorunlu" kuralı, 0000 şablon, 0001–0014), `.github/pull_request_template.md`, §0 kural 1'e "kabul edilmiş ADR'ler" | ✅ | 15 dosya + README; 0001 Kabul, 0002/0003/0004/0005/0013/0014 Önerildi, 0006–0012 Taslak; `tests/unit/adrBicimi.spec.ts` geçer; ADR-0004 seçenek matrisi kullanıcıya sunuldu |
 
 Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **35 şablon / ~3 haftaya** büyüdü
 (şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**
