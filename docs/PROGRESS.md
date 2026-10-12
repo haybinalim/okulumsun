@@ -5,7 +5,7 @@
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
 > Tarih: 12 Ekim 2026 (Adım 17 — karar kayıtları)
 
-<!-- durum:birim_test=227 durum:birim_dosya=24 durum:e2e_dosya=2 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 -->
+<!-- durum:birim_test=233 durum:birim_dosya=25 durum:e2e_dosya=2 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
 
 ## Yönetici özeti
 
@@ -18,7 +18,7 @@ yardım akışı, maskot ve Bahçem çalışıyor. Ürün okulumsun-tc.vercel.ap
 Açık işler: ticari kullanıma uygun ses kaynağı (Adım 31), gerçek çocuk ve fiziksel tahta
 testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25, 26).
 
-**Adım 18 sürüyor:** ses kaynağı kararı (Google Cloud TTS Chirp 3 HD) şartlarıyla ADR-0004'e işlendi, istemci ve örnek üretim hattı hazır. ADR-0004 `Kabul` için kalan: kullanıcının GCP projesi ve anahtarı, örneklerin dinlenip sesin seçilmesi.
+**Adım 18 sürüyor:** ses kaynağı kararı (Google Cloud TTS Chirp 3 HD) şartlarıyla ADR-0004'e işlendi, istemci ve örnek üretim hattı hazır. ADR-0004 `Kabul` için kalan: kullanıcının GCP projesi ve anahtarı, örneklerin dinlenip sesin seçilmesi. Adım 19 (K8 bayatlık kapısı) bitti; belge sayıları artık CI'da denetleniyor.
 
 ## Yol haritası durumu (plan §14)
 
@@ -45,8 +45,9 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 16 | Durumu gerçeğe döndürme (PLAN §14, PROGRESS, TEST-PROTOKOLU, README, LICENSES) + `belgeTutarliligi.spec.ts` | ✅ |
 | 17 | ADR altyapısı (`docs/ADR/` 0000–0014 + dizin), PR şablonu, `adrBicimi.spec.ts` | ✅ |
 | 18 | Ses kaynağı kararı (ADR-0004): `bekleyen` kaynak, `googleTts.ts`, `--ornek` | 🔄 kısmi — GCP anahtarı ve ses seçimi bekliyor |
+| 19 | Bayatlık kapısı K8: `npm run durum -- --denetle` (CI), PLAN §14 durum bloğu, PLAN §12 üretilmiş ağaç | ✅ |
 
-Adım 19–58: depo dışındaki geliştirme planı v2.
+Adım 20–58: depo dışındaki geliştirme planı v2.
 
 ## Karar kayıtları (ADR tablosu)
 
@@ -71,13 +72,14 @@ Ayrıntı ve durum sözlüğü: `docs/ADR/README.md`.
 
 ## Teknik doğrulama (son çalıştırma: 12 Ekim 2026)
 
-- `npm test` → ✅ 227/227, 24 dosya
+- `npm test` → ✅ 233/233, 25 dosya
 - `npm run e2e` → ✅ 2 dosya: 5 geçti, 1 bilinçli atlandı
+- `npm run durum -- --denetle` → ✅ PROGRESS ve PLAN blokları + §12 ağacı kodla eşleşiyor
 - `npm run validate` → ✅ 19 kazanım · 57 beceri · 15/15 hata etiketi · 39 jeneratör
 - `SES_GECIS_MODU=1 npm run audio:audit` → ✅ 287/287 klip, köken eşleşmesi tam
 - `npm run build` → ✅ PWA service worker, 305 precache girdisi (~5,9 MB)
 - `npm run lint` → ✅ 0 uyarı 0 hata
-- CI → ✅ `.github/workflows/ci.yml` (push: lint, test, validate, audio:audit, build; PR: + e2e)
+- CI → ✅ `.github/workflows/ci.yml` (push: lint, test, validate, durum --denetle, audio:audit, build; PR: + e2e)
 
 ## Bilinen sapmalar / notlar
 

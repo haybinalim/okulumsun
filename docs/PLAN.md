@@ -1111,7 +1111,9 @@ Yan dal: [4] → dişli → Veli kapısı → [9] Veli paneli
 
 ## 12. Proje Yapısı
 
-Ağaç, hedef son durumu gösterir; `(✓)` bugün repoda var, `(⬜)` planlandı.
+Elle yazılmış ağaç hedef son durumu gösterir; `(✓)` bugün repoda var, `(⬜)` planlandı.
+Altındaki **üretilmiş ağaç** bugünkü klasörleri gösterir: `npm run durum -- --agac` yazar,
+`npm run durum -- --denetle` (CI, K8) bayatsa kırar. Sayılar elle yazılmaz; makine bloğundan okunur.
 
 ```
 okulumsun/
@@ -1154,8 +1156,40 @@ okulumsun/
 ├── public/
 │   ├── audio/                      # (✓) 287 klip, 29 klasör (kaynak değişiyor → plan v2 Adım 31)
 │   └── fonts/                      # (✓) Andika latin + latin-ext
-└── tests/{unit,e2e}/               # (✓) 22 birim test dosyası, 2 e2e dosyası (board-geometry, adult-area)
+└── tests/{unit,e2e}/               # (✓) birim ve e2e testleri (sayılar: §14 durum bloğu)
 ```
+
+Bugünkü klasörler (üretilmiş, elle düzenlemeyin):
+
+<!-- agac:basla -->
+```
+okulumsun/
+├── docs/
+│   ├── ADR/
+│   └── ses/
+├── public/
+│   ├── audio/
+│   ├── fonts/
+│   └── images/
+├── screenshots/
+├── scripts/
+│   └── ses/
+├── src/
+│   ├── assets/
+│   ├── audio/
+│   ├── content/
+│   ├── design/
+│   ├── dev/
+│   ├── exercises/
+│   ├── persistence/
+│   ├── progress/
+│   ├── store/
+│   └── ui/
+└── tests/
+    ├── e2e/
+    └── unit/
+```
+<!-- agac:bitir -->
 
 **İçerik ayrı JSON'da.** Bir öğretmen/editör/script JSON üretebilir, TypeScript üretemez · `validate-content.ts` çapraz referansları doğrular · **kod deploy etmeden içerik güncellenebilir** · tip güvenliği Zod `z.infer` + üretilen union tipleriyle korunur.
 
@@ -1185,6 +1219,8 @@ Her adımın **"Bitti tanımı"** vardır: listedeki her madde doğrulanmadan ad
 ve bir sonraki adıma geçilemez. Durum sütunu bu repodaki gerçeği yansıtır; bir adımı
 bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 
+<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=25 durum:e2e_dosya=2 durum:adr=14 -->
+
 | # | İş | Durum | Bitti tanımı |
 |---|---|---|---|
 | 0 | Vite iskeleti, `tokens.ts`, `deviceProfile.ts`, `BoardHarness`, tek `BigButton` | ✅ | `npm run build` geçer; `?device=board` üç profili değiştirir; BoardHarness erişim bölgesini çizer |
@@ -1208,6 +1244,7 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 16 | Durumu gerçeğe döndürme: Adım 3/8/9/11/12/13 kanıta göre yeniden açıldı; PROGRESS yeniden yazıldı (makine okunur blok); TEST-PROTOKOLU numaralama + ekran bağlama düzeltmesi; LICENSES gizlilik = `VERI_SAKLAMA_BILDIRIMI`; README yayın satırı; §12 ağacı | ✅ | `tests/unit/belgeTutarliligi.spec.ts` geçer (LICENSES ↔ politika, PROGRESS bloğu ↔ test dosya sayısı, TEST-PROTOKOLU'nda "bağlanmadı" yok); yalnız belge, kod davranışı değişmedi |
 | 17 | ADR altyapısı: `docs/ADR/` (README dizini + durum sözlüğü + "ne zaman zorunlu" kuralı, 0000 şablon, 0001–0014), `.github/pull_request_template.md`, §0 kural 1'e "kabul edilmiş ADR'ler" | ✅ | 15 dosya + README; 0001 Kabul, 0002/0003/0004/0005/0013/0014 Önerildi, 0006–0012 Taslak; `tests/unit/adrBicimi.spec.ts` geçer; ADR-0004 seçenek matrisi kullanıcıya sunuldu |
 | 18 | Ses kaynağı kararı (ADR-0004): şartlar birincil kaynaktan alıntılı, `sesKaynagi.json` `bekleyen` = Google Chirp 3 HD, `scripts/ses/googleTts.ts`, `npm run audio -- --ornek` | 🔄 | Eksik: GCP projesi + bütçe uyarısı + kısıtlı anahtar (kullanıcı, KG-20), örneklerin dinlenmesi ve ses seçimi (KG-04, 6 Kas 2026) → ADR-0004 `Kabul` |
+| 19 | Bayatlık kapısı K8: `scripts/durum.ts`, `npm run durum [-- --denetle | --agac]`, §14 durum bloğu, §12 üretilmiş ağaç, CI adımı | ✅ | `--denetle` CI'da yeşil; PROGRESS'e kasıtlı `ses=288` yazınca çıkış 1 (PR #19 açıklamasında çıktı); `durum.spec.ts` |
 
 Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **35 şablon / ~3 haftaya** büyüdü
 (şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**
@@ -1362,6 +1399,7 @@ ve kodla birlikte AYNI commit'te düzeltilir (§0 kural 1).
 | 6 | Ön-koşul grafiğinde çevrim yok | `validate-content.ts` |
 | 7 | Ritmik sayma üçlüleri yalnız `RITMIK_SAYMA_BICIMLERI` içinde | `types.ts` tip düzeyi + property testi |
 | 8 | `PROGRESS.md` makine okunur bloğundaki `birim_dosya` = `tests/unit` dosya sayısı; LICENSES gizlilik paragrafı = `VERI_SAKLAMA_BILDIRIMI` (durum tablosu kanıtla yeniden açıldı — Adım 16, 12 Eki 2026) | `tests/unit/belgeTutarliligi.spec.ts` |
+| 9 | PLAN §14 ve PROGRESS makine okunur bloklarındaki sayılar (kazanım, beceri, şablon, hata etiketi, ses, test dosyası, ADR) ve PLAN §12 üretilmiş ağacı kodla eşleşir — K8 (Adım 19) | `npm run durum -- --denetle` (CI), `tests/unit/durum.spec.ts` |
 
 **Bayatlık kontrolü — her adımın sonunda 60 saniye:** `npm run validate` çıktısındaki
 sayıları (kazanım · beceri · etiket · jeneratör) §5.2, §14 ve `PROGRESS.md` ile karşılaştır.
