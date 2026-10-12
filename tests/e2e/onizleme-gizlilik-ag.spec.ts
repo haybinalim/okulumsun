@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { alistirmalariCoz, kisiselModaGir, oturumuBitir, temayiBaslat } from './yardimci/akis';
+import { alistirmalariCoz, kisiselModaGir, oturumuBitir, temayiBaslat, yetiskinAlaniniAc } from './yardimci/akis';
 import { agIhlalleri, agKaydet, depolamaDurumu, depolamaIhlalleri } from './yardimci/gizlilik';
 
 /**
@@ -23,6 +23,9 @@ test.describe('gizlilik: ağ ve depolama', () => {
     await temayiBaslat(page);
     expect(await oturumuBitir(page)).toBeGreaterThanOrEqual(5);
     await page.getByRole('button', { name: 'Ev' }).click({ timeout: 15_000 });
+    // Adım 27: tek kalıcı ayar (ekran boyutu) da akışta; yalnız izinli anahtarı yazmalı.
+    await yetiskinAlaniniAc(page);
+    await page.getByRole('group', { name: 'Ekran boyutu' }).getByRole('button', { name: 'Akıllı tahta' }).click();
 
     expect(agIhlalleri(ag.istekler, koken)).toEqual([]);
     expect(ag.soketler).toEqual([]);

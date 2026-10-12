@@ -1,10 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   applyProfile,
+  readStoredOverride,
   resolveProfile,
   storeOverride,
   type DeviceProfile,
 } from './deviceProfile';
+
+/**
+ * Elle seçimi kaydeder ve yeni nihai profili hesaplar (plan v2 Adım 27).
+ * `null` anahtarı siler → otomatik tespite dönülür. Tek depolama yazımı
+ * `okulumsun.deviceOverride` (izin listesinde); öğrenci verisi değildir.
+ */
+export function profilSec(p: DeviceProfile | null): { profil: DeviceProfile; elleSecilen: DeviceProfile | null } {
+  storeOverride(p);
+  return { profil: resolveProfile(), elleSecilen: readStoredOverride() };
+}
 
 /**
  * Aktif cihaz profilini döndürür ve CSS değişkenlerini `<html>` üzerine yayar.
@@ -14,9 +25,11 @@ import {
  */
 export function useDeviceProfile(): {
   profile: DeviceProfile;
+  elleSecilen: DeviceProfile | null;
   setOverride: (p: DeviceProfile | null) => void;
 } {
   const [profile, setProfile] = useState<DeviceProfile>(() => resolveProfile());
+  const [elleSecilen, setElleSecilen] = useState<DeviceProfile | null>(() => readStoredOverride());
 
   useEffect(() => {
     applyProfile(profile, document.documentElement);
@@ -28,10 +41,13 @@ export function useDeviceProfile(): {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  const setOverride = (p: DeviceProfile | null) => {
-    storeOverride(p);
-    setProfile(resolveProfile());
-  };
+  const setOverride = useCallback((p: DeviceProfile | null) => {
+    const sonuc = profilSec(p);
+    // Ölçek aynı karede uygulanır; önizleme kutusu hemen yeni boyutu gösterir.
+    applyProfile(sonuc.profil, document.documentElement);
+    setProfile(sonuc.profil);
+    setElleSecilen(sonuc.elleSecilen);
+  }, []);
 
-  return { profile, setOverride };
+  return { profile, elleSecilen, setOverride };
 }

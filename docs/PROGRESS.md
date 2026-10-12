@@ -3,9 +3,9 @@
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
-> Tarih: 12 Ekim 2026 (Adım 17 — karar kayıtları)
+> Tarih: 13 Ekim 2026 (Adım 27 — cihaz profili ayarı)
 
-<!-- durum:birim_test=289 durum:birim_dosya=34 durum:e2e_dosya=9 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
+<!-- durum:birim_test=295 durum:birim_dosya=35 durum:e2e_dosya=10 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
 
 ## Yönetici özeti
 
@@ -18,7 +18,7 @@ yardım akışı, maskot ve Bahçem çalışıyor. Ürün okulumsun-tc.vercel.ap
 Açık işler: ticari kullanıma uygun ses kaynağı (Adım 31), gerçek çocuk ve fiziksel tahta
 testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25, 26).
 
-**Adım 18 sürüyor:** ses kaynağı kararı (Google Cloud TTS Chirp 3 HD) şartlarıyla ADR-0004'e işlendi, istemci ve örnek üretim hattı hazır. ADR-0004 `Kabul` için kalan: kullanıcının GCP projesi ve anahtarı, örneklerin dinlenip sesin seçilmesi. Adım 19 (K8 bayatlık kapısı) ve Adım 20 (lisans: tüm hakları saklı) bitti; Adım 21'de K10 lisans envanteri, şematik banknot ve iş modeli kararı (ADR-0014) tamam. Adım 22'de Vercel tek yayın kaynağı oldu: CSP ve güvenlik başlıkları canlıda, üretim `dogrula` kontrolü geçmeden alınmıyor. Adım 23'te bellekte kalan hata günlüğü, yetişkin alanında "Sorun bildir" ve sürüm kimliği (`v0.1.0`) eklendi. Adım 24'te övgü/tekrar klibi madde kimliğinden seçiliyor (`Math.random` kalmadı) ve K9 gizlilik taraması CI'da. Adım 25'te uygulamanın kendi ikonu (Bahçem çiçeği), yatay açılış ve tek tema rengi (krem) geldi. Adım 26'da e2e, tablet ve tahtada tam akışı, çevrimdışı tam oturumu ve iki modda "ağa hiçbir şey gitmez, öğrenci verisi kalmaz" kanıtını otomatik sınıyor; JS boyut bütçesi CI'da.
+**Adım 18 sürüyor:** ses kaynağı kararı (Google Cloud TTS Chirp 3 HD) şartlarıyla ADR-0004'e işlendi, istemci ve örnek üretim hattı hazır. ADR-0004 `Kabul` için kalan: kullanıcının GCP projesi ve anahtarı, örneklerin dinlenip sesin seçilmesi. Adım 19 (K8 bayatlık kapısı) ve Adım 20 (lisans: tüm hakları saklı) bitti; Adım 21'de K10 lisans envanteri, şematik banknot ve iş modeli kararı (ADR-0014) tamam. Adım 22'de Vercel tek yayın kaynağı oldu: CSP ve güvenlik başlıkları canlıda, üretim `dogrula` kontrolü geçmeden alınmıyor. Adım 23'te bellekte kalan hata günlüğü, yetişkin alanında "Sorun bildir" ve sürüm kimliği (`v0.1.0`) eklendi. Adım 24'te övgü/tekrar klibi madde kimliğinden seçiliyor (`Math.random` kalmadı) ve K9 gizlilik taraması CI'da. Adım 25'te uygulamanın kendi ikonu (Bahçem çiçeği), yatay açılış ve tek tema rengi (krem) geldi. Adım 26'da e2e, tablet ve tahtada tam akışı, çevrimdışı tam oturumu ve iki modda "ağa hiçbir şey gitmez, öğrenci verisi kalmaz" kanıtını otomatik sınıyor; JS boyut bütçesi CI'da. Adım 27'de öğretmen yetişkin alanından "Ekran boyutu"nu (Otomatik / Akıllı tahta / Tablet / Telefon) seçebiliyor; seçim yenilemede kalıyor ve yalnız izinli tek anahtara yazılıyor.
 
 ## Yol haritası durumu (plan §14)
 
@@ -34,7 +34,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 5 | Oturum motoru (`src/progress/`) | ✅/⚠ (SAF; kova oranı testi gevşek — gerçekçi profil gerektirir) |
 | 6 | 3 kademeli yardım + hata taksonomisi akışı | ✅ |
 | 7 | Maskot + kutlama + Bahçem | ✅ |
-| 8 | Kabuk ekranları + veli kapısı/paneli | 🔄 kısmi — veli paneli 5 kalemden 2'si (ayarlar kısmen: cihaz profili ayarı yok → Adım 27; Kaynaklar bağlantısı). İlerleme, zorlanılan konular, yedekleme Seçenek A (veri saklanmaz) gereği kapalı → Adım 52 |
+| 8 | Kabuk ekranları + veli kapısı/paneli | 🔄 kısmi — veli paneli 5 kalemden 2'si (ayarlar: cihaz profili ayarı ✓ Adım 27; Kaynaklar bağlantısı). İlerleme, zorlanılan konular, yedekleme Seçenek A (veri saklanmaz) gereği kapalı → Adım 52 |
 | 9 | Kalıcılık + PWA + yedekleme | 🔄 kısmi — çevrimdışı tam oturum e2e ✅ (Adım 26); yedek dışa/içe aktarım e2e yok → Adım 52; manifest/ikon/yön Adım 25'te düzeldi, Lighthouse "Installable" raporu canlı yayın onarılınca (KG-34) |
 | 10 | Kalan 35 şablon + ses kümeleri (§4.5) + SVG varlıklar | ✅ 39/39 şablon; §4.5 ses kümeleri üretildi |
 | 11 | Dağıtım + LICENSES + Kaynaklar ekranı | 🔄 kısmi — Vercel'de yayında; USB/`file://` açılış kanıtı yok → Adım 49; yayın hedefi Vercel (ADR-0003 Kabul, Adım 22) |
@@ -52,9 +52,10 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 23 | Yerel hata günlüğü + "Sorun bildir" + sürüm kimliği (ADR-0005 Kabul) | ✅ PR #23 (`ad0e235`); canlıya alma ertelendi (KG-34) |
 | 24 | Deterministik geri bildirim sesi + K9 gizlilik taraması | ✅ PR #24 (`ae7f0d9`) |
 | 25 | PWA kurulabilirlik: ikonlar, yatay/dikey, krem tema rengi | ✅ PR #25 (`511c93c`); Lighthouse canlı yayın bekliyor (KG-34) |
-| 26 | E2E genişletme + gizlilik kanıtı (çevrimdışı tam oturum, iki modda ağ/depolama, PWA manifest), K5 boyut bütçesi | ✅ |
+| 26 | E2E genişletme + gizlilik kanıtı (çevrimdışı tam oturum, iki modda ağ/depolama, PWA manifest), K5 boyut bütçesi | ✅ PR #26 (`0001a86`) |
+| 27 | Cihaz profili ayar ekranı (yetişkin alanı → "Ekran boyutu"), elle geçersiz kılma kalıcı | ✅ |
 
-Adım 27–58: depo dışındaki geliştirme planı v2.
+Adım 28–58: depo dışındaki geliştirme planı v2.
 
 ## Karar kayıtları (ADR tablosu)
 

@@ -12,6 +12,28 @@ export function depolamaCasusuKur(): { readonly cagrilar: () => readonly Depolam
   const kayit: DepolamaCagrisi[] = [];
   const geriAl: (() => void)[] = [];
 
+  // happy-dom, depo yöntemini ilk erişimde örneğe bağlar (ClassMethodBinder); sonrasında
+  // prototip yaması o örneği yakalamaz. Bu yüzden önce örneklerin kendisi yamalanır
+  // (Adım 27'de bulundu: daha önce yazılmış bir depoda casus sessiz kalıyordu).
+  for (const [api, depo] of [
+    ['localStorage', globalThis.localStorage],
+    ['sessionStorage', globalThis.sessionStorage],
+  ] as const) {
+    if (!depo) continue;
+    const onceki = depo.setItem;
+    Object.defineProperty(depo, 'setItem', {
+      configurable: true,
+      writable: true,
+      value: (anahtar: string, deger: string) => {
+        onceki.call(depo, anahtar, deger);
+        kayit.push({ api, anahtar });
+      },
+    });
+    geriAl.push(() => {
+      Object.defineProperty(depo, 'setItem', { configurable: true, writable: true, value: onceki });
+    });
+  }
+
   const setItemOzgun = Storage.prototype.setItem;
   Storage.prototype.setItem = function (this: Storage, anahtar: string, deger: string) {
     setItemOzgun.call(this, anahtar, deger);

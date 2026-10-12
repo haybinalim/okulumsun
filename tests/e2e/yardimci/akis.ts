@@ -117,3 +117,13 @@ export async function oturumuBitir(page: Page): Promise<number> {
     adet += 1;
   }
 }
+
+/** Ana ekrandaki Ayarlar dişlisinden veli kapısını geçip yetişkin alanını açar (Adım 27). */
+export async function yetiskinAlaniniAc(page: Page): Promise<void> {
+  await page.getByRole('button', { name: 'Ayarlar' }).click();
+  const sirali = await page.locator('button[aria-label$="sıradaki sayı olarak seç"]').evaluateAll((b) =>
+    b.map((x) => Number(x.getAttribute('aria-label')?.split(',')[0])).sort((a, c) => c - a),
+  );
+  for (const sayi of sirali) await page.getByRole('button', { name: `${sayi}, sıradaki sayı olarak seç` }).click();
+  await expect(page.getByRole('heading', { name: 'Yetişkin alanı' })).toBeVisible();
+}
