@@ -15,6 +15,7 @@ import { TapToPlaceScreen } from './TapToPlaceScreen';
 import { SequenceOrderScreen } from './SequenceOrderScreen';
 import { MatchPairsScreen } from './MatchPairsScreen';
 import { HotspotFindScreen } from './HotspotFindScreen';
+import { useE2eAlistirma } from '../../dev/e2eKanca';
 
 /**
  * Alıştırma ekranı — bir Exercise'i kind'ına göre ilgili alt ekrana yönlendirir.
@@ -32,6 +33,9 @@ export function ExerciseScreen({
   accent: Accent;
   onDone: (dogruMu: boolean) => void;
 }) {
+  // Adım 26: yalnız geliştirme/test derlemesinde etkin e2e kapısı (üretimde ağaçtan atılır).
+  useE2eAlistirma(exercise, onDone);
+
   // Etkileşim türüne göre ilgili ekrana yönlendir.
   if (exercise.kind === 'TAP_COUNT') {
     return <TapCountScreen exercise={exercise} accent={accent} onDone={onDone} />;

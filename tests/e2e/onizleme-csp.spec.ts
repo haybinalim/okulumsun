@@ -7,9 +7,7 @@ import { expect, test } from '@playwright/test';
  */
 const HEDEF = process.env.E2E_HEDEF_URL ?? 'http://localhost:4173/';
 
-test('üretim başlıklarıyla CSP ihlali yok; font ve SW çalışıyor', async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name === 'board', 'Başlık denetimi tek profilde yeter.');
-
+test('üretim başlıklarıyla CSP ihlali yok; font ve SW çalışıyor', async ({ page }) => {
   const ihlaller: string[] = [];
   page.on('console', (m) => {
     if (/Content Security Policy|Refused to/i.test(m.text())) ihlaller.push(m.text());

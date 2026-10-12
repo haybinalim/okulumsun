@@ -71,6 +71,7 @@ export const UCUNCU_TARAF_VARLIKLAR: readonly UcuncuTarafVarlik[] = [
   { ad: 'vite-plugin-pwa', tur: 'arac', lisans: 'MIT', sahip: 'Anthony Fu', kaynakUrl: 'https://github.com/vite-pwa/vite-plugin-pwa', dagitimdaVar: false },
   { ad: 'typescript', tur: 'arac', lisans: 'Apache-2.0', sahip: 'Microsoft Corp.', kaynakUrl: 'https://github.com/microsoft/TypeScript', dagitimdaVar: false },
   { ad: 'vitest', tur: 'arac', lisans: 'MIT', sahip: 'Anthony Fu ve Vitest katkıcıları', kaynakUrl: 'https://github.com/vitest-dev/vitest', dagitimdaVar: false },
+  { ad: 'happy-dom', tur: 'arac', lisans: 'MIT', sahip: 'David Ortner', kaynakUrl: 'https://github.com/capricorn86/happy-dom', dagitimdaVar: false },
   { ad: 'fake-indexeddb', tur: 'arac', lisans: 'Apache-2.0', sahip: 'Jeremy Scheff', kaynakUrl: 'https://github.com/dumbmatter/fakeIndexedDB', dagitimdaVar: false },
   { ad: 'Piper', tur: 'arac', lisans: 'GPL-3.0', sahip: 'Open Home Foundation', kaynakUrl: 'https://github.com/OHF-Voice/piper1-gpl', dagitimdaVar: false, kosul: 'Yalnız geliştirme makinesinde; ürettiği ses dosyalarına lisans geçirmez' },
 ];

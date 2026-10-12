@@ -25,13 +25,28 @@ jobs:
           # ADR-0004 / Adım 31'de kaldırılacak: mevcut kliplerin ticari dağıtım izni yok (geçiş istisnası).
           SES_GECIS_MODU: '1'
       - run: npm run build
+      # K5 boyut bütçesi (plan v2 Adım 26): v0.3.0'a kadar uyarı, sonra +%10 aşım hata.
+      - run: npm run boyut
+      # E2E kancası (src/dev/e2eKanca.ts) üretim derlemesine girmemeli (KG-38).
+      - name: E2E kancası üretimde yok
+        run: "! grep -rq __okulumsunE2E dist/"
   e2e:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    # Adım 26: main'e push'ta ve PR'da koşar (diğer dallardaki push'lar PR ile sınanır).
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    strategy:
+      fail-fast: false
+      matrix:
+        proje: [board, tablet, onizleme]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: '24', cache: 'npm' }
       - run: npm ci
+      - name: Playwright tarayıcı önbelleği
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
       - run: npx playwright install --with-deps chromium
-      - run: npm run e2e
+      - run: npx playwright test --project=${{ matrix.proje }}

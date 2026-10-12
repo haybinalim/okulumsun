@@ -16,6 +16,7 @@
  * gerekiyor — `<audio>` elemanlarıyla bu, duyulur biçimde tutarsız oluyor.
  */
 
+import { e2eKlipAlindi } from '../dev/e2eKanca';
 import { AUDIO_MANIFEST, type SpeechKey } from './audioManifest.generated';
 import { kayitEkle } from '../hata/hataKaydi';
 import { hash32 } from '../exercises/rng';
@@ -258,6 +259,7 @@ class SpeechService {
           return null;
         }
         const bytes = await res.arrayBuffer();
+        e2eKlipAlindi(key);
         const buffer = await this.#ctx!.decodeAudioData(bytes);
         this.#buffers.set(key, buffer);
         return buffer;

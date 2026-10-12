@@ -56,6 +56,7 @@ Uygulamadaki Kaynaklar ekranı aynı listeyi çizer.
 | vite-plugin-pwa | MIT | Anthony Fu | — |
 | typescript | Apache-2.0 | Microsoft Corp. | — |
 | vitest | MIT | Anthony Fu ve Vitest katkıcıları | — |
+| happy-dom | MIT | David Ortner | — |
 | fake-indexeddb | Apache-2.0 | Jeremy Scheff | — |
 | Piper | GPL-3.0 | Open Home Foundation | Yalnız geliştirme makinesinde; ürettiği ses dosyalarına lisans geçirmez |
 <!-- lisans:bitir -->

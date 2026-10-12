@@ -111,6 +111,9 @@ export function AnaEkran() {
         <button
           type="button"
           aria-label="Ayarlar"
+          // Yetişkin girişi: bilerek küçük, soluk ve tahtada çocuğun erişemeyeceği üst bölgede (veli kapısı).
+          // E2E geometri denetimi bu işaretli öğeyi muaf tutar (tests/e2e/yardimci/geometri.ts).
+          data-yetiskin=""
           onClick={handleDisli}
           style={{
             width: 32,
