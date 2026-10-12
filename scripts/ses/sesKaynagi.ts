@@ -42,6 +42,59 @@ export interface SesKaynagi {
   readonly atifSarti: string | null;
 }
 
+/**
+ * Kararı verilmiş ama henüz aktif olmayan kaynak (Adım 18). `aktif` Adım 31'de bu
+ * değerlerle değişir; o zamana kadar üretim ve denetim eski kaynağı kullanır.
+ * `ses` kullanıcı sesi seçene kadar null (KG-04).
+ */
+export interface BekleyenKaynak {
+  readonly saglayici: Saglayici;
+  readonly model: string;
+  readonly ses: string | null;
+  readonly ticariDagitimIzni: boolean;
+  readonly cocukUrunundeKullanim: 'izinli' | 'kosullu' | 'bilinmiyor';
+  readonly sartlarUrl: readonly string[];
+  /** YYYY-AA-GG — şartların birincil kaynaktan okunduğu gün. */
+  readonly sartlarOkunduTarih: string;
+  readonly atifSarti: string | null;
+}
+
+export function bekleyenKaynagiDogrula(deger: unknown): BekleyenKaynak {
+  if (typeof deger !== 'object' || deger === null) throw new Error('Bekleyen kaynak bir nesne olmalı.');
+  const k = deger as Record<string, unknown>;
+  if (!SAGLAYICILAR.includes(k.saglayici as Saglayici)) {
+    throw new Error(`Bilinmeyen ses sağlayıcısı: ${String(k.saglayici)}`);
+  }
+  if (typeof k.model !== 'string' || k.model.trim() === '') throw new Error('Bekleyen kaynağın modeli boş olamaz.');
+  if (k.ses !== null && (typeof k.ses !== 'string' || k.ses.trim() === '')) {
+    throw new Error('ses metin veya null olmalı.');
+  }
+  if (typeof k.ticariDagitimIzni !== 'boolean') throw new Error('ticariDagitimIzni true/false olmalı.');
+  if (!['izinli', 'kosullu', 'bilinmiyor'].includes(k.cocukUrunundeKullanim as string)) {
+    throw new Error('cocukUrunundeKullanim izinli | kosullu | bilinmiyor olmalı.');
+  }
+  if (!Array.isArray(k.sartlarUrl) || k.sartlarUrl.length === 0 || !k.sartlarUrl.every((u) => typeof u === 'string' && u.startsWith('https://'))) {
+    throw new Error('sartlarUrl en az bir https adresi içermeli.');
+  }
+  if (typeof k.sartlarOkunduTarih !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(k.sartlarOkunduTarih)) {
+    throw new Error('sartlarOkunduTarih YYYY-AA-GG olmalı.');
+  }
+  if (k.atifSarti !== null && typeof k.atifSarti !== 'string') throw new Error('atifSarti metin veya null olmalı.');
+  return k as unknown as BekleyenKaynak;
+}
+
+/** `sesKaynagi.json`'u aktif ve bekleyen kaynağa ayırır (`$not` insan içindir). */
+export function sesKaynagiDosyasiniAyir(ham: Readonly<Record<string, unknown>>): {
+  readonly aktif: SesKaynagi;
+  readonly bekleyen: BekleyenKaynak | null;
+} {
+  const { $not: _not, bekleyen, ...aktif } = ham;
+  return {
+    aktif: sesKaynaginiDogrula(aktif),
+    bekleyen: bekleyen === undefined || bekleyen === null ? null : bekleyenKaynagiDogrula(bekleyen),
+  };
+}
+
 /** Mevcut 287 klibin kaynağı: önek `piper:` olarak kanıtlı, model kimliği bilinmiyor (KG-15). */
 export const ESKI_KAYNAK: SesKaynagi = {
   saglayici: 'piper',

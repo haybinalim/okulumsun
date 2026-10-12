@@ -1,9 +1,23 @@
 {
-  "$not": "Aktif ses kaynağı (Adım 15). Geçiş durumu: mevcut 287 klibin kökeni bilinmiyor (KG-15); Adım 31'de Google Cloud TTS Chirp 3 HD ile değiştirilecek (KG-01). Ayrıntı: docs/ses/SES_KAYNAKLARI.md",
+  "$not": "Aktif ses kaynağı (Adım 15). Geçiş durumu: mevcut 287 klibin kökeni bilinmiyor (KG-15); Adım 31'de 'bekleyen' kaynakla (Google Cloud TTS Chirp 3 HD, KG-01, ADR-0004) değiştirilecek. 'bekleyen.ses' kullanıcı sesi seçince yazılır (KG-04). Ayrıntı: docs/ses/SES_KAYNAKLARI.md",
   "saglayici": "piper",
   "modelKimligi": "piper:bilinmiyor",
   "lisansUrl": "docs/ses/SES_KAYNAKLARI.md",
   "ticariDagitimIzni": false,
   "cocukUrunundeKullanim": "bilinmiyor",
-  "atifSarti": null
+  "atifSarti": null,
+  "bekleyen": {
+    "saglayici": "google",
+    "model": "chirp3-hd",
+    "ses": null,
+    "ticariDagitimIzni": true,
+    "cocukUrunundeKullanim": "kosullu",
+    "sartlarUrl": [
+      "https://docs.cloud.google.com/text-to-speech/quotas",
+      "https://cloud.google.com/terms/service-terms",
+      "https://cloud.google.com/text-to-speech/pricing"
+    ],
+    "sartlarOkunduTarih": "2026-10-12",
+    "atifSarti": "Sesler Google Cloud Text-to-Speech ile üretilmiştir."
+  }
 }

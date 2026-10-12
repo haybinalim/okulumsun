@@ -20,7 +20,9 @@
  *   say   — macOS Yelda; YALNIZ `--prototip` bayrağıyla, çıktı public/audio-prototip/
  *           (gitignore). Apple lisansı ticari dağıtıma izin vermez.
  *   eleven— KG-01 gereği kullanılmaz; çağrılırsa hata fırlatır.
- *   google— Google Cloud TTS Chirp 3 HD tr-TR (KG-01); Adım 31'de bağlanacak.
+ *   google— Google Cloud TTS Chirp 3 HD tr-TR (KG-01, ADR-0004). Adım 18'de bağlandı
+ *           (scripts/ses/googleTts.ts); aktif kaynak Adım 31'de google olur. Anahtar:
+ *           GOOGLE_TTS_API_KEY (ortam veya gitignore'daki .env.local), asla depoya girmez.
  *
  * ARTIMLI ÜRETİM: yalnız metni değişen anahtarlar yeniden sentezlenir (hash
  * karşılaştırması). Ücretli sağlayıcılarda bu, maliyeti sıfıra yakın tutar.
@@ -29,6 +31,10 @@
  *   npm run audio                       (aktif kaynak: src/content/sesKaynagi.json)
  *   npm run audio -- --prototip         (macOS say; çıktı public/audio-prototip/, dağıtılmaz)
  *   npm run audio -- --force            (hash'i yoksay, hepsini yeniden üret)
+ *   npm run audio -- --ornek [--ses Kore,Aoede,Puck]
+ *                                       (KG-04: ses seçimi için ses başına 10 örnek +
+ *                                        "on yedi elma" birleştirme örneği; çıktı
+ *                                        public/audio-prototip/ornek/<ses>/, dağıtılmaz)
  */
 
 import { execFile } from 'node:child_process';
@@ -41,9 +47,16 @@ import { klipleriTopla, type Clip } from './ses/klipler.ts';
 import {
   klipOzeti,
   ozetDosyasiniOku,
-  sesKaynaginiDogrula,
+  sesKaynagiDosyasiniAyir,
   type SesKaynagi,
 } from './ses/sesKaynagi.ts';
+import {
+  VARSAYILAN_ORNEK_SESLER,
+  googleIstegi,
+  googleSentezle,
+  googleSesAdi,
+  modelKimligindenSes,
+} from './ses/googleTts.ts';
 
 const exec = promisify(execFile);
 
@@ -55,7 +68,40 @@ const OUT_MANIFEST = path.join(ROOT, 'src/audio/audioManifest.generated.ts');
 const FORCE = process.argv.includes('--force');
 /** macOS `say` yalnız prototip içindir; çıktısı dağıtılan klasöre asla yazılmaz. */
 const PROTOTIP = process.argv.includes('--prototip');
+/** KG-04: ses seçimi örnekleri. Manifest ve .hashes.json'a dokunmaz. */
+const ORNEK = process.argv.includes('--ornek');
 const OUT_AUDIO = path.join(ROOT, PROTOTIP ? 'public/audio-prototip' : 'public/audio');
+const OUT_ORNEK = path.join(ROOT, 'public/audio-prototip/ornek');
+
+/** Örnek dinleme kümesi: yönerge, geri bildirim, sayı ve birleştirme parçaları (gerçek klip anahtarları). */
+const ORNEK_ANAHTARLAR = [
+  'soru.hangisi-gelir',
+  'soru-olcme.hangisi-agir',
+  'veri.grafik',
+  'esit.ayni-mi',
+  'konum.yaninda',
+  'geri.dogru-1',
+  'geri.tekrar-1',
+  'sayi.7',
+  'sayi.17',
+  'nesne.elma',
+] as const;
+
+function argDegeri(ad: string): string | undefined {
+  const i = process.argv.indexOf(ad);
+  return i >= 0 ? process.argv[i + 1] : undefined;
+}
+
+/** `GOOGLE_TTS_API_KEY`: önce ortam, sonra gitignore'daki `.env.local`. Değer hiçbir yere yazdırılmaz. */
+async function googleAnahtari(): Promise<string> {
+  if (process.env.GOOGLE_TTS_API_KEY) return process.env.GOOGLE_TTS_API_KEY;
+  const dosya = path.join(ROOT, '.env.local');
+  if (existsSync(dosya)) {
+    const satir = (await readFile(dosya, 'utf8')).split('\n').find((s) => s.startsWith('GOOGLE_TTS_API_KEY='));
+    if (satir) return satir.slice('GOOGLE_TTS_API_KEY='.length).trim().replace(/^["']|["']$/g, '');
+  }
+  return '';
+}
 const CACHE = path.join(OUT_AUDIO, '.hashes.json');
 
 type Provider = 'say' | 'piper' | 'eleven' | 'google';
@@ -75,8 +121,9 @@ async function aktifKaynagiOku(): Promise<{ kaynak: SesKaynagi; provider: Provid
       provider: 'say',
     };
   }
-  const { $not: _not, ...ham } = JSON.parse(await readFile(SES_KAYNAGI, 'utf8')) as Record<string, unknown>;
-  const kaynak = sesKaynaginiDogrula(ham);
+  const { aktif: kaynak } = sesKaynagiDosyasiniAyir(
+    JSON.parse(await readFile(SES_KAYNAGI, 'utf8')) as Record<string, unknown>,
+  );
   const istenen = process.env.TTS_PROVIDER ?? kaynak.saglayici;
   if (istenen === 'say') {
     throw new Error('macOS say yalnız --prototip bayrağıyla kullanılabilir (çıktı public/audio-prototip/).');
@@ -151,6 +198,25 @@ async function synthPiper(text: string, out: string): Promise<void> {
   await rm(tmp, { force: true });
 }
 
+/** WAV baytlarını 24 kHz mono AAC m4a'ya çevirir (diğer sağlayıcılarla aynı biçim). */
+async function wavdanM4a(wav: Buffer, out: string): Promise<void> {
+  const tmp = `${out}.wav`;
+  await writeFile(tmp, wav);
+  await exec('ffmpeg', ['-y', '-loglevel', 'error', '-i', tmp, '-ac', '1', '-ar', '24000', '-c:a', 'aac', '-b:a', '40k', out]);
+  await rm(tmp, { force: true });
+}
+
+/** Chirp 3 HD kotası 200 istek/dk/proje → istekler arası ≥350 ms. */
+const bekle = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+async function synthGoogle(text: string, out: string, sesAdi: string): Promise<void> {
+  const wav = await googleSentezle(googleIstegi(text, sesAdi), await googleAnahtari());
+  await wavdanM4a(wav, out);
+  await bekle(350);
+}
+
+let aktifGoogleSesi = '';
+
 async function synth(provider: Provider, text: string, out: string): Promise<void> {
   switch (provider) {
     case 'say':
@@ -160,7 +226,7 @@ async function synth(provider: Provider, text: string, out: string): Promise<voi
     case 'eleven':
       throw new Error('ElevenLabs kullanılmaz (KG-01, ADR-0004).');
     case 'google':
-      throw new Error('Google Cloud TTS sağlayıcısı Adım 31\'de bağlanacak (KG-01).');
+      return synthGoogle(text, out, aktifGoogleSesi);
   }
 }
 
@@ -201,8 +267,37 @@ export const CORE_KEYS: readonly SpeechKey[] = Object.entries(AUDIO_MANIFEST)
 
 // ------------------------------------------------------------------------ ana
 
+/** KG-04: aday seslerle örnek üretimi. Ücretsiz kotanın çok altında (~3 × 150 karakter). */
+async function ornekUret(): Promise<void> {
+  const sesler = (argDegeri('--ses') ?? VARSAYILAN_ORNEK_SESLER.join(',')).split(',').map((s) => googleSesAdi(s.trim()));
+  if (!(await googleAnahtari())) {
+    throw new Error('GOOGLE_TTS_API_KEY tanımlı değil (.env.local veya ortam değişkeni). Bkz. ADR-0004.');
+  }
+  const tumKlipler = klipleriTopla(JSON.parse(await readFile(CONTENT, 'utf8')) as Record<string, unknown>);
+  const secilen = ORNEK_ANAHTARLAR.map((k) => {
+    const c = tumKlipler.find((x) => x.key === k);
+    if (!c) throw new Error(`Örnek anahtarı içerikte yok: ${k}`);
+    return c;
+  });
+  for (const ses of sesler) {
+    const dizin = path.join(OUT_ORNEK, ses);
+    await mkdir(dizin, { recursive: true });
+    for (const c of secilen) await synthGoogle(c.text, path.join(dizin, `${c.key}.m4a`), ses);
+    // PLAN §4.3 sayı birleştirme: "on yedi" + "elma" ardışık çalınınca tını tutarlı mı?
+    const parcalar = ['sayi.17', 'nesne.elma'].map((k) => path.join(dizin, `${k}.m4a`));
+    await exec('ffmpeg', [
+      '-y', '-loglevel', 'error', '-i', parcalar[0], '-i', parcalar[1],
+      '-filter_complex', '[0:a][1:a]concat=n=2:v=0:a=1', '-c:a', 'aac', '-b:a', '40k',
+      path.join(dizin, 'birlesim-on-yedi-elma.m4a'),
+    ]);
+    console.log(`  ${ses}: ${secilen.length} örnek + birleştirme → ${path.relative(ROOT, dizin)}`);
+  }
+}
+
 async function main(): Promise<void> {
+  if (ORNEK) return ornekUret();
   const { kaynak, provider } = await aktifKaynagiOku();
+  if (provider === 'google') aktifGoogleSesi = modelKimligindenSes(kaynak.modelKimligi);
   const clips = klipleriTopla(JSON.parse(await readFile(CONTENT, 'utf8')) as Record<string, unknown>);
   console.log(
     `${clips.length} klip · kaynak: ${kaynak.modelKimligi}${PROTOTIP ? ' · --prototip' : ''}${FORCE ? ' · --force' : ''}`,

@@ -5,7 +5,7 @@
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
 > Tarih: 12 Ekim 2026 (Adım 17 — karar kayıtları)
 
-<!-- durum:birim_test=218 durum:birim_dosya=23 durum:e2e_dosya=2 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 -->
+<!-- durum:birim_test=227 durum:birim_dosya=24 durum:e2e_dosya=2 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 -->
 
 ## Yönetici özeti
 
@@ -18,7 +18,7 @@ yardım akışı, maskot ve Bahçem çalışıyor. Ürün okulumsun-tc.vercel.ap
 Açık işler: ticari kullanıma uygun ses kaynağı (Adım 31), gerçek çocuk ve fiziksel tahta
 testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25, 26).
 
-Sıradaki iş **Adım 18** (geliştirme planı v2): ses kaynağı kararı, ADR-0004 `Kabul`.
+**Adım 18 sürüyor:** ses kaynağı kararı (Google Cloud TTS Chirp 3 HD) şartlarıyla ADR-0004'e işlendi, istemci ve örnek üretim hattı hazır. ADR-0004 `Kabul` için kalan: kullanıcının GCP projesi ve anahtarı, örneklerin dinlenip sesin seçilmesi.
 
 ## Yol haritası durumu (plan §14)
 
@@ -44,8 +44,9 @@ Sıradaki iş **Adım 18** (geliştirme planı v2): ses kaynağı kararı, ADR-0
 | 15 | Ses kökeni envanteri + acil lisans beyanı düzeltmesi + `audio:audit` köken denetimi | ✅ |
 | 16 | Durumu gerçeğe döndürme (PLAN §14, PROGRESS, TEST-PROTOKOLU, README, LICENSES) + `belgeTutarliligi.spec.ts` | ✅ |
 | 17 | ADR altyapısı (`docs/ADR/` 0000–0014 + dizin), PR şablonu, `adrBicimi.spec.ts` | ✅ |
+| 18 | Ses kaynağı kararı (ADR-0004): `bekleyen` kaynak, `googleTts.ts`, `--ornek` | 🔄 kısmi — GCP anahtarı ve ses seçimi bekliyor |
 
-Adım 18–58: depo dışındaki geliştirme planı v2.
+Adım 19–58: depo dışındaki geliştirme planı v2.
 
 ## Karar kayıtları (ADR tablosu)
 
@@ -70,7 +71,7 @@ Ayrıntı ve durum sözlüğü: `docs/ADR/README.md`.
 
 ## Teknik doğrulama (son çalıştırma: 12 Ekim 2026)
 
-- `npm test` → ✅ 218/218, 23 dosya
+- `npm test` → ✅ 227/227, 24 dosya
 - `npm run e2e` → ✅ 2 dosya: 5 geçti, 1 bilinçli atlandı
 - `npm run validate` → ✅ 19 kazanım · 57 beceri · 15/15 hata etiketi · 39 jeneratör
 - `SES_GECIS_MODU=1 npm run audio:audit` → ✅ 287/287 klip, köken eşleşmesi tam
@@ -84,7 +85,7 @@ Ayrıntı ve durum sözlüğü: `docs/ADR/README.md`.
   Türkçe Piper sesleri ticari dağıtıma uygun değil (`docs/ses/SES_KAYNAKLARI.md`).
   `npm run audio:audit` ticari izinsiz aktif kaynakta çıkış 1 verir; yerelde ve CI'da
   `SES_GECIS_MODU=1` ile çalıştırılır. Klipler Adım 31'de Google Cloud TTS Chirp 3 HD ile
-  yeniden üretilecek.
+  yeniden üretilecek. Karar `src/content/sesKaynagi.json` → `bekleyen` alanında (Adım 18).
 - **Veri saklanmıyor (Seçenek A).** Öğrenci ve veli verisi saklanmaz; Dexie kalıcılık katmanı
   kodda var ama politika modülü (`veriSaklamaPolitikasi.ts`) kapalı tutuyor. LICENSES gizlilik
   paragrafı veli panelindeki `VERI_SAKLAMA_BILDIRIMI` cümlesini birebir içerir (testle korunur);
