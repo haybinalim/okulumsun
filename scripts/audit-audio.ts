@@ -24,7 +24,7 @@ import { fileURLToPath } from 'node:url';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { klipleriTopla } from './ses/klipler.ts';
-import { kokenDenetle, ozetDosyasiniOku, sesKaynaginiDogrula } from './ses/sesKaynagi.ts';
+import { kokenDenetle, ozetDosyasiniOku, sesKaynagiDosyasiniAyir } from './ses/sesKaynagi.ts';
 
 const exec = promisify(execFile);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -164,8 +164,8 @@ async function main(): Promise<void> {
   for (const k of manifestAnahtarlari) if (!metinler.has(k)) problems.push(`İÇERİKSİZ  ${k}`);
 
   // Köken denetimi.
-  const { $not: _not, ...kaynakHam } = JSON.parse(await readFile(SES_KAYNAGI, 'utf8')) as Record<string, unknown>;
-  const aktif = sesKaynaginiDogrula(kaynakHam);
+  // `bekleyen` (Adım 18) yalnız doğrulanır; köken her zaman AKTİF kaynağa göre denetlenir.
+  const { aktif } = sesKaynagiDosyasiniAyir(JSON.parse(await readFile(SES_KAYNAGI, 'utf8')) as Record<string, unknown>);
   const ozetDosyasi = existsSync(HASHES)
     ? ozetDosyasiniOku(JSON.parse(await readFile(HASHES, 'utf8')))
     : { kaynak: null, ozetler: {} };

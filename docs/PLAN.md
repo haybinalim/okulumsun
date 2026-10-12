@@ -236,9 +236,10 @@ Tüm sabit metinler geliştirme anında sentezlenip `public/audio/` altına göm
 |---|---|---|
 | **macOS `say -v Yelda`** | ✅ Bu makinede doğrulandı | **Gün 1 prototipi.** Anında, bedava, sınırsız, çevrimdışı. Kalite orta ama akışı hemen test ettirir. |
 | **Piper TTS** (`tr_TR-fahrettin-medium`) | ⚠ İnceleniyor — ADR-0004 | **Üretimde kullanılmaz** (Adım 15): `fahrettin`/`fettah` 30 Ara 2025'te katkı verenlerin isteğiyle kaldırıldı, `dfki` CC BY-NC-SA. Mevcut 287 klibin kökeni bilinmiyor; Google Cloud TTS Chirp 3 HD ile yeniden üretilecek (Adım 31). Bkz. `docs/ses/SES_KAYNAKLARI.md`, §16 risk 2–3 |
-| **ElevenLabs ücretsiz kredi** | Hesap gerekir | **Sadece maskot replikleri** (~60 klip). Kredi sınırlı → en çok duyulan, kişilik taşıyan cümlelere ayrılır. ⚠️ Ücretsiz katmanın dağıtım şartları yayın öncesi doğrulanmalı. |
+| **Google Cloud TTS, Chirp 3 HD `tr-TR`** | ✅ Karar (KG-01) — ADR-0004 `Önerildi`, ses seçimi bekliyor | **Üretim kaynağı** (Adım 31'de aktif). Yalnız derleme anında; ayda 1M karakter ücretsiz; üretilen sesin uygulamada kullanımına izin. İstemci `scripts/ses/googleTts.ts`, örnekler `npm run audio -- --ornek`. |
+| **ElevenLabs** | ⛔ Kullanılmaz (KG-01, ADR-0004) | Çağrılırsa betik hata verir. Maskot sesi ayrı karar (Adım 54). |
 
-Hat, `src/content/tr.json`'u tarar, yalnız **hash'i değişen** anahtarları yeniden üretir, `audioManifest.generated.ts` + `SpeechKey` union tipini yazar. Sağlayıcı değişimi tek env değişkeni.
+Hat, `src/content/tr.json`'u tarar, yalnız **hash'i değişen** anahtarları yeniden üretir, `audioManifest.generated.ts` + `SpeechKey` union tipini yazar. Sağlayıcı `src/content/sesKaynagi.json`'daki aktif kaynaktan gelir; model kimliği özete girer (Adım 15).
 
 ### 4.3 Sayı birleştirme tekniği (çekirdek fikir)
 
@@ -1206,6 +1207,7 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 15 | Ses kökeni envanteri (`docs/ses/SES_KAYNAKLARI.md`), Kaynaklar/LICENSES acil lisans beyanı düzeltmesi, `scripts/ses/` (klip çıkarımı + `SesKaynagi` sözleşmesi), model kimliği özete, `audio:audit` köken denetimi, dinleme testi protokolü | ✅ | 287/287 özet `piper:` önekli, model bilinmiyor; `audio:audit` ticari izinsiz kaynakta kırmızı, CI'da `SES_GECIS_MODU=1` (Adım 31 kaldırır); `say` yalnız `--prototip`; 210 birim test |
 | 16 | Durumu gerçeğe döndürme: Adım 3/8/9/11/12/13 kanıta göre yeniden açıldı; PROGRESS yeniden yazıldı (makine okunur blok); TEST-PROTOKOLU numaralama + ekran bağlama düzeltmesi; LICENSES gizlilik = `VERI_SAKLAMA_BILDIRIMI`; README yayın satırı; §12 ağacı | ✅ | `tests/unit/belgeTutarliligi.spec.ts` geçer (LICENSES ↔ politika, PROGRESS bloğu ↔ test dosya sayısı, TEST-PROTOKOLU'nda "bağlanmadı" yok); yalnız belge, kod davranışı değişmedi |
 | 17 | ADR altyapısı: `docs/ADR/` (README dizini + durum sözlüğü + "ne zaman zorunlu" kuralı, 0000 şablon, 0001–0014), `.github/pull_request_template.md`, §0 kural 1'e "kabul edilmiş ADR'ler" | ✅ | 15 dosya + README; 0001 Kabul, 0002/0003/0004/0005/0013/0014 Önerildi, 0006–0012 Taslak; `tests/unit/adrBicimi.spec.ts` geçer; ADR-0004 seçenek matrisi kullanıcıya sunuldu |
+| 18 | Ses kaynağı kararı (ADR-0004): şartlar birincil kaynaktan alıntılı, `sesKaynagi.json` `bekleyen` = Google Chirp 3 HD, `scripts/ses/googleTts.ts`, `npm run audio -- --ornek` | 🔄 | Eksik: GCP projesi + bütçe uyarısı + kısıtlı anahtar (kullanıcı, KG-20), örneklerin dinlenmesi ve ses seçimi (KG-04, 6 Kas 2026) → ADR-0004 `Kabul` |
 
 Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **35 şablon / ~3 haftaya** büyüdü
 (şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**
@@ -1294,8 +1296,8 @@ npm run dev
 ## 16. Açık Riskler
 
 1. **Fiziksel tahta doğrulanmamış** (1 ay). §13'teki üç katman geometriyi korur, dokunma isabetini kanıtlamaz. `tokens.ts` tek noktadan ayarlanabilir tutuluyor.
-2. **ElevenLabs ücretsiz katmanı**nın üretilen sesi uygulamada dağıtma iznini veriyor mu — yayın öncesi şartlar okunmalı. Vermiyorsa Piper tek başına yeterli (lisansı net). *(Adım 15 notu: bu varsayım geçersiz — Türkçe Piper sesleri ticari dağıtım için uygun değil; ElevenLabs kullanılmaz. Bkz. `docs/ses/SES_KAYNAKLARI.md`.)*
-3. **Piper kurulumu** Python 3.9 ile uyumlu mu; değilse `python3.11` veya `edge-tts` alternatifi. *(Adım 15 notu: Piper ve `edge-tts` üretim kaynağı olmaktan çıktı — `docs/ses/SES_KAYNAKLARI.md`; ses kaynağı ADR-0004'te kararlaştırılır.)*
+2. **ElevenLabs ücretsiz katmanı**nın üretilen sesi uygulamada dağıtma iznini veriyor mu — yayın öncesi şartlar okunmalı. Vermiyorsa Piper tek başına yeterli (lisansı net). *(Adım 15 notu: bu varsayım geçersiz — Türkçe Piper sesleri ticari dağıtım için uygun değil; ElevenLabs kullanılmaz. Bkz. `docs/ses/SES_KAYNAKLARI.md`.)* *(Adım 18: **kapandı → ADR-0004**, kaynak Google Cloud TTS.)*
+3. **Piper kurulumu** Python 3.9 ile uyumlu mu; değilse `python3.11` veya `edge-tts` alternatifi. *(Adım 15 notu: Piper ve `edge-tts` üretim kaynağı olmaktan çıktı — `docs/ses/SES_KAYNAKLARI.md`; ses kaynağı ADR-0004'te kararlaştırılır.)* *(Adım 18: **kapandı → ADR-0004**.)*
 4. **`MAT.1.1.9` banknot görselleri** — TCMB koruması nedeniyle stilize temsil çizilmeli. Projedeki tek gerçek varlık riski.
 5. **`MAT.1.4.1` (veriye dayalı araştırma)** doğası gereği çok adımlı ve sınıf ortamına dönük — tek kişilik dijital alıştırmaya indirgenmesi programın ruhunu tam karşılamayabilir. Sadeleştirilmiş bir versiyon yapılıp sınırı açıkça kaydedilecek.
 6. **Tarayıcı depolama tahliyesi.** `storage.persist()` + PWA kurulumu + yedek (§10) riski azaltır ama sıfırlamaz; özellikle kurulmamış iOS Safari'de 7 gün kuralı yılın verisini silebilir. Karşı önlem davranışsal: veli panelindeki yedek uyarısı ve "ana ekrana ekle" yönergesi.

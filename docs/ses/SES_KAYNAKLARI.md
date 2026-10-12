@@ -52,3 +52,11 @@ Piper `tr_TR-dfki` (CC BY-NC-SA) · Piper `fahrettin`/`fettah` (kaldırıldı) �
 - Klip kümesi: `scripts/ses/klipler.ts` (üretici ve denetim aynı modülü kullanır).
 - `.hashes.json` yeni biçimi `{ "$kaynak": SesKaynagi, "<anahtar>": "<özet>" }`; eski düz biçim geriye uyumlu okunur.
 - Google kaynağına geçiş (Adım 31): `sesKaynagi.json` → `{ "saglayici": "google", "modelKimligi": "google:tr-TR-Chirp3-HD-<ses>@<tarih>", "ticariDagitimIzni": true, ... }`, `npm run audio -- --force`, CI'dan `SES_GECIS_MODU` kaldırılır.
+
+## 8. Karar (Adım 18, ADR-0004)
+
+- Sağlayıcı: **Google Cloud TTS, Chirp 3 HD `tr-TR`** (KG-01). Durum: ADR-0004 `Önerildi`; ses adı seçilince `Kabul`.
+- `sesKaynagi.json` → `bekleyen`: karar kaydı; `aktif` Adım 31'e kadar `piper:bilinmiyor` kalır, `audio:audit` köken denetimini aktif kaynağa göre yapar.
+- Anahtar: `GOOGLE_TTS_API_KEY`, yalnız ortam değişkeni veya `.env.local` (`*.local` gitignore'da). Depoya, CI'ya, günlüğe girmez (KG-03).
+- Ses seçimi (KG-04): `npm run audio -- --ornek` → Kore, Aoede, Puck (veya `--ses A,B,C`) için 10'ar örnek + `birlesim-on-yedi-elma.m4a` (PLAN §4.3 tını kontrolü). Çıktı `public/audio-prototip/ornek/<ses>/`, dağıtılmaz.
+- Şartlar ve alıntılar: ADR-0004 "Karar" bölümü.

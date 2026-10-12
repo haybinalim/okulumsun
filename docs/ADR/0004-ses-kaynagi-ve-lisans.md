@@ -2,7 +2,7 @@
 
 - **Durum:** Önerildi
 - **Tarih:** 2026-10-12
-- **Karar sahibi:** Kullanıcı · **Kullanıcı onayı:** Sağlayıcı seçildi 11 Eki 2026 (KG-01); ses adı seçimi bekliyor (KG-04, son tarih 6 Kas 2026)
+- **Karar sahibi:** Kullanıcı · **Kullanıcı onayı:** Sağlayıcı seçildi 11 Eki 2026 (KG-01, sohbet kaydı); Adım 18'e başlama onayı 12 Eki 2026; ses adı seçimi bekliyor (KG-04, son tarih 6 Kas 2026)
 - **İlgili:** PLAN §4, Adım 15, 18, 31, 32, 54, 58, `docs/ses/SES_KAYNAKLARI.md`, eksik G01
 
 ## Bağlam
@@ -29,7 +29,20 @@ C elenir (ticari izin yok). D elenir (kullanıcı kararı: ElevenLabs kullanılm
 
 Önerilen (kullanıcının seçtiği sağlayıcı, KG-01): **B — Google Cloud TTS, Chirp 3 HD `tr-TR`**. Google yalnız derleme anında, geliştirici makinesinde çağrılır; çalışma anında hiçbir ses servisine istek gitmez (KG-02). Maliyet koruması: ayrı GCP projesi, 1 USD bütçe uyarısı, yalnız Text-to-Speech API'ye kısıtlı anahtar; anahtar depoya, CI'ya ve sohbete girmez (KG-03). Yedek yol: Chatterbox Multilingual (MIT, yerel, rızalı referans ses), sonra insan sesi (KG-07).
 
-**Hukuki dayanak (KG-05):** Google belgesi, Cloud TTS ile üretilen ses dosyalarının Google Cloud Platform Hizmet Şartları'na ve yasalara uygun olarak uygulamalarda kullanılabileceğini söyler. Yasak: çıktıyla ses modeli eğitmek veya klonlamak; rakip ses sentezi hizmeti kurmak. Kabulde ses adı, üretim tarihi ve şart sürümü buraya yazılır.
+**Hukuki dayanak (KG-05), birincil kaynaklardan, 12 Eki 2026'da okundu:**
+
+- https://docs.cloud.google.com/text-to-speech/quotas (sayfa güncelleme tarihi 2026-10-09): *"You can use the audio data files you create using Cloud Text-to-Speech in your applications or media in compliance with the Google Cloud Platform Terms of Service including compliance with all applicable law."*
+- https://cloud.google.com/text-to-speech/pricing: Chirp 3 HD için ayda 0–1 milyon karakter ücretsiz, sonrası 30 USD / 1 milyon karakter; faturalandırma hesabı açık olmalı (11 Eki 2026'da okundu, ihtiyaç ≈3.500 karakter).
+- https://cloud.google.com/terms/service-terms: yapay zeka/ML kısıtları — çıktıyla benzer veya rakip bir ürün geliştirmek ve Google modeline benzer bir model eğitmek yasak. Bu proje çıktıyı yalnız uygulama içinde oynatır; ikisini de yapmaz.
+- https://docs.cloud.google.com/text-to-speech/docs/chirp3-hd (2026-10-09): `tr-TR` Chirp 3 HD'de destekli; ses adı biçimi `tr-TR-Chirp3-HD-<ad>`; hız denetimi (`speakingRate` 0,25–2) tüm dillerde, "Preview" aşamasında; kota 200 istek/dk/proje.
+
+**Çocuk ürünü:** şartlarda 13 yaş altına yönelik uygulamada çıktı kullanımını yasaklayan bir madde bulunmadı, ama bunu açıkça izinli kılan bir cümle de okunmadı → `kosullu`. Ticari lansmandan önceki avukat incelemesinde (KG-06) teyit edilir; olumsuzsa yedek yol (KG-07).
+
+**İfşa:** Google atıf şartı koymuyor; proje gönüllü olarak Kaynaklar ekranına ve LICENSES'a aynı cümleyi yazar: "Sesler Google Cloud Text-to-Speech ile üretilmiştir." (Adım 31'de, aktif kaynak değişince).
+
+**Teknik kayıt (Adım 18):** `src/content/sesKaynagi.json` içindeki `bekleyen` alanı bu kararı taşır (`saglayici: google`, `model: chirp3-hd`, `ses: null`, `ticariDagitimIzni: true`, `cocukUrunundeKullanim: kosullu`, şart URL'leri ve okunma tarihi). İstemci `scripts/ses/googleTts.ts`; örnek üretimi `npm run audio -- --ornek [--ses Kore,Aoede,Puck]` (çıktı `public/audio-prototip/ornek/`, gitignore). Konuşma hızı 0,9 (6 yaş için ~%10 yavaş). Kabulde ses adı, üretim ayı (`google:tr-TR-Chirp3-HD-<ad>@YYYY-AA`) ve şart okuma tarihi buraya yazılır.
+
+**Diğer sağlayıcıların durumu:** `say` yalnız `--prototip` (dağıtılmaz); `eleven` çağrılırsa hata; `piper` yalnız eski kliplerin tanınması için, üretimde kullanılmaz.
 
 **Kullanılmayacak kaynaklar (KG-08):** Piper `tr_TR-dfki`, Piper `fahrettin`/`fettah`, macOS `say`/Yelda, `edge-tts` ve benzeri resmî olmayan araçlar, Meta MMS-TTS.
 
@@ -54,5 +67,7 @@ Orta: klipler başka kaynakla yeniden üretilebilir (≈3 gün), ama dinleme tes
 
 - [x] Sağlayıcı seçildi (KG-01).
 - [ ] GCP projesi, bütçe uyarısı ve kısıtlı anahtar kullanıcı tarafından kuruldu (KG-20, 20 Eki 2026'ya kadar).
-- [ ] 2–3 Chirp 3 HD sesiyle 10'ar örnek; ses adı kullanıcı tarafından seçildi (KG-04).
+- [x] Şartlar birincil kaynaktan, tarih ve URL ile alıntılandı (12 Eki 2026).
+- [x] Örnek üretim hattı hazır (`npm run audio -- --ornek`).
+- [ ] 2–3 Chirp 3 HD sesiyle 10'ar örnek üretildi; ses adı kullanıcı tarafından seçildi (KG-04).
 - [ ] Ses adı, üretim tarihi ve şart sürümü bu ADR'ye yazıldı (Adım 18).
