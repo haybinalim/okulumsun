@@ -2,14 +2,15 @@
  * Keşif Masası araçlarının ortak parçaları (plan v2 Adım 44 aşama 2).
  * Animasyon yalnız `transform`/`opacity`, ≤1,5 sn; azaltılmış harekette süre 0.
  */
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useHareketAzalt } from '../../design/useHareketAzalt';
 import type { KesifOlayi } from '../../kesif/kesifMasasi';
 
 export type Gonder = (o: KesifOlayi) => void;
 
 /** Sayaç/nesne belirişi: ölçek + saydamlık, 0,25 sn. */
 export function Belir({ children, anahtar }: { children: React.ReactNode; anahtar: string | number }) {
-  const az = useReducedMotion();
+  const az = useHareketAzalt();
   return (
     <motion.span
       key={anahtar}

@@ -9,7 +9,7 @@ import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { useGeriBildirim } from '../useGeriBildirim';
 import { hataDestekKarari, yanlisSecimBilgisi, type HataDestekKarari } from '../../exercises/hataDestek';
 import type { TapCountExercise, Renk } from '../../exercises/types';
-import type { Accent } from '../../design/tokens';
+import type { Vurgu } from '../../design/tokens';
 import { ACCENTS } from '../../design/tokens';
 import type { YanlisBilgisi } from '../../progress/basitMaddeSonucu';
 
@@ -33,7 +33,7 @@ export function TapCountScreen({
   onYanlis,
 }: {
   exercise: TapCountExercise;
-  accent: Accent;
+  accent: Vurgu;
   onDone: (dogruMu: boolean) => void;
   /** Adım 36: her yanlış denemede (Sınıf Turu ikinci yanlışı sayar). */
   onYanlis?: (bilgi: YanlisBilgisi) => void;
@@ -171,7 +171,7 @@ export function TapCountScreen({
             ))}
           </div>
 
-          <div style={{ display: 'flex', gap: 'var(--size-gap)', alignItems: 'center' }}>
+          <div className="alt-cubuk" style={{ display: 'flex', gap: 'var(--size-gap)', alignItems: 'center' }}>
             <SpeakButton />
             <BigButton
               label="Onayla"

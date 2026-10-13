@@ -190,7 +190,12 @@ describe('kapsayicilik — saf çekirdek', () => {
     expect(css['--size-gap']).toBeUndefined();
     expect(css['--size-edge']).toBeUndefined();
     expect(Object.keys(css).filter((k) => k.startsWith('--size-'))).toHaveLength(BUYUYEN_HEDEFLER.length);
-    for (const ad of BUYUYEN_HEDEFLER) expect(SIZE[ad]).toBeGreaterThan(0);
+    expect([...BUYUYEN_HEDEFLER].sort()).toEqual(['control', 'mascot', 'tapMin']);
+    // Zaten alt sınırın iki katından büyük hedefler büyümez (tahtada alt %65 taşmasın).
+    for (const ad of ['choice', 'choiceMin', 'primary', 'unlock'] as const) {
+      expect(SIZE[ad]).toBeGreaterThanOrEqual(2 * SIZE.tapMin);
+      expect(css[`--size-${ad === 'choiceMin' ? 'choice-min' : ad}`]).toBeUndefined();
+    }
   });
 
   it('palet değişkenleri yalnız renk körlüğü paletinde', () => {

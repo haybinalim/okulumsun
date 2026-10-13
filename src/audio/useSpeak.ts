@@ -22,11 +22,12 @@ export function useScreenSpeech(source: SpeakSource | null, deps: unknown[] = []
   useEffect(() => {
     if (!source) return;
     const controller = new AbortController();
-    void speech.speak(source, { priority: 'high', signal: controller.signal });
+    void speech.speak(source, { priority: 'high', signal: controller.signal, talimat: true });
 
     return () => {
       controller.abort();
       speech.stop();
+      speech.talimatiUnut();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);

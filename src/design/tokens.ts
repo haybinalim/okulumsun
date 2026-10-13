@@ -102,6 +102,12 @@ export const COLOR = {
 
 /** Öğrencinin seçebileceği vurgu renkleri (profil kişiselleştirme). */
 export type Accent = (typeof ACCENTS)[number];
+/** Ekrana giden vurgu: kimlik ve ses adı `Accent`'ten, renk seçili paletten (Adım 55). */
+export interface Vurgu {
+  readonly id: Accent['id'];
+  readonly hex: string;
+  readonly speechKey: Accent['speechKey'];
+}
 
 export const ACCENTS = [
   { id: 'mor', hex: '#7C3AED', speechKey: 'renk.mor' },

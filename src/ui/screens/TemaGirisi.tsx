@@ -11,12 +11,13 @@ import { useEffect } from 'react';
 import { useAppStore, TEMALAR } from '../../store/appStore';
 import { Maskot } from '../feedback/Maskot';
 import { useScreenSpeech } from '../../audio/useSpeak';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { COLOR, MOTION } from '../../design/tokens';
 
 export function TemaGirisi() {
   const { secilenTemaNo, ekranGit, mod } = useAppStore();
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useHareketAzalt();
 
   const tema = TEMALAR.find((t) => t.no === secilenTemaNo);
 

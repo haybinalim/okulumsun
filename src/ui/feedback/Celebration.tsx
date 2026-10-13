@@ -16,7 +16,8 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { COLOR, MOTION, KONFETI, KUTLAMA } from '../../design/tokens';
 
 // ----------------------------------------------------- doğru cevap kutlaması
@@ -35,7 +36,7 @@ export interface DogruKutlamaProps {
  * prefers-reduced-motion'da çerçeve ve tik görünür ama animasyon yok.
  */
 export function DogruKutlama({ aktif, onBitti }: DogruKutlamaProps) {
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useHareketAzalt();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -81,8 +82,8 @@ export function DogruKutlama({ aktif, onBitti }: DogruKutlamaProps) {
           width: 120,
           height: 120,
           borderRadius: '50%',
-          border: `6px solid ${COLOR.correct}`,
-          background: COLOR.correctSoft,
+          border: '6px solid var(--color-correct)',
+          background: 'var(--color-correct-soft)',
           display: 'grid',
           placeItems: 'center',
         }}
@@ -91,7 +92,7 @@ export function DogruKutlama({ aktif, onBitti }: DogruKutlamaProps) {
         <svg width="60" height="60" viewBox="0 0 60 60" aria-hidden="true">
           <path
             d="M14 30 L26 42 L46 18"
-            stroke={COLOR.correct}
+            stroke="var(--color-correct)"
             strokeWidth="6"
             fill="none"
             strokeLinecap="round"
@@ -119,7 +120,7 @@ export interface OturumSonuKutlamaProps {
  * prefers-reduced-motion'da konfeti başlamaz — sadece metin görünür.
  */
 export function OturumSonuKutlama({ aktif, onAtla }: OturumSonuKutlamaProps) {
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useHareketAzalt();
   const confetiRef = useRef<(() => void) | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [gorunur, setGorunur] = useState(false);

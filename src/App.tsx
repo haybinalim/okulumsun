@@ -1,4 +1,6 @@
 import { lazy, Suspense, useState, useMemo, useRef } from 'react';
+import { useKapsayicilikEtkileri } from './ui/useKapsayicilikEtkileri';
+import { useVurgu } from './design/useVurgu';
 import { BoardHarness } from './dev/BoardHarness';
 import { AudioUnlock } from './ui/screens/AudioUnlock';
 import { DersSonuOzeti } from './ui/screens/DersSonuOzeti';
@@ -19,7 +21,7 @@ import { SorunBildir } from './ui/screens/SorunBildir';
 import { OturumSonu } from './ui/screens/OturumSonu';
 import { Bahcem } from './ui/screens/Bahcem';
 import { OturumHatasi, OturumYukleniyor } from './ui/screens/OturumDurumlari';
-import { useAppStore, accentBul } from './store/appStore';
+import { useAppStore } from './store/appStore';
 import { useDeviceProfile } from './design/useDeviceProfile';
 import { CihazProfiliBaglami } from './design/CihazProfiliBaglami';
 import { useUyanikTut } from './ui/useUyanikTut';
@@ -62,7 +64,7 @@ export default function App() {
   );
   const ekran = useAppStore((s) => s.ekran);
   const mod = useAppStore((s) => s.mod);
-  const accent = accentBul(useAppStore((s) => s.accentId));
+  const accent = useVurgu();
   const ekranGit = useAppStore((s) => s.ekranGit);
   const secilenDugumId = useAppStore((s) => s.secilenDugumId);
   const bugunTamamlanan = useAppStore((s) => s.bugunTamamlanan);
@@ -81,6 +83,7 @@ export default function App() {
   }, [aktifSet, setSirasi, secilenDugumId, tahtaTohumu]);
 
   const kisiselOturum = useKisiselOturum(ekran, mod);
+  useKapsayicilikEtkileri();
   useUyanikTut(ekran);
   const tamEkran = useSyncExternalStore(dersAyariniDinle, () => dersteTamEkranMi(profile));
 

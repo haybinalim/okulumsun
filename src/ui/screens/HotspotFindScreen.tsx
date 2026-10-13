@@ -17,7 +17,7 @@ import { Visual } from '../svg/Visual';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { useGeriBildirim } from '../useGeriBildirim';
 import type { HotspotFindExercise, HotspotOption } from '../../exercises/types';
-import type { Accent } from '../../design/tokens';
+import type { Vurgu } from '../../design/tokens';
 import type { YanlisBilgisi } from '../../progress/basitMaddeSonucu';
 import { yanlisSecimBilgisi } from '../../exercises/hataDestek';
 
@@ -28,7 +28,7 @@ export function HotspotFindScreen({
   onYanlis,
 }: {
   exercise: HotspotFindExercise;
-  accent: Accent;
+  accent: Vurgu;
   onDone: (dogruMu: boolean) => void;
   /** Adım 36: her yanlış denemede (Sınıf Turu ikinci yanlışı sayar). */
   onYanlis?: (bilgi: YanlisBilgisi) => void;
@@ -138,7 +138,7 @@ export function HotspotFindScreen({
       }
       interaction={
         <>
-          <div style={{ display: 'flex', gap: 'var(--size-gap)', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="alt-cubuk" style={{ display: 'flex', gap: 'var(--size-gap)', alignItems: 'center', justifyContent: 'center' }}>
             <SpeakButton />
             {hepsiGerekli && (
               <div style={{ fontSize: 'var(--text-adult)', color: 'var(--color-ink-soft)' }}>

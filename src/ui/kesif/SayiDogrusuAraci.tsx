@@ -2,13 +2,14 @@
  * Sayı doğrusu aracı (plan v2 Adım 44): 0–20, ekrana sığsın diye 11 noktalık pencere (0–10 veya 10–20;
  * konum 10'u geçince kayar). Noktaya dokununca işaret oraya zıplar; "+1/−1" birer adım.
  */
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { BigButton } from '../primitives/BigButton';
 import { izgaraBoslugu, type Gonder } from './ortak';
 import { pencereBaslangici } from './kesifEkrani';
 
 export function SayiDogrusuAraci({ konum, gonder }: { konum: number; gonder: Gonder }) {
-  const az = useReducedMotion();
+  const az = useHareketAzalt();
   const bas = pencereBaslangici(konum);
   return (
     <div data-arac="sayiDogrusu" data-pencere={`${bas}-${bas + 10}`} style={{ position: 'relative' }}>

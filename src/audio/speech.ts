@@ -20,6 +20,7 @@ import { e2eKlipAlindi } from '../dev/e2eKanca';
 import { AUDIO_MANIFEST, type SpeechKey } from './audioManifest.generated';
 import { kayitEkle } from '../hata/hataKaydi';
 import { hash32 } from '../exercises/rng';
+import { EN_DUSUK_CALMA_HIZI } from '../design/kapsayicilik';
 
 export type { SpeechKey };
 
@@ -38,6 +39,8 @@ export interface SpeakOptions {
   /** 1'den küçük = daha yavaş. "Tekrar dinle" ikinci kez daha yavaş çalar. */
   rate?: number;
   signal?: AbortSignal;
+  /** Ekran talimatı mı? (Adım 55: talimat tekrarı yalnız bunu yeniden söyler, övgü/tekrar-dene klibini değil.) */
+  talimat?: boolean;
 }
 
 export type SpeechEngineState = 'kilitli' | 'hazir' | 'calisiyor';
@@ -73,6 +76,10 @@ class SpeechService {
   #last: { source: SpeakSource; options: SpeakOptions } | null = null;
   #primed = false;
   #listeners = new Set<(s: SpeechEngineState) => void>();
+  /** Son ekran talimatı (Adım 55). */
+  #sonTalimat: SpeakSource | null = null;
+  /** Temel çalma hızı: veli "Ses hızı" × kapsayıcılık temposu (Adım 55). Her klibin hızıyla çarpılır. */
+  #temelHiz = 1;
 
   get primed(): boolean {
     return this._primed();
@@ -125,8 +132,33 @@ class SpeechService {
     await Promise.all(keys.map((k) => this.#load(k)));
   }
 
+  /** Temel çalma hızını ayarlar (Adım 55); geçersiz değer 1 sayılır. Çalan klibi değiştirmez. */
+  temelHizAyarla(hiz: number): void {
+    this.#temelHiz = Number.isFinite(hiz) && hiz > 0 ? hiz : 1;
+  }
+
+  get temelHiz(): number {
+    return this.#temelHiz;
+  }
+
+  /**
+   * Son ekran talimatını bir kez yeniden söyler (Adım 55, talimat tekrarı). Konuşma sürüyorsa
+   * veya talimat yoksa hiçbir şey yapmaz ve `false` döner.
+   */
+  talimatiTekrarla(): boolean {
+    if (!this.#sonTalimat || !this._primed() || this.#playing || this.#queue.length > 0) return false;
+    void this.speak(this.#sonTalimat, { priority: 'high', talimat: true });
+    return true;
+  }
+
+  /** Ekran kapanınca talimat unutulur: önceki ekranın talimatı yenisinde tekrarlanmaz. */
+  talimatiUnut(): void {
+    this.#sonTalimat = null;
+  }
+
   async speak(source: SpeakSource, options: SpeakOptions = {}): Promise<void> {
     this.#last = { source, options };
+    if (options.talimat) this.#sonTalimat = source;
 
     if (options.priority === 'high') this.stop();
 
@@ -210,7 +242,7 @@ class SpeechService {
       if (options.signal?.aborted) return;
       const buffer = await this.#load(keys[i]);
       if (!buffer) continue;
-      await this.#playBuffer(buffer, options.rate ?? 1);
+      await this.#playBuffer(buffer, Math.max(EN_DUSUK_CALMA_HIZI, (options.rate ?? 1) * this.#temelHiz));
       if (gap > 0 && i < keys.length - 1) await sleep(gap);
     }
   }

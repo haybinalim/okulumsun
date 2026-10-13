@@ -16,7 +16,7 @@ import { Visual } from '../svg/Visual';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { useGeriBildirim } from '../useGeriBildirim';
 import type { MatchPairsExercise, EslesmeKarti } from '../../exercises/types';
-import type { Accent } from '../../design/tokens';
+import type { Vurgu } from '../../design/tokens';
 import { BILGISIZ_YANLIS, type YanlisBilgisi } from '../../progress/basitMaddeSonucu';
 
 export function MatchPairsScreen({
@@ -26,7 +26,7 @@ export function MatchPairsScreen({
   onYanlis,
 }: {
   exercise: MatchPairsExercise;
-  accent: Accent;
+  accent: Vurgu;
   onDone: (dogruMu: boolean) => void;
   /** Adım 36: her yanlış denemede (Sınıf Turu ikinci yanlışı sayar). */
   onYanlis?: (bilgi: YanlisBilgisi) => void;
@@ -145,7 +145,7 @@ export function MatchPairsScreen({
               ))}
             </div>
           </div>
-          <div style={{ display: 'flex', gap: 'var(--size-gap)', alignItems: 'center' }}>
+          <div className="alt-cubuk" style={{ display: 'flex', gap: 'var(--size-gap)', alignItems: 'center' }}>
             <SpeakButton />
           </div>
         </>

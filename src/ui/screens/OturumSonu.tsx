@@ -11,7 +11,8 @@
  */
 
 import { useEffect, useState, useCallback } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { COLOR, MOTION } from '../../design/tokens';
 import { BigButton } from '../primitives/BigButton';
 import { OturumSonuKutlama } from '../feedback/Celebration';
@@ -32,7 +33,7 @@ export interface OturumSonuProps {
  * Dokununca veya ≤2 sn sonra Bahçem'e geçer.
  */
 export function OturumSonu({ oturumTamamlandi, onBahcem }: OturumSonuProps) {
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useHareketAzalt();
   const [kutlamaAktif, setKutlamaAktif] = useState(true);
   const [gecisHazir, setGecisHazir] = useState(false);
 

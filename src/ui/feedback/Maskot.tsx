@@ -12,7 +12,8 @@
  */
 
 import { memo } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { type MaskotDurumu } from './maskotState';
 import { COLOR, SIZE, MOTION } from '../../design/tokens';
 
@@ -161,7 +162,7 @@ export interface MaskotProps {
 export const Maskot = memo(function Maskot({ durum, size, onDokun }: MaskotProps) {
   const boyut = size ?? SIZE.mascot;
   const renk = COLOR.mascot;
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useHareketAzalt();
 
   return (
     <motion.button

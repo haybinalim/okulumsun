@@ -12,7 +12,8 @@
  *  · Yeni sahne açıldığsa küçük kutlama.
  */
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useHareketAzalt } from '../../design/useHareketAzalt';
 import {
   type CikartmaKoleksiyonu,
   YENI_SAHNE_ESIGI,
@@ -73,7 +74,7 @@ function CikartmaIkon({ sahne, dolu }: { sahne: string; dolu: boolean }) {
  * Çocuğa gösterim: dolu/boş yuva dizisi, sayı YOK.
  */
 export function Bahcem({ koleksiyon, onEv }: BahcemProps) {
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useHareketAzalt();
   const sahne = mevcutSahneAdi(koleksiyon);
   const arkaPlan = sahneArkaPlan(sahne);
   const kalan = kalanCikartma(koleksiyon);

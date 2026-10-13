@@ -7,7 +7,7 @@ import { Visual } from '../svg/Visual';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { useGeriBildirim } from '../useGeriBildirim';
 import type { TapToPlaceExercise } from '../../exercises/types';
-import type { Accent } from '../../design/tokens';
+import type { Vurgu } from '../../design/tokens';
 import type { YanlisBilgisi } from '../../progress/basitMaddeSonucu';
 import { yanlisSecimBilgisi } from '../../exercises/hataDestek';
 
@@ -25,7 +25,7 @@ export function TapToPlaceScreen({
   onYanlis,
 }: {
   exercise: TapToPlaceExercise;
-  accent: Accent;
+  accent: Vurgu;
   onDone: (dogruMu: boolean) => void;
   /** Adım 36: her yanlış denemede (Sınıf Turu ikinci yanlışı sayar). */
   onYanlis?: (bilgi: YanlisBilgisi) => void;
@@ -144,7 +144,7 @@ export function TapToPlaceScreen({
               );
             })}
           </div>
-          <div style={{ display: 'flex', gap: 'var(--size-gap)', alignItems: 'center' }}>
+          <div className="alt-cubuk" style={{ display: 'flex', gap: 'var(--size-gap)', alignItems: 'center' }}>
             <SpeakButton />
             <BigButton
               label="Onayla"

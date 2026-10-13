@@ -140,3 +140,21 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/*
+ * Kapsayıcılık ayarları (plan v2 Adım 55) — yetişkin açar, kök öznitelikleri `applyProfile` yazar.
+ * Sol el: yalnız alt düğme çubuğu aynalanır (Tekrar dinle ↔ Onayla); cevap kartlarının sırası
+ * DEĞİŞMEZ (sıralama/sayı doğrusu soruları soldan sağa okunur).
+ */
+:root[data-sol-el] .alt-cubuk {
+  flex-direction: row-reverse;
+}
+
+/* Hareket azalt: işletim sistemi ayarından bağımsız, `prefers-reduced-motion` ile aynı kural. */
+:root[data-hareket-azalt] *,
+:root[data-hareket-azalt] *::before,
+:root[data-hareket-azalt] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}

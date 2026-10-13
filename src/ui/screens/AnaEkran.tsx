@@ -10,22 +10,24 @@
  * Akıllı tahta erişim bölgesi: dişli 32px (çocuk hedefi değil), alt %65'te.
  */
 
+import { useVurgu } from '../../design/useVurgu';
 import { useState } from 'react';
-import { useAppStore, TEMALAR, accentBul, avatarBul } from '../../store/appStore';
+import { useAppStore, TEMALAR, avatarBul } from '../../store/appStore';
 import { temaAcikMi } from '../../content/okulAyi';
 import { BigButton } from '../primitives/BigButton';
 import { Maskot } from '../feedback/Maskot';
 import { YonlendirmeSeridi } from '../feedback/YonlendirmeSeridi';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { COLOR, MOTION, SIZE } from '../../design/tokens';
 import { SinifKavanozu } from '../svg/SinifKavanozu';
 
 export function AnaEkran() {
   const { mod, okulAyiIndex, temaSec, ekranGit, sinifTuruKur } = useAppStore();
-  const accent = accentBul(useAppStore((s) => s.accentId));
+  const accent = useVurgu();
   const avatar = avatarBul(useAppStore((s) => s.avatarId));
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useHareketAzalt();
   const [kilitliTema, setKilitliTema] = useState<string | null>(null);
 
   // Konu seçimi, çocuk için sesli yönlendirmeyle başlar; şerit ses çalmazsa

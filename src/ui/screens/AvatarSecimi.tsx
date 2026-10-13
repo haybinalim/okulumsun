@@ -10,12 +10,13 @@
 import { useAppStore, AVATARLAR } from '../../store/appStore';
 import { BigButton } from '../primitives/BigButton';
 import { useScreenSpeech } from '../../audio/useSpeak';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { COLOR, SIZE } from '../../design/tokens';
 
 export function AvatarSecimi() {
   const avatarSec = useAppStore((s) => s.avatarSec);
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useHareketAzalt();
 
   useScreenSpeech({ kind: 'key', key: 'ui.avatar-sec' }, []);
 
