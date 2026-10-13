@@ -112,6 +112,8 @@ interface AppStore {
   secilenTemaNo: number | null;
   secilenDugumId: string | null;
   oturumTamamlandi: boolean;
+  /** Bugünün bahçesi: yalnız bellekte, yenilemede sıfırlanır (Adım 29). */
+  bugunTamamlanan: number;
 
   // --- Actions
   ekranGit: (ekran: Ekran) => void;
@@ -143,6 +145,7 @@ const baslangicDurumu = {
   secilenTemaNo: null as number | null,
   secilenDugumId: null as string | null,
   oturumTamamlandi: false,
+  bugunTamamlanan: 0,
 };
 
 export const useAppStore = create<AppStore>((set) => ({
@@ -191,7 +194,12 @@ export const useAppStore = create<AppStore>((set) => ({
     }),
 
   oturumuTamamla: () =>
-    set({ oturumTamamlandi: true, ekran: 'oturumSonu', oncekiEkran: 'alistirma' }),
+    set((s) => ({
+      oturumTamamlandi: true,
+      bugunTamamlanan: s.bugunTamamlanan + 1,
+      ekran: 'oturumSonu',
+      oncekiEkran: 'alistirma',
+    })),
 
   sifirla: () => set({ ...baslangicDurumu }),
 

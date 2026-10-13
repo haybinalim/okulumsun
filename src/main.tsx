@@ -6,12 +6,14 @@ import App from './App.tsx'
 import { ErrorBoundary } from './ui/ErrorBoundary.tsx'
 import { ekranSaglayicisiAyarla } from './hata/hataKaydi.ts'
 import { useAppStore } from './store/appStore.ts'
+import { acilistaTemizle } from './persistence/acilistaTemizle.ts'
 import { gelistirmeHatasiTetikle, hataDinleyicileriniKur } from './hata/dinleyiciler.ts'
 
 // Adım 23: yakalanmamış hatalar yalnız bellekteki yerel günlüğe (ADR-0005).
 ekranSaglayicisiAyarla(() => useAppStore.getState().ekran)
 hataDinleyicileriniKur()
 gelistirmeHatasiTetikle()
+void acilistaTemizle()
 
 /*
  * Hata sınırı EN DIŞTA. Bir render hatası aksi hâlde #root'u tamamen boşaltır

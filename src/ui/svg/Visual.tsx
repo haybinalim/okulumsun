@@ -581,7 +581,7 @@ function IslemSahnesi({
     return Array.from({ length: adet }).map((_, i) => (
       <g key={`${x}-${y}-${i}`} transform={`translate(${x + (i % sutun) * boyut} ${y + Math.floor(i / sutun) * boyut})`} opacity={soluk ? 0.3 : 1}>
         <Sprite name={spec.nesne} fill={renk} size={boyut * 0.82} />
-        {soluk && <path d={`M${boyut * 0.1} ${boyut * 0.1} L${boyut * 0.72} ${boyut * 0.72} M${boyut * 0.72} ${boyut * 0.1} L${boyut * 0.1} ${boyut * 0.72}`} stroke="#dc2626" strokeWidth={3} />}
+        {soluk && <path d={`M${boyut * 0.1} ${boyut * 0.1} L${boyut * 0.72} ${boyut * 0.72} M${boyut * 0.72} ${boyut * 0.1} L${boyut * 0.1} ${boyut * 0.72}`} stroke="#6B7280" strokeWidth={3} />}
       </g>
     ));
   };

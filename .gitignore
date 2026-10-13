@@ -44,3 +44,4 @@ public/audio-prototip/
 *.ndjson
 okulumsun-yedek-*.json
 dist-e2e
+scripts/claude-cikti/
