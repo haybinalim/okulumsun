@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { uyanikTut } from '../platform/uyanikTut';
 
-const KILITLI_EKRANLAR = new Set(['alistirma', 'konuSecimi', 'temaGirisi', 'sinifTuru']);
+const KILITLI_EKRANLAR = new Set(['alistirma', 'konuSecimi', 'temaGirisi', 'sinifTuru', 'sinifTuruSonu']);
 
 /** Ders ekranlarında ekranı uyanık tutar; ana ekran ve yetişkin ekranlarında bırakır. */
 export function useUyanikTut(ekran: string): void {

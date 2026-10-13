@@ -4,7 +4,7 @@
  * 7 tema kartı (ikon + renk + siluet) + maskot + dişli (32px, çocuk hedefi değil).
  *
  * Kişisel mod: "Başla" butonu → adaptif motor 8 soru seçer.
- * Tahta modu: tema kartına dokununca → [4b] Konu seçimi.
+ * Tahta modu: tema kartına dokununca → [4b] Konu seçimi; 8. kart "Sınıf Turu" → [4d] (Adım 36).
  *
  * Dişli → Veli kapısı → Veli paneli.
  * Akıllı tahta erişim bölgesi: dişli 32px (çocuk hedefi değil), alt %65'te.
@@ -19,9 +19,10 @@ import { YonlendirmeSeridi } from '../feedback/YonlendirmeSeridi';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { motion, useReducedMotion } from 'framer-motion';
 import { COLOR, MOTION, SIZE } from '../../design/tokens';
+import { SinifKavanozu } from '../svg/SinifKavanozu';
 
 export function AnaEkran() {
-  const { mod, okulAyiIndex, temaSec, ekranGit } = useAppStore();
+  const { mod, okulAyiIndex, temaSec, ekranGit, sinifTuruKur } = useAppStore();
   const accent = accentBul(useAppStore((s) => s.accentId));
   const avatar = avatarBul(useAppStore((s) => s.avatarId));
   const reducedMotion = useReducedMotion();
@@ -221,6 +222,27 @@ export function AnaEkran() {
               />
             );
           })}
+          {/* Sınıf Turu (Adım 36): yalnız tahtada; öğretmen kurulumu açar. */}
+          {mod === 'tahta' && (
+            <BigButton
+              label="Sınıf Turu"
+              size="tapMin"
+              variant="solid"
+              onPress={() => sinifTuruKur()}
+              style={{
+                width: 180,
+                height: 180,
+                background: COLOR.surface,
+                color: COLOR.ink,
+                border: `4px dashed ${COLOR.border}`,
+                flexDirection: 'column',
+                gap: 4,
+              }}
+            >
+              <SinifKavanozu kavanoz={5} hedef={9} boyut={70} />
+              <span style={{ fontSize: 16, textAlign: 'center', fontWeight: 700 }}>Sınıf Turu</span>
+            </BigButton>
+          )}
         </motion.div>
       </section>
 

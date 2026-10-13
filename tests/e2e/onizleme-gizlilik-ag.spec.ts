@@ -53,6 +53,32 @@ test.describe('gizlilik: ağ ve depolama', () => {
     expect(depolamaIhlalleri(await depolamaDurumu(page))).toEqual([]);
   });
 
+  test('tahta modu: Sınıf Turu (2 takım, küçük kavanoz) baştan sona', async ({ page }) => {
+    test.setTimeout(120_000);
+    const ag = agKaydet(page);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('./?device=board');
+    const koken = new URL(page.url()).origin;
+
+    await page.getByRole('button', { name: 'Başla' }).click();
+    await page.getByRole('button', { name: 'Tahtada birlikte çalışalım.' }).click();
+    await page.getByRole('button', { name: 'Sınıf Turu', exact: true }).click();
+    await page.getByRole('button', { name: '2 takım' }).click();
+    await page.getByRole('button', { name: 'Küçük kavanoz' }).click();
+    await page.getByRole('button', { name: 'Sınıf Turunu başlat' }).click();
+    for (let tur = 0; tur < 4; tur++) {
+      await page.getByRole('button', { name: 'Hazırız' }).click();
+      await expect.poll(() => page.evaluate(() => window.__okulumsunE2E?.dogruCevapla() ?? false)).toBe(true);
+      await page.getByRole('button', { name: 'Devam' }).click();
+    }
+    await expect(page.getByRole('heading', { name: 'Kavanozu birlikte doldurduk!' })).toBeVisible();
+    await page.getByRole('button', { name: 'Ana ekran' }).click();
+
+    expect(agIhlalleri(ag.istekler, koken)).toEqual([]);
+    expect(ag.soketler).toEqual([]);
+    expect(depolamaIhlalleri(await depolamaDurumu(page))).toEqual([]);
+  });
+
   test('tuzak: dış adrese istek ve izinsiz depolama yakalanır', async ({ page }) => {
     const ag = agKaydet(page);
     await page.goto('./?device=tablet');

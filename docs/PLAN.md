@@ -874,6 +874,10 @@ Aşırı oyunlaştırma önlemleri: ödül **tamamlamaya** bağlı, doğru sayı
 
 Doğru cevap: 400–600ms, yeşil çerçeve + tik + %8 nabız + yükselen iki nota. Sesli onay 6–8 varyantlı. **Konfeti yalnız oturum sonunda.**
 
+**Sınıf Turu notu (Adım 36, ADR-0008 önerildi).** Tahtadaki grup oyununda da aynı ilke: ödül tamamlanan
+tura bağlıdır (doğru, ipuçlu veya birlikte çözülmüş fark etmez) — sınıfın ortak kavanozuna bir yaprak, takıma
+bir yıldız. Yıldızlar simgedir, sayı yazılmaz; kavanoz yüzde göstermez; kazanan, sıralama ve süre yoktur.
+
 ### 7.5 Maskot
 
 Tek net işlevi: **sesin sahibi olmak.** Tüm sesli talimat ondan gelir; "kim konuşuyor" sorusunu çözer, yardım istemeyi doğallaştırır.
@@ -1073,6 +1077,10 @@ Yan dal: [4] → dişli → Veli kapısı → [9] Veli paneli
 - [7]/[8] (çıkartma/bahçe) atlanır — ödül kişiseldir, sınıf ekranında anlamsız.
   Oturum "Ev" ile biter.
 - Hiçbir şey IndexedDB'ye yazılmaz (`events` dahil).
+- **[4d] Sınıf Turu** (plan v2 Adım 36, ADR-0008 önerildi): ana ekranın 8. kartı → kurulum (2–4 takım,
+  renk, soru kaynağı: bugünün seti veya tema, kavanoz büyüklüğü) → sıra duyurusu → soru (`ExerciseScreen`
+  gömülü; üst %12 kavanoz + takım şeritleri) → tur kutlaması → … → kavanoz kutlaması. Yalnız tahta modunda;
+  durum yalnız bellekte, ekrandan çıkınca silinir.
 
 **Veli paneli [9] — içerik listesi (ilk sürüm, bu kadarı ZORUNLU, fazlası değil):**
 
@@ -1231,7 +1239,7 @@ Her adımın **"Bitti tanımı"** vardır: listedeki her madde doğrulanmadan ad
 ve bir sonraki adıma geçilemez. Durum sütunu bu repodaki gerçeği yansıtır; bir adımı
 bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 
-<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=47 durum:e2e_dosya=13 durum:adr=14 -->
+<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=48 durum:e2e_dosya=14 durum:adr=14 -->
 
 | # | İş | Durum | Bitti tanımı |
 |---|---|---|---|
@@ -1270,7 +1278,7 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 30 | Rakam glifleri doğrulaması (MEB dik temel): path verisi tek kaynak `src/ui/svg/rakamGlifleri.ts` (`RAKAM_GLIFLERI`, `Visual.tsx` `Rakam` kullanır, çizgi kalınlığı `GLIF` belirteci), DEV glif kartı `src/dev/GlifKarti.tsx` (`?gelistirme=glif`), öğretmen görüş formu `docs/icerik/rakam-glifleri.md` + yazdırılabilir A4 form `npm run glif:formu`. Path'ler değişmedi | ⚠ kod hazır, öğretmen formları bekleniyor (iki aşamalı, KG-42) | `rakamGlifleri.spec.ts` (10 glif, kancalı 1, çizgisiz 7, Visual tek kaynak) |
 | 34 | Bugünün seti (tahta/öğretmen): `src/ogretmen/{dugumKodlari,gunlukSet,tahtaSorusu}.ts` (kararlı 2 karakterlik düğüm kodları, saf set mantığı, `App.tsx`'ten taşınan saf soru üretimi), `SetHazirla` ekranı (≤4 düğüm, alt %65, ≥102 px), AnaEkran "Öğretmen" girişi, veli paneli "Öğretmen alanı", `appStore.aktifSet` (yalnız bellekte), validate düğüm kodu denetimi. Ses klipleri (`ui.set-basliyor`, `ui.set-bitti`) GCP anahtarı gelene kadar ertelendi (KG-43) | ✅ | `gunlukSet.spec.ts`, `tahtaSorusu.spec.ts` (39 şablon), `dugumKodlari.spec.ts`, e2e `bugunun-seti.spec.ts` |
 | 35 | Yazdırılabilir çalışma kâğıdı + cevap anahtarı: `src/ogretmen/calismaKagidi/{yazdirmaUygunlugu,kagitMaddesi,kagitPlani,kagitYerlesimi,cevapAnahtari,sesMetni}.ts` (saf; aynı istek → aynı plan, cevap `validation` alanından), `CalismaKagidi` ekranı (tembel yüklenir) + `KagitSayfalari`/`kagit.css` (HTML+SVG, `@page` A4, 12 mm kenar, seçenek kutusu ≥ 26 mm, şematik banknot), `SetHazirla`/`VeliPaneli` girişleri, validate yazdırma sınıfı denetimi (23 uygun · 14 uyarlanır · 2 uygun değil); ADR-0006 Kabul. İki öğretmen incelemesi ve elle siyah-beyaz baskı bekliyor | ✅ | `calismaKagidi.spec.ts` (determinizm, doğruluk, sınıflandırma, para, depolama/ağ yok), e2e `calisma-kagidi.spec.ts` (PDF sayfa sayısı, yazdırma ortamı ölçüleri, görsel taban `kagit-2x3`) |
-| 36a | Sınıf Turu aşama 1: `src/sinif/sinifTuru.ts` (SAF durum makinesi: 2–4 takım, döngüsel sıra, yıldız + yaprak, sayısız kavanoz, öğretmen bitirir). Ekranlar, `onDone` refaktörü, ses klipleri ve e2e sonraki aşamalarda | ✅ | `sinifTuru.spec.ts` (sıra döngüsel, yanlış sırayı geçirmez, hedefte biter, 1/5 takım reddi, puan/skor alanı yok) |
+| 36 | Sınıf Turu (ADR-0008 önerildi): `src/sinif/sinifTuru.ts` (SAF durum makinesi: 2–4 takım, döngüsel sıra, yıldız + yaprak, öğretmen bitirir) + `src/sinif/takim.ts` (renk + hayvan + renk sesi kimliği, ikinci yanlışta birlikte çözme, tur sonucu); `ExerciseScreen.onDone` `MaddeSonuc` taşır, `onYanlis` yanlış denemeleri bildirir; `SinifTuruKurulum`/`SinifTuruEkrani`/`SinifTuruSonu` + `SinifKavanozu`, ana ekranda tahta kartı, `appStore.sinifTuru` yalnız bellekte. 10 yeni ses klibi Adım 31'e ertelendi (mevcut klipler kullanılıyor); ADR-0008 `Kabul` kullanıcı onayı, tablet deneme turu cihazda bekliyor | ✅ (sesler hariç) | `sinifTuru.spec.ts`, `sinifTuruAkis.spec.ts`, `exerciseScreenSonuc.spec.ts`; e2e `board-sinif-turu.spec.ts` (3 takım × 3 tur → kavanoz kutlaması, ikinci yanlışta "hep birlikte", her ekranda tahta geometrisi, ekranda puan/skor yok, depolama boş; öğretmen "Bitir" iki dokunuş) |
 
 Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **35 şablon / ~3 haftaya** büyüdü
 (şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**

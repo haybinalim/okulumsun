@@ -20,10 +20,13 @@ export function TapToPlaceScreen({
   exercise,
   accent,
   onDone,
+  onYanlis,
 }: {
   exercise: TapToPlaceExercise;
   accent: Accent;
   onDone: (dogruMu: boolean) => void;
+  /** Adım 36: her yanlış denemede (Sınıf Turu ikinci yanlışı sayar). */
+  onYanlis?: () => void;
 }) {
   useScreenSpeech(exercise.prompt.ses, [exercise.itemId]);
   const geriBildirim = useGeriBildirim(exercise.itemId);
@@ -63,6 +66,7 @@ export function TapToPlaceScreen({
     } else {
       setCozum('tekrar');
       void speak(geriBildirim.tekrar());
+      onYanlis?.();
       window.setTimeout(() => {
         setCozum('bos');
         setYerlesim({});

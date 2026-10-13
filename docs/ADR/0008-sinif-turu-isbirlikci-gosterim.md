@@ -1,7 +1,7 @@
 # ADR-0008: Sınıf Turu: iş birlikçi gösterim
 
-- **Durum:** Taslak
-- **Tarih:** 2026-10-12
+- **Durum:** Önerildi
+- **Tarih:** 2026-10-13
 - **Karar sahibi:** Geliştirici + kullanıcı · **Kullanıcı onayı:** Gerekecek
 - **İlgili:** Adım 36, PLAN §7
 
@@ -17,12 +17,23 @@ Tahtada grup oyunu istendi. Takım skorları ve sıralama, PLAN §7.1'in "cezala
 
 ## Karar
 
-Henüz karar verilmedi. Bu kayıt seçenekleri ve kabul koşullarını sabitler; bağlı adım başlamadan önce `Önerildi` durumuna getirilir. Eğilim: 1.
+Önerilen: **1 — ortak kavanoz** (plan v2 Adım 36, KG-45–47 ile uygulandı; `Kabul` kullanıcı onayı bekliyor).
+
+- Tamamlanan her tur (ilk denemede doğru, yanlıştan sonra doğru ya da birlikte çözülmüş) kavanoza bir
+  yaprak, sıradaki takıma bir yıldız ekler. Doğru sayısı, hız ve süre ölçülmez/gösterilmez; kazanan,
+  sıralama ve sayısal skor yoktur (PLAN §7.4). Yıldızlar simge olarak çizilir, sayı yazılmaz.
+- Yanlışta aynı takım tekrar dener; ikinci yanlışta maskot "Hep birlikte sayalım." der, sınıf soruyu
+  birlikte çözer ve tur tamamlanmış sayılır (öğretmen "Birlikte çözdük" ile de kapatabilir).
+- Takım kimliği renk + hayvan ikonu + renk sesi; takım adı ve öğrenci adı girişi yoktur.
+- Öğretmen her an "Bitir" (ikinci dokunuşta onay). Durum yalnız bellekte; ekrandan çıkınca silinir.
+- Emsal: Matific Play'in rekabetsiz sınıf "tamamlama panosu".
 
 ## Sonuçlar
 
-- Değişen dosyalar / PLAN bölümleri: Sınıf Turu ekranı, PLAN §7.
-- Test / kanıt: tahta geometri testi; takım bilgisinin yazılmadığı test.
+- Değişen dosyalar / PLAN bölümleri: `src/sinif/{sinifTuru,takim}.ts`, `SinifTuruKurulum/Ekrani/Sonu.tsx`,
+  `SinifKavanozu.tsx`, `appStore` (`sinifTuru`), PLAN §7.4 notu, §11 [4d].
+- Test / kanıt: `sinifTuru.spec.ts`, `sinifTuruAkis.spec.ts`; e2e `board-sinif-turu.spec.ts` (3 takım × 3 tur,
+  her ekranda tahta geometrisi, ekranda `\d+ puan|skor` yok, depolama boş).
 
 ## Gizlilik etkisi
 
@@ -38,5 +49,5 @@ Düşük.
 
 ## Kabul koşulları
 
-- [ ] Seçenek seçildi.
+- [x] Seçenek seçildi (1, önerildi; kullanıcı onayı bekliyor).
 - [ ] Tahta denemesinde (Adım 41) tur süreleri ölçüldü.

@@ -27,6 +27,8 @@ export interface E2eKancasi {
   sayac: number;
   /** Ekrandaki alıştırmayı doğru cevaplanmış gibi bitirir. */
   dogruCevapla: () => boolean;
+  /** Ekrandaki alıştırmaya bir yanlış deneme bildirir (Adım 36 Sınıf Turu); madde açık kalır. */
+  yanlisCevapla: () => boolean;
   /** Başarıyla alınan ses klipleri (anahtar), sırayla. */
   readonly alinanKlipler: string[];
 }
@@ -38,15 +40,21 @@ declare global {
 }
 
 function kanca(): E2eKancasi {
-  window.__okulumsunE2E ??= { alistirma: null, sayac: 0, dogruCevapla: () => false, alinanKlipler: [] };
+  window.__okulumsunE2E ??= { alistirma: null, sayac: 0, dogruCevapla: () => false, yanlisCevapla: () => false, alinanKlipler: [] };
   return window.__okulumsunE2E;
 }
 
 /** Alıştırma ekranı bağlanınca çağrılır; kanca kapalıyken hiçbir şey yapmaz. */
-export function useE2eAlistirma(exercise: Exercise, onDone: (dogruMu: boolean) => void): void {
+export function useE2eAlistirma(
+  exercise: Exercise,
+  onDone: (dogruMu: boolean) => void,
+  onYanlis?: () => void,
+): void {
   // onDone her render'da yeni olabilir (tahta modu); alıştırma değişmedikçe kanca yeniden kurulmaz.
   const onDoneRef = useRef(onDone);
   onDoneRef.current = onDone;
+  const onYanlisRef = useRef(onYanlis);
+  onYanlisRef.current = onYanlis;
   useEffect(() => {
     if (!E2E_KANCASI_ACIK) return;
     const k = kanca();
@@ -60,11 +68,17 @@ export function useE2eAlistirma(exercise: Exercise, onDone: (dogruMu: boolean) =
       onDoneRef.current(true);
       return true;
     };
+    k.yanlisCevapla = () => {
+      if (bitti || !onYanlisRef.current) return false;
+      onYanlisRef.current();
+      return true;
+    };
     return () => {
       bitti = true;
       if (k.alistirma?.sira === sira) {
         k.alistirma = null;
         k.dogruCevapla = () => false;
+        k.yanlisCevapla = () => false;
       }
     };
   }, [exercise]);
