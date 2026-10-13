@@ -1,6 +1,6 @@
 # ADR-0008: Sınıf Turu: iş birlikçi gösterim
 
-- **Durum:** Kabul (2026-10-13, kullanıcı onayı)
+- **Durum:** Kabul
 - **Tarih:** 2026-10-13
 - **Karar sahibi:** Geliştirici + kullanıcı · **Kullanıcı onayı:** Verildi (2026-10-13)
 - **İlgili:** Adım 36, PLAN §7
