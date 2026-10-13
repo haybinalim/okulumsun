@@ -25,10 +25,10 @@ export function Belir({ children, anahtar }: { children: React.ReactNode; anahta
 }
 
 /** Sayaç: dolu daire (onluk çerçeve ve nesne kümesi). */
-export function Sayac({ boyut = '70%' }: { boyut?: string }) {
+export function Sayac({ boyut = '70%', renk = 'var(--color-accent)' }: { boyut?: string; renk?: string }) {
   return (
     <svg viewBox="0 0 40 40" width={boyut} height={boyut} aria-hidden="true">
-      <circle cx="20" cy="20" r="17" fill="var(--color-accent)" />
+      <circle cx="20" cy="20" r="17" fill={renk} />
       <circle cx="14" cy="14" r="5" fill="#ffffff" opacity="0.35" />
     </svg>
   );

@@ -13,10 +13,12 @@ import { BigButton } from '../primitives/BigButton';
 import { speak } from '../../audio/useSpeak';
 import { COLOR } from '../../design/tokens';
 import { kesifBaslangic, kesifIndirge, kesifSeslendirme } from '../../kesif/kesifMasasi';
-import { EKRAN_ARACLARI, gosterilenSayi } from '../kesif/kesifEkrani';
+import { EKRAN_ARACLARI, genelArtiEksiVarMi, gosterilenMetin, gosterilenSayi } from '../kesif/kesifEkrani';
 import { OnlukCerceveAraci } from '../kesif/OnlukCerceveAraci';
 import { NesneKumesiAraci } from '../kesif/NesneKumesiAraci';
 import { SayiDogrusuAraci } from '../kesif/SayiDogrusuAraci';
+import { TeraziAraci } from '../kesif/TeraziAraci';
+import { AyirBirlestirAraci } from '../kesif/AyirBirlestirAraci';
 
 export default function KesifMasasi() {
   const ekranGit = useAppStore((s) => s.ekranGit);
@@ -35,6 +37,7 @@ export default function KesifMasasi() {
   }, [durum]);
 
   const sayi = gosterilenSayi(durum);
+  const metin = gosterilenMetin(durum);
 
   return (
     <main
@@ -59,14 +62,20 @@ export default function KesifMasasi() {
         style={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       >
         <motion.output
-          key={`${durum.arac}-${sayi}`}
+          key={`${durum.arac}-${metin}`}
           initial={az ? false : { scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: az ? 0 : 0.25 }}
-          aria-label={`Sayı ${sayi}`}
-          style={{ fontSize: 'var(--text-stimulus)', fontWeight: 700, color: COLOR.ink, lineHeight: 1 }}
+          aria-label={metin}
+          style={{
+            fontSize: metin.length > 3 ? 'calc(var(--text-stimulus) * 0.7)' : 'var(--text-stimulus)',
+            fontWeight: 700,
+            color: COLOR.ink,
+            lineHeight: 1,
+            whiteSpace: 'pre',
+          }}
         >
-          {sayi}
+          {metin}
         </motion.output>
       </section>
 
@@ -75,6 +84,10 @@ export default function KesifMasasi() {
         {durum.arac === 'onlukCerceve' && <OnlukCerceveAraci dolu={durum.dolu} gonder={gonder} />}
         {durum.arac === 'nesneKumesi' && <NesneKumesiAraci sayi={durum.sayi} gonder={gonder} />}
         {durum.arac === 'sayiDogrusu' && <SayiDogrusuAraci konum={durum.konum} gonder={gonder} />}
+        {durum.arac === 'terazi' && <TeraziAraci sol={durum.sol} sag={durum.sag} gonder={gonder} />}
+        {durum.arac === 'ayirBirlestir' && (
+          <AyirBirlestirAraci toplam={durum.toplam} ayirma={durum.ayirma} gonder={gonder} />
+        )}
       </section>
 
       {/* Alt: Ev · araç seçimi · −1 · +1 · baştan. */}
@@ -105,12 +118,16 @@ export default function KesifMasasi() {
             {a.ikon}
           </BigButton>
         ))}
-        <BigButton label="Bir çıkar" size="tapMin" onPress={() => gonder({ tur: 'dokun', hedef: 'eksi' })}>
-          −1
-        </BigButton>
-        <BigButton label="Bir ekle" size="tapMin" onPress={() => gonder({ tur: 'dokun', hedef: 'arti' })}>
-          +1
-        </BigButton>
+        {genelArtiEksiVarMi(durum.arac) && (
+          <>
+            <BigButton label="Bir çıkar" size="tapMin" onPress={() => gonder({ tur: 'dokun', hedef: 'eksi' })}>
+              −1
+            </BigButton>
+            <BigButton label="Bir ekle" size="tapMin" onPress={() => gonder({ tur: 'dokun', hedef: 'arti' })}>
+              +1
+            </BigButton>
+          </>
+        )}
         <BigButton label="Baştan" size="tapMin" variant="ghost" onPress={() => gonder({ tur: 'sifirla' })}>
           ↺
         </BigButton>
