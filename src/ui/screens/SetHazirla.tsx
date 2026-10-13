@@ -27,6 +27,7 @@ export function SetHazirla() {
   const ekranGit = useAppStore((s) => s.ekranGit);
   const setBaslat = useAppStore((s) => s.setBaslat);
   const kagitIcinSet = useAppStore((s) => s.kagitIcinSet);
+  const eveGonder = useAppStore((s) => s.eveGonder);
   const kagitSeti = useAppStore((s) => s.kagitSeti);
   const tahta = useAppStore((s) => s.mod) === 'tahta';
   const [temaNo, setTemaNo] = useState<number>(TEMALAR[0].no);
@@ -75,6 +76,13 @@ export function SetHazirla() {
     // Tohum UI katmanında: saf modülde saat/rastgelelik yok (Math.random yasak).
     const tohum = hash32(String(performance.now()) + setKodla(taslak));
     setBaslat({ ...taslak, tohum });
+  };
+
+  /** Eve gönder (Adım 42): aynı düğüm seçimi yeni tohumla eve link + QR olur. */
+  const eveyeGonder = () => {
+    if (secili.length === 0) return;
+    const taslak = { surum: SET_SURUMU, dugumler: secili, tohum: 0 };
+    eveGonder({ ...taslak, tohum: hash32(String(performance.now()) + setKodla(taslak)) });
   };
 
   /** Çalışma kâğıdı (Adım 35): aynı düğüm seçimi, tohum kâğıt koduna girer. */
@@ -214,7 +222,7 @@ export function SetHazirla() {
       </section>
 
       <footer style={{ flex: '0 0 auto', display: 'flex', gap: 'var(--size-gap-tight)', alignItems: 'center' }}>
-        <BigButton label="Geri" size="tapMin" variant="ghost" onPress={() => ekranGit('veliPaneli')} style={{ padding: '0 20px' }}>
+        <BigButton label="Geri" size="tapMin" variant="ghost" onPress={() => ekranGit('veliPaneli')} style={{ padding: '0 20px', fontSize: 'var(--text-adult)', whiteSpace: 'nowrap' }}>
           ← Geri
         </BigButton>
         <BigButton
@@ -224,10 +232,23 @@ export function SetHazirla() {
           disabled={secili.length === 0}
           onBlockedPress={() => undefined}
           onPress={kagidaGonder}
-          style={{ padding: '0 24px', fontWeight: 700 }}
+          style={{ padding: '0 20px', fontWeight: 700, fontSize: 'var(--text-adult)', whiteSpace: 'nowrap' }}
         >
           Çalışma kâğıdı yazdır
         </BigButton>
+        {tahta && (
+          <BigButton
+            label="Eve gönder"
+            size="tapMin"
+            variant="solid"
+            disabled={secili.length === 0}
+            onBlockedPress={() => undefined}
+            onPress={eveyeGonder}
+            style={{ padding: '0 20px', fontWeight: 700, fontSize: 'var(--text-adult)', whiteSpace: 'nowrap' }}
+          >
+            Eve gönder
+          </BigButton>
+        )}
         {tahta && (
           <BigButton
             label="Tahtada başlat"
@@ -236,7 +257,7 @@ export function SetHazirla() {
             disabled={secili.length === 0}
             onBlockedPress={() => undefined}
             onPress={baslat}
-            style={{ padding: '0 32px', fontWeight: 700 }}
+            style={{ padding: '0 24px', fontWeight: 700, fontSize: 'var(--text-adult)', whiteSpace: 'nowrap' }}
           >
             Tahtada başlat
           </BigButton>

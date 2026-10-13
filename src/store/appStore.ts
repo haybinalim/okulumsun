@@ -49,7 +49,8 @@ export type Ekran =
   | 'sinifTuru'
   | 'sinifTuruSonu'
   | 'dersSonuOzeti'
-  | 'evdeCalis';
+  | 'evdeCalis'
+  | 'eveGonder';
 
 /** Sınıf Turu durumunun yaşadığı ekranlar; başka ekrana geçişte durum `null` olur. */
 export const SINIF_TURU_EKRANLARI: ReadonlySet<Ekran> = new Set<Ekran>(['sinifTuruKurulum', 'sinifTuru', 'sinifTuruSonu']);
@@ -141,6 +142,8 @@ interface AppStore {
   sinifTuru: SinifTuruDurumu | null;
   /** Eve link (Adım 42, ADR-0010): bağlantıdan okunan set; yalnız bellekte, ev çalışması bitince `null`. */
   evSeti: GunlukSet | null;
+  /** Eve gönder ekranındaki set (Adım 42 aşama 3): yalnız bellekte; ekrandan çıkınca kullanılmaz. */
+  eveGonderSeti: GunlukSet | null;
 
   // --- Actions
   ekranGit: (ekran: Ekran) => void;
@@ -166,6 +169,8 @@ interface AppStore {
   evSetiAyarla: (set: GunlukSet | null) => void;
   /** Ev çalışmasını kapatır: set silinir, mod seçimine dönülür. */
   evCalismasiniBitir: () => void;
+  /** Öğretmen: seti eve link/QR olarak göster. */
+  eveGonder: (set: GunlukSet) => void;
   sifirla: () => void;
   // --- Kalıcılık (Adım 9)
   profildenYukle: (profil: Partial<AppStore>) => void;
@@ -189,6 +194,7 @@ const baslangicDurumu = {
   kagitSeti: null as GunlukSet | null,
   sinifTuru: null as SinifTuruDurumu | null,
   evSeti: null as GunlukSet | null,
+  eveGonderSeti: null as GunlukSet | null,
 };
 
 export const useAppStore = create<AppStore>((set) => ({
@@ -292,6 +298,8 @@ export const useAppStore = create<AppStore>((set) => ({
   evSetiAyarla: (evSeti) => set({ evSeti }),
 
   evCalismasiniBitir: () => set((s) => ({ evSeti: null, ekran: 'modSecimi', oncekiEkran: s.ekran })),
+
+  eveGonder: (eveGonderSeti) => set((s) => ({ eveGonderSeti, ekran: 'eveGonder', oncekiEkran: s.ekran })),
 
   sifirla: () => set({ ...baslangicDurumu }),
 

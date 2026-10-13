@@ -34,7 +34,7 @@ https://<kanonik kök>/#ev=<sürüm>.<set kodu>        örn.  https://okulumsun-
 
 ## Sonuçlar
 
-- Değişen dosyalar / PLAN bölümleri: `src/ogretmen/eveLink.ts` (yeni, aşama 1); açılış ayrıştırma + `EvdeCalis` (aşama 2); `EveGonder` QR ekranı (aşama 3); `/gizlilik` "eve link" bölümü.
+- Değişen dosyalar / PLAN bölümleri: `src/ogretmen/eveLink.ts` (yeni, aşama 1); açılış ayrıştırma + `EvdeCalis` (aşama 2); `EveGonder` QR ekranı + `src/ogretmen/qrMatrisi.ts` + `src/platform/kanonikKok.ts` (aşama 3); `/gizlilik` "Eve link" bölümü.
 - Test / kanıt: `tests/unit/eveLink.spec.ts` (üret/çöz tersi, fazla alan → null, sürüm uyumsuz → null, `?` yok); e2e `eve-link.spec.ts` (aşama 2: hash temizlenir, ağ isteklerinde hash yok).
 
 ## Gizlilik etkisi
@@ -43,7 +43,7 @@ URL yalnız düğüm kodu ve tohum taşır; ad, sınıf, okul, tarih veya cevap 
 
 ## Lisans ve üçüncü taraf etkisi
 
-Yok (aşama 1). QR kodlayıcı bağımlılığı aşama 3'te K10 envanteriyle eklenir.
+`qrcode-generator` (MIT, Kazuhiko Arase) aşama 3'te eklendi; K10 envanterinde, yalnız Eve gönder ekranıyla tembel yüklenir. QR kodu cihazda üretilir; kısa bağlantı veya QR hizmeti kullanılmaz.
 
 ## Geri dönüş maliyeti
 

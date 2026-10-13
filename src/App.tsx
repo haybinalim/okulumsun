@@ -36,6 +36,8 @@ import { SinifTuruSonu } from './ui/screens/SinifTuruSonu';
 const CalismaKagidi = lazy(() => import('./ui/screens/CalismaKagidi'));
 // Haftalık plan (Adım 37) ve plan verisi (kazanimlar.json) ana pakete girmez.
 const HaftalikPlan = lazy(() => import('./ui/screens/HaftalikPlan'));
+// Eve gönder (Adım 42) ve QR kodlayıcı ana pakete girmez.
+const EveGonder = lazy(() => import('./ui/screens/EveGonder'));
 import { setSorusu } from './ogretmen/gunlukSet';
 import { setSorusuUret, tahtaSorusuUret } from './ogretmen/tahtaSorusu';
 
@@ -197,6 +199,19 @@ export default function App() {
         <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <Suspense fallback={<OturumYukleniyor />}>
             <CalismaKagidi />
+          </Suspense>
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Eve gönder: eve link + QR (Adım 42)
+  if (ekran === 'eveGonder') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <Suspense fallback={<OturumYukleniyor />}>
+            <EveGonder />
           </Suspense>
         </div>
       </BoardHarness>
