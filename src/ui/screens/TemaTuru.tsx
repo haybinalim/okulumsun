@@ -6,8 +6,9 @@
  * sayı/yüzde gösterilmez). `tematuru.basliyor` / `tematuru.bitti` klipleri Adım 31'de üretilecek;
  * o zamana kadar mevcut `ui.oturum-bitti` klibi kullanılır.
  */
+import { useVurgu } from '../../design/useVurgu';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { useAppStore, accentBul, TEMALAR } from '../../store/appStore';
+import { useAppStore, TEMALAR } from '../../store/appStore';
 import { setSorusu } from '../../ogretmen/gunlukSet';
 import { setSorusuUret } from '../../ogretmen/tahtaSorusu';
 import { dersOlayiUret, type DersOlayi, type RahatlikDuzeyi } from '../../ogretmen/dersOzeti';
@@ -30,7 +31,7 @@ const DUZEY_METNI: Record<RahatlikDuzeyi, { simge: string; metin: string }> = {
 };
 
 function TemaTuru({ tema, plan }: { tema: number; plan: TemaTuruPlani }) {
-  const accent = accentBul(useAppStore((s) => s.accentId));
+  const accent = useVurgu();
   const kapat = useAppStore((s) => s.temaTuruKapat);
   const [sira, setSira] = useState(0);
   const [olaylar, setOlaylar] = useState<readonly DersOlayi[]>([]);

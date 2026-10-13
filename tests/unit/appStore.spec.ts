@@ -250,9 +250,10 @@ describe('Veli paneli — geçici saklama politikası', () => {
       'utf-8',
     );
     const bolumSayisi = (kaynak.match(/<Bolum/g) || []).length;
-    expect(bolumSayisi).toBe(12);
+    expect(bolumSayisi).toBe(13);
     expect(kaynak).toContain('baslik="Tema turu"');
     expect(kaynak).toContain('baslik="Ekran boyutu"');
+    expect(kaynak).toContain('baslik="Kapsayıcılık"');
     expect(kaynak).toContain('baslik="Haftalık plan"');
   });
 

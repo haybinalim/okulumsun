@@ -5,8 +5,9 @@
  * Hiçbir şey saklanmaz: set yalnız bellekte, sonuçlar tutulmaz (puan/skor yok). `ev.okuldaki-konu` /
  * `ev.bitti` klipleri Adım 31'de üretilecek; o zamana kadar mevcut `ui.oturum-bitti` klibi kullanılır.
  */
+import { useVurgu } from '../../design/useVurgu';
 import { useCallback, useMemo, useState } from 'react';
-import { useAppStore, accentBul } from '../../store/appStore';
+import { useAppStore } from '../../store/appStore';
 import { setSorusu, type GunlukSet } from '../../ogretmen/gunlukSet';
 import { setSorusuUret } from '../../ogretmen/tahtaSorusu';
 import { REGISTRY } from '../../exercises/registry';
@@ -21,7 +22,7 @@ import { COLOR, SIZE } from '../../design/tokens';
 export const EV_SORU_SAYISI = 8;
 
 export function EvdeCalis({ set }: { set: GunlukSet }) {
-  const accent = accentBul(useAppStore((s) => s.accentId));
+  const accent = useVurgu();
   const evCalismasiniBitir = useAppStore((s) => s.evCalismasiniBitir);
   const evIpucunaGec = useAppStore((s) => s.evIpucunaGec);
   // Adım 43: veli "Evde 10 dakika" başlattıysa sonda ipucu kartına geçilir.

@@ -5,7 +5,7 @@
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
 > Tarih: 13 Ekim 2026 (Adım 55 — Kapsayıcılık ayarları)
 
-<!-- durum:birim_test=526 durum:birim_dosya=72 durum:e2e_dosya=25 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
+<!-- durum:birim_test=535 durum:birim_dosya=73 durum:e2e_dosya=26 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
 
 ## Yönetici özeti
 
@@ -70,7 +70,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 46 | Tema sonu turu: temanın bütün becerilerini dolaşan 8–10 soruluk kısa tur (tahtada konu seçiminin son kartı, kişiselde yetişkin alanından); sonunda çocuğa kutlama, yetişkine beceri başına nitel düzey (Rahat / Biraz destek gerekti / Tekrar çalışılabilir). Sayı/yüzde/puan yok, sonuçlar tur kapanınca silinir | ✅ (tur sesleri Adım 31'de; Adım 45 derin tema girişi Adım 31'e bağlı) |
 | 48 | Çalışma kâğıdı arşivi: her kazanım için hazır, cevap anahtarlı A4 PDF kâğıtlar (55 etkinlik × 3 kâğıt = 165 PDF) ve arama motorlarının bulabileceği statik dizin sayfaları (`/kagitlar/`, sitemap). Kâğıtlar uygulamadaki çalışma kâğıdıyla aynı üretimdir, para şematiktir; uygulamanın çevrimdışı önbelleğine girmez | ✅ (arama motoru kaydı yayından sonra kendiliğinden) |
 | 49 | Okul ağı ve yerel dağıtım: okul sunucusuna ya da alt klasöre kopyalanabilen `dist-okul.zip` paketi (kurulum notu, lisans, sürüm, dosya özetleri), alt klasörden tam akış e2e ile kanıtlı; filtre listesine eklenecek tek alan adı belgeli. Dosyaya çift tıklayarak açılış tarayıcı güvenliği nedeniyle çalışmaz, ekranda yönerge çıkar | ✅ (okul/kurum dağıtımı için yazılı izin metni kullanıcıda; Release eki o zaman) |
-| 55 | Kapsayıcılık ayarları: yetişkinin açabileceği yavaş tempo, talimat tekrarı, renk körlüğü dostu renkler, sol el yerleşimi, büyük dokunma hedefi ve hareket azaltma; tahtada ayarlar adrese eklenir, öğretmen yer imiyle ertesi gün aynı ayarlarla açar. Aşama 1: hesaplama çekirdeği, renk paleti ve ayar kodu hazır | ⏳ (ekran bağlantısı aşama 2'de; özel eğitim öğretmeniyle görev analizi kullanıcıda) |
+| 55 | Kapsayıcılık ayarları: yetişkin/öğretmen alanında altı ayar — yavaş tempo, talimat tekrarı (8 sn dokunulmazsa soru bir kez yeniden okunur), renk körlüğü dostu renkler, sol el (Onayla solda), büyük hedef (küçük düğmeler büyür), hareketi azalt. Hepsi varsayılan kapalı, bu açılışta geçerli; tahtada ayarlar adrese eklenir, öğretmen yer imiyle ertesi gün aynı ayarlarla açar. Veli "Ses hızı" ayarı artık gerçekten uygulanıyor | ✅ (özel eğitim öğretmeniyle görev analizi kullanıcıda; protokol hazır) |
 
 Adım 31–33 ve 35–58: depo dışındaki geliştirme planı v2.
 

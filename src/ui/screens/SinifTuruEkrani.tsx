@@ -7,8 +7,10 @@
  * "hep birlikte" der ve tur birlikte çözülmüş sayılır. Öğretmen her an "Bitir" (ikinci dokunuşta onay).
  * Durum yalnız `appStore.sinifTuru` belleğinde; puan, skor, süre ve kazanan yoktur.
  */
+import { useVurgu } from '../../design/useVurgu';
+import type { Vurgu } from '../../design/tokens';
 import { useMemo, useRef, useState } from 'react';
-import { useAppStore, accentBul } from '../../store/appStore';
+import { useAppStore } from '../../store/appStore';
 import { BigButton } from '../primitives/BigButton';
 import { Maskot } from '../feedback/Maskot';
 import { YonlendirmeSeridi } from '../feedback/YonlendirmeSeridi';
@@ -35,7 +37,7 @@ export function SinifTuruEkrani() {
 
 function SinifTuruIcerik({ d }: { d: SinifTuruDurumu }) {
   const olay = useAppStore((s) => s.sinifTuruOlay);
-  const accent = accentBul(useAppStore((s) => s.accentId));
+  const accent = useVurgu();
   const [bitirOnayi, setBitirOnayi] = useState(false);
   const takim = takimKimligi(d.takimlar[d.siradaki].renk);
 
@@ -194,7 +196,7 @@ function TurSorusu({
   onKapandi,
 }: {
   d: SinifTuruDurumu;
-  accentHex: ReturnType<typeof accentBul>;
+  accentHex: Vurgu;
   onKapandi: (sonuc: MaddeSonuc, skillId: SinifTuruDurumu['kaynak']['dugumler'][number]) => void;
 }) {
   const soru = useMemo(() => sinifTuruSorusu(d, KAYITLI), [d]);

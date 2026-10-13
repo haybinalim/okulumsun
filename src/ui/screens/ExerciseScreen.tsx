@@ -11,7 +11,7 @@ import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { useGeriBildirim } from '../useGeriBildirim';
 import { hataDestekKarari, yanlisSecimBilgisi, type HataDestekKarari } from '../../exercises/hataDestek';
 import type { Exercise } from '../../exercises/types';
-import type { Accent } from '../../design/tokens';
+import type { Vurgu } from '../../design/tokens';
 import { TapCountScreen } from './TapCountScreen';
 import { TapToPlaceScreen } from './TapToPlaceScreen';
 import { SequenceOrderScreen } from './SequenceOrderScreen';
@@ -33,7 +33,7 @@ export function ExerciseScreen({
   onYanlis,
 }: {
   exercise: Exercise;
-  accent: Accent;
+  accent: Vurgu;
   onDone: (sonuc: MaddeSonuc) => void;
   /** Adım 36 aşama 2b: her yanlış denemede çağrılır (alt ekran yeniden denemeyi kendisi yönetir). */
   onYanlis?: (bilgi: YanlisBilgisi) => void;
@@ -93,7 +93,7 @@ function AudioToImageFlow({
   onYanlis,
 }: {
   exercise: Extract<Exercise, { kind: 'AUDIO_TO_IMAGE' }>;
-  accent: Accent;
+  accent: Vurgu;
   onDone: (dogruMu: boolean) => void;
   onYanlis?: (bilgi: YanlisBilgisi) => void;
 }) {
@@ -229,7 +229,7 @@ function InteractionArea({
           />
         ))}
       </div>
-      <div style={{ display: 'flex', gap: 'var(--size-gap)', alignItems: 'center' }}>
+      <div className="alt-cubuk" style={{ display: 'flex', gap: 'var(--size-gap)', alignItems: 'center' }}>
         <SpeakButton />
         <BigButton
           label="Onayla"

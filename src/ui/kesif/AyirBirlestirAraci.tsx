@@ -3,7 +3,8 @@
  * dokunmak bütünü oradan ikiye ayırır: o sayaca kadar olanlar bir renk, sonrakiler başka renk ve hafif
  * aralıklı (parça-bütün). "Birleştir" tek renge döndürür; "+1/−1" bütünü değiştirir (ayırma kalkar).
  */
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { BigButton } from '../primitives/BigButton';
 import { KESIF_NESNE_SINIRI } from '../../kesif/kesifMasasi';
 import { Sayac, izgaraBoslugu, type Gonder } from './ortak';
@@ -17,7 +18,7 @@ export function AyirBirlestirAraci({
   ayirma: number | null;
   gonder: Gonder;
 }) {
-  const az = useReducedMotion();
+  const az = useHareketAzalt();
   return (
     <div
       data-arac="ayirBirlestir"

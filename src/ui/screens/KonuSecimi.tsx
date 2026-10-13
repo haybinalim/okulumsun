@@ -12,7 +12,8 @@ import { useAppStore } from '../../store/appStore';
 import { BigButton } from '../primitives/BigButton';
 import { YonlendirmeSeridi } from '../feedback/YonlendirmeSeridi';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { COLOR } from '../../design/tokens';
 import { skillsData } from '../../content/skillsData';
 import type { SkillNode } from '../../content/schema/skill';
@@ -23,7 +24,7 @@ const DUGUMLER: readonly SkillNode[] = skillsData;
 
 export function KonuSecimi() {
   const { secilenTemaNo, ekranGit } = useAppStore();
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useHareketAzalt();
   const [kilitliEtiket, setKilitliEtiket] = useState<string | null>(null);
 
   useScreenSpeech({ kind: 'key', key: 'ui.konu-sec' }, [secilenTemaNo]);

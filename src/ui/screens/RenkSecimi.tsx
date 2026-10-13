@@ -9,14 +9,17 @@
 
 import { useAppStore } from '../../store/appStore';
 import { ACCENTS } from '../../design/tokens';
+import { paletliVurgu } from '../../design/kapsayicilik';
 import { BigButton } from '../primitives/BigButton';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { COLOR } from '../../design/tokens';
 
 export function RenkSecimi() {
   const renkSec = useAppStore((s) => s.renkSec);
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useHareketAzalt();
+  const palet = useAppStore((s) => s.kapsayicilik.palet);
 
   useScreenSpeech({ kind: 'key', key: 'ui.renk-sec' }, []);
 
@@ -62,7 +65,7 @@ export function RenkSecimi() {
                 renkSec(a.id);
               }}
               style={{
-                background: a.hex,
+                background: paletliVurgu(a, palet),
                 border: 'none',
               }}
             >

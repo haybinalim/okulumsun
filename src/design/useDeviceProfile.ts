@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useAppStore } from '../store/appStore';
 import {
   applyProfile,
   readStoredOverride,
@@ -30,10 +31,14 @@ export function useDeviceProfile(): {
 } {
   const [profile, setProfile] = useState<DeviceProfile>(() => resolveProfile());
   const [elleSecilen, setElleSecilen] = useState<DeviceProfile | null>(() => readStoredOverride());
+  // Kapsayıcılık ayarları (Adım 55) profil değişkenlerinin üstüne yazılır; bellekten okunur.
+  const kapsayicilik = useAppStore((s) => s.kapsayicilik);
+  const kapsayicilikRef = useRef(kapsayicilik);
+  kapsayicilikRef.current = kapsayicilik;
 
   useEffect(() => {
-    applyProfile(profile, document.documentElement);
-  }, [profile]);
+    applyProfile(profile, document.documentElement, kapsayicilik);
+  }, [profile, kapsayicilik]);
 
   useEffect(() => {
     const onResize = () => setProfile(resolveProfile());
@@ -44,7 +49,7 @@ export function useDeviceProfile(): {
   const setOverride = useCallback((p: DeviceProfile | null) => {
     const sonuc = profilSec(p);
     // Ölçek aynı karede uygulanır; önizleme kutusu hemen yeni boyutu gösterir.
-    applyProfile(sonuc.profil, document.documentElement);
+    applyProfile(sonuc.profil, document.documentElement, kapsayicilikRef.current);
     setProfile(sonuc.profil);
     setElleSecilen(sonuc.elleSecilen);
   }, []);

@@ -13,6 +13,7 @@
 
 import { CIHAZ_PROFILI_ANAHTARI } from '../persistence/depolamaIzinListesi';
 import { SCALE, SIZE, TEXT, COLOR, REACH, type DeviceProfile } from './tokens';
+import { VARSAYILAN_KAPSAYICILIK, cssDegiskenleri, veriOznitelikleri, type KapsayicilikAyarlari } from './kapsayicilik';
 
 export type { DeviceProfile };
 
@@ -84,7 +85,11 @@ export function resolveProfile(): DeviceProfile {
  * Bileşenler ham piksel yazmaz; `var(--size-control)` gibi değişkenler kullanır.
  * Böylece 2. aydaki fiziksel tahta testinden sonra ölçek ayarı tek dosyadan yapılır.
  */
-export function applyProfile(profile: DeviceProfile, root: HTMLElement): void {
+export function applyProfile(
+  profile: DeviceProfile,
+  root: HTMLElement,
+  kapsayicilik: KapsayicilikAyarlari = VARSAYILAN_KAPSAYICILIK,
+): void {
   const k = SCALE[profile];
   const px = (n: number) => `${Math.round(n * k)}px`;
 
@@ -102,6 +107,15 @@ export function applyProfile(profile: DeviceProfile, root: HTMLElement): void {
 
   root.style.setProperty('--scale', String(k));
   root.style.setProperty('--reach-dead-top', `${REACH.deadTopRatio * 100}%`);
+
+  // Kapsayıcılık (Adım 55): profil değerlerinin ÜSTÜNE yazılır; varsayılanda hiçbir şey yazılmaz.
+  // `--scale` bilerek değişmez — sahne/görsel ölçeği büyük hedefte de aynı kalır (üst %35 taşmaz).
+  root.style.setProperty('--scale-hedef', String(k));
+  for (const [ad, deger] of Object.entries(cssDegiskenleri(kapsayicilik, profile))) root.style.setProperty(ad, deger);
+  for (const [ad, deger] of Object.entries(veriOznitelikleri(kapsayicilik))) {
+    if (deger === null) delete root.dataset[ad];
+    else root.dataset[ad] = deger;
+  }
 }
 
 function kebab(s: string): string {

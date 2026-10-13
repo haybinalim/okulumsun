@@ -7,7 +7,8 @@
  * ekrandan çıkınca silinir. Bu ekran tembel yüklenir.
  */
 import { useEffect, useReducer, useRef } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { useAppStore } from '../../store/appStore';
 import { BigButton } from '../primitives/BigButton';
 import { speak } from '../../audio/useSpeak';
@@ -23,7 +24,7 @@ import { AyirBirlestirAraci } from '../kesif/AyirBirlestirAraci';
 export default function KesifMasasi() {
   const ekranGit = useAppStore((s) => s.ekranGit);
   const [durum, gonder] = useReducer(kesifIndirge, kesifBaslangic('onlukCerceve'));
-  const az = useReducedMotion();
+  const az = useHareketAzalt();
   const ilk = useRef(true);
 
   // Her değişiklikte mevcut sayı/işlem klipleriyle seslendir (açılışta değil).

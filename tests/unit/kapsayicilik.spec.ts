@@ -91,7 +91,15 @@ const CVD: Record<string, number[][]> = {
 function benzet(hex: string, m: number[][] | null): number[] {
   const v = rgb(hex).map(dogrusal);
   if (!m) return v;
-  return m.map((satir) => Math.min(1, Math.max(0, satir.reduce((t, k, j) => t + k * v[j]!, 0))));
+  return m.map((satir) =>
+    Math.min(
+      1,
+      Math.max(
+        0,
+        satir.reduce((t, k, j) => t + k * v[j]!, 0),
+      ),
+    ),
+  );
 }
 function lab([r, g, b]: number[]): [number, number, number] {
   const X = (0.4124 * r! + 0.3576 * g! + 0.1805 * b!) / 0.95047;
@@ -162,7 +170,8 @@ describe('kapsayicilik — saf çekirdek', () => {
   it('varsayılan: hepsi kapalı, CSS değişkeni yok, öznitelik yok', () => {
     expect(varsayilandanFarkliMi(VARSAYILAN_KAPSAYICILIK)).toBe(false);
     expect(Object.isFrozen(VARSAYILAN_KAPSAYICILIK)).toBe(true);
-    for (const p of ['board', 'tablet', 'phone'] as const) expect(cssDegiskenleri(VARSAYILAN_KAPSAYICILIK, p)).toEqual({});
+    for (const p of ['board', 'tablet', 'phone'] as const)
+      expect(cssDegiskenleri(VARSAYILAN_KAPSAYICILIK, p)).toEqual({});
     expect(Object.values(veriOznitelikleri(VARSAYILAN_KAPSAYICILIK)).every((v) => v === null)).toBe(true);
     expect(talimatTekrariGecikmesi(VARSAYILAN_KAPSAYICILIK)).toBeNull();
   });
@@ -176,7 +185,7 @@ describe('kapsayicilik — saf çekirdek', () => {
     expect(etkinCalmaHizi(Number.NaN, 'normal')).toBe(1);
   });
 
-  it('talimat tekrarı 8 sn, K1 15 sn\'den önce', () => {
+  it("talimat tekrarı 8 sn, K1 15 sn'den önce", () => {
     expect(talimatTekrariGecikmesi({ ...VARSAYILAN_KAPSAYICILIK, talimatTekrari: true })).toBe(TALIMAT_TEKRARI_MS);
     expect(TALIMAT_TEKRARI_MS).toBe(8000);
   });
@@ -190,7 +199,12 @@ describe('kapsayicilik — saf çekirdek', () => {
     expect(css['--size-gap']).toBeUndefined();
     expect(css['--size-edge']).toBeUndefined();
     expect(Object.keys(css).filter((k) => k.startsWith('--size-'))).toHaveLength(BUYUYEN_HEDEFLER.length);
-    for (const ad of BUYUYEN_HEDEFLER) expect(SIZE[ad]).toBeGreaterThan(0);
+    expect([...BUYUYEN_HEDEFLER].sort()).toEqual(['control', 'mascot', 'tapMin']);
+    // Zaten alt sınırın iki katından büyük hedefler büyümez (tahtada alt %65 taşmasın).
+    for (const ad of ['choice', 'choiceMin', 'primary', 'unlock'] as const) {
+      expect(SIZE[ad]).toBeGreaterThanOrEqual(2 * SIZE.tapMin);
+      expect(css[`--size-${ad === 'choiceMin' ? 'choice-min' : ad}`]).toBeUndefined();
+    }
   });
 
   it('palet değişkenleri yalnız renk körlüğü paletinde', () => {
@@ -204,7 +218,12 @@ describe('kapsayicilik — saf çekirdek', () => {
   });
 
   it('öznitelikler ayarlara bire bir', () => {
-    expect(veriOznitelikleri(HEPSI_ACIK)).toEqual({ solEl: '1', hareketAzalt: '1', palet: 'renk-korlugu', buyukHedef: '1' });
+    expect(veriOznitelikleri(HEPSI_ACIK)).toEqual({
+      solEl: '1',
+      hareketAzalt: '1',
+      palet: 'renk-korlugu',
+      buyukHedef: '1',
+    });
   });
 });
 

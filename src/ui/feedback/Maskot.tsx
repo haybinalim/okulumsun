@@ -12,7 +12,8 @@
  */
 
 import { memo } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { type MaskotDurumu } from './maskotState';
 import { COLOR, SIZE, MOTION } from '../../design/tokens';
 
@@ -161,7 +162,7 @@ export interface MaskotProps {
 export const Maskot = memo(function Maskot({ durum, size, onDokun }: MaskotProps) {
   const boyut = size ?? SIZE.mascot;
   const renk = COLOR.mascot;
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useHareketAzalt();
 
   return (
     <motion.button
@@ -183,8 +184,9 @@ export const Maskot = memo(function Maskot({ durum, size, onDokun }: MaskotProps
           : { duration: MOTION.correct / 1000, times: durum === 'sevinmis' ? [0, 0.5, 1] : undefined }
       }
       style={{
-        width: boyut,
-        height: boyut,
+        // Dokunma alt sınırının altına inmez (Adım 55 büyük hedef: tahtada 118 px).
+        width: `max(${boyut}px, var(--size-tap-min, 0px))`,
+        height: `max(${boyut}px, var(--size-tap-min, 0px))`,
         border: 'none',
         background: 'transparent',
         cursor: onDokun ? 'pointer' : 'default',
@@ -192,7 +194,7 @@ export const Maskot = memo(function Maskot({ durum, size, onDokun }: MaskotProps
         display: 'block',
       }}
     >
-      <svg viewBox="0 0 100 100" width={boyut} height={boyut} aria-hidden="true">
+      <svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true">
         <Govde renk={renk} />
         <YuzVeKollar durum={durum} renk={renk} />
       </svg>

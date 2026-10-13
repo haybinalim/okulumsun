@@ -13,12 +13,13 @@ import { useAppStore } from '../../store/appStore';
 import { BigButton } from '../primitives/BigButton';
 import { YonlendirmeSeridi } from '../feedback/YonlendirmeSeridi';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { COLOR, MOTION, SIZE } from '../../design/tokens';
 
 export function ModSecimi() {
   const modSec = useAppStore((s) => s.modSec);
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useHareketAzalt();
 
   useScreenSpeech({ kind: 'key', key: 'ui.mod-sec' }, []);
 

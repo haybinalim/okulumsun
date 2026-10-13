@@ -18,6 +18,8 @@ import { hash32 } from '../../exercises/rng';
 import { yerelGun } from '../../platform/dosyaIndir';
 import { dersteTamEkranMi, dersteTamEkranAyarla, dersAyariniDinle } from '../../platform/dersAyari';
 import { tamEkranIste, tamEkrandanCik } from '../../platform/tamEkran';
+import { varsayilandanFarkliMi, type KapsayicilikAyarlari } from '../../design/kapsayicilik';
+import { ayarHash } from '../../ogretmen/ayarKodu';
 
 
 const PROFIL_ADI: Record<DeviceProfile, string> = { board: 'akıllı tahta', tablet: 'tablet', phone: 'telefon' };
@@ -157,6 +159,8 @@ export function VeliPaneli() {
           <span style={bilgiMetniStili}>{sesHizi.toFixed(1)}×</span>
         </AyarSatir>
       </Bolum>
+
+      <KapsayicilikBolumu tahta={tahta} />
 
       <Bolum baslik="Bu ay açık konular">
         <p style={{ ...bilgiMetniStili, marginBottom: 12 }}>
@@ -489,6 +493,98 @@ function TamEkranAyari() {
       >
         {acik ? 'Açık' : 'Kapalı'}
       </BigButton>
+    </Bolum>
+  );
+}
+
+/** Kapsayıcılık ayarı satırları (Adım 55): etiket + kısa açıklama + açık/kapalı. */
+const KAPSAYICILIK_SATIRLARI: readonly {
+  readonly ad: string;
+  readonly aciklama: string;
+  readonly acikMi: (a: KapsayicilikAyarlari) => boolean;
+  readonly degistir: (acik: boolean) => Partial<KapsayicilikAyarlari>;
+}[] = [
+  {
+    ad: 'Yavaş tempo',
+    aciklama: 'Sesler biraz daha yavaş çalar.',
+    acikMi: (a) => a.tempo === 'yavas',
+    degistir: (acik) => ({ tempo: acik ? 'yavas' : 'normal' }),
+  },
+  {
+    ad: 'Talimat tekrarı',
+    aciklama: '8 saniye dokunulmazsa soru bir kez yeniden okunur.',
+    acikMi: (a) => a.talimatTekrari,
+    degistir: (acik) => ({ talimatTekrari: acik }),
+  },
+  {
+    ad: 'Renk körlüğü dostu renkler',
+    aciklama: 'Doğru mavi, tekrar dene koyu turuncu; renkler koyulaşır.',
+    acikMi: (a) => a.palet === 'renkKorluguDostu',
+    degistir: (acik) => ({ palet: acik ? 'renkKorluguDostu' : 'standart' }),
+  },
+  {
+    ad: 'Sol el',
+    aciklama: 'Alt sıradaki düğmeler yer değiştirir: Onayla solda.',
+    acikMi: (a) => a.solEl,
+    degistir: (acik) => ({ solEl: acik }),
+  },
+  {
+    ad: 'Büyük hedef',
+    aciklama: 'Küçük düğmeler büyür.',
+    acikMi: (a) => a.buyukHedef,
+    degistir: (acik) => ({ buyukHedef: acik }),
+  },
+  {
+    ad: 'Hareketi azalt',
+    aciklama: 'Kayma ve zıplama animasyonları kapanır.',
+    acikMi: (a) => a.hareketAzalt,
+    degistir: (acik) => ({ hareketAzalt: acik }),
+  },
+];
+
+/**
+ * "Kapsayıcılık" bölümü (plan v2 Adım 55): altı ayar, varsayılan hepsi kapalı, yalnız bellekte.
+ * Tahtada ayarlar adres çubuğuna (`#ayar=…`) yazılır; öğretmen yer imine ekler.
+ */
+function KapsayicilikBolumu({ tahta }: { tahta: boolean }) {
+  const kapsayicilik = useAppStore((s) => s.kapsayicilik);
+  const ayarla = useAppStore((s) => s.kapsayicilikAyarla);
+  const farkli = varsayilandanFarkliMi(kapsayicilik);
+  return (
+    <Bolum baslik="Kapsayıcılık">
+      <p style={{ ...bilgiMetniStili, marginBottom: 12 }}>
+        Bu ayarlar çocuğa özel kayıt değildir; yalnız bu açılışta geçerlidir.
+      </p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {KAPSAYICILIK_SATIRLARI.map((satir) => {
+          const acik = satir.acikMi(kapsayicilik);
+          return (
+            <div key={satir.ad} style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+              <BigButton
+                label={`${satir.ad}: ${acik ? 'açık' : 'kapalı'}`}
+                size="control"
+                variant={acik ? 'accent' : 'ghost'}
+                ariaPressed={acik}
+                onPress={() => ayarla(satir.degistir(!acik))}
+                style={{ minHeight: 'max(64px, var(--size-control))', padding: '0 16px', fontSize: 'var(--text-adult)' }}
+              >
+                {acik ? 'Açık' : 'Kapalı'}
+              </BigButton>
+              <div>
+                <div style={{ fontSize: 'var(--text-adult)', color: COLOR.ink }}>{satir.ad}</div>
+                <p style={bilgiMetniStili}>{satir.aciklama}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {tahta && (
+        <p data-testid="ayar-kodu" style={{ ...bilgiMetniStili, marginTop: 12 }}>
+          {farkli
+            ? `Ayarlar adres çubuğuna eklendi (${ayarHash(kapsayicilik)}). Bu adresi yer imine eklerseniz uygulama aynı ayarlarla açılır.`
+            : 'Bir ayarı açtığınızda adres çubuğuna eklenir; adresi yer imine ekleyerek sonraki derste aynı ayarlarla açabilirsiniz.'}
+        </p>
+      )}
     </Bolum>
   );
 }

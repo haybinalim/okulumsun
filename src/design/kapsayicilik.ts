@@ -8,7 +8,16 @@
  * Bu modül DOM'a, depolamaya, saate dokunmaz: girdi → CSS değişkenleri / sayılar.
  * Uygulayan taraf `deviceProfile.ts` (`applyProfile`) ve `speech.ts` (temel hız).
  */
-import { ACCENTS, ACCENTS_RENK_KORLUGU, COLOR, COLOR_RENK_KORLUGU, SCALE, SIZE, type Accent, type DeviceProfile } from './tokens';
+import {
+  ACCENTS,
+  ACCENTS_RENK_KORLUGU,
+  COLOR,
+  COLOR_RENK_KORLUGU,
+  SCALE,
+  SIZE,
+  type Accent,
+  type DeviceProfile,
+} from './tokens';
 
 export interface KapsayicilikAyarlari {
   /** `yavas` → çalma hızı 0,85 × ses hızı (alt sınır 0,5). */
@@ -18,7 +27,7 @@ export interface KapsayicilikAyarlari {
   readonly palet: 'standart' | 'renkKorluguDostu';
   /** Alt düğme çubuğu (Tekrar dinle ↔ Onayla) aynalanır. */
   readonly solEl: boolean;
-  /** Dokunma hedefleri × 1,15 (tahtada 102 → ~118 px). */
+  /** Küçük dokunma hedefleri × 1,15 (tahtada 102 → 118 px; bkz. `BUYUYEN_HEDEFLER`). */
   readonly buyukHedef: boolean;
   /** İşletim sistemi ayarından bağımsız hareket azaltma. */
   readonly hareketAzalt: boolean;
@@ -42,10 +51,17 @@ export const BUYUK_HEDEF_CARPANI = 1.15;
 export const TALIMAT_TEKRARI_MS = 8_000;
 
 /**
- * Büyük hedefte büyüyen uzunluklar: yalnız DOKUNULAN öğeler. Boşluk, kenar ve ölü bölge
- * değişmez — kenar payları büyürse alt %65'e sığmayan ekranlar taşar.
+ * Büyük hedefte büyüyen uzunluklar: yalnız KÜÇÜK dokunma hedefleri (temel değeri < 2 × `tapMin`):
+ * dokunma alt sınırı, ikincil kontroller (Tekrar dinle, Geri, Yardım) ve maskot. Seçenek kartı,
+ * Onayla ve ses kilidi zaten alt sınırın iki katından büyüktür; onlar da büyürse tahtada alt %65'e
+ * sığmaz (4 kart × 368 px + 258 px Onayla > 640 px). Boşluk, kenar ve ölü bölge de değişmez.
+ * Bu kural ekrandan bağımsızdır; ekran bazlı istisna gerekmez (e2e taşmayı denetler).
  */
-export const BUYUYEN_HEDEFLER = ['tapMin', 'control', 'choiceMin', 'choice', 'primary', 'mascot', 'unlock'] as const satisfies readonly (keyof typeof SIZE)[];
+export const BUYUYEN_HEDEFLER = (Object.keys(SIZE) as (keyof typeof SIZE)[]).filter(
+  (ad) =>
+    ['tapMin', 'control', 'choiceMin', 'choice', 'primary', 'mascot', 'unlock'].includes(ad) &&
+    SIZE[ad] < 2 * SIZE.tapMin,
+);
 
 /** Ayarlarda en az biri varsayılandan farklı mı? */
 export function varsayilandanFarkliMi(a: KapsayicilikAyarlari): boolean {
