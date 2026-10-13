@@ -12,40 +12,11 @@ import { useAppStore } from '../../store/appStore';
 import { BigButton } from '../primitives/BigButton';
 import { speak } from '../../audio/useSpeak';
 import { COLOR } from '../../design/tokens';
-import {
-  doluSayisi,
-  kesifBaslangic,
-  kesifIndirge,
-  kesifSeslendirme,
-  type KesifAraci,
-  type KesifDurumu,
-} from '../../kesif/kesifMasasi';
+import { kesifBaslangic, kesifIndirge, kesifSeslendirme } from '../../kesif/kesifMasasi';
+import { EKRAN_ARACLARI, gosterilenSayi } from '../kesif/kesifEkrani';
 import { OnlukCerceveAraci } from '../kesif/OnlukCerceveAraci';
 import { NesneKumesiAraci } from '../kesif/NesneKumesiAraci';
 import { SayiDogrusuAraci } from '../kesif/SayiDogrusuAraci';
-
-/** Bu aşamada ekranda olan araçlar (terazi ve ayır-birleştir aşama 3). */
-export const EKRAN_ARACLARI: readonly { arac: KesifAraci; ad: string; ikon: string }[] = [
-  { arac: 'onlukCerceve', ad: 'Onluk çerçeve', ikon: '▦' },
-  { arac: 'nesneKumesi', ad: 'Nesneler', ikon: '●●●' },
-  { arac: 'sayiDogrusu', ad: 'Sayı doğrusu', ikon: '0—10' },
-];
-
-/** Üst bölgede gösterilen sayı (gösterim; dokunulmaz). */
-export function gosterilenSayi(d: KesifDurumu): number {
-  switch (d.arac) {
-    case 'onlukCerceve':
-      return doluSayisi(d.dolu);
-    case 'nesneKumesi':
-      return d.sayi;
-    case 'sayiDogrusu':
-      return d.konum;
-    case 'terazi':
-      return d.sol;
-    case 'ayirBirlestir':
-      return d.toplam;
-  }
-}
 
 export default function KesifMasasi() {
   const ekranGit = useAppStore((s) => s.ekranGit);

@@ -5,10 +5,7 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { BigButton } from '../primitives/BigButton';
 import { izgaraBoslugu, type Gonder } from './ortak';
-
-export function pencereBaslangici(konum: number): number {
-  return konum <= 10 ? 0 : 10;
-}
+import { pencereBaslangici } from './kesifEkrani';
 
 export function SayiDogrusuAraci({ konum, gonder }: { konum: number; gonder: Gonder }) {
   const az = useReducedMotion();
