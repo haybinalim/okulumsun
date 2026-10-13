@@ -1,4 +1,5 @@
 import { lazy, Suspense, useState, useMemo, useRef } from 'react';
+import { gomuluDurum } from './platform/gomuluAcilis';
 import { useKapsayicilikEtkileri } from './ui/useKapsayicilikEtkileri';
 import { useVurgu } from './design/useVurgu';
 import { BoardHarness } from './dev/BoardHarness';
@@ -85,7 +86,9 @@ export default function App() {
   const kisiselOturum = useKisiselOturum(ekran, mod);
   useKapsayicilikEtkileri();
   useUyanikTut(ekran);
-  const tamEkran = useSyncExternalStore(dersAyariniDinle, () => dersteTamEkranMi(profile));
+  const tamEkranAyari = useSyncExternalStore(dersAyariniDinle, () => dersteTamEkranMi(profile));
+  // Adım 56: gömülü modda iframe tam ekrana izin vermiyorsa ses kilidi tam ekran denemez.
+  const tamEkran = tamEkranAyari && gomuluDurum().kisitlar.tamEkran;
 
   // Ses kilidi ekranı — her zaman en başta
   if (ekran === 'audioUnlock') {

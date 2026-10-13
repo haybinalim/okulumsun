@@ -3,6 +3,7 @@
  * Ayarlar yalnız açık uygulama oturumunda bellekte kalır; yenilemede sıfırlanır.
  */
 
+import { gomuluDurum } from '../../platform/gomuluAcilis';
 import { useAppStore, TEMALAR } from '../../store/appStore';
 import { BigButton } from '../primitives/BigButton';
 import { OKUL_AYLARI, acilanTemalar } from '../../content/okulAyi';
@@ -185,7 +186,8 @@ export function VeliPaneli() {
         </button>
       </Bolum>
 
-      <TamEkranAyari />
+      {/* Gömülü modda tam ekran yalnız iframe izin veriyorsa (Adım 56). */}
+      {gomuluDurum().kisitlar.tamEkran && <TamEkranAyari />}
 
       <Bolum baslik="Sorun bildir">
         <p style={{ ...bilgiMetniStili, marginBottom: 12 }}>

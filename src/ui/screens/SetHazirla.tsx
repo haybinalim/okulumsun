@@ -9,6 +9,7 @@
  * Adım 37 (KG-50): haftalık MEB planından "bu haftanın önerisi" üstte bilgi olarak gösterilir ve tek dokunuşla
  * seçilir; seçimi öğretmen yapar (öneri kendiliğinden işaretlenmez). Plan verisi tembel yüklenir.
  */
+import { gomuluDurum } from '../../platform/gomuluAcilis';
 import { useEffect, useMemo, useState } from 'react';
 import { TEMALAR, useAppStore } from '../../store/appStore';
 import { BigButton } from '../primitives/BigButton';
@@ -236,7 +237,8 @@ export function SetHazirla() {
         >
           Çalışma kâğıdı yazdır
         </BigButton>
-        {tahta && (
+        {/* Gömülü modda (Adım 56) başka adrese bağlantı üretilmez. */}
+        {tahta && gomuluDurum().kisitlar.eveGonder && (
           <BigButton
             label="Eve gönder"
             size="tapMin"

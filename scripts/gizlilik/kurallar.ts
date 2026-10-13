@@ -38,6 +38,13 @@ export const KURALLAR: readonly Kural[] = [
   { ad: 'document.cookie yazımı yasak', desen: /\bdocument\.cookie\s*=(?!=)/, yalnizSrc: true },
   { ad: 'sessionStorage.setItem yasak', desen: /\bsessionStorage\.setItem\s*\(/, yalnizSrc: true },
   { ad: 'postMessage yasak', desen: /\bpostMessage\s*\(/, yalnizSrc: true },
+  { ad: 'window.parent/opener erişimi yasak', desen: /\bwindow\.(parent|opener)\b/, yalnizSrc: true },
+  {
+    ad: 'window.top yalnız src/platform/gomuluAcilis.ts (kimlik karşılaştırması)',
+    desen: /\bwindow\.top\b/,
+    izin: (d, s) => d === 'src/platform/gomuluAcilis.ts' && /window\.self\s*!==\s*window\.top/.test(s),
+    yalnizSrc: true,
+  },
   {
     ad: 'localStorage.setItem yalnız izin listesindeki anahtarla',
     desen: /\blocalStorage\.setItem\s*\(/,

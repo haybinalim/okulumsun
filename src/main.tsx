@@ -9,6 +9,7 @@ import { useAppStore } from './store/appStore.ts'
 import { acilistaTemizle } from './persistence/acilistaTemizle.ts'
 import { eveLinkiAcilistaOku, tarayiciAdresi } from './platform/eveLinkAcilis.ts'
 import { ayarKodunuAcilistaOku } from './platform/ayarKoduAdres.ts'
+import { gomuluDurum } from './platform/gomuluAcilis.ts'
 import { gelistirmeHatasiTetikle, hataDinleyicileriniKur } from './hata/dinleyiciler.ts'
 
 // Adım 23: yakalanmamış hatalar yalnız bellekteki yerel günlüğe (ADR-0005).
@@ -23,6 +24,8 @@ useAppStore.getState().evSetiAyarla(eveLinkiAcilistaOku(tarayiciAdresi()))
 // Adım 55: `#ayar=` (tahtada öğretmenin yer imi) kapsayıcılık ayarlarını belleğe alır; hash adreste kalır.
 const acilisAyarlari = ayarKodunuAcilistaOku(tarayiciAdresi())
 if (acilisAyarlari) useAppStore.getState().kapsayicilikAyarla(acilisAyarlari)
+// Adım 56: `?gomulu=eba|okul-portali` + iframe içinde → sade mod (kökte `data-gomulu`); üst pencereyle iletişim yok.
+gomuluDurum()
 
 /*
  * Hata sınırı EN DIŞTA. Bir render hatası aksi hâlde #root'u tamamen boşaltır

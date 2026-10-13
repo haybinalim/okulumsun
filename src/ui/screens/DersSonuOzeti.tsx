@@ -2,6 +2,7 @@
  * DERS SONU ÖZETİ (plan v2 Adım 40 aşama 2): sınıf en çok nerede zorlandı? Yalnız düzey, sayı/yüzde yok.
  * Yetişkin ekranı; ses yok. Olaylar yalnız bellekte.
  */
+import { gomuluDurum } from '../../platform/gomuluAcilis';
 import { useMemo } from 'react';
 import { useAppStore } from '../../store/appStore';
 import { useDersOturumu } from '../useDersOturumu';
@@ -61,9 +62,12 @@ export function DersSonuOzeti() {
             <BigButton label="Kâğıt yazdır" size="tapMin" variant="ghost" onPress={() => { const s = ozet.yarinIcinSet; if (s) { dersiKapat(); kagitIcinSet(s); } }} style={{ padding: '0 32px', minHeight: 102 }}>
               Kâğıt yazdır
             </BigButton>
-            <BigButton label="Eve gönder" size="tapMin" variant="ghost" onPress={() => { const s = ozet.yarinIcinSet; if (s) eveGonder(s); /* Geri özete döner; ders kapanmaz. */ }} style={{ padding: '0 32px', minHeight: 102 }}>
-              Eve gönder
-            </BigButton>
+            {/* Gömülü modda (Adım 56) başka adrese bağlantı üretilmez. */}
+            {gomuluDurum().kisitlar.eveGonder && (
+              <BigButton label="Eve gönder" size="tapMin" variant="ghost" onPress={() => { const s = ozet.yarinIcinSet; if (s) eveGonder(s); /* Geri özete döner; ders kapanmaz. */ }} style={{ padding: '0 32px', minHeight: 102 }}>
+                Eve gönder
+              </BigButton>
+            )}
           </>
         )}
         <BigButton label="Kapat" size="tapMin" variant="ghost" onPress={kapat} style={{ padding: '0 32px', minHeight: 102 }}>
