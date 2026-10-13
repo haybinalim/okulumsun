@@ -45,7 +45,7 @@ describe('durum denetimi (K8)', () => {
     const asil = oku('docs/PLAN.md');
     const bas = asil.indexOf('<!-- agac:basla -->');
     // Yalnız üretilmiş bloktaki bir klasör adını boz (elle yazılmış hedef ağaç değil).
-    const plan = asil.slice(0, bas) + asil.slice(bas).replace('│   └── ses/', '│   └── sesler/');
+    const plan = asil.slice(0, bas) + asil.slice(bas).replace(/│   ([├└])── ses\//, '│   $1── sesler/');
     expect(plan).not.toBe(asil);
     expect(denetle(s, { 'docs/PLAN.md': plan }, agacUret(kok))).toContain('docs/PLAN.md: §12 ağacı bayat (npm run durum -- --agac)');
   });

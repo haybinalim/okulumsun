@@ -1201,12 +1201,14 @@ Bugünkü klasörler (üretilmiş, elle düzenlemeyin):
 okulumsun/
 ├── docs/
 │   ├── ADR/
+│   ├── basvuru/
 │   ├── gizlilik/
 │   ├── icerik/
 │   ├── kurulum/
 │   ├── ogretmen/
 │   ├── research/
-│   └── ses/
+│   ├── ses/
+│   └── strateji/
 ├── public/
 │   ├── audio/
 │   ├── fonts/
@@ -1216,6 +1218,7 @@ okulumsun/
 │   └── ogretmen/
 ├── screenshots/
 ├── scripts/
+│   ├── basvuru/
 │   ├── denetim/
 │   ├── gizlilik/
 │   ├── icerik/
@@ -1271,7 +1274,7 @@ Her adımın **"Bitti tanımı"** vardır: listedeki her madde doğrulanmadan ad
 ve bir sonraki adıma geçilemez. Durum sütunu bu repodaki gerçeği yansıtır; bir adımı
 bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 
-<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=74 durum:e2e_dosya=27 durum:adr=14 -->
+<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=75 durum:e2e_dosya=27 durum:adr=14 -->
 
 | # | İş | Durum | Bitti tanımı |
 |---|---|---|---|
@@ -1322,7 +1325,7 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 48 | Çalışma kâğıdı arşivi + SEO: aşama 1 (KG-69) `src/ogretmen/calismaKagidi/arsivTohumlari.ts` (101, 202, 303; yalnız eklenir), `arsiv.ts` (SAF: kâğıda girebilen her hazır düğüm × 3 tohum, tek düğümlü 6 madde 2×3; yanıt biçimi daire içine al, olmazsa yazmalı; yol `kagitlar/<kazanım>/<düğüm kodu>-<tohum>.pdf`; `kagitMetinOzeti` determinizm). Aşama 2 (KG-70): `?arsiv=<kâğıt kodu>` görünümü (`src/ui/print/ArsivKagidi.tsx`, tembel; uygulama kabuğu açılmaz; arşivde kesikli çerçeve düz), `scripts/calisma-kagidi-arsivi.ts` (`npm run build && npm run arsiv`; vite preview + Chromium A4 PDF, tarih alanları sabit → aynı bayt; `--eksik`, `--yalniz-dizin`), 165 PDF + statik dizin sayfaları `public/kagitlar/` ve `public/sitemap.xml` commitlenir (Vercel derlemesinde Chromium yok), `robots.txt` `Sitemap:`, Workbox `globIgnores: kagitlar/**`, `/ogretmen` bağlantısı. Para şematik (KG-19). Adım 47 (Isınma Keşfi) ADR-0007 kullanıcı onayını bekliyor (ADR `Önerildi`, KG-68) | ✅ | `arsiv.spec.ts`, `arsivDizini.spec.ts` (dizin/sitemap tazeliği, her kaydın PDF'i, dış kaynak yok), e2e `onizleme-kagit-arsivi.spec.ts` (aynı köken, çerez yok, PDF iner, arşiv görünümü) |
 | 49 | Okul ağı ve yerel dağıtım (KG-71): `scripts/okul-paketi.ts` (`npm run build && npm run okul-paketi` → `dist-okul.zip`: `okulumsun/` + OKUBENI + LICENSE/LICENSES.md + SURUM + SHA256SUMS; sıralı, sabit tarihli, deterministik), CI'da yalnız `main` push'unda artefakt (GitHub Release eki yok: kurum dağıtımı ADR-0013 gereği yazılı izin ister, izin metni kullanıcıda), `public/yerel-acilis.js` (klasik betik; `file://` açılışında boş ekran yerine yönerge), `docs/kurulum/okul-agi.md` (filtre listesi alan adı, okul sunucusu, alt dizin, MIME, USB/yerel sunucu, güncelleme). `file://` tam desteği (modülsüz tek dosya derleme + `<audio>` ses yolu) yapılmadı | ✅ (`file://` belgeli sınır; düz HTTP okul sunucusunda tam akış sınanmadı) | `okulPaketi.spec.ts` (zip içeriği, özetler, determinizm), e2e `onizleme-yerel.spec.ts` (alt dizinden tam akış, istekler yalnız alt dizinde, ses dâhil; `file://` uyarısı) |
 | 55 | Kapsayıcılık ayarları: aşama 1 (KG-72) `src/design/kapsayicilik.ts` (SAF: yavaş tempo 0,85 × ses hızı ≥0,5; talimat tekrarı 8 sn; renk körlüğü dostu palet; sol el; büyük hedef; hareket azalt; `cssDegiskenleri`, `veriOznitelikleri`), `tokens.ts` `ACCENTS_RENK_KORLUGU` + `COLOR_RENK_KORLUGU` (≥4,5:1, renk körlüğü benzetiminde ΔE ≥10), `src/ogretmen/ayarKodu.ts` (`#ayar=1.<harfler>`, katı çözücü, yeni depolama anahtarı yok), `appStore.kapsayicilik` (yalnız bellekte). Aşama 2 (KG-73): büyük hedef yalnız temel değeri < 2 × `tapMin` olan hedefler (`tapMin`, `control`, `mascot`; kart/Onayla/kilit büyümez, alt %65 taşmaz), `applyProfile(profil, kök, ayarlar)` (CSS değişkenleri + `data-sol-el`/`data-hareket-azalt`/`data-palet`/`data-buyuk-hedef`), `speech.temelHizAyarla` (veli "Ses hızı" artık gerçekten uygulanır × tempo), `useScreenSpeech` talimatı işaretler → `useTalimatTekrari` (`GameShell`; 8 sn hareketsizlikte bir kez), `.alt-cubuk` sol elde aynalanır (kart sırası değişmez), `useHareketAzalt` (sistem VEYA ayar; bütün `useReducedMotion` çağrıları), `useVurgu` (paletli vurgu), `src/platform/ayarKoduAdres.ts` (açılışta `#ayar=` belleğe, hash adreste kalır; ayar değişince `replaceState`), veli/öğretmen alanı "Kapsayıcılık" bölümü, Maskot ve "Dersi bitir" `--size-tap-min` altına inmez; `docs/research/kapsayicilik-gorev-analizi.md` (protokol; oturum kullanıcıda). `v0.7.0` etiketi yayın kararıyla | ✅ (görev analizi oturumu ve etiket kullanıcıda) | `kapsayicilik.spec.ts`, `kapsayicilikBaglama.spec.ts` (CSS/öznitelik, adres çubuğu, depolama casusu, talimat tekrarı sahte saat, temel hız), e2e `board-kapsayicilik.spec.ts` (4 temsilci kombinasyon: geometri 118 px eşiği + taşma, sol el yönü, palet, hash kalır/ağa gitmez, depolama boş; bozuk kod silinir; öğretmen alanından aç/kapat → hash) |
-| 56 | MEM Ar-Ge / EBA başvuru dosyaları ve gömülü mod: aşama 1 (KG-74) `src/gomulu.ts` (SAF: `gomuluBaglam(arama, ustPencereFarkli)` — `?gomulu=eba\|okul-portali` yalnız gerçekten iframe içindeyse; `gomuluKisitlari`: Eve gönder gizli, tam ekran iframe iznine bağlı, Sorun bildir ve Kaynaklar açık), `src/platform/gomuluAcilis.ts` (yalnız `window.self !== window.top`; kökte `data-gomulu`), `SetHazirla`/`DersSonuOzeti` Eve gönder ve veli paneli tam ekran koşullu, ses kilidi tam ekran denemesi iframe izni yoksa yapılmaz; K9'a `window.parent`/`opener` yasağı ve `window.top` sınırı; `docs/yayin.md` (yayın başlığı `frame-ancestors 'self'` kalır — EBA alan adı teyidi kullanıcıda). Aşama 2 (uyum matrisi + `docs/basvuru/*` + iş modeli) sırada; başvuruların yapılması (⛔ O6) ve bağımsız inceleme başvurusu kullanıcıda | ⏳ | `gomulu.spec.ts`, `gizlilikTarama.spec.ts` (üst pencere kuralları), e2e `onizleme-gomulu.spec.ts` (aynı kökenli portal iframe'i, üretim başlıkları: tahta akışı + 3 soru, Eve gönder yok, aynı köken, `postMessage`/`message` 0, depolama boş; bağımsız sekmede parametre etkisiz) |
+| 56 | MEM Ar-Ge / EBA başvuru dosyaları ve gömülü mod: aşama 1 (KG-74) `src/gomulu.ts` (SAF: `gomuluBaglam(arama, ustPencereFarkli)` — `?gomulu=eba\|okul-portali` yalnız gerçekten iframe içindeyse; `gomuluKisitlari`: Eve gönder gizli, tam ekran iframe iznine bağlı, Sorun bildir ve Kaynaklar açık), `src/platform/gomuluAcilis.ts` (yalnız `window.self !== window.top`; kökte `data-gomulu`), `SetHazirla`/`DersSonuOzeti` Eve gönder ve veli paneli tam ekran koşullu, ses kilidi tam ekran denemesi iframe izni yoksa yapılmaz; K9'a `window.parent`/`opener` yasağı ve `window.top` sınırı; `docs/yayin.md` (yayın başlığı `frame-ancestors 'self'` kalır — EBA alan adı teyidi kullanıcıda). Aşama 2 (KG-75): `scripts/basvuru/uyumMatrisi.ts` (SAF) + `scripts/meb-uyum-matrisi.ts` (`npm run uyum-matrisi` → `docs/basvuru/meb-uyum-matrisi.md` + `.csv`, 19/19 kazanım × süreç bileşeni × hazır beceri × şablon × düğüm kodu; bayatlık ve 19/19 birim testte, CI'da), `docs/basvuru/` (README + başvuru kaydı tablosu, ürün özeti, teknik gereksinimler, erişilebilirlik, lisans envanteri, gizlilik, kanıt özeti — "saha kanıtı yok" açıkça), `docs/strateji/is-modeli.md` (ADR-0014 başvuru dili). Başvuruların yapılması (≥2, ⛔ O6), bağımsız inceleme başvurusu ve EBA alan adı teyidi kullanıcıda | ✅ (başvurular, inceleme başvurusu ve EBA teyidi kullanıcıda) | `gomulu.spec.ts`, `uyumMatrisi.spec.ts` (19/19, bayatlık, kapsam kuralı), `gizlilikTarama.spec.ts` (üst pencere kuralları), e2e `onizleme-gomulu.spec.ts` (aynı kökenli portal iframe'i, üretim başlıkları: tahta akışı + 3 soru, Eve gönder yok, aynı köken, `postMessage`/`message` 0, depolama boş; bağımsız sekmede parametre etkisiz) |
 
 Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **35 şablon / ~3 haftaya** büyüdü
 (şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**
