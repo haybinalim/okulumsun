@@ -27,6 +27,8 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2,m4a}'],
         // Önbellek sürümü — içerik değişince otomatik güncellenir.
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB (ses klipleri)
+        // Uygulamadan bağımsız statik sayfalar SPA yedeğine düşmesin (plan v2 Adım 38/39/48).
+        navigateFallbackDenylist: [/^\/ogretmen/, /^\/gizlilik/, /^\/kagitlar/],
       },
     }),
   ],
