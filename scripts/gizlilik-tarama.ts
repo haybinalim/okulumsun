@@ -4,6 +4,7 @@
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
+import { kirmiziTara } from './denetim/kirmiziYok.ts';
 import { tara, type Bulgu } from './gizlilik/kurallar.ts';
 
 const kok = process.cwd();
@@ -30,7 +31,9 @@ for (const dizin of ['src', 'scripts']) {
     // Kural tanımları yasak desenleri metin olarak içerir.
     if (goreli === 'scripts/gizlilik/kurallar.ts') continue;
     sayi++;
-    bulgular.push(...tara(goreli, readFileSync(yol, 'utf8')));
+    const icerik = readFileSync(yol, 'utf8');
+    bulgular.push(...tara(goreli, icerik));
+    for (const k of kirmiziTara(goreli, icerik)) bulgular.push({ dosya: k.dosya, satir: k.satir, kural: `kırmızı yasak ${k.desen}` } as Bulgu);
   }
 }
 

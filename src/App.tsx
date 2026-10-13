@@ -14,6 +14,7 @@ import { Kaynaklar } from './ui/screens/Kaynaklar';
 import { SorunBildir } from './ui/screens/SorunBildir';
 import { OturumSonu } from './ui/screens/OturumSonu';
 import { Bahcem } from './ui/screens/Bahcem';
+import { OturumHatasi, OturumYukleniyor } from './ui/screens/OturumDurumlari';
 import { useAppStore, accentBul } from './store/appStore';
 import { useDeviceProfile } from './design/useDeviceProfile';
 import { CihazProfiliBaglami } from './design/CihazProfiliBaglami';
@@ -44,6 +45,7 @@ export default function App() {
   const accent = accentBul(useAppStore((s) => s.accentId));
   const ekranGit = useAppStore((s) => s.ekranGit);
   const secilenDugumId = useAppStore((s) => s.secilenDugumId);
+  const bugunTamamlanan = useAppStore((s) => s.bugunTamamlanan);
   const [tahtaTohumu, setTahtaTohumu] = useState(7);
 
   // Tahta modunda seçilen konuya göre (veya varsayılan ilk hazır konuya göre) egzersiz üret
@@ -230,7 +232,7 @@ export default function App() {
     return (
       <BoardHarness profile={profile}>
         <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <Bahcem koleksiyon={{ toplam: 3, sahneIndeksi: 0, sonKazancMs: null }} onEv={() => ekranGit('anaEkran')} />
+          <Bahcem koleksiyon={{ toplam: bugunTamamlanan, sahneIndeksi: 0, sonKazancMs: null }} onEv={() => ekranGit('anaEkran')} />
         </div>
       </BoardHarness>
     );
@@ -286,28 +288,5 @@ export default function App() {
         {alistirmaIcerigi}
       </div>
     </BoardHarness>
-  );
-}
-
-function OturumYukleniyor() {
-  return (
-    <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, fontWeight: 'bold' }}>
-      Oturum hazırlanıyor...
-    </div>
-  );
-}
-
-function OturumHatasi({ mesaj, onAnaEkran }: { readonly mesaj: string; readonly onAnaEkran: () => void }) {
-  return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24, textAlign: 'center' }}>
-      <div style={{ fontSize: 24, color: '#DC2626', fontWeight: 'bold' }}>Oturum Hatası</div>
-      <div style={{ fontSize: 16, opacity: 0.8 }}>{mesaj}</div>
-      <button
-        onClick={onAnaEkran}
-        style={{ padding: '12px 24px', background: '#7C3AED', color: '#FFF', borderRadius: 12, fontSize: 18, fontWeight: 'bold', cursor: 'pointer' }}
-      >
-        Ana Ekrana Dön
-      </button>
-    </div>
   );
 }
