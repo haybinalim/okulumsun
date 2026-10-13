@@ -23,13 +23,17 @@ export const EV_SORU_SAYISI = 8;
 export function EvdeCalis({ set }: { set: GunlukSet }) {
   const accent = accentBul(useAppStore((s) => s.accentId));
   const evCalismasiniBitir = useAppStore((s) => s.evCalismasiniBitir);
+  const evIpucunaGec = useAppStore((s) => s.evIpucunaGec);
+  // Adım 43: veli "Evde 10 dakika" başlattıysa sonda ipucu kartına geçilir.
+  const veliBaslatti = useAppStore((s) => s.evdeOnDakikaTema !== null);
   const [sira, setSira] = useState(0);
   const exercise = useMemo(
     () => (sira < EV_SORU_SAYISI ? setSorusuUret(setSorusu(set, sira, (t) => REGISTRY.has(t))) : null),
     [set, sira],
   );
 
-  if (exercise === null) return <EvdeCalisSonu onEv={evCalismasiniBitir} />;
+  if (exercise === null)
+    return veliBaslatti ? <EvdeCalisSonu onYetiskin={evIpucunaGec} /> : <EvdeCalisSonu onEv={evCalismasiniBitir} />;
   return (
     <div data-ev-sira={sira} style={{ height: '100%' }}>
       <ExerciseScreen
@@ -42,7 +46,7 @@ export function EvdeCalis({ set }: { set: GunlukSet }) {
   );
 }
 
-function EvdeCalisSonu({ onEv }: { onEv: () => void }) {
+function EvdeCalisSonu({ onEv, onYetiskin }: { onEv?: () => void; onYetiskin?: () => void }) {
   const [kutlama, setKutlama] = useState(true);
   const atla = useCallback(() => setKutlama(false), []);
   useScreenSpeech({ kind: 'key', key: 'ui.oturum-bitti' }, []);
@@ -67,9 +71,21 @@ function EvdeCalisSonu({ onEv }: { onEv: () => void }) {
       </div>
       {/* [Ev] kutlama bittikten (≤2 sn veya dokununca) sonra görünür — OturumSonu ile aynı. */}
       <section style={{ display: 'flex', justifyContent: 'center', minHeight: 'var(--size-control, 102px)' }}>
-        {!kutlama && (
+        {!kutlama && onEv && (
           <BigButton label="Ev" size="control" variant="accent" onPress={onEv}>
             🏠
+          </BigButton>
+        )}
+        {/* Adım 43: telefon bir büyüğe verilir; düğme yetişkin içindir (ev.yetiskine-ver klibi Adım 31). */}
+        {!kutlama && onYetiskin && (
+          <BigButton
+            label="Yetişkin: ipucu kartını aç"
+            size="control"
+            variant="accent"
+            onPress={onYetiskin}
+            style={{ padding: '0 24px', fontSize: 'var(--text-adult)' }}
+          >
+            🧑‍🤝‍🧑 İpucu kartı
           </BigButton>
         )}
       </section>

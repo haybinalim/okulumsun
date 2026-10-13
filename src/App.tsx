@@ -38,6 +38,8 @@ const CalismaKagidi = lazy(() => import('./ui/screens/CalismaKagidi'));
 const HaftalikPlan = lazy(() => import('./ui/screens/HaftalikPlan'));
 // Eve gönder (Adım 42) ve QR kodlayıcı ana pakete girmez.
 const EveGonder = lazy(() => import('./ui/screens/EveGonder'));
+// Evde 10 dakika ipucu kartı (Adım 43) ve ipucu verisi ana pakete girmez.
+const VeliIpucuKarti = lazy(() => import('./ui/screens/VeliIpucuKarti'));
 import { setSorusu } from './ogretmen/gunlukSet';
 import { setSorusuUret, tahtaSorusuUret } from './ogretmen/tahtaSorusu';
 
@@ -98,6 +100,19 @@ export default function App() {
       <BoardHarness profile={profile}>
         <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <EvdeCalis set={evSeti} />
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Evde 10 dakika sonu: veliye ipucu kartı (Adım 43)
+  if (ekran === 'veliIpucuKarti') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <Suspense fallback={<OturumYukleniyor />}>
+            <VeliIpucuKarti />
+          </Suspense>
         </div>
       </BoardHarness>
     );
