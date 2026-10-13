@@ -1,6 +1,8 @@
-import { lazy, Suspense, useState, useMemo } from 'react';
+import { lazy, Suspense, useState, useMemo, useRef } from 'react';
 import { BoardHarness } from './dev/BoardHarness';
 import { AudioUnlock } from './ui/screens/AudioUnlock';
+import { DersSonuOzeti } from './ui/screens/DersSonuOzeti';
+import { useDersOturumu } from './ui/useDersOturumu';
 import { ExerciseScreen } from './ui/screens/ExerciseScreen';
 import { ModSecimi } from './ui/screens/ModSecimi';
 import { AvatarSecimi } from './ui/screens/AvatarSecimi';
@@ -60,6 +62,7 @@ export default function App() {
   const aktifSet = useAppStore((s) => s.aktifSet);
   const setBitir = useAppStore((s) => s.setBitir);
   const [setSirasi, setSetSirasi] = useState(0);
+  const yanlisVar = useRef(false);
   const tahtaExercise = useMemo<Exercise>(() => {
     if (aktifSet) return setSorusuUret(setSorusu(aktifSet, setSirasi, (t) => REGISTRY.has(t)));
     return tahtaSorusuUret(secilenDugumId, tahtaTohumu);
@@ -154,6 +157,16 @@ export default function App() {
       <BoardHarness profile={profile}>
         <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           {ekran === 'sinifTuruKurulum' ? <SinifTuruKurulum /> : ekran === 'sinifTuru' ? <SinifTuruEkrani /> : <SinifTuruSonu />}
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  if (ekran === 'dersSonuOzeti') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <DersSonuOzeti />
         </div>
       </BoardHarness>
     );
@@ -282,7 +295,18 @@ export default function App() {
           key={`${aktifSet ? `set-${setSirasi}` : secilenDugumId}-${tahtaExercise.itemId}`}
           exercise={tahtaExercise}
           accent={accent}
-          onDone={() => (aktifSet ? setSetSirasi((sira) => sira + 1) : setTahtaTohumu((tohum) => tohum + 1))}
+          onYanlis={() => { yanlisVar.current = true; }}
+          onDone={() => {
+            useDersOturumu.getState().kaydet({
+              skillId: tahtaExercise.skillIds[0],
+              ilkDenemeDogru: !yanlisVar.current,
+              yardimKademesi: 0,
+              tani: null,
+            });
+            yanlisVar.current = false;
+            if (aktifSet) setSetSirasi((sira) => sira + 1);
+            else setTahtaTohumu((tohum) => tohum + 1);
+          }}
         />
         {aktifSet && (
           // Öğretmen çıkışı: bilerek küçük ve soluk, çocuğun erişemeyeceği üst köşede (Ayarlar dişlisi gibi).
