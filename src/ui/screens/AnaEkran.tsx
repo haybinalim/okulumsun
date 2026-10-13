@@ -274,7 +274,7 @@ export function AnaEkran() {
               variant="ghost"
               data-yetiskin=""
               onPress={() => ekranGit('dersSonuOzeti')}
-              style={{ position: 'fixed', left: 16, bottom: 16, zIndex: 5, minHeight: 102, padding: '0 24px', fontSize: 'var(--text-adult)' }}
+              style={{ position: 'fixed', left: 16, bottom: 16, zIndex: 5, minHeight: 'max(102px, var(--size-tap-min))', padding: '0 24px', fontSize: 'var(--text-adult)' }}
             >
               Dersi bitir
             </BigButton>
