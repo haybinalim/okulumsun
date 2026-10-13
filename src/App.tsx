@@ -2,6 +2,7 @@ import { lazy, Suspense, useState, useMemo, useRef } from 'react';
 import { BoardHarness } from './dev/BoardHarness';
 import { AudioUnlock } from './ui/screens/AudioUnlock';
 import { DersSonuOzeti } from './ui/screens/DersSonuOzeti';
+import { EvdeCalis } from './ui/screens/EvdeCalis';
 import { useDersOturumu } from './ui/useDersOturumu';
 import { dersOlayiUret } from './ogretmen/dersOzeti';
 import { ExerciseScreen } from './ui/screens/ExerciseScreen';
@@ -61,6 +62,7 @@ export default function App() {
 
   // Tahta modu: bugünün seti varsa set akışı, yoksa seçilen konu (veya ilk hazır konu).
   const aktifSet = useAppStore((s) => s.aktifSet);
+  const evSeti = useAppStore((s) => s.evSeti);
   const setBitir = useAppStore((s) => s.setBitir);
   const [setSirasi, setSetSirasi] = useState(0);
   const yanlisVar = useRef(false);
@@ -78,7 +80,22 @@ export default function App() {
     return (
       <BoardHarness profile={profile}>
         <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <AudioUnlock tamEkran={tamEkran} onUnlocked={() => useAppStore.getState().ekranGit('modSecimi')} />
+          <AudioUnlock
+            tamEkran={tamEkran}
+            // Adım 42: geçerli eve link okunduysa ses kilidinden sonra doğrudan ev çalışması.
+            onUnlocked={() => useAppStore.getState().ekranGit(useAppStore.getState().evSeti ? 'evdeCalis' : 'modSecimi')}
+          />
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Eve link ile açılan ev çalışması (Adım 42)
+  if (ekran === 'evdeCalis' && evSeti) {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <EvdeCalis set={evSeti} />
         </div>
       </BoardHarness>
     );
