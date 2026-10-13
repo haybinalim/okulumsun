@@ -16,6 +16,13 @@ import { create } from 'zustand';
 import { ACCENTS, type Accent } from '../design/tokens';
 import { OGRENCI_VERISI_SAKLANIR_MI } from '../persistence/veriSaklamaPolitikasi';
 import type { GunlukSet } from '../ogretmen/gunlukSet';
+import type { Renk } from '../exercises/types';
+import {
+  sinifTuruBaslat as sinifTuruDurumuBaslat,
+  sinifTuruIlerlet,
+  type SinifTuruDurumu,
+  type SinifTuruOlayi,
+} from '../sinif/sinifTuru';
 
 // ---------------------------------------------------------------- tipler
 
@@ -36,7 +43,13 @@ export type Ekran =
   | 'kaynaklar'
   | 'sorunBildir'
   | 'setHazirla'
-  | 'calismaKagidi';
+  | 'calismaKagidi'
+  | 'sinifTuruKurulum'
+  | 'sinifTuru'
+  | 'sinifTuruSonu';
+
+/** Sınıf Turu durumunun yaşadığı ekranlar; başka ekrana geçişte durum `null` olur. */
+export const SINIF_TURU_EKRANLARI: ReadonlySet<Ekran> = new Set<Ekran>(['sinifTuruKurulum', 'sinifTuru', 'sinifTuruSonu']);
 
 /** Kullanım modu — plan §3.3. */
 export type Mod = 'tahta' | 'kisisel';
@@ -121,6 +134,8 @@ interface AppStore {
   aktifSet: GunlukSet | null;
   /** Çalışma kâğıdı için hazırlanan set (Adım 35): yalnız bellekte; kâğıt saklanmaz, koddan yeniden üretilir. */
   kagitSeti: GunlukSet | null;
+  /** Sınıf Turu (Adım 36): yalnız bellekte; turdan çıkınca `null` (ADR-0008, gizlilik). */
+  sinifTuru: SinifTuruDurumu | null;
 
   // --- Actions
   ekranGit: (ekran: Ekran) => void;
@@ -137,6 +152,11 @@ interface AppStore {
   setBaslat: (set: GunlukSet) => void;
   setBitir: () => void;
   kagitIcinSet: (set: GunlukSet) => void;
+  sinifTuruKur: () => void;
+  sinifTuruBaslat: (renkler: readonly Renk[], kaynak: GunlukSet, turPerTakim: number) => void;
+  /** Geçersiz olay (ör. çift dokunuş) sessizce yok sayılır; durum değişmez. */
+  sinifTuruOlay: (olay: SinifTuruOlayi) => void;
+  sinifTuruKapat: () => void;
   sifirla: () => void;
   // --- Kalıcılık (Adım 9)
   profildenYukle: (profil: Partial<AppStore>) => void;
@@ -158,13 +178,19 @@ const baslangicDurumu = {
   bugunTamamlanan: 0,
   aktifSet: null as GunlukSet | null,
   kagitSeti: null as GunlukSet | null,
+  sinifTuru: null as SinifTuruDurumu | null,
 };
 
 export const useAppStore = create<AppStore>((set) => ({
   ...baslangicDurumu,
 
   ekranGit: (ekran) =>
-    set((s) => ({ oncekiEkran: s.ekran, ekran })),
+    set((s) => ({
+      oncekiEkran: s.ekran,
+      ekran,
+      // Sınıf Turu ekranlarından çıkınca tur durumu silinir (Adım 36, gizlilik).
+      sinifTuru: SINIF_TURU_EKRANLARI.has(ekran) ? s.sinifTuru : null,
+    })),
 
   modSec: (mod) =>
     set({
@@ -227,6 +253,31 @@ export const useAppStore = create<AppStore>((set) => ({
 
   kagitIcinSet: (kagitSeti) =>
     set((s) => ({ kagitSeti, ekran: 'calismaKagidi', oncekiEkran: s.ekran })),
+
+  sinifTuruKur: () => set((s) => ({ sinifTuru: null, ekran: 'sinifTuruKurulum', oncekiEkran: s.ekran })),
+
+  sinifTuruBaslat: (renkler, kaynak, turPerTakim) =>
+    set((s) => ({
+      sinifTuru: sinifTuruDurumuBaslat(renkler, kaynak, turPerTakim),
+      ekran: 'sinifTuru',
+      oncekiEkran: s.ekran,
+    })),
+
+  sinifTuruOlay: (olay) =>
+    set((s) => {
+      if (!s.sinifTuru) return {};
+      let sonraki: SinifTuruDurumu;
+      try {
+        sonraki = sinifTuruIlerlet(s.sinifTuru, olay);
+      } catch {
+        return {};
+      }
+      return sonraki.asama === 'bitti'
+        ? { sinifTuru: sonraki, ekran: 'sinifTuruSonu', oncekiEkran: s.ekran }
+        : { sinifTuru: sonraki };
+    }),
+
+  sinifTuruKapat: () => set((s) => ({ sinifTuru: null, ekran: 'anaEkran', oncekiEkran: s.ekran })),
 
   sifirla: () => set({ ...baslangicDurumu }),
 

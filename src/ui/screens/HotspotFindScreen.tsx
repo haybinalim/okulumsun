@@ -23,10 +23,13 @@ export function HotspotFindScreen({
   exercise,
   accent,
   onDone,
+  onYanlis,
 }: {
   exercise: HotspotFindExercise;
   accent: Accent;
   onDone: (dogruMu: boolean) => void;
+  /** Adım 36: her yanlış denemede (Sınıf Turu ikinci yanlışı sayar). */
+  onYanlis?: () => void;
 }) {
   useScreenSpeech(exercise.prompt.ses, [exercise.itemId]);
   const geriBildirim = useGeriBildirim(exercise.itemId);
@@ -60,6 +63,7 @@ export function HotspotFindScreen({
       setHatalar((onceki) => new Set([...onceki, id]));
       setCozum('tekrar');
       void speak(geriBildirim.tekrar());
+      onYanlis?.();
       window.setTimeout(() => {
         setCozum('bos');
         setHatalar(new Set());

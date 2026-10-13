@@ -25,6 +25,9 @@ import { useKisiselOturum } from './ui/useKisiselOturum';
 import { REGISTRY } from './exercises/registry';
 import type { Exercise } from './exercises/types';
 import { SetHazirla } from './ui/screens/SetHazirla';
+import { SinifTuruKurulum } from './ui/screens/SinifTuruKurulum';
+import { SinifTuruEkrani } from './ui/screens/SinifTuruEkrani';
+import { SinifTuruSonu } from './ui/screens/SinifTuruSonu';
 // Çalışma kâğıdı (Adım 35) ana pakete girmez: yazdırma ekranı açılınca yüklenir.
 const CalismaKagidi = lazy(() => import('./ui/screens/CalismaKagidi'));
 import { setSorusu } from './ogretmen/gunlukSet';
@@ -138,6 +141,17 @@ export default function App() {
       <BoardHarness profile={profile}>
         <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <SetHazirla />
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Sınıf Turu (Adım 36): kurulum → oyun → kavanoz kutlaması; durum yalnız bellekte.
+  if (ekran === 'sinifTuruKurulum' || ekran === 'sinifTuru' || ekran === 'sinifTuruSonu') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          {ekran === 'sinifTuruKurulum' ? <SinifTuruKurulum /> : ekran === 'sinifTuru' ? <SinifTuruEkrani /> : <SinifTuruSonu />}
         </div>
       </BoardHarness>
     );

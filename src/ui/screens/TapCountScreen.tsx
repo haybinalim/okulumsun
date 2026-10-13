@@ -29,10 +29,13 @@ export function TapCountScreen({
   exercise,
   accent,
   onDone,
+  onYanlis,
 }: {
   exercise: TapCountExercise;
   accent: Accent;
   onDone: (dogruMu: boolean) => void;
+  /** Adım 36: her yanlış denemede (Sınıf Turu ikinci yanlışı sayar). */
+  onYanlis?: () => void;
 }) {
   useScreenSpeech(exercise.prompt.ses, [exercise.itemId]);
   const geriBildirim = useGeriBildirim(exercise.itemId);
@@ -86,6 +89,7 @@ export function TapCountScreen({
       setHataDestegi(destek);
       setCozum('tekrar');
       void speak(geriBildirim.tekrar());
+      onYanlis?.();
       if (destek != null) void speak(destek.destek.ses);
       window.setTimeout(() => {
         setCozum('bos');
