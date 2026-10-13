@@ -73,3 +73,12 @@ bayatlığını yakalamaz; içerik değişikliği PR'larında arşivi yeniden ü
 
 `main` push'unda CI `dist-okul.zip` artefaktını üretir (`npm run okul-paketi`; 30 gün saklanır). GitHub Release eki
 yapılmaz: okul/kurum ağı dağıtımı ADR-0013 gereği yazılı izin ister. Kurulum: `docs/kurulum/okul-agi.md`.
+
+## Gömülü mod (plan v2 Adım 56, KG-74)
+
+`?gomulu=eba` veya `?gomulu=okul-portali` + gerçekten iframe içinde → sade mod (kökte `data-gomulu`): "Eve gönder"
+gizlenir, tam ekran yalnız iframe izin veriyorsa (`allow="fullscreen; screen-wake-lock"`) gösterilir; Sorun bildir ve
+lisanslar kalır. Üst pencereyle iletişim yok (K9: `postMessage`, `window.parent`/`opener` yasak; `window.top` yalnız
+kimlik karşılaştırması). **Yayın başlığı değişmedi:** `frame-ancestors 'self'` + `X-Frame-Options: SAMEORIGIN`; EBA'nın
+gömme alan adları EBA ile yazılı teyit edilmeden başka köken eklenmez (o zaman `scripts/yayin/basliklar.ts` +
+`vercel.json` + gizlilik sayfası birlikte güncellenir, `onizleme-gomulu` e2e'si o kökene genişletilir).

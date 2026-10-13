@@ -19,7 +19,15 @@ describe('K9 gizlilik taraması (Adım 24)', () => {
       'await fetch("https://dis.example.com");',
     ].join('\n');
     const b = tara('src/ui/tuzak.ts', tuzak);
-    expect(b.map((x) => x.satir)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+    expect(b.map((x) => x.satir)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 10, 11]);
+  });
+
+  it('üst pencere erişimi (Adım 56): parent/opener yasak; window.top yalnız gömülü açılışta kimlik karşılaştırması', () => {
+    expect(kurallar('src/ui/a.ts', 'const p = window.parent;')).toEqual(['window.parent/opener erişimi yasak']);
+    expect(kurallar('src/ui/a.ts', 'window.opener.location = x;')).toEqual(['window.parent/opener erişimi yasak']);
+    expect(kurallar('src/ui/a.ts', 'const t = window.self !== window.top;')).toHaveLength(1);
+    expect(kurallar('src/platform/gomuluAcilis.ts', 'return window.self !== window.top;')).toEqual([]);
+    expect(kurallar('src/platform/gomuluAcilis.ts', 'window.top.location.href = x;')).toHaveLength(1);
   });
 
   it('yorum satırı ve blok yorum yakalanmaz, satır numarası korunur', () => {
