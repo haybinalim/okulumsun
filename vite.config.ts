@@ -25,6 +25,8 @@ export default defineConfig({
       workbox: {
         // Tüm varlıklar precache → tam çevrimdışı.
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2,m4a}'],
+        // Kâğıt arşivi (Adım 48) uygulamanın parçası değil; çevrimdışı önbelleği şişirmesin.
+        globIgnores: ['kagitlar/**'],
         // Önbellek sürümü — içerik değişince otomatik güncellenir.
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB (ses klipleri)
         // Uygulamadan bağımsız statik sayfalar SPA yedeğine düşmesin (plan v2 Adım 38/39/48).

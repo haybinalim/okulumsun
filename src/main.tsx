@@ -15,6 +15,8 @@ ekranSaglayicisiAyarla(() => useAppStore.getState().ekran)
 hataDinleyicileriniKur()
 gelistirmeHatasiTetikle()
 void acilistaTemizle()
+// Adım 48: `?arsiv=<kâğıt kodu>` yalnız kâğıdı çizer (arşiv PDF üreticisi için); uygulama açılmaz.
+const arsivKodu = new URLSearchParams(location.search).get('arsiv')
 // Adım 42: eve link hash'i okunur ve adresten hemen silinir (ADR-0010); set yalnız bellekte.
 useAppStore.getState().evSetiAyarla(eveLinkiAcilistaOku(tarayiciAdresi()))
 
@@ -27,7 +29,9 @@ const kok = createRoot(document.getElementById('root')!)
 
 // Adım 30: rakam glif kartı YALNIZ geliştirmede (`?gelistirme=glif`); üretim
 // derlemesinde DEV `false` olduğundan dal ve dinamik içe aktarma atılır.
-if (import.meta.env.DEV && new URLSearchParams(location.search).get('gelistirme') === 'glif') {
+if (arsivKodu) {
+  void import('./ui/print/ArsivKagidi.tsx').then(({ ArsivKagidi }) => kok.render(<ArsivKagidi kod={arsivKodu} />))
+} else if (import.meta.env.DEV && new URLSearchParams(location.search).get('gelistirme') === 'glif') {
   void import('./dev/GlifKarti.tsx').then(({ GlifKarti }) => kok.render(<GlifKarti />))
 } else {
   kok.render(
