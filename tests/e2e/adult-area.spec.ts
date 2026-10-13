@@ -11,7 +11,7 @@ test.describe('yetişkin alanı', () => {
     await page.getByRole('button', { name: 'Renk mor' }).click();
     await page.getByRole('button', { name: 'Ayarlar' }).click();
 
-    await expect(page.getByRole('heading', { name: 'Yetişkin alanı' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Yetişkin alanı|Öğretmen alanı/ })).toBeVisible();
     await expect(page.getByText('Bu kontrol hiçbir veri kaydetmez.')).toBeVisible();
 
     const siraliSayilar = await page.locator('button[aria-label$="sıradaki sayı olarak seç"]').evaluateAll((buttons) =>

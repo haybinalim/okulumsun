@@ -18,14 +18,15 @@ import { OturumHatasi, OturumYukleniyor } from './ui/screens/OturumDurumlari';
 import { useAppStore, accentBul } from './store/appStore';
 import { useDeviceProfile } from './design/useDeviceProfile';
 import { CihazProfiliBaglami } from './design/CihazProfiliBaglami';
-import { createRng } from './exercises/rng';
 import { useUyanikTut } from './ui/useUyanikTut';
 import { dersteTamEkranMi, dersAyariniDinle } from './platform/dersAyari';
 import { useSyncExternalStore } from 'react';
 import { useKisiselOturum } from './ui/useKisiselOturum';
-import { skillsData } from './content/skillsData';
 import { REGISTRY } from './exercises/registry';
 import type { Exercise } from './exercises/types';
+import { SetHazirla } from './ui/screens/SetHazirla';
+import { setSorusu } from './ogretmen/gunlukSet';
+import { setSorusuUret, tahtaSorusuUret } from './ogretmen/tahtaSorusu';
 
 /**
  * Uygulama kabuğu — plan §11 ekran akışını yönetir.
@@ -48,46 +49,14 @@ export default function App() {
   const bugunTamamlanan = useAppStore((s) => s.bugunTamamlanan);
   const [tahtaTohumu, setTahtaTohumu] = useState(7);
 
-  // Tahta modunda seçilen konuya göre (veya varsayılan ilk hazır konuya göre) egzersiz üret
+  // Tahta modu: bugünün seti varsa set akışı, yoksa seçilen konu (veya ilk hazır konu).
+  const aktifSet = useAppStore((s) => s.aktifSet);
+  const setBitir = useAppStore((s) => s.setBitir);
+  const [setSirasi, setSetSirasi] = useState(0);
   const tahtaExercise = useMemo<Exercise>(() => {
-    const hedefDugum = skillsData.find((d) => d.id === secilenDugumId)
-      ?? skillsData.find((d) => d.durum === 'hazir')
-      ?? skillsData[0];
-
-    const templateId = hedefDugum.exerciseTemplates.find((t) => REGISTRY.has(t))
-      ?? 'M-SAY';
-
-    const generator = REGISTRY.get(templateId);
-    if (!generator) {
-      const fallbackGen = REGISTRY.values().next().value!;
-      return fallbackGen.uret({ seed: tahtaTohumu, difficulty: hedefDugum.difficulty, mod: 'tahta' }, createRng(tahtaTohumu));
-    }
-
-    const hedefParametreleri = templateId === 'M-ORUNTU-SAYI'
-      ? {
-          yon: hedefDugum.id === 'mat.oruntu.artan-sayi'
-            ? 'artan' as const
-            : hedefDugum.id === 'mat.oruntu.azalan-sayi'
-              ? 'azalan' as const
-              : undefined,
-        }
-      : templateId === 'M-CIKAR-GORSEL' && (
-        hedefDugum.id === 'mat.cikarma.ayirma' ||
-        hedefDugum.id === 'mat.cikarma.geriye-sayarak'
-      )
-        ? { hedefSkillId: hedefDugum.id }
-        : templateId === 'M-CIKAR-SEMBOL' && (
-          hedefDugum.id === 'mat.cikarma.fark-bulma' ||
-          hedefDugum.id === 'mat.cikarma.onluk-bozmadan-20'
-        )
-          ? { hedefSkillId: hedefDugum.id }
-          : {};
-
-    return generator.uret(
-      { seed: tahtaTohumu, difficulty: hedefDugum.difficulty, mod: 'tahta', ...hedefParametreleri },
-      createRng(tahtaTohumu),
-    );
-  }, [secilenDugumId, tahtaTohumu]);
+    if (aktifSet) return setSorusuUret(setSorusu(aktifSet, setSirasi, (t) => REGISTRY.has(t)));
+    return tahtaSorusuUret(secilenDugumId, tahtaTohumu);
+  }, [aktifSet, setSirasi, secilenDugumId, tahtaTohumu]);
 
   const kisiselOturum = useKisiselOturum(ekran, mod);
   useUyanikTut(ekran);
@@ -156,6 +125,17 @@ export default function App() {
           <CihazProfiliBaglami.Provider value={cihazProfili}>
             <VeliPaneli />
           </CihazProfiliBaglami.Provider>
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Bugünün seti hazırlama (Adım 34)
+  if (ekran === 'setHazirla') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <SetHazirla />
         </div>
       </BoardHarness>
     );
@@ -253,12 +233,44 @@ export default function App() {
           />
         )
     : (
-      <ExerciseScreen
-        key={`${secilenDugumId}-${tahtaExercise.itemId}`}
-        exercise={tahtaExercise}
-        accent={accent}
-        onDone={() => setTahtaTohumu((tohum) => tohum + 1)}
-      />
+      <>
+        <ExerciseScreen
+          key={`${aktifSet ? `set-${setSirasi}` : secilenDugumId}-${tahtaExercise.itemId}`}
+          exercise={tahtaExercise}
+          accent={accent}
+          onDone={() => (aktifSet ? setSetSirasi((sira) => sira + 1) : setTahtaTohumu((tohum) => tohum + 1))}
+        />
+        {aktifSet && (
+          // Öğretmen çıkışı: bilerek küçük ve soluk, çocuğun erişemeyeceği üst köşede (Ayarlar dişlisi gibi).
+          <button
+            type="button"
+            data-yetiskin=""
+            aria-label="Seti bitir"
+            onClick={() => {
+              setSetSirasi(0);
+              setBitir();
+            }}
+            style={{
+              position: 'fixed',
+              top: 8,
+              right: 8,
+              minWidth: 44,
+              minHeight: 44,
+              padding: '0 12px',
+              border: 'none',
+              borderRadius: 8,
+              background: 'transparent',
+              color: 'var(--color-ink)',
+              opacity: 0.5,
+              cursor: 'pointer',
+              fontSize: 'var(--text-adult)',
+              zIndex: 5,
+            }}
+          >
+            Seti bitir
+          </button>
+        )}
+      </>
     );
 
   return (

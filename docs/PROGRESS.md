@@ -3,9 +3,9 @@
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
-> Tarih: 13 Ekim 2026 (Adım 30 — rakam glifleri, kod hazır)
+> Tarih: 13 Ekim 2026 (Adım 34 — bugünün seti)
 
-<!-- durum:birim_test=310 durum:birim_dosya=41 durum:e2e_dosya=11 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
+<!-- durum:birim_test=329 durum:birim_dosya=44 durum:e2e_dosya=12 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
 
 ## Yönetici özeti
 
@@ -18,7 +18,7 @@ yardım akışı, maskot ve Bahçem çalışıyor. Ürün okulumsun-tc.vercel.ap
 Açık işler: ticari kullanıma uygun ses kaynağı (Adım 31), gerçek çocuk ve fiziksel tahta
 testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25, 26).
 
-**Adım 18 sürüyor:** ses kaynağı kararı (Google Cloud TTS Chirp 3 HD) şartlarıyla ADR-0004'e işlendi, istemci ve örnek üretim hattı hazır. ADR-0004 `Kabul` için kalan: kullanıcının GCP projesi ve anahtarı, örneklerin dinlenip sesin seçilmesi. Adım 19 (K8 bayatlık kapısı) ve Adım 20 (lisans: tüm hakları saklı) bitti; Adım 21'de K10 lisans envanteri, şematik banknot ve iş modeli kararı (ADR-0014) tamam. Adım 22'de Vercel tek yayın kaynağı oldu: CSP ve güvenlik başlıkları canlıda, üretim `dogrula` kontrolü geçmeden alınmıyor. Adım 23'te bellekte kalan hata günlüğü, yetişkin alanında "Sorun bildir" ve sürüm kimliği (`v0.1.0`) eklendi. Adım 24'te övgü/tekrar klibi madde kimliğinden seçiliyor (`Math.random` kalmadı) ve K9 gizlilik taraması CI'da. Adım 25'te uygulamanın kendi ikonu (Bahçem çiçeği), yatay açılış ve tek tema rengi (krem) geldi. Adım 26'da e2e, tablet ve tahtada tam akışı, çevrimdışı tam oturumu ve iki modda "ağa hiçbir şey gitmez, öğrenci verisi kalmaz" kanıtını otomatik sınıyor; JS boyut bütçesi CI'da. Adım 27'de öğretmen yetişkin alanından "Ekran boyutu"nu (Otomatik / Akıllı tahta / Tablet / Telefon) seçebiliyor; seçim yenilemede kalıyor ve yalnız izinli tek anahtara yazılıyor. Adım 30'da rakam glifleri tek kaynağa (`RAKAM_GLIFLERI`) alındı, geliştirme glif kartı ve iki öğretmen için yazdırılabilir görüş formu hazır; glif düzeltmesi öğretmen görüşünden sonra yapılacak.
+**Adım 18 sürüyor:** ses kaynağı kararı (Google Cloud TTS Chirp 3 HD) şartlarıyla ADR-0004'e işlendi, istemci ve örnek üretim hattı hazır. ADR-0004 `Kabul` için kalan: kullanıcının GCP projesi ve anahtarı, örneklerin dinlenip sesin seçilmesi. Adım 19 (K8 bayatlık kapısı) ve Adım 20 (lisans: tüm hakları saklı) bitti; Adım 21'de K10 lisans envanteri, şematik banknot ve iş modeli kararı (ADR-0014) tamam. Adım 22'de Vercel tek yayın kaynağı oldu: CSP ve güvenlik başlıkları canlıda, üretim `dogrula` kontrolü geçmeden alınmıyor. Adım 23'te bellekte kalan hata günlüğü, yetişkin alanında "Sorun bildir" ve sürüm kimliği (`v0.1.0`) eklendi. Adım 24'te övgü/tekrar klibi madde kimliğinden seçiliyor (`Math.random` kalmadı) ve K9 gizlilik taraması CI'da. Adım 25'te uygulamanın kendi ikonu (Bahçem çiçeği), yatay açılış ve tek tema rengi (krem) geldi. Adım 26'da e2e, tablet ve tahtada tam akışı, çevrimdışı tam oturumu ve iki modda "ağa hiçbir şey gitmez, öğrenci verisi kalmaz" kanıtını otomatik sınıyor; JS boyut bütçesi CI'da. Adım 27'de öğretmen yetişkin alanından "Ekran boyutu"nu (Otomatik / Akıllı tahta / Tablet / Telefon) seçebiliyor; seçim yenilemede kalıyor ve yalnız izinli tek anahtara yazılıyor. Adım 30'da rakam glifleri tek kaynağa (`RAKAM_GLIFLERI`) alındı, geliştirme glif kartı ve iki öğretmen için yazdırılabilir görüş formu hazır; glif düzeltmesi öğretmen görüşünden sonra yapılacak. Adım 34'te öğretmen tahta modunda "Öğretmen" girişinden en çok 4 etkinlikli "bugünün setini" hazırlayıp tahtada başlatabiliyor; set yalnız bellekte kalır ve her düğümün kararlı 2 karakterlik kodu var (kâğıt, eve link ve arşiv aynı tabloyu kullanacak).
 
 ## Yol haritası durumu (plan §14)
 
@@ -57,8 +57,9 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 28 | Tam ekran + Wake Lock (tahtada ses kilidi dokunuşunda tam ekran; ders ekranlarında ekran uyanık; veli paneli "Derste tam ekran") | ✅ |
 | 29 | Ürün hijyeni (hata/yükleme ekranı, açılış temizliği, bugünün bahçesi, kırmızı denetimi) | ✅ |
 | 30 | Rakam glifleri doğrulaması: path tek kaynak (`RAKAM_GLIFLERI`), DEV glif kartı, öğretmen görüş formu (md + yazdırılabilir A4) | ⚠ kod hazır, öğretmen formları bekleniyor |
+| 34 | Bugünün seti: öğretmen ≤4 etkinlik seçip tahtada başlatır (`src/ogretmen/`, `SetHazirla`, kararlı düğüm kodları); set yalnız bellekte | ✅ |
 
-Adım 31–58: depo dışındaki geliştirme planı v2.
+Adım 31–33 ve 35–58: depo dışındaki geliştirme planı v2.
 
 ## Karar kayıtları (ADR tablosu)
 

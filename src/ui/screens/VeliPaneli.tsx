@@ -29,7 +29,9 @@ export function VeliPaneli() {
     sesHizi,
     sesHiziAyarla,
     ekranGit,
+    mod,
   } = useAppStore();
+  const tahta = mod === 'tahta';
 
   return (
     <main
@@ -51,11 +53,22 @@ export function VeliPaneli() {
         </BigButton>
         <div>
           <h1 id="veli-paneli-baslik" style={{ fontSize: 'var(--text-adult)', color: COLOR.ink, margin: 0 }}>
-            Yetişkin alanı
+            {tahta ? 'Öğretmen alanı' : 'Yetişkin alanı'}
           </h1>
           <p style={{ ...bilgiMetniStili, marginTop: 2 }}>Ayarlar bu açık uygulama oturumu içindir.</p>
         </div>
       </header>
+
+      {tahta && (
+        <Bolum baslik="Bugünün seti">
+          <p style={{ ...bilgiMetniStili, marginTop: 0 }}>
+            En çok 4 etkinlik seçin; tahta bunları sırayla karıştırarak sorar. Set bu açık oturumda kalır.
+          </p>
+          <BigButton label="Bugünün setini hazırla" size="control" variant="accent" onPress={() => ekranGit('setHazirla')} style={{ padding: '0 24px', fontSize: 'var(--text-adult)' }}>
+            Bugünün setini hazırla
+          </BigButton>
+        </Bolum>
+      )}
 
       <Bolum baslik="Bu sürümde kayıt tutulmaz">
         <div role="status" aria-live="polite" style={mahremiyetKutusuStili}>

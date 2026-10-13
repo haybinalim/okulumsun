@@ -28,6 +28,7 @@ import { kazanimlariDogrula, kazanimHaritasi } from '../src/content/schema/kazan
 import { skillGrafiniAyristir } from '../src/content/schema/skill';
 import { TUM_HATA_ETIKETLERI } from '../src/exercises/distractors';
 import { REGISTRY } from '../src/exercises/registry';
+import { DUGUM_KODLARI, SILINEN_KODLAR } from '../src/ogretmen/dugumKodlari';
 import type { ExerciseGenerator } from '../src/exercises/types';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -134,6 +135,24 @@ try {
         `AYNI commit'te güncelleyin, sonra bu betikteki PLAN_SABLON_SAYISI değerini düzeltin.`,
     );
   }
+  // (f) kararlı düğüm kodları (Adım 34): her düğümün 2 karakterlik benzersiz kodu var, silinen kod yeniden verilmemiş
+  const kodlar = new Map<string, string>();
+  for (const d of graf) {
+    const kod = (DUGUM_KODLARI as Readonly<Record<string, string | undefined>>)[d.id];
+    if (!kod) {
+      hata(`${d.id}: src/ogretmen/dugumKodlari.ts içinde düğüm kodu yok.`);
+      continue;
+    }
+    if (!/^[a-z0-9]{2}$/.test(kod)) hata(`${d.id}: düğüm kodu '${kod}' 2 karakterli [a-z0-9] değil.`);
+    const onceki = kodlar.get(kod);
+    if (onceki) hata(`Düğüm kodu '${kod}' hem ${onceki} hem ${d.id} için verilmiş.`);
+    kodlar.set(kod, d.id);
+    if (SILINEN_KODLAR.includes(kod)) hata(`${d.id}: düğüm kodu '${kod}' silinmiş bir düğüme aitti, yeniden kullanılamaz.`);
+  }
+  for (const id of Object.keys(DUGUM_KODLARI)) {
+    if (!beceriIdleri.has(id)) hata(`dugumKodlari.ts: '${id}' skills.json'da yok (silinen düğümün kodu SILINEN_KODLAR'a taşınmalı).`);
+  }
+  sonuc.istatistik.push(`düğüm kodları: ${kodlar.size} benzersiz`);
   sonuc.istatistik.push(
     `şablonlar: ${tumSablonlar.size} benzersiz · ${UYGULANMIS_SABLONLAR.size} uygulandı · ` +
       `${tumSablonlar.size - UYGULANMIS_SABLONLAR.size} bekliyor`,
