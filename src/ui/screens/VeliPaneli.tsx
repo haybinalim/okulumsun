@@ -13,7 +13,9 @@ import { SURUM_METNI } from '../../hata/surum';
 import { useCihazProfili } from '../../design/CihazProfiliBaglami';
 import type { DeviceProfile } from '../../design/tokens';
 import { EKRAN_BOYUTU_SECENEKLERI } from '../../design/ekranBoyutu';
-import { useSyncExternalStore } from 'react';
+import { useState, useSyncExternalStore } from 'react';
+import { hash32 } from '../../exercises/rng';
+import { yerelGun } from '../../platform/dosyaIndir';
 import { dersteTamEkranMi, dersteTamEkranAyarla, dersAyariniDinle } from '../../platform/dersAyari';
 import { tamEkranIste, tamEkrandanCik } from '../../platform/tamEkran';
 
@@ -80,6 +82,8 @@ export function VeliPaneli() {
           </BigButton>
         </Bolum>
       )}
+
+      {!tahta && <EvdeOnDakikaBolumu />}
 
       <Bolum baslik="Haftalık plan">
         <p style={{ ...bilgiMetniStili, marginTop: 0 }}>
@@ -188,6 +192,52 @@ export function VeliPaneli() {
 
       <footer style={{ ...bilgiMetniStili, textAlign: 'center' }}>{SURUM_METNI}</footer>
     </main>
+  );
+}
+
+/**
+ * Evde 10 dakika (plan v2 Adım 43, KG-62): bu haftanın MEB konusundan kısa oturum, sonunda veliye
+ * 3 cümlelik ipucu kartı. Plan verisi düğmeye basınca tembel yüklenir; hiçbir şey saklanmaz.
+ */
+function EvdeOnDakikaBolumu() {
+  const baslat = useAppStore((s) => s.evdeOnDakikaBaslat);
+  const [bildirim, setBildirim] = useState('');
+  const [bekliyor, setBekliyor] = useState(false);
+  const tikla = async () => {
+    setBekliyor(true);
+    try {
+      const { buHaftaninEvdeOnDakikasi } = await import('../../ogretmen/evdeOnDakikaBaglama');
+      // "Bugün" ve tohum UI katmanında (saf modül saat/rastgelelik okumaz; Math.random yasak).
+      const bugun = yerelGun(new Date());
+      const sonuc = buHaftaninEvdeOnDakikasi(bugun, hash32(String(performance.now()) + bugun));
+      if (sonuc) baslat(sonuc.set, sonuc.tema);
+      else setBildirim('Bu hafta okul takviminde ders haftası değil; okul açılınca yeniden deneyin.');
+    } finally {
+      setBekliyor(false);
+    }
+  };
+  return (
+    <Bolum baslik="Evde 10 dakika">
+      <p style={{ ...bilgiMetniStili, marginTop: 0 }}>
+        Bu haftanın okul konusundan 8 kısa soru; sonunda size çocuğunuzla konuşmak için 3 cümlelik bir ipucu. Hiçbir
+        şey kaydedilmez.
+      </p>
+      <BigButton
+        label="Evde 10 dakika başlat"
+        size="control"
+        variant="accent"
+        onPress={() => void tikla()}
+        disabled={bekliyor}
+        style={{ padding: '0 24px', fontSize: 'var(--text-adult)' }}
+      >
+        Evde 10 dakika başlat
+      </BigButton>
+      {bildirim && (
+        <p role="status" style={{ ...bilgiMetniStili, marginTop: 8 }}>
+          {bildirim}
+        </p>
+      )}
+    </Bolum>
   );
 }
 

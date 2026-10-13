@@ -50,6 +50,7 @@ export type Ekran =
   | 'sinifTuruSonu'
   | 'dersSonuOzeti'
   | 'evdeCalis'
+  | 'veliIpucuKarti'
   | 'eveGonder';
 
 /** Sınıf Turu durumunun yaşadığı ekranlar; başka ekrana geçişte durum `null` olur. */
@@ -144,6 +145,8 @@ interface AppStore {
   evSeti: GunlukSet | null;
   /** Eve gönder ekranındaki set (Adım 42 aşama 3): yalnız bellekte; ekrandan çıkınca kullanılmaz. */
   eveGonderSeti: GunlukSet | null;
+  /** Evde 10 dakika (Adım 43): veli başlattıysa ipucu temasının numarası; yalnız bellekte. */
+  evdeOnDakikaTema: number | null;
 
   // --- Actions
   ekranGit: (ekran: Ekran) => void;
@@ -169,6 +172,12 @@ interface AppStore {
   evSetiAyarla: (set: GunlukSet | null) => void;
   /** Ev çalışmasını kapatır: set silinir, mod seçimine dönülür. */
   evCalismasiniBitir: () => void;
+  /** Veli: bu haftanın ev setini başlat (Adım 43); sonda ipucu kartı açılır. */
+  evdeOnDakikaBaslat: (set: GunlukSet, tema: number) => void;
+  /** Çocuk kısmı bitti: yetişkine ipucu kartı. */
+  evIpucunaGec: () => void;
+  /** İpucu kartı kapandı: set ve tema silinir, çocuk ekranına dönülür. */
+  evdeOnDakikaBitir: () => void;
   /** Öğretmen: seti eve link/QR olarak göster. */
   eveGonder: (set: GunlukSet) => void;
   sifirla: () => void;
@@ -195,6 +204,7 @@ const baslangicDurumu = {
   sinifTuru: null as SinifTuruDurumu | null,
   evSeti: null as GunlukSet | null,
   eveGonderSeti: null as GunlukSet | null,
+  evdeOnDakikaTema: null as number | null,
 };
 
 export const useAppStore = create<AppStore>((set) => ({
@@ -297,7 +307,16 @@ export const useAppStore = create<AppStore>((set) => ({
 
   evSetiAyarla: (evSeti) => set({ evSeti }),
 
-  evCalismasiniBitir: () => set((s) => ({ evSeti: null, ekran: 'modSecimi', oncekiEkran: s.ekran })),
+  evCalismasiniBitir: () =>
+    set((s) => ({ evSeti: null, evdeOnDakikaTema: null, ekran: 'modSecimi', oncekiEkran: s.ekran })),
+
+  evdeOnDakikaBaslat: (evSeti, evdeOnDakikaTema) =>
+    set((s) => ({ evSeti, evdeOnDakikaTema, ekran: 'evdeCalis', oncekiEkran: s.ekran })),
+
+  evIpucunaGec: () => set((s) => ({ evSeti: null, ekran: 'veliIpucuKarti', oncekiEkran: s.ekran })),
+
+  evdeOnDakikaBitir: () =>
+    set((s) => ({ evSeti: null, evdeOnDakikaTema: null, ekran: 'anaEkran', oncekiEkran: s.ekran })),
 
   eveGonder: (eveGonderSeti) => set((s) => ({ eveGonderSeti, ekran: 'eveGonder', oncekiEkran: s.ekran })),
 
