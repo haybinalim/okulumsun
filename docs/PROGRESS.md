@@ -3,9 +3,9 @@
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
-> Tarih: 13 Ekim 2026 (Adım 40 — ders sonu özeti)
+> Tarih: 13 Ekim 2026 (Adım 42 — eve link, aşama 1)
 
-<!-- durum:birim_test=431 durum:birim_dosya=58 durum:e2e_dosya=17 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
+<!-- durum:birim_test=441 durum:birim_dosya=59 durum:e2e_dosya=17 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
 
 ## Yönetici özeti
 
@@ -64,6 +64,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 38 | Öğretmen tanıtım sayfası `/ogretmen/`: statik, betiksiz, yalnız aynı kökenden; ölçülmüş içerik hacmi (en az 66.000 farklı soru), veri almıyoruz kutusu, SSS, pilot etiketi, paylaşım kartı; sayılar kodla birlikte denetleniyor | ✅ (video, danışmanlar, iletişim adresi, öğretmen testi ve yayın kullanıcıda) |
 | 39 | Gizlilik kanıt paketi: `/gizlilik/` sayfası (ne toplanmaz, cihazda ne kalır, ağ, güvenlik politikası, 3 adımda kendin doğrula), KVKK beyanı taslağı, her PR'da otomatik gizlilik kanıt raporu (CI artefaktı) ve bağımsız inceleme yol haritası | ✅ (hukuki görüş, yönetici/veli denemesi ve yayın kullanıcıda) |
 | 40 | Ders sonu özeti (tahta): "Dersi bitir" → sınıfın en çok zorlandığı en çok 3 beceri, baskın hata türü ve sınıfta yapılacak etkinlik; tek dokunuşla yarın için set veya kâğıt. Sayı/yüzde/puan yok; olaylar yalnız bellekte, ders kapanınca ve yenilemede silinir | ✅ (öğretmen görüşü Adım 41'de) |
+| 42 | Eve link: bağlantı biçimi sabitlendi (yalnız düğüm kodu + tohum, adresin hash parçasında; sunucuya gitmez), katı çözücü | 🟡 aşama 1/3 |
 
 Adım 31–33 ve 35–58: depo dışındaki geliştirme planı v2.
 
@@ -82,7 +83,7 @@ Ayrıntı ve durum sözlüğü: `docs/ADR/README.md`.
 | 0007 | Isınma Keşfi ve PLAN §6.5 | Taslak | 47 |
 | 0008 | Sınıf Turu: iş birlikçi gösterim | Önerildi | 36 |
 | 0009 | Mağaza varlığı | Taslak | 50, 51 |
-| 0010 | Eve link URL sözleşmesi | Taslak | 42 |
+| 0010 | Eve link URL sözleşmesi | Kabul | 42 |
 | 0011 | Çok ders mimarisi | Taslak | 57 |
 | 0012 | Çok dilli ses | Taslak | 58 |
 | 0013 | Uygulama lisansı | Önerildi | 20 |
