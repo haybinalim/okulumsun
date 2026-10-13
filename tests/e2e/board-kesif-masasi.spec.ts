@@ -3,14 +3,14 @@ import { geometriTemiz, sesKilidiniAc } from './yardimci/akis';
 import { agIhlalleri, agKaydet } from './yardimci/gizlilik';
 
 /**
- * Plan v2 Adım 44 aşama 2 (KG-64): tahtada Keşif Masası — ana ekrandan giriş, üç araç (onluk çerçeve,
- * nesneler, sayı doğrusu) erişim bölgesinde ve ≥102 px; dokunuşlar sayıyı değiştirir, sınır 20'de durur;
+ * Plan v2 Adım 44 aşama 2 (KG-64): tahtada Keşif Masası — ana ekrandan giriş, beş araç (onluk çerçeve,
+ * nesneler, sayı doğrusu, terazi, ayır-birleştir; aşama 3) erişim bölgesinde ve ≥102 px; dokunuşlar sayıyı değiştirir, sınır 20'de durur;
  * azaltılmış harekette animasyon yok; ağ ve depolama temiz.
  */
 
 const sayi = (page: Page) => page.getByRole('main', { name: 'Keşif Masası' }).getAttribute('data-kesif-sayi');
 
-test('tahta: Keşif Masası üç araç, geometri ve sınırlar', async ({ page, baseURL }) => {
+test('tahta: Keşif Masası beş araç, geometri ve sınırlar', async ({ page, baseURL }) => {
   test.setTimeout(90_000);
   const ag = agKaydet(page);
   await sesKilidiniAc(page, '/?device=board');
@@ -62,6 +62,26 @@ test('tahta: Keşif Masası üç araç, geometri ve sınırlar', async ({ page, 
   await expect(page.getByRole('button', { name: 'Sayı 20', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Baştan' }).click();
   await expect.poll(() => sayi(page)).toBe('0');
+
+  // Terazi (aşama 3): kefe düğmeleri; genel +1/−1 yok; eşitlikte "=".
+  await page.getByRole('button', { name: 'Terazi', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Bir ekle', exact: true })).toHaveCount(0);
+  await geometriTemiz(page, 'Keşif Masası — terazi');
+  await page.getByRole('button', { name: 'Sol kefeye bir ekle' }).click();
+  await page.getByRole('button', { name: 'Sağ kefeye bir ekle' }).click();
+  await expect(page.locator('[data-arac="terazi"]')).toHaveAttribute('data-egim', '0');
+  await expect(page.locator('output')).toHaveText('1 = 1');
+  await page.waitForTimeout(260);
+  await page.getByRole('button', { name: 'Sağ kefeye bir ekle' }).click();
+  await expect(page.locator('[data-arac="terazi"]')).toHaveAttribute('data-egim', '4');
+
+  // Ayır ve birleştir (aşama 3): 5'i 2 + 3'e ayır, sonra birleştir.
+  await page.getByRole('button', { name: 'Ayır ve birleştir', exact: true }).click();
+  await geometriTemiz(page, 'Keşif Masası — ayır ve birleştir');
+  await page.getByRole('button', { name: 'Sayaç 2, buradan ayır' }).click();
+  await expect(page.locator('output')).toHaveText('2 + 3');
+  await page.getByRole('button', { name: 'Birleştir', exact: true }).click();
+  await expect(page.locator('output')).toHaveText('5');
 
   await page.getByRole('button', { name: 'Ev', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Keşif Masası' })).toBeVisible();

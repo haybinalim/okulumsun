@@ -46,6 +46,10 @@ export function ogretmenSayfasiUret(v: SayfaVerisi): string {
       'Sınıf Turu',
       'Renkli takımlar sırayla soru çözer; yanlışta aynı takım yeniden dener, sonra sınıf birlikte çözer. Puan ve kazanan yok.',
     ],
+    [
+      'Keşif Masası',
+      'Soru ve puan olmadan anlatım aracı: onluk çerçeve, nesneler, sayı doğrusu, terazi, ayır-birleştir. Dokundukça sayı sesli söylenir.',
+    ],
   ];
   const sss: readonly [string, string][] = [
     [
