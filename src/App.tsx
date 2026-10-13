@@ -42,6 +42,8 @@ const EveGonder = lazy(() => import('./ui/screens/EveGonder'));
 const VeliIpucuKarti = lazy(() => import('./ui/screens/VeliIpucuKarti'));
 // Keşif Masası (Adım 44) ana pakete girmez.
 const KesifMasasi = lazy(() => import('./ui/screens/KesifMasasi'));
+// Tema sonu turu (Adım 46) ana pakete girmez.
+const TemaTuru = lazy(() => import('./ui/screens/TemaTuru'));
 import { setSorusu } from './ogretmen/gunlukSet';
 import { setSorusuUret, tahtaSorusuUret } from './ogretmen/tahtaSorusu';
 
@@ -70,6 +72,7 @@ export default function App() {
   const aktifSet = useAppStore((s) => s.aktifSet);
   const evSeti = useAppStore((s) => s.evSeti);
   const setBitir = useAppStore((s) => s.setBitir);
+  const temaTuru = useAppStore((s) => s.temaTuru);
   const [setSirasi, setSetSirasi] = useState(0);
   const yanlisVar = useRef(false);
   const tahtaExercise = useMemo<Exercise>(() => {
@@ -127,6 +130,19 @@ export default function App() {
         <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <Suspense fallback={<OturumYukleniyor />}>
             <KesifMasasi />
+          </Suspense>
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Tema sonu turu: 8–10 soru → kutlama → yetişkine nitel özet (Adım 46)
+  if (ekran === 'temaTuru' && temaTuru) {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <Suspense fallback={<OturumYukleniyor />}>
+            <TemaTuru tema={temaTuru.tema} plan={temaTuru.plan} />
           </Suspense>
         </div>
       </BoardHarness>

@@ -3,7 +3,15 @@ import { describe, expect, it } from 'vitest';
 import { skillsData } from '../../src/content/skillsData';
 import { REGISTRY } from '../../src/exercises/registry';
 import { setSorusu, setlenebilirDugumler } from '../../src/ogretmen/gunlukSet';
-import { TEMA_TURU_MADDE, esitAralikliIndeksler, temaTuruPlani, type TemaNo } from '../../src/ogretmen/temaTuru';
+import {
+  TEMA_TURU_MADDE,
+  esitAralikliIndeksler,
+  temaTuruOzeti,
+  temaTuruPlani,
+  type TemaNo,
+} from '../../src/ogretmen/temaTuru';
+import { temaTuruHazirla } from '../../src/ogretmen/temaTuruBaglama';
+import type { DersOlayi } from '../../src/ogretmen/dersOzeti';
 
 const kayitli = (t: string): boolean => REGISTRY.has(t);
 const uygun = setlenebilirDugumler(kayitli);
@@ -58,5 +66,56 @@ describe('temaTuruPlani', () => {
     expect(temaTuruPlani(4, adaylar, 9)).toEqual(temaTuruPlani(4, adaylar, 9));
     expect(temaTuruPlani(4, adaylar, 9)!.dugumler).toEqual(temaTuruPlani(4, adaylar, 10)!.dugumler);
     expect(temaTuruPlani(3, [], 1)).toBeNull();
+  });
+});
+
+describe('temaTuruOzeti (aşama 2, KG-67)', () => {
+  const plan = temaTuruPlani(1, adaylar, 3)!;
+  const olay = (skillId: string, ilkDenemeDogru: boolean, yardimKademesi: 0 | 1 | 2 | 3 = 0): DersOlayi => ({
+    skillId: skillId as DersOlayi['skillId'],
+    ilkDenemeDogru,
+    yardimKademesi,
+    tani: null,
+  });
+  it('tek madde yeterli; ders özeti eşikleri; plan sırası; olaysız düğüm atlanır', () => {
+    const [a, b, c] = plan.dugumler;
+    const ozet = temaTuruOzeti(plan, [olay(c, true), olay(a, false), olay(b, true, 2)], skillsData);
+    expect(ozet.map((d) => d.skillId)).toEqual([a, b, c]);
+    expect(ozet.map((d) => d.duzey)).toEqual(['zorlandi', 'zorlandi', 'rahat']);
+    expect(ozet.every((d) => d.baslik.length > 0)).toBe(true);
+  });
+  it('birden çok maddede oran: 4 maddeden 1 yanlış → destekle', () => {
+    const a = plan.dugumler[0];
+    const ozet = temaTuruOzeti(plan, [olay(a, true), olay(a, true), olay(a, true), olay(a, false)], skillsData);
+    expect(ozet).toEqual([{ skillId: a, baslik: expect.any(String), duzey: 'destekle' }]);
+  });
+  it('çıktıda sayı/yüzde alanı yok', () => {
+    const ozet = temaTuruOzeti(
+      plan,
+      plan.dugumler.map((d) => olay(d, true)),
+      skillsData,
+    );
+    for (const d of ozet) expect(Object.keys(d).sort()).toEqual(['baslik', 'duzey', 'skillId']);
+  });
+});
+
+describe('temaTuruHazirla (bağlama)', () => {
+  it('7 temada plan; geçersiz temada null', () => {
+    for (const t of TEMALAR) expect(temaTuruHazirla(t, 1)).toEqual(temaTuruPlani(t, adaylar, 1));
+    expect(temaTuruHazirla(0, 1)).toBeNull();
+    expect(temaTuruHazirla(8, 1)).toBeNull();
+  });
+});
+
+describe('appStore tema turu (bellek)', () => {
+  it('başlat → temaTuru ekranı ve plan; kapat → null, ana ekran', async () => {
+    const { useAppStore } = await import('../../src/store/appStore');
+    const plan = temaTuruHazirla(4, 2)!;
+    useAppStore.getState().temaTuruBaslat(4, plan);
+    expect(useAppStore.getState().ekran).toBe('temaTuru');
+    expect(useAppStore.getState().temaTuru).toEqual({ tema: 4, plan });
+    useAppStore.getState().temaTuruKapat();
+    expect(useAppStore.getState().temaTuru).toBeNull();
+    expect(useAppStore.getState().ekran).toBe('anaEkran');
   });
 });

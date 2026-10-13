@@ -3,7 +3,7 @@
  * Ayarlar yalnız açık uygulama oturumunda bellekte kalır; yenilemede sıfırlanır.
  */
 
-import { useAppStore } from '../../store/appStore';
+import { useAppStore, TEMALAR } from '../../store/appStore';
 import { BigButton } from '../primitives/BigButton';
 import { OKUL_AYLARI, acilanTemalar } from '../../content/okulAyi';
 import { COLOR } from '../../design/tokens';
@@ -84,6 +84,8 @@ export function VeliPaneli() {
       )}
 
       {!tahta && <EvdeOnDakikaBolumu />}
+
+      {!tahta && <TemaTuruBolumu okulAyiIndex={okulAyiIndex} />}
 
       <Bolum baslik="Haftalık plan">
         <p style={{ ...bilgiMetniStili, marginTop: 0 }}>
@@ -231,6 +233,54 @@ function EvdeOnDakikaBolumu() {
         style={{ padding: '0 24px', fontSize: 'var(--text-adult)' }}
       >
         Evde 10 dakika başlat
+      </BigButton>
+      {bildirim && (
+        <p role="status" style={{ ...bilgiMetniStili, marginTop: 8 }}>
+          {bildirim}
+        </p>
+      )}
+    </Bolum>
+  );
+}
+
+/**
+ * Tema turu (plan v2 Adım 46, KG-67): açık bir temanın becerilerini dolaşan 8–10 soru; sonunda size
+ * beceri başına nitel düzey. Plan bellekte, sonuçlar tur kapanınca silinir.
+ */
+function TemaTuruBolumu({ okulAyiIndex }: { okulAyiIndex: number }) {
+  const baslat = useAppStore((s) => s.temaTuruBaslat);
+  const acik = acilanTemalar(okulAyiIndex);
+  const [tema, setTema] = useState<number>(acik.at(-1) ?? 1);
+  const [bildirim, setBildirim] = useState('');
+  const tikla = async () => {
+    const { temaTuruHazirla } = await import('../../ogretmen/temaTuruBaglama');
+    const plan = temaTuruHazirla(tema, hash32(`${performance.now()}:tur:${tema}`));
+    if (plan) baslat(tema, plan);
+    else setBildirim('Bu temada henüz hazır etkinlik yok.');
+  };
+  return (
+    <Bolum baslik="Tema turu">
+      <p style={{ ...bilgiMetniStili, marginTop: 0 }}>
+        Bir temanın bütün becerilerinden 8–10 kısa soru; sonunda size beceri başına kısa bir gözlem. Not ya da
+        puan yok, hiçbir şey kaydedilmez.
+      </p>
+      <AyarSatir etiket="Tema" htmlFor="tema-turu-tema">
+        <select id="tema-turu-tema" value={tema} onChange={(e) => setTema(Number(e.target.value))} style={selectStyle}>
+          {TEMALAR.filter((t) => acik.includes(t.no)).map((t) => (
+            <option key={t.no} value={t.no}>
+              {t.ad}
+            </option>
+          ))}
+        </select>
+      </AyarSatir>
+      <BigButton
+        label="Tema turu başlat"
+        size="control"
+        variant="accent"
+        onPress={() => void tikla()}
+        style={{ padding: '0 24px', fontSize: 'var(--text-adult)', marginTop: 8 }}
+      >
+        Tema turu başlat
       </BigButton>
       {bildirim && (
         <p role="status" style={{ ...bilgiMetniStili, marginTop: 8 }}>

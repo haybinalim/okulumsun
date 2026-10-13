@@ -16,6 +16,8 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { COLOR } from '../../design/tokens';
 import { skillsData } from '../../content/skillsData';
 import type { SkillNode } from '../../content/schema/skill';
+import { temaTuruHazirla } from '../../ogretmen/temaTuruBaglama';
+import { hash32 } from '../../exercises/rng';
 
 const DUGUMLER: readonly SkillNode[] = skillsData;
 
@@ -33,6 +35,15 @@ export function KonuSecimi() {
   );
 
   const dugumSec = useAppStore((s) => s.dugumSec);
+  const temaTuruBaslat = useAppStore((s) => s.temaTuruBaslat);
+  // Adım 46: son kart "Tema turu"; temada oynatılabilir düğüm yoksa kart çıkmaz.
+  const turVar = useMemo(() => secilenTemaNo != null && temaTuruHazirla(secilenTemaNo, 0) !== null, [secilenTemaNo]);
+  const handleTemaTuru = () => {
+    if (secilenTemaNo == null) return;
+    // Tohum UI katmanında (saf modül rastgelelik okumaz; Math.random yasak).
+    const plan = temaTuruHazirla(secilenTemaNo, hash32(`${performance.now()}:tur:${secilenTemaNo}`));
+    if (plan) temaTuruBaslat(secilenTemaNo, plan);
+  };
 
   const handleKonuSec = (dugum: SkillNode) => {
     if (dugum.durum !== 'hazir') {
@@ -150,6 +161,18 @@ export function KonuSecimi() {
               </BigButton>
             </motion.div>
           ))}
+          {turVar && (
+            <BigButton
+              label="Tema turu"
+              size="choice"
+              variant="accent"
+              onPress={handleTemaTuru}
+              style={{ width: '100%', minHeight: 160, flexDirection: 'column', gap: 8 }}
+            >
+              <span aria-hidden="true" style={{ fontSize: 32 }}>🧭</span>
+              <span style={{ fontSize: 'var(--text-ui)', textAlign: 'center', fontWeight: 700 }}>Tema turu</span>
+            </BigButton>
+          )}
         </div>
       </section>
     </main>
