@@ -17,7 +17,7 @@ Geri dönüş maliyeti olan her karar burada numaralı bir kayıtla tutulur. Kur
 | [0007](0007-isinma-kesfi-plan-6-5.md) | Isınma Keşfi ve PLAN §6.5 | Taslak | 47 |
 | [0008](0008-sinif-turu-isbirlikci-gosterim.md) | Sınıf Turu: iş birlikçi gösterim | Kabul | 36 |
 | [0009](0009-magaza-varligi.md) | Mağaza varlığı | Taslak | 50, 51 |
-| [0010](0010-eve-link-url-sozlesmesi.md) | Eve link URL sözleşmesi | Taslak | 42 |
+| [0010](0010-eve-link-url-sozlesmesi.md) | Eve link URL sözleşmesi | Kabul | 42 |
 | [0011](0011-cok-ders-mimarisi.md) | Çok ders mimarisi | Taslak | 57 |
 | [0012](0012-cok-dilli-ses.md) | Çok dilli ses | Taslak | 58 |
 | [0013](0013-uygulama-lisansi.md) | Uygulama lisansı | Kabul | 20 |
