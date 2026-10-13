@@ -5,7 +5,7 @@
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
 > Tarih: 13 Ekim 2026 (Adım 39 — gizlilik kanıt paketi)
 
-<!-- durum:birim_test=418 durum:birim_dosya=55 durum:e2e_dosya=16 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
+<!-- durum:birim_test=423 durum:birim_dosya=56 durum:e2e_dosya=16 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
 
 ## Yönetici özeti
 
