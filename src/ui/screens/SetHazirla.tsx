@@ -21,8 +21,11 @@ const KAYITLI = (t: string): boolean => REGISTRY.has(t);
 export function SetHazirla() {
   const ekranGit = useAppStore((s) => s.ekranGit);
   const setBaslat = useAppStore((s) => s.setBaslat);
+  const kagitIcinSet = useAppStore((s) => s.kagitIcinSet);
+  const kagitSeti = useAppStore((s) => s.kagitSeti);
+  const tahta = useAppStore((s) => s.mod) === 'tahta';
   const [temaNo, setTemaNo] = useState<number>(TEMALAR[0].no);
-  const [secili, setSecili] = useState<readonly SkillId[]>([]);
+  const [secili, setSecili] = useState<readonly SkillId[]>(kagitSeti?.dugumler ?? []);
   const [dolu, setDolu] = useState(false);
 
   const uygun = useMemo(() => setlenebilirDugumler(KAYITLI), []);
@@ -51,6 +54,13 @@ export function SetHazirla() {
     setBaslat({ ...taslak, tohum });
   };
 
+  /** Çalışma kâğıdı (Adım 35): aynı düğüm seçimi, tohum kâğıt koduna girer. */
+  const kagidaGonder = () => {
+    if (secili.length === 0) return;
+    const taslak = { surum: SET_SURUMU, dugumler: secili, tohum: 0 };
+    kagitIcinSet({ ...taslak, tohum: kagitSeti && kagitSeti.dugumler.join() === secili.join() ? kagitSeti.tohum : hash32(String(performance.now()) + setKodla(taslak)) });
+  };
+
   return (
     <main
       aria-labelledby="set-hazirla-baslik"
@@ -68,10 +78,10 @@ export function SetHazirla() {
       {/* Üst %35: yalnız bilgi, dokunulabilir öğe yok. */}
       <header style={{ flex: '0 0 30%', display: 'flex', flexDirection: 'column', gap: 12, overflow: 'hidden' }}>
         <h1 id="set-hazirla-baslik" style={{ fontSize: 'var(--text-adult)', color: COLOR.ink, margin: 0 }}>
-          Bugünün setini hazırla
+          {tahta ? 'Bugünün setini hazırla' : 'Çalışma kâğıdı için etkinlik seç'}
         </h1>
         <p style={{ fontSize: 'var(--text-adult)', color: COLOR.inkSoft, margin: 0 }}>
-          En çok {SET_EN_FAZLA_DUGUM} etkinlik seç; farklı konulardan olabilir. Set yalnız bu açık oturumda kalır.
+          En çok {SET_EN_FAZLA_DUGUM} etkinlik seç; farklı konulardan olabilir. Seçim yalnız bu açık oturumda kalır.
         </p>
         <ul
           aria-label="Seçilen etkinlikler"
@@ -168,16 +178,29 @@ export function SetHazirla() {
           ← Geri
         </BigButton>
         <BigButton
-          label="Tahtada başlat"
+          label="Çalışma kâğıdı yazdır"
           size="tapMin"
-          variant="accent"
+          variant={tahta ? 'solid' : 'accent'}
           disabled={secili.length === 0}
           onBlockedPress={() => undefined}
-          onPress={baslat}
-          style={{ padding: '0 32px', fontWeight: 700 }}
+          onPress={kagidaGonder}
+          style={{ padding: '0 24px', fontWeight: 700 }}
         >
-          Tahtada başlat
+          Çalışma kâğıdı yazdır
         </BigButton>
+        {tahta && (
+          <BigButton
+            label="Tahtada başlat"
+            size="tapMin"
+            variant="accent"
+            disabled={secili.length === 0}
+            onBlockedPress={() => undefined}
+            onPress={baslat}
+            style={{ padding: '0 32px', fontWeight: 700 }}
+          >
+            Tahtada başlat
+          </BigButton>
+        )}
       </footer>
     </main>
   );

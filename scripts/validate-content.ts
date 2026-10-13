@@ -29,6 +29,7 @@ import { skillGrafiniAyristir } from '../src/content/schema/skill';
 import { TUM_HATA_ETIKETLERI } from '../src/exercises/distractors';
 import { REGISTRY } from '../src/exercises/registry';
 import { DUGUM_KODLARI, SILINEN_KODLAR } from '../src/ogretmen/dugumKodlari';
+import { YAZDIRMA_SINIFI } from '../src/ogretmen/calismaKagidi/yazdirmaUygunlugu';
 import type { ExerciseGenerator } from '../src/exercises/types';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -152,6 +153,19 @@ try {
   for (const id of Object.keys(DUGUM_KODLARI)) {
     if (!beceriIdleri.has(id)) hata(`dugumKodlari.ts: '${id}' skills.json'da yok (silinen düğümün kodu SILINEN_KODLAR'a taşınmalı).`);
   }
+  // (g) yazdırma uygunluğu (Adım 35): 39 şablonun her biri tam bir sınıfta, sınıf tablosunda fazla şablon yok
+  const sinifSayilari = { uygun: 0, uyarlanir: 0, uygunDegil: 0 };
+  for (const t of tumSablonlar) {
+    const sinif = YAZDIRMA_SINIFI[t];
+    if (!sinif) hata(`${t}: src/ogretmen/calismaKagidi/yazdirmaUygunlugu.ts içinde yazdırma sınıfı yok.`);
+    else sinifSayilari[sinif]++;
+  }
+  for (const t of Object.keys(YAZDIRMA_SINIFI)) {
+    if (!tumSablonlar.has(t)) hata(`yazdirmaUygunlugu.ts: '${t}' skills.json'da yok.`);
+  }
+  sonuc.istatistik.push(
+    `yazdırma sınıfı: ${sinifSayilari.uygun} uygun · ${sinifSayilari.uyarlanir} uyarlanır · ${sinifSayilari.uygunDegil} uygun değil`,
+  );
   sonuc.istatistik.push(`düğüm kodları: ${kodlar.size} benzersiz`);
   sonuc.istatistik.push(
     `şablonlar: ${tumSablonlar.size} benzersiz · ${UYGULANMIS_SABLONLAR.size} uygulandı · ` +

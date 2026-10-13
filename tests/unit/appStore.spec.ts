@@ -242,7 +242,7 @@ describe('Veli paneli — geçici saklama politikası', () => {
   beforeEach(sifirla);
 
   it('VeliPaneli mahremiyet, ayar, konu, kaynak ve sorun bildir bölümlerini içermeli (kaynak kod kontrolü)', async () => {
-    // VeliPaneli kaynak kodunu oku ve 8 Bolum (Adım 23: Sorun bildir, Adım 27: Ekran boyutu, Adım 34: Bugünün seti) bileşeni olduğunu doğrula
+    // VeliPaneli kaynak kodunu oku ve 9 Bolum (Adım 23: Sorun bildir, Adım 27: Ekran boyutu, Adım 34: Bugünün seti, Adım 35: Çalışma kâğıdı) bileşeni olduğunu doğrula
     const fs = await import('node:fs');
     const path = await import('node:path');
     const kaynak = fs.readFileSync(
@@ -250,7 +250,7 @@ describe('Veli paneli — geçici saklama politikası', () => {
       'utf-8',
     );
     const bolumSayisi = (kaynak.match(/<Bolum/g) || []).length;
-    expect(bolumSayisi).toBe(8);
+    expect(bolumSayisi).toBe(9);
     expect(kaynak).toContain('baslik="Ekran boyutu"');
   });
 
