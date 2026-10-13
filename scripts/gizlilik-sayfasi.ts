@@ -108,6 +108,11 @@ ${anahtarlar}
 <pre aria-label="Content-Security-Policy">${k(v.csp)}</pre>
 </section>
 
+<section aria-labelledby="evelink">
+<h2 id="evelink">Eve link</h2>
+<p>Öğretmen bir seti velilere bağlantı ya da QR koduyla gönderebilir. Bağlantı yalnız etkinlik kodlarını ve soruları çeşitlendiren bir sayıyı adresin <code>#</code> işaretinden sonraki kısmında taşır (örnek: <code>…/#ev=1.1.a1b4.39u</code>); ad, sınıf, okul, tarih ya da cevap içermez. Tarayıcılar <code>#</code> sonrasını sunucuya göndermez; uygulama açılınca bu kısmı adresten hemen siler. Fazladan bilgi eklenmiş bir bağlantı geçersiz sayılır ve uygulama olağan biçimde açılır. QR kodu cihazda üretilir, hiçbir hizmete gönderilmez; çocuğun evde çözdüğü sorular kaydedilmez.</p>
+</section>
+
 <section aria-labelledby="dogrula">
 <h2 id="dogrula">Kendiniz doğrulayın (3 adım)</h2>
 <ol>

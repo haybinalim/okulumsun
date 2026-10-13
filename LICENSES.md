@@ -27,6 +27,7 @@ Uygulamadaki Kaynaklar ekranı aynı listeyi çizer.
 | dexie | Apache-2.0 | David Fahlander | — |
 | zod | MIT | Colin McDonnell | — |
 | framer-motion | MIT | Matt Perry | — |
+| qrcode-generator | MIT | Kazuhiko Arase | yalnız Eve gönder ekranıyla tembel yüklenir (Adım 42) |
 | canvas-confetti | ISC | Kiril Vatev | — |
 | workbox-window | MIT | Google LLC | vite-plugin-pwa ile service worker içine derlenir |
 

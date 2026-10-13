@@ -18,7 +18,7 @@ const DUZEY: Record<'destekle' | 'zorlandi', { simge: string; metin: string }> =
 export function DersSonuOzeti() {
   const olaylar = useDersOturumu((s) => s.olaylar);
   const dersiKapat = useDersOturumu((s) => s.dersiKapat);
-  const { ekranGit, setBaslat, kagitIcinSet } = useAppStore();
+  const { ekranGit, setBaslat, kagitIcinSet, eveGonder } = useAppStore();
   const ozet = useMemo(
     () => dersOzetiHesapla(olaylar, skillsData, Math.imul(olaylar.length + 1, 2654435761) >>> 0),
     [olaylar],
@@ -60,6 +60,9 @@ export function DersSonuOzeti() {
             </BigButton>
             <BigButton label="Kâğıt yazdır" size="tapMin" variant="ghost" onPress={() => { const s = ozet.yarinIcinSet; if (s) { dersiKapat(); kagitIcinSet(s); } }} style={{ padding: '0 32px', minHeight: 102 }}>
               Kâğıt yazdır
+            </BigButton>
+            <BigButton label="Eve gönder" size="tapMin" variant="ghost" onPress={() => { const s = ozet.yarinIcinSet; if (s) eveGonder(s); /* Geri özete döner; ders kapanmaz. */ }} style={{ padding: '0 32px', minHeight: 102 }}>
+              Eve gönder
             </BigButton>
           </>
         )}

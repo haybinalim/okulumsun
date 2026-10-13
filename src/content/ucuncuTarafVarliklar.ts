@@ -49,6 +49,7 @@ export const UCUNCU_TARAF_VARLIKLAR: readonly UcuncuTarafVarlik[] = [
   { ad: 'dexie', tur: 'bagimlilik', lisans: 'Apache-2.0', sahip: 'David Fahlander', kaynakUrl: 'https://github.com/dexie/Dexie.js', dagitimdaVar: true },
   { ad: 'zod', tur: 'bagimlilik', lisans: 'MIT', sahip: 'Colin McDonnell', kaynakUrl: 'https://github.com/colinhacks/zod', dagitimdaVar: true },
   { ad: 'framer-motion', tur: 'bagimlilik', lisans: 'MIT', sahip: 'Matt Perry', kaynakUrl: 'https://github.com/motiondivision/motion', dagitimdaVar: true },
+  { ad: 'qrcode-generator', tur: 'bagimlilik', lisans: 'MIT', sahip: 'Kazuhiko Arase', kaynakUrl: 'https://github.com/kazuhikoarase/qrcode-generator', dagitimdaVar: true, kosul: 'yalnız Eve gönder ekranıyla tembel yüklenir (Adım 42)' },
   { ad: 'canvas-confetti', tur: 'bagimlilik', lisans: 'ISC', sahip: 'Kiril Vatev', kaynakUrl: 'https://github.com/catdad/canvas-confetti', dagitimdaVar: true },
   // --- Service worker'a derlenen Workbox (vite-plugin-pwa üretir)
   { ad: 'workbox-window', tur: 'bagimlilik', lisans: 'MIT', sahip: 'Google LLC', kaynakUrl: 'https://github.com/GoogleChrome/workbox', dagitimdaVar: true, kosul: 'vite-plugin-pwa ile service worker içine derlenir' },
