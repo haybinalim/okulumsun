@@ -9,7 +9,17 @@
  */
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { cpSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, utimesSync, writeFileSync } from 'node:fs';
+import {
+  cpSync,
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  statSync,
+  utimesSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -90,7 +100,9 @@ export function okulPaketiUret(kok: string, hedef = path.join(kok, PAKET_ADI)): 
     const uygulama = dosyalariListele(path.join(sahne, PAKET_KOK));
     const ozetler = uygulama.map((yol) => ({
       yol,
-      sha256: createHash('sha256').update(readFileSync(path.join(sahne, PAKET_KOK, yol))).digest('hex'),
+      sha256: createHash('sha256')
+        .update(readFileSync(path.join(sahne, PAKET_KOK, yol)))
+        .digest('hex'),
     }));
     writeFileSync(path.join(sahne, 'SHA256SUMS.txt'), sha256Listesi(ozetler));
     writeFileSync(path.join(sahne, 'OKUBENI.txt'), okubeniMetni(surum));

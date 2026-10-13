@@ -3,9 +3,9 @@
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
-> Tarih: 13 Ekim 2026 (Adım 48 — Çalışma kâğıdı arşivi)
+> Tarih: 13 Ekim 2026 (Adım 49 — Okul ağı ve yerel dağıtım)
 
-<!-- durum:birim_test=506 durum:birim_dosya=70 durum:e2e_dosya=24 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
+<!-- durum:birim_test=510 durum:birim_dosya=71 durum:e2e_dosya=25 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
 
 ## Yönetici özeti
 
@@ -37,7 +37,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 8 | Kabuk ekranları + veli kapısı/paneli | 🔄 kısmi — veli paneli 5 kalemden 2'si (ayarlar: cihaz profili ayarı ✓ Adım 27; Kaynaklar bağlantısı). İlerleme, zorlanılan konular, yedekleme Seçenek A (veri saklanmaz) gereği kapalı → Adım 52 |
 | 9 | Kalıcılık + PWA + yedekleme | 🔄 kısmi — çevrimdışı tam oturum e2e ✅ (Adım 26); yedek dışa/içe aktarım e2e yok → Adım 52; manifest/ikon/yön Adım 25'te düzeldi, Lighthouse "Installable" raporu canlı yayın onarılınca (KG-34) |
 | 10 | Kalan 35 şablon + ses kümeleri (§4.5) + SVG varlıklar | ✅ 39/39 şablon; §4.5 ses kümeleri üretildi |
-| 11 | Dağıtım + LICENSES + Kaynaklar ekranı | 🔄 kısmi — Vercel'de yayında; USB/`file://` açılış kanıtı yok → Adım 49; yayın hedefi Vercel (ADR-0003 Kabul, Adım 22) |
+| 11 | Dağıtım + LICENSES + Kaynaklar ekranı | ✅ — Vercel'de yayında (ADR-0003 Kabul, Adım 22); `file://` açılışı denendi (Adım 49): tarayıcı engeller, yönerge gösterilir; okul sunucusu/alt klasör yolu e2e ile kanıtlı |
 | 12 | Erişilebilirlik + 5 çocukla tablet testi | 🔄 kısmi — erişilebilirlik denetimi ✅; 5 çocukla tablet testi yapılmadı → Adım 32 |
 | 13 | (2. ay) Fiziksel tahta doğrulaması | ⬜ — yapılmadı → Adım 33, 41 |
 | 14 | PR #14 — erişilebilir şık etiketleri, veli kapısı/panel, `adult-area` e2e | ✅ |
@@ -69,6 +69,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 44 | Keşif Masası: soru ve puan olmadan dokunarak sayı kurulan alan, iki modda (tahtada öğretmenin anlatım aracı): onluk çerçeve (iki onluk), nesneler (en çok 20), sayı doğrusu (0–20), terazi (kefe başına en çok 10; ağır taraf iner, eşitse "=") ve ayır-birleştir ("2 + 3"). Her değişiklik mevcut sayı/işlem klipleriyle seslendirilir, hiçbir şey saklanmaz | ✅ (yeni hoş geldin/denge sesleri Adım 31'de; eski tahta tarayıcısında akıcılık Adım 41'de) |
 | 46 | Tema sonu turu: temanın bütün becerilerini dolaşan 8–10 soruluk kısa tur (tahtada konu seçiminin son kartı, kişiselde yetişkin alanından); sonunda çocuğa kutlama, yetişkine beceri başına nitel düzey (Rahat / Biraz destek gerekti / Tekrar çalışılabilir). Sayı/yüzde/puan yok, sonuçlar tur kapanınca silinir | ✅ (tur sesleri Adım 31'de; Adım 45 derin tema girişi Adım 31'e bağlı) |
 | 48 | Çalışma kâğıdı arşivi: her kazanım için hazır, cevap anahtarlı A4 PDF kâğıtlar (55 etkinlik × 3 kâğıt = 165 PDF) ve arama motorlarının bulabileceği statik dizin sayfaları (`/kagitlar/`, sitemap). Kâğıtlar uygulamadaki çalışma kâğıdıyla aynı üretimdir, para şematiktir; uygulamanın çevrimdışı önbelleğine girmez | ✅ (arama motoru kaydı yayından sonra kendiliğinden) |
+| 49 | Okul ağı ve yerel dağıtım: okul sunucusuna ya da alt klasöre kopyalanabilen `dist-okul.zip` paketi (kurulum notu, lisans, sürüm, dosya özetleri), alt klasörden tam akış e2e ile kanıtlı; filtre listesine eklenecek tek alan adı belgeli. Dosyaya çift tıklayarak açılış tarayıcı güvenliği nedeniyle çalışmaz, ekranda yönerge çıkar | ✅ (okul/kurum dağıtımı için yazılı izin metni kullanıcıda; Release eki o zaman) |
 
 Adım 31–33 ve 35–58: depo dışındaki geliştirme planı v2.
 

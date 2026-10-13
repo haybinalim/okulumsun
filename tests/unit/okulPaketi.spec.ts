@@ -5,13 +5,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
-import {
-  PAKET_KOK,
-  okubeniMetni,
-  okulPaketiUret,
-  paketGirdileri,
-  sha256Listesi,
-} from '../../scripts/okul-paketi';
+import { PAKET_KOK, okubeniMetni, okulPaketiUret, paketGirdileri, sha256Listesi } from '../../scripts/okul-paketi';
 
 const gecici = mkdtempSync(path.join(tmpdir(), 'okul-paketi-test-'));
 afterAll(() => rmSync(gecici, { recursive: true, force: true }));
@@ -29,7 +23,9 @@ describe('okul paketi', () => {
     ]);
   });
   it('SHA256SUMS sha256sum biçiminde', () => {
-    expect(sha256Listesi([{ yol: 'index.html', sha256: 'ab'.repeat(32) }])).toBe(`${'ab'.repeat(32)}  okulumsun/index.html\n`);
+    expect(sha256Listesi([{ yol: 'index.html', sha256: 'ab'.repeat(32) }])).toBe(
+      `${'ab'.repeat(32)}  okulumsun/index.html\n`,
+    );
   });
   it('OKUBENI: alt klasör, file:// sınırı, yazılı izin, gizlilik', () => {
     const m = okubeniMetni('9.9.9');

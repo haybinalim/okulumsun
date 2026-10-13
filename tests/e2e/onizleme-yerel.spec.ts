@@ -65,7 +65,9 @@ test('alt dizinden servis: ses kilidi → tahta → konu → 3 soru; istekler ya
   await page.getByRole('button', { name: 'Nerede?', exact: true }).click();
   expect(await alistirmalariCoz(page, 3)).toHaveLength(3);
 
-  const disarida = istekler.filter((u) => !u.startsWith('data:') && !u.startsWith('blob:') && !u.startsWith(`${kok}${ONEK}`));
+  const disarida = istekler.filter(
+    (u) => !u.startsWith('data:') && !u.startsWith('blob:') && !u.startsWith(`${kok}${ONEK}`),
+  );
   expect(disarida).toEqual([]);
   // Ses klipleri de alt dizinden geldi.
   expect(istekler.some((u) => u.startsWith(`${kok}${ONEK}audio/`))).toBe(true);
