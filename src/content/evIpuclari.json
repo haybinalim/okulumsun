@@ -1,0 +1,12 @@
+{
+  "$aciklama": "Plan v2 Adım 43: veliye tema başına 3 cümle (gözlem, soru, ev nesnesiyle etkinlik). Öğretmen okuması bekliyor (Bitti tanımı).",
+  "ipuclari": [
+    { "tema": 1, "gozlem": "Çocuğunuzun altında, üstünde, yanında gibi sözcükleri günlük konuşmada kullanıp kullanmadığına bakın.", "soru": "Çorap çekmecesi dolabın neresinde, sence?", "etkinlik": "Bir oyuncağı koltuğun altına, üstüne, arkasına koyun; çocuk yerini söylesin, sonra rolleri değiştirin." },
+    { "tema": 2, "gozlem": "Sayarken her nesneye tek bir sayı söyleyip söylemediğini, parmağıyla gösterip göstermediğini izleyin.", "soru": "Tabakta kaç tane var? Bir tane daha eklersek kaç olur?", "etkinlik": "Mutfaktaki kaşık, çatal ya da fındıkları 20'ye kadar birlikte sayın; sonra gruplara ayırıp hangisi çok diye sorun." },
+    { "tema": 3, "gozlem": "Sayıları iki parçaya ayırırken hangi parçalarla rahat ettiğini not edin.", "soru": "Elimizde 6 elma var; ikisini sen al, geri kalan kaç?", "etkinlik": "Bir avuç düğmeyi iki kâseye paylaştırın; her paylaşımı birlikte söyleyin." },
+    { "tema": 4, "gozlem": "Toplama ve çıkarmada nesneyi mi, parmağı mı, zihinden mi kullandığını fark edin.", "soru": "Sepette 5 portakal vardı, 3 tane daha geldi; şimdi kaç oldu?", "etkinlik": "Tuz kutusu ve makarna gibi ev nesneleriyle küçük hikâyeler kurun, çocuk sonucu nesnelerle göstersin." },
+    { "tema": 5, "gozlem": "Çocuğunuzun şekilleri adlandırırken kenar ve köşe sözcüklerini kullanıp kullanmadığına bakın.", "soru": "Bu kutunun yüzlerine bakınca hangi şekli görüyorsun?", "etkinlik": "Evde daire, kare ve üçgen şekilli nesneler arayın; en çok hangisini bulduğunuzu sayın." },
+    { "tema": 6, "gozlem": "Boy ve uzunluk kıyaslarken başlangıç noktasını aynı yerden alıp almadığını izleyin.", "soru": "Hangisi daha uzun? Nasıl emin olabiliriz?", "etkinlik": "İki kalemi ya da iki ayakkabıyı aynı çizgiden başlatıp kıyaslayın; sonra ayak adımıyla ölçün." },
+    { "tema": 7, "gozlem": "Tekrar eden bir düzeni devam ettirebiliyor mu, nasıl açıkladığına dikkat edin.", "soru": "Sırada ne gelir? Bunu nereden anladın?", "etkinlik": "Sofrada renkli nesnelerle kırmızı, mavi, kırmızı, mavi gibi bir sıra dizin; çocuk devam ettirsin ve kendi örüntüsünü kursun." }
+  ]
+}

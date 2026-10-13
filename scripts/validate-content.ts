@@ -34,6 +34,7 @@ import type { ExerciseGenerator } from '../src/exercises/types';
 import { OGRETIM_HAFTALARI } from '../src/content/okulTakvimi';
 import { PlanDuzeltmeleriSchema } from '../src/content/schema/haftalikPlan';
 import { haftalikPlanUret } from '../src/ogretmen/haftalikPlan';
+import { EvIpuclariSchema } from '../src/content/schema/evIpucu';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel: string): unknown => JSON.parse(readFileSync(path.join(ROOT, rel), 'utf8'));
@@ -233,6 +234,14 @@ for (const g of JENERATORLER) {
 sonuc.istatistik.push(
   `jeneratörler: ${JENERATORLER.length} uygulandı (${[...UYGULANMIS_SABLONLAR].join(', ')}).`,
 );
+
+// ------------------------------------------------ ev ipuçları (Adım 43)
+try {
+  const ev = EvIpuclariSchema.parse(read('src/content/evIpuclari.json'));
+  sonuc.istatistik.push(`ev ipuçları: ${ev.ipuclari.length} tema`);
+} catch (e) {
+  hata(`evIpuclari.json: ${e instanceof Error ? e.message : String(e)}`);
+}
 
 // ------------------------------------------------ haftalık MEB planı (Adım 37)
 try {
