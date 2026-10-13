@@ -5,7 +5,7 @@
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
 > Tarih: 13 Ekim 2026 (Adım 35 — çalışma kâğıdı)
 
-<!-- durum:birim_test=350 durum:birim_dosya=45 durum:e2e_dosya=13 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
+<!-- durum:birim_test=358 durum:birim_dosya=46 durum:e2e_dosya=13 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
 
 ## Yönetici özeti
 
@@ -59,6 +59,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 30 | Rakam glifleri doğrulaması: path tek kaynak (`RAKAM_GLIFLERI`), DEV glif kartı, öğretmen görüş formu (md + yazdırılabilir A4) | ⚠ kod hazır, öğretmen formları bekleniyor |
 | 34 | Bugünün seti: öğretmen ≤4 etkinlik seçip tahtada başlatır (`src/ogretmen/`, `SetHazirla`, kararlı düğüm kodları); set yalnız bellekte | ✅ |
 | 35 | Yazdırılabilir çalışma kâğıdı + cevap anahtarı (`src/ogretmen/calismaKagidi/`, `CalismaKagidi`, `KagitSayfalari`; ADR-0006 Kabul); 23 uygun · 14 uyarlanır · 2 uygun değil şablon | ✅ (iki öğretmen incelemesi ve elle siyah-beyaz baskı bekliyor) |
+| 36a | Sınıf Turu aşama 1: saf durum makinesi (`src/sinif/sinifTuru.ts`); ekranlar ve sesler sonraki aşamalarda | ✅ (aşama 1) |
 
 Adım 31–33 ve 35–58: depo dışındaki geliştirme planı v2.
 

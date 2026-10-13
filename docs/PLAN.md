@@ -1194,6 +1194,7 @@ okulumsun/
 │   ├── persistence/
 │   ├── platform/
 │   ├── progress/
+│   ├── sinif/
 │   ├── store/
 │   └── ui/
 └── tests/
@@ -1230,7 +1231,7 @@ Her adımın **"Bitti tanımı"** vardır: listedeki her madde doğrulanmadan ad
 ve bir sonraki adıma geçilemez. Durum sütunu bu repodaki gerçeği yansıtır; bir adımı
 bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 
-<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=45 durum:e2e_dosya=13 durum:adr=14 -->
+<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=46 durum:e2e_dosya=13 durum:adr=14 -->
 
 | # | İş | Durum | Bitti tanımı |
 |---|---|---|---|
@@ -1269,6 +1270,7 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 30 | Rakam glifleri doğrulaması (MEB dik temel): path verisi tek kaynak `src/ui/svg/rakamGlifleri.ts` (`RAKAM_GLIFLERI`, `Visual.tsx` `Rakam` kullanır, çizgi kalınlığı `GLIF` belirteci), DEV glif kartı `src/dev/GlifKarti.tsx` (`?gelistirme=glif`), öğretmen görüş formu `docs/icerik/rakam-glifleri.md` + yazdırılabilir A4 form `npm run glif:formu`. Path'ler değişmedi | ⚠ kod hazır, öğretmen formları bekleniyor (iki aşamalı, KG-42) | `rakamGlifleri.spec.ts` (10 glif, kancalı 1, çizgisiz 7, Visual tek kaynak) |
 | 34 | Bugünün seti (tahta/öğretmen): `src/ogretmen/{dugumKodlari,gunlukSet,tahtaSorusu}.ts` (kararlı 2 karakterlik düğüm kodları, saf set mantığı, `App.tsx`'ten taşınan saf soru üretimi), `SetHazirla` ekranı (≤4 düğüm, alt %65, ≥102 px), AnaEkran "Öğretmen" girişi, veli paneli "Öğretmen alanı", `appStore.aktifSet` (yalnız bellekte), validate düğüm kodu denetimi. Ses klipleri (`ui.set-basliyor`, `ui.set-bitti`) GCP anahtarı gelene kadar ertelendi (KG-43) | ✅ | `gunlukSet.spec.ts`, `tahtaSorusu.spec.ts` (39 şablon), `dugumKodlari.spec.ts`, e2e `bugunun-seti.spec.ts` |
 | 35 | Yazdırılabilir çalışma kâğıdı + cevap anahtarı: `src/ogretmen/calismaKagidi/{yazdirmaUygunlugu,kagitMaddesi,kagitPlani,kagitYerlesimi,cevapAnahtari,sesMetni}.ts` (saf; aynı istek → aynı plan, cevap `validation` alanından), `CalismaKagidi` ekranı (tembel yüklenir) + `KagitSayfalari`/`kagit.css` (HTML+SVG, `@page` A4, 12 mm kenar, seçenek kutusu ≥ 26 mm, şematik banknot), `SetHazirla`/`VeliPaneli` girişleri, validate yazdırma sınıfı denetimi (23 uygun · 14 uyarlanır · 2 uygun değil); ADR-0006 Kabul. İki öğretmen incelemesi ve elle siyah-beyaz baskı bekliyor | ✅ | `calismaKagidi.spec.ts` (determinizm, doğruluk, sınıflandırma, para, depolama/ağ yok), e2e `calisma-kagidi.spec.ts` (PDF sayfa sayısı, yazdırma ortamı ölçüleri, görsel taban `kagit-2x3`) |
+| 36a | Sınıf Turu aşama 1: `src/sinif/sinifTuru.ts` (SAF durum makinesi: 2–4 takım, döngüsel sıra, yıldız + yaprak, sayısız kavanoz, öğretmen bitirir). Ekranlar, `onDone` refaktörü, ses klipleri ve e2e sonraki aşamalarda | ✅ | `sinifTuru.spec.ts` (sıra döngüsel, yanlış sırayı geçirmez, hedefte biter, 1/5 takım reddi, puan/skor alanı yok) |
 
 Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **35 şablon / ~3 haftaya** büyüdü
 (şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**
