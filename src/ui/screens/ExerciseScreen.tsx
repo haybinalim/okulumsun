@@ -1,5 +1,5 @@
 import { useRef, useState, type ReactNode } from 'react';
-import { basitMaddeSonucu } from '../../progress/basitMaddeSonucu';
+import { basitMaddeSonucu, yanlisBilgisiBirlestir, type YanlisBilgisi } from '../../progress/basitMaddeSonucu';
 import type { MaddeSonuc } from '../../progress/itemLifecycle';
 import { GameShell } from '../layout/GameShell';
 import { ChoiceCard, type ChoiceState } from '../primitives/ChoiceCard';
@@ -9,7 +9,7 @@ import { BigButton } from '../primitives/BigButton';
 import { Visual } from '../svg/Visual';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { useGeriBildirim } from '../useGeriBildirim';
-import { hataDestekKarari, type HataDestekKarari } from '../../exercises/hataDestek';
+import { hataDestekKarari, yanlisSecimBilgisi, type HataDestekKarari } from '../../exercises/hataDestek';
 import type { Exercise } from '../../exercises/types';
 import type { Accent } from '../../design/tokens';
 import { TapCountScreen } from './TapCountScreen';
@@ -36,32 +36,45 @@ export function ExerciseScreen({
   accent: Accent;
   onDone: (sonuc: MaddeSonuc) => void;
   /** Adım 36 aşama 2b: her yanlış denemede çağrılır (alt ekran yeniden denemeyi kendisi yönetir). */
-  onYanlis?: () => void;
+  onYanlis?: (bilgi: YanlisBilgisi) => void;
 }) {
   // Adım 36: alt ekranlar "doğru mu" bildirir; burada MaddeSonuc'a çevrilir.
+  // Adım 40 aşama 3: yanlış denemelerin tanısı ve yardım kademesi madde boyunca birikir.
   const baslangicMs = useRef(Date.now());
-  const bitir = (dogruMu: boolean): void => onDone(basitMaddeSonucu(dogruMu, baslangicMs.current, Date.now()));
+  const yanlisRef = useRef<YanlisBilgisi | null>(null);
+  const bitir = (dogruMu: boolean): void =>
+    onDone(basitMaddeSonucu(dogruMu, baslangicMs.current, Date.now(), yanlisRef.current));
+  const yanlis = (bilgi: YanlisBilgisi): void => {
+    yanlisRef.current = yanlisBilgisiBirlestir(yanlisRef.current, bilgi);
+    onYanlis?.(bilgi);
+  };
+  // e2e kancası: ilk tanılı yanlış şıkkı seçmiş gibi (ekranın K2 davranışıyla aynı bilgi).
+  const e2eYanlis = (): void => {
+    const sik = exercise.options.find((o) => o.correct !== true && o.diagnosticTag != null);
+    const k2 = exercise.kind === 'AUDIO_TO_IMAGE' || exercise.kind === 'TAP_COUNT';
+    yanlis(yanlisSecimBilgisi(exercise, sik?.id, k2));
+  };
   // Adım 26: yalnız geliştirme/test derlemesinde etkin e2e kapısı (üretimde ağaçtan atılır).
-  useE2eAlistirma(exercise, bitir, onYanlis);
+  useE2eAlistirma(exercise, bitir, onYanlis ? e2eYanlis : undefined);
 
   // Etkileşim türüne göre ilgili ekrana yönlendir.
   if (exercise.kind === 'TAP_COUNT') {
-    return <TapCountScreen exercise={exercise} accent={accent} onDone={bitir} onYanlis={onYanlis} />;
+    return <TapCountScreen exercise={exercise} accent={accent} onDone={bitir} onYanlis={yanlis} />;
   }
   if (exercise.kind === 'TAP_TO_PLACE') {
-    return <TapToPlaceScreen exercise={exercise} accent={accent} onDone={bitir} onYanlis={onYanlis} />;
+    return <TapToPlaceScreen exercise={exercise} accent={accent} onDone={bitir} onYanlis={yanlis} />;
   }
   if (exercise.kind === 'SEQUENCE_ORDER') {
-    return <SequenceOrderScreen exercise={exercise} accent={accent} onDone={bitir} onYanlis={onYanlis} />;
+    return <SequenceOrderScreen exercise={exercise} accent={accent} onDone={bitir} onYanlis={yanlis} />;
   }
   if (exercise.kind === 'MATCH_PAIRS') {
-    return <MatchPairsScreen exercise={exercise} accent={accent} onDone={bitir} onYanlis={onYanlis} />;
+    return <MatchPairsScreen exercise={exercise} accent={accent} onDone={bitir} onYanlis={yanlis} />;
   }
   if (exercise.kind === 'HOTSPOT_FIND') {
-    return <HotspotFindScreen exercise={exercise} accent={accent} onDone={bitir} onYanlis={onYanlis} />;
+    return <HotspotFindScreen exercise={exercise} accent={accent} onDone={bitir} onYanlis={yanlis} />;
   }
   if (exercise.kind === 'AUDIO_TO_IMAGE') {
-    return <AudioToImageFlow exercise={exercise} accent={accent} onDone={bitir} onYanlis={onYanlis} />;
+    return <AudioToImageFlow exercise={exercise} accent={accent} onDone={bitir} onYanlis={yanlis} />;
   }
 
   // Henüz ekranı yazılmamış etkileşim biçimleri sessizce yanlış
@@ -82,7 +95,7 @@ function AudioToImageFlow({
   exercise: Extract<Exercise, { kind: 'AUDIO_TO_IMAGE' }>;
   accent: Accent;
   onDone: (dogruMu: boolean) => void;
-  onYanlis?: () => void;
+  onYanlis?: (bilgi: YanlisBilgisi) => void;
 }) {
   useScreenSpeech(exercise.prompt.ses, [exercise.itemId]);
   const geriBildirim = useGeriBildirim(exercise.itemId);
@@ -125,7 +138,7 @@ function AudioToImageFlow({
       // Önce yargılamayan tekrar mesajı, ardından K2'nin YÖNTEM sesi gelir.
       // K2 cevabı söylemez; yalnız görsel kanıtla yapılacak eylemi hatırlatır.
       void speak(geriBildirim.tekrar());
-      onYanlis?.();
+      onYanlis?.(yanlisSecimBilgisi(exercise, seciliId, destek != null));
       if (destek != null) void speak(destek.destek.ses);
       // Biraz sonra seçimi sıfırla — çocuk tekrar denesin, ama doğruyu öğrenmeden.
       window.setTimeout(() => {

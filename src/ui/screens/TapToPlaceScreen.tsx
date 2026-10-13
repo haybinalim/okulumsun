@@ -8,6 +8,8 @@ import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { useGeriBildirim } from '../useGeriBildirim';
 import type { TapToPlaceExercise } from '../../exercises/types';
 import type { Accent } from '../../design/tokens';
+import type { YanlisBilgisi } from '../../progress/basitMaddeSonucu';
+import { yanlisSecimBilgisi } from '../../exercises/hataDestek';
 
 /**
  * M-RITMIK (TAP_TO_PLACE) ekranı — parça dokun → yuvaya dokun (sürükleme yok).
@@ -26,7 +28,7 @@ export function TapToPlaceScreen({
   accent: Accent;
   onDone: (dogruMu: boolean) => void;
   /** Adım 36: her yanlış denemede (Sınıf Turu ikinci yanlışı sayar). */
-  onYanlis?: () => void;
+  onYanlis?: (bilgi: YanlisBilgisi) => void;
 }) {
   useScreenSpeech(exercise.prompt.ses, [exercise.itemId]);
   const geriBildirim = useGeriBildirim(exercise.itemId);
@@ -66,7 +68,13 @@ export function TapToPlaceScreen({
     } else {
       setCozum('tekrar');
       void speak(geriBildirim.tekrar());
-      onYanlis?.();
+      onYanlis?.(
+        yanlisSecimBilgisi(
+          exercise,
+          yerlesim[yuvaIdleri.find((y) => yerlesim[y] !== eslesme[y]) ?? ''],
+          false,
+        ),
+      );
       window.setTimeout(() => {
         setCozum('bos');
         setYerlesim({});

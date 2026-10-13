@@ -18,6 +18,8 @@ import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { useGeriBildirim } from '../useGeriBildirim';
 import type { HotspotFindExercise, HotspotOption } from '../../exercises/types';
 import type { Accent } from '../../design/tokens';
+import type { YanlisBilgisi } from '../../progress/basitMaddeSonucu';
+import { yanlisSecimBilgisi } from '../../exercises/hataDestek';
 
 export function HotspotFindScreen({
   exercise,
@@ -29,7 +31,7 @@ export function HotspotFindScreen({
   accent: Accent;
   onDone: (dogruMu: boolean) => void;
   /** Adım 36: her yanlış denemede (Sınıf Turu ikinci yanlışı sayar). */
-  onYanlis?: () => void;
+  onYanlis?: (bilgi: YanlisBilgisi) => void;
 }) {
   useScreenSpeech(exercise.prompt.ses, [exercise.itemId]);
   const geriBildirim = useGeriBildirim(exercise.itemId);
@@ -63,7 +65,7 @@ export function HotspotFindScreen({
       setHatalar((onceki) => new Set([...onceki, id]));
       setCozum('tekrar');
       void speak(geriBildirim.tekrar());
-      onYanlis?.();
+      onYanlis?.(yanlisSecimBilgisi(exercise, id, false));
       window.setTimeout(() => {
         setCozum('bos');
         setHatalar(new Set());

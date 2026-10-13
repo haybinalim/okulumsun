@@ -20,8 +20,10 @@ import { REGISTRY } from '../../exercises/registry';
 import { setSorusuUret } from '../../ogretmen/tahtaSorusu';
 import { sinifTuruSorusu, type SinifTuruDurumu } from '../../sinif/sinifTuru';
 import { BIRLIKTE_COZME_ESIGI, renkAdi, takimKimligi, turSonucu } from '../../sinif/takim';
-import { basitMaddeSonucu } from '../../progress/basitMaddeSonucu';
+import { basitMaddeSonucu, yanlisBilgisiBirlestir, type YanlisBilgisi } from '../../progress/basitMaddeSonucu';
 import type { MaddeSonuc } from '../../progress/itemLifecycle';
+import { useDersOturumu } from '../useDersOturumu';
+import { dersOlayiUret } from '../../ogretmen/dersOzeti';
 
 const KAYITLI = (t: string): boolean => REGISTRY.has(t);
 
@@ -116,7 +118,11 @@ function SinifTuruIcerik({ d }: { d: SinifTuruDurumu }) {
             key={`soru-${d.turNo}`}
             d={d}
             accentHex={accent}
-            onKapandi={(sonuc, skillId) => olay({ tur: 'maddeKapandi', sonuc, skillId })}
+            onKapandi={(sonuc, skillId) => {
+              // Adım 40 aşama 3: Sınıf Turu maddeleri de ders sonu özetine girer (yalnız bellekte).
+              useDersOturumu.getState().kaydet(dersOlayiUret(skillId, sonuc, false));
+              olay({ tur: 'maddeKapandi', sonuc, skillId });
+            }}
           />
         )}
         {d.asama === 'kutlama' && (
@@ -208,7 +214,10 @@ function TurSorusu({
     );
   };
 
-  const yanlisOldu = () => {
+  // "Birlikte çözdük" ekranın biriktirdiği tanı/kademeyi kaybetmesin (Adım 40 aşama 3).
+  const yanlisBilgisi = useRef<YanlisBilgisi | null>(null);
+  const yanlisOldu = (bilgi: YanlisBilgisi) => {
+    yanlisBilgisi.current = yanlisBilgisiBirlestir(yanlisBilgisi.current, bilgi);
     yanlisRef.current += 1;
     // İkinci yanlış: maskot "hep birlikte" der (mevcut klip; sinifturu.hep-birlikte Adım 31'de).
     if (yanlisRef.current === BIRLIKTE_COZME_ESIGI) void speak({ kind: 'key', key: 'yardim.k2-birlikte-sayalim' });
@@ -255,7 +264,7 @@ function TurSorusu({
               label="Birlikte çözdük"
               size="tapMin"
               variant="ghost"
-              onPress={() => kapat(basitMaddeSonucu(false, baslangic.current, Date.now()), true)}
+              onPress={() => kapat(basitMaddeSonucu(false, baslangic.current, Date.now(), yanlisBilgisi.current), true)}
               style={{ padding: '0 18px', fontSize: 'var(--text-adult)', color: COLOR.inkSoft }}
             >
               Birlikte çözdük

@@ -7,10 +7,11 @@ import { Sprite } from '../svg/Sprite';
 import { nesneKonumlari } from '../svg/positions';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { useGeriBildirim } from '../useGeriBildirim';
-import { hataDestekKarari, type HataDestekKarari } from '../../exercises/hataDestek';
+import { hataDestekKarari, yanlisSecimBilgisi, type HataDestekKarari } from '../../exercises/hataDestek';
 import type { TapCountExercise, Renk } from '../../exercises/types';
 import type { Accent } from '../../design/tokens';
 import { ACCENTS } from '../../design/tokens';
+import type { YanlisBilgisi } from '../../progress/basitMaddeSonucu';
 
 /** Renk adı → hex (ACCENTS tek kaynak). Visual.tsx ile aynı harita. */
 const RENK_HEX: Record<Renk, string> = Object.fromEntries(
@@ -35,7 +36,7 @@ export function TapCountScreen({
   accent: Accent;
   onDone: (dogruMu: boolean) => void;
   /** Adım 36: her yanlış denemede (Sınıf Turu ikinci yanlışı sayar). */
-  onYanlis?: () => void;
+  onYanlis?: (bilgi: YanlisBilgisi) => void;
 }) {
   useScreenSpeech(exercise.prompt.ses, [exercise.itemId]);
   const geriBildirim = useGeriBildirim(exercise.itemId);
@@ -89,7 +90,7 @@ export function TapCountScreen({
       setHataDestegi(destek);
       setCozum('tekrar');
       void speak(geriBildirim.tekrar());
-      onYanlis?.();
+      onYanlis?.(yanlisSecimBilgisi(exercise, seciliId, destek != null));
       if (destek != null) void speak(destek.destek.ses);
       window.setTimeout(() => {
         setCozum('bos');

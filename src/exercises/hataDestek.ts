@@ -43,3 +43,17 @@ export function hataDestekKarari(exercise: Exercise, optionId: string): HataDest
     solukOptionIds: destek.eleOptionIds ?? [],
   };
 }
+
+/**
+ * Yanlış denemenin tanı/yardım bilgisi (plan v2 Adım 40 aşama 3). `optionId` yanlış seçilen
+ * şıktır (bilinmiyorsa null); `k2Gosterildi` ekranın K2 desteğini gerçekten seslendirip
+ * gösterdiğini bildirir. Tanı yalnız sözleşmenin kapsadığı etiketlerden gelir (tahmin yok).
+ */
+export function yanlisSecimBilgisi(
+  exercise: Exercise,
+  optionId: string | null | undefined,
+  k2Gosterildi: boolean,
+): { readonly tani: HataEtiketi | null; readonly yardimKademesi: 0 | 2 } {
+  const karar = optionId == null ? null : hataDestekKarari(exercise, optionId);
+  return { tani: karar?.hataEtiketi ?? null, yardimKademesi: karar != null && k2Gosterildi ? 2 : 0 };
+}

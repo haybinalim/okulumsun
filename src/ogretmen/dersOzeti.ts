@@ -8,6 +8,7 @@ import { HATA_TANIMLARI, type HataEtiketi } from '../exercises/distractors';
 import type { SkillId } from '../exercises/types';
 import type { SkillNode } from '../content/schema/skill';
 import { fizikselEtkinlik } from '../progress/ilerlemeOzeti';
+import type { MaddeSonuc } from '../progress/itemLifecycle';
 import { SET_EN_FAZLA_DUGUM, SET_SURUMU, type GunlukSet } from './gunlukSet';
 
 export const DERS_OZETI_EN_FAZLA = 3;
@@ -61,6 +62,20 @@ function baskinTani(olaylar: readonly DersOlayi[]): ZorlanilanBeceri['baskinTani
   if (!en) return null;
   const tanim = HATA_TANIMLARI[en] as { aciklama: string } | undefined;
   return tanim ? { etiket: en, aciklama: tanim.aciklama } : null;
+}
+
+/**
+ * Kapanan maddenin sonucundan ders olayı (plan v2 Adım 40 aşama 3): tanı ve yardım kademesi
+ * `MaddeSonuc`'tan taşınır. `yanlisOldu` madde boyunca en az bir yanlış deneme olduğunu bildirir
+ * (tek konu/set akışında sonuç `dogru` kalır; Sınıf Turu `turSonucu` ile `dogru:false` yapar).
+ */
+export function dersOlayiUret(skillId: SkillId, sonuc: MaddeSonuc, yanlisOldu: boolean): DersOlayi {
+  return {
+    skillId,
+    ilkDenemeDogru: sonuc.dogru && !yanlisOldu,
+    yardimKademesi: sonuc.kullanilanYardimKademesi,
+    tani: sonuc.tani,
+  };
 }
 
 export function dersOzetiHesapla(

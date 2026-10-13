@@ -18,6 +18,7 @@ import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { useGeriBildirim } from '../useGeriBildirim';
 import type { SequenceOrderExercise } from '../../exercises/types';
 import type { Accent } from '../../design/tokens';
+import { BILGISIZ_YANLIS, type YanlisBilgisi } from '../../progress/basitMaddeSonucu';
 
 export function SequenceOrderScreen({
   exercise,
@@ -29,7 +30,7 @@ export function SequenceOrderScreen({
   accent: Accent;
   onDone: (dogruMu: boolean) => void;
   /** Adım 36: her yanlış denemede (Sınıf Turu ikinci yanlışı sayar). */
-  onYanlis?: () => void;
+  onYanlis?: (bilgi: YanlisBilgisi) => void;
 }) {
   useScreenSpeech(exercise.prompt.ses, [exercise.itemId]);
   const geriBildirim = useGeriBildirim(exercise.itemId);
@@ -57,7 +58,7 @@ export function SequenceOrderScreen({
     } else {
       setCozum('tekrar');
       void speak(geriBildirim.tekrar());
-      onYanlis?.();
+      onYanlis?.(BILGISIZ_YANLIS);
       window.setTimeout(() => {
         setCozum('bos');
         setDokunmaSirasi([]);

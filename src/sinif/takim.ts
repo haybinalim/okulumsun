@@ -81,6 +81,7 @@ export const BIRLIKTE_COZME_ESIGI = 2;
  */
 export function turSonucu(sonuc: MaddeSonuc, yanlisSayisi: number, birlikteCozuldu: boolean): MaddeSonuc {
   if (birlikteCozuldu) return { ...sonuc, dogru: false, kullanilanYardimKademesi: 3 };
-  if (yanlisSayisi > 0) return { ...sonuc, dogru: false, kullanilanYardimKademesi: 1 };
+  // Adım 40 aşama 3: ekranın gösterdiği K2 (sonuçta taşınır) K1'e düşürülmez; tanı korunur.
+  if (yanlisSayisi > 0) return { ...sonuc, dogru: false, kullanilanYardimKademesi: sonuc.kullanilanYardimKademesi >= 1 ? sonuc.kullanilanYardimKademesi : 1 };
   return sonuc;
 }
