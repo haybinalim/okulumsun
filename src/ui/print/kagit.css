@@ -93,6 +93,12 @@
   padding-top: 1mm;
 }
 
+/* Arşiv PDF'i (Adım 48, KG-70): kesikli çerçeve Chromium PDF'inde binlerce parçaya bölünüp dosyayı ~5 kat büyütür. */
+.kg-arsiv .kg-madde {
+  border-style: solid !important;
+  border-width: 0.3mm !important;
+}
+
 /* Madde kartı */
 .kg-madde {
   box-sizing: border-box;
