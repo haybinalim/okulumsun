@@ -8,7 +8,16 @@
  * Bu modül DOM'a, depolamaya, saate dokunmaz: girdi → CSS değişkenleri / sayılar.
  * Uygulayan taraf `deviceProfile.ts` (`applyProfile`) ve `speech.ts` (temel hız).
  */
-import { ACCENTS, ACCENTS_RENK_KORLUGU, COLOR, COLOR_RENK_KORLUGU, SCALE, SIZE, type Accent, type DeviceProfile } from './tokens';
+import {
+  ACCENTS,
+  ACCENTS_RENK_KORLUGU,
+  COLOR,
+  COLOR_RENK_KORLUGU,
+  SCALE,
+  SIZE,
+  type Accent,
+  type DeviceProfile,
+} from './tokens';
 
 export interface KapsayicilikAyarlari {
   /** `yavas` → çalma hızı 0,85 × ses hızı (alt sınır 0,5). */
@@ -49,7 +58,9 @@ export const TALIMAT_TEKRARI_MS = 8_000;
  * Bu kural ekrandan bağımsızdır; ekran bazlı istisna gerekmez (e2e taşmayı denetler).
  */
 export const BUYUYEN_HEDEFLER = (Object.keys(SIZE) as (keyof typeof SIZE)[]).filter(
-  (ad) => ['tapMin', 'control', 'choiceMin', 'choice', 'primary', 'mascot', 'unlock'].includes(ad) && SIZE[ad] < 2 * SIZE.tapMin,
+  (ad) =>
+    ['tapMin', 'control', 'choiceMin', 'choice', 'primary', 'mascot', 'unlock'].includes(ad) &&
+    SIZE[ad] < 2 * SIZE.tapMin,
 );
 
 /** Ayarlarda en az biri varsayılandan farklı mı? */

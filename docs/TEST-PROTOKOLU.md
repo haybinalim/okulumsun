@@ -57,9 +57,31 @@ Plan §9: WCAG AA (4.5:1 metin, 3:1 büyük metin).
 
 **Bulgma:** `--color-retry` (#F59E0B) küçük metin için WCAG AA altında. Ancak bu renk yalnızca büyük geri bildirim metninde kullanılıyor (geri bildirim kutusu), küçük metinde değil. Kabul edilebilir.
 
+**Renk körlüğü dostu palet (plan v2 Adım 55, yetişkin ayarı):** doğru `#0B5FA5` (mavi), tekrar dene `#A34700`
+(koyu turuncu), vurgular koyulaştırılmış eşler (`tokens.ts` `ACCENTS_RENK_KORLUGU`). Her biri zemine ve beyaza ≥4,5:1;
+döteranopi/protanopi/tritanopi benzetiminde (Machado 2009) vurgu çiftleri ΔE ≥10, doğru↔tekrar ΔE ≥40 —
+`tests/unit/kapsayicilik.spec.ts` hesaplar.
+
 ### 1.5 Klavye erişimi
 
 Uygulama bir dokunmatik arayüz olarak tasarlandı — klavye navigasyonu birincil değil. Ancak `BigButton` ve `ChoiceCard` `tabindex` ve `onKeyDown` desteğine sahip. Veli paneli ve Kaynaklar ekranı klavye ile gezilebilir.
+
+### 1.6 Kapsayıcılık ayarları (plan v2 Adım 55)
+
+Yetişkin alanında "Kapsayıcılık" bölümü; altısı varsayılan kapalı, yalnız bellekte, tahtada adres çubuğunda
+`#ayar=1.<harfler>` (t yavaş tempo · r talimat tekrarı · p palet · s sol el · b büyük hedef · h hareket azalt).
+
+| Ayar | Otomatik kanıt |
+|---|---|
+| Yavaş tempo (0,85 × ses hızı, ≥0,5) | `kapsayicilik.spec.ts` (hız hesabı), `kapsayicilikBaglama.spec.ts` (temel hız) |
+| Talimat tekrarı (8 sn, dönem başına bir kez) | `kapsayicilikBaglama.spec.ts` (sahte saat) |
+| Renk körlüğü dostu palet | §1.4; e2e `board-kapsayicilik.spec.ts` (`--color-correct`) |
+| Sol el (alt çubuk aynalanır) | e2e: Onayla, Tekrar dinle'nin solunda |
+| Büyük hedef (küçük hedefler × 1,15; tahtada 118 px) | e2e: 4 temsilci kombinasyonda geometri (eşik `--size-tap-min`) + taşma yok |
+| Hareket azalt | `useHareketAzalt` (sistem ayarı VEYA ayar); e2e kök özniteliği |
+
+Elle: gerçek tahtada sol el + büyük hedefle bir ders (Adım 41 ile birlikte); özel eğitim öğretmeniyle görev analizi
+`docs/research/kapsayicilik-gorev-analizi.md`.
 
 ## 2. Elle doğrulama listesi (§15)
 

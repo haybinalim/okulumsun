@@ -135,7 +135,7 @@ describe('talimat tekrarı (8 sn, hareketsizlik dönemi başına bir kez)', () =
     k.sok();
   });
 
-  it('açıkken 8 sn sonra bir kez; dokunuş sayacı sıfırlar ve yeni hak açar; 15 sn\'de ikinci kez söylemez', () => {
+  it("açıkken 8 sn sonra bir kez; dokunuş sayacı sıfırlar ve yeni hak açar; 15 sn'de ikinci kez söylemez", () => {
     useAppStore.getState().kapsayicilikAyarla({ talimatTekrari: true });
     const k = ciz();
     act(() => vi.advanceTimersByTime(7_999));

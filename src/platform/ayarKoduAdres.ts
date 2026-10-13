@@ -18,7 +18,10 @@ export function ayarKodunuAcilistaOku(adres: AdresCubugu): KapsayicilikAyarlari 
 }
 
 /** Yazılacak yeni adres; değişiklik gerekmiyorsa veya hash başka bir şeye aitse `null`. */
-export function ayarAdresi(adres: Pick<AdresCubugu, 'hash' | 'pathname' | 'search'>, a: KapsayicilikAyarlari): string | null {
+export function ayarAdresi(
+  adres: Pick<AdresCubugu, 'hash' | 'pathname' | 'search'>,
+  a: KapsayicilikAyarlari,
+): string | null {
   const bos = adres.hash === '' || adres.hash === '#';
   if (!bos && !ayarKoduGirisimiMi(adres.hash)) return null; // başka hash'e dokunma
   const mevcut = bos ? '' : adres.hash;

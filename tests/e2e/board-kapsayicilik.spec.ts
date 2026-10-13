@@ -24,7 +24,9 @@ async function tasmaIhlalleri(page: Page): Promise<string[]> {
       const r = el.getBoundingClientRect();
       if (r.width === 0 || r.height === 0 || getComputedStyle(el).visibility === 'hidden') continue;
       if (r.left < -1 || r.top < -1 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1) {
-        out.push(`${el.getAttribute('aria-label') ?? el.textContent?.trim().slice(0, 24)} (${Math.round(r.left)},${Math.round(r.top)} → ${Math.round(r.right)},${Math.round(r.bottom)})`);
+        out.push(
+          `${el.getAttribute('aria-label') ?? el.textContent?.trim().slice(0, 24)} (${Math.round(r.left)},${Math.round(r.top)} → ${Math.round(r.right)},${Math.round(r.bottom)})`,
+        );
       }
     }
     return out;
@@ -89,7 +91,10 @@ for (const { kod, ad } of TEMSILCILER) {
 
 test('kapsayıcılık: bozuk #ayar= adresten silinir, uygulama varsayılanla açılır', async ({ page }) => {
   await sesKilidiniAc(page, '/?device=board#ayar=1.zz');
-  const kok = await page.evaluate(() => ({ hash: location.hash, tapMin: getComputedStyle(document.documentElement).getPropertyValue('--size-tap-min').trim() }));
+  const kok = await page.evaluate(() => ({
+    hash: location.hash,
+    tapMin: getComputedStyle(document.documentElement).getPropertyValue('--size-tap-min').trim(),
+  }));
   expect(kok.hash).toBe('');
   expect(kok.tapMin).toBe('102px');
 });
@@ -98,9 +103,9 @@ test('kapsayıcılık: öğretmen alanında Sol el + Büyük hedef açılır →
   await sesKilidiniAc(page, '/?device=board');
   await page.getByRole('button', { name: 'Tahtada birlikte çalışalım.' }).click();
   await page.getByRole('button', { name: 'Ayarlar' }).click();
-  const sayilar = await page.locator('button[aria-label$="sıradaki sayı olarak seç"]').evaluateAll((b) =>
-    b.map((x) => Number(x.getAttribute('aria-label')?.split(',')[0])).sort((a, c) => c - a),
-  );
+  const sayilar = await page
+    .locator('button[aria-label$="sıradaki sayı olarak seç"]')
+    .evaluateAll((b) => b.map((x) => Number(x.getAttribute('aria-label')?.split(',')[0])).sort((a, c) => c - a));
   for (const sayi of sayilar) await page.getByRole('button', { name: `${sayi}, sıradaki sayı olarak seç` }).click();
   await expect(page.getByRole('heading', { name: 'Kapsayıcılık' })).toBeVisible();
 
