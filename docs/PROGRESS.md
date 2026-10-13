@@ -5,7 +5,7 @@
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
 > Tarih: 13 Ekim 2026 (Adım 46 — Tema sonu turu)
 
-<!-- durum:birim_test=495 durum:birim_dosya=68 durum:e2e_dosya=23 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
+<!-- durum:birim_test=501 durum:birim_dosya=69 durum:e2e_dosya=23 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
 
 ## Yönetici özeti
 
