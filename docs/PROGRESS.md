@@ -3,9 +3,9 @@
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
-> Tarih: 13 Ekim 2026 (Adım 42 — eve link)
+> Tarih: 13 Ekim 2026 (Adım 43 — evde 10 dakika)
 
-<!-- durum:birim_test=462 durum:birim_dosya=63 durum:e2e_dosya=19 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
+<!-- durum:birim_test=467 durum:birim_dosya=64 durum:e2e_dosya=20 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
 
 ## Yönetici özeti
 
@@ -65,6 +65,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 39 | Gizlilik kanıt paketi: `/gizlilik/` sayfası (ne toplanmaz, cihazda ne kalır, ağ, güvenlik politikası, 3 adımda kendin doğrula), KVKK beyanı taslağı, her PR'da otomatik gizlilik kanıt raporu (CI artefaktı) ve bağımsız inceleme yol haritası | ✅ (hukuki görüş, yönetici/veli denemesi ve yayın kullanıcıda) |
 | 40 | Ders sonu özeti (tahta): "Dersi bitir" → sınıfın en çok zorlandığı en çok 3 beceri, baskın hata türü ve sınıfta yapılacak etkinlik; tek dokunuşla yarın için set veya kâğıt. Sayı/yüzde/puan yok; olaylar yalnız bellekte, ders kapanınca ve yenilemede silinir | ✅ (öğretmen görüşü Adım 41'de) |
 | 42 | Eve link: öğretmen bugünün setinden veya ders sonu özetinden "Eve gönder" ile büyük bir QR kodu ve kısa bağlantı gösterir (cihazda üretilir, Kopyala); bağlantı yalnız etkinlik kodu + tohum taşır, adresin hash parçasında kalır ve açılınca adresten silinir; çocuk aynı setten 8 soruluk ev çalışması yapar, hiçbir şey saklanmaz | ✅ (ses klipleri Adım 31'de) |
+| 43 | Evde 10 dakika: veli, yetişkin alanından tek dokunuşla bu haftanın okul konusundan 8 soruluk kısa oturum başlatır (bu hafta + geçen haftadan 1 hatırlama); sonunda telefon büyüğe verilir ve 3 cümlelik ipucu kartı (gözlem, soru, evdeki nesnelerle etkinlik) açılır. Yanıt/puan gösterilmez, hiçbir şey saklanmaz | ✅ (ses klibi Adım 31'de; iki öğretmen okuması bekliyor) |
 
 Adım 31–33 ve 35–58: depo dışındaki geliştirme planı v2.
 

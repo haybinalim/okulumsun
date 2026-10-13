@@ -12,7 +12,10 @@ async function aktif(page: import('@playwright/test').Page): Promise<number | nu
   return page.evaluate(() => window.__okulumsunE2E?.alistirma?.sira ?? null);
 }
 
-test('evde 10 dakika: veli başlatır, 8 soru, ipucu kartı; ağ ve depolama temiz', async ({ page, baseURL }, testInfo) => {
+test('evde 10 dakika: veli başlatır, 8 soru, ipucu kartı; ağ ve depolama temiz', async ({
+  page,
+  baseURL,
+}, testInfo) => {
   test.skip(testInfo.project.name === 'board', 'Evde 10 dakika yalnız kişisel moddadır (tablet/telefon).');
   test.setTimeout(120_000);
   await page.clock.setFixedTime(new Date('2026-10-14T10:00:00'));
@@ -26,9 +29,9 @@ test('evde 10 dakika: veli başlatır, 8 soru, ipucu kartı; ağ ve depolama tem
   await page.getByRole('button', { name: 'Ayarlar' }).click();
 
   // Veli kapısı: sayıları büyükten küçüğe seç.
-  const sayilar = await page.locator('button[aria-label$="sıradaki sayı olarak seç"]').evaluateAll((b) =>
-    b.map((x) => Number(x.getAttribute('aria-label')?.split(',')[0])).sort((a, c) => c - a),
-  );
+  const sayilar = await page
+    .locator('button[aria-label$="sıradaki sayı olarak seç"]')
+    .evaluateAll((b) => b.map((x) => Number(x.getAttribute('aria-label')?.split(',')[0])).sort((a, c) => c - a));
   for (const s of sayilar) await page.getByRole('button', { name: `${s}, sıradaki sayı olarak seç` }).click();
 
   await expect(page.getByRole('heading', { name: 'Yetişkin alanı' })).toBeVisible();
