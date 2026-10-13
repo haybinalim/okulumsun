@@ -130,3 +130,28 @@ export function okulAyiIndeksi(iso: string): number {
   const ay = Number(iso.slice(5, 7));
   return ay >= 9 ? ay - 9 : ay + 3;
 }
+
+/**
+ * Ekranın açılışta göstereceği hafta: `bugun` bir öğretim haftasındaysa o; tatil haftasındaysa veya ders yılı
+ * başlamadıysa SIRADAKİ öğretim haftası; ders yılı bittiyse son hafta. `buHafta` ise yalnız gerçek "bu hafta"dır.
+ */
+export function varsayilanHaftaIndeksi(plan: readonly PlanHaftasi[], bugun: string): number {
+  if (plan.length === 0) return -1;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(bugun)) return 0;
+  const pazartesi = haftaninPazartesisi(bugun);
+  const i = plan.findIndex((p) => p.hafta.pazartesi >= pazartesi);
+  return i === -1 ? plan.length - 1 : i;
+}
+
+/**
+ * Haftanın set/kâğıt düğümleri: plandaki sırayla, yalnız setlenebilir (şablonu kayıtlı) olanlar, en çok `enFazla`.
+ * `kirpildi`: haftada daha çok düğüm vardı (öğretmene "ilk N" notu için).
+ */
+export function haftaSetDugumleri(
+  p: PlanHaftasi,
+  uygun: ReadonlySet<SkillId>,
+  enFazla: number,
+): { readonly dugumler: readonly SkillId[]; readonly kirpildi: boolean } {
+  const hepsi = p.dugumler.filter((d) => uygun.has(d));
+  return { dugumler: hepsi.slice(0, enFazla), kirpildi: hepsi.length > enFazla };
+}

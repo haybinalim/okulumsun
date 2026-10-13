@@ -5,8 +5,11 @@
  * Yetişkin ekranıdır ama tahtada açılacağı için TÜM dokunulabilir öğeler alt %65'te ve
  * tahta hedef boyutundadır; üst %35'te yalnız dokunulmaz bilgi (başlık, seçili düğüm çipleri) durur.
  * Set yalnız bellekte tutulur (appStore.aktifSet); hiçbir şey depolanmaz.
+ *
+ * Adım 37 (KG-50): haftalık MEB planından "bu haftanın önerisi" üstte bilgi olarak gösterilir ve tek dokunuşla
+ * seçilir; seçimi öğretmen yapar (öneri kendiliğinden işaretlenmez). Plan verisi tembel yüklenir.
  */
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { TEMALAR, useAppStore } from '../../store/appStore';
 import { BigButton } from '../primitives/BigButton';
 import { COLOR } from '../../design/tokens';
@@ -15,6 +18,8 @@ import { REGISTRY } from '../../exercises/registry';
 import { hash32 } from '../../exercises/rng';
 import { SET_EN_FAZLA_DUGUM, SET_SURUMU, setKodla, setlenebilirDugumler } from '../../ogretmen/gunlukSet';
 import type { SkillId } from '../../exercises/types';
+import type { HaftaOnerisi } from '../../ogretmen/yillikPlan';
+import { yerelGun } from '../../platform/dosyaIndir';
 
 const KAYITLI = (t: string): boolean => REGISTRY.has(t);
 
@@ -33,6 +38,24 @@ export function SetHazirla() {
     () => skillsData.filter((d) => d.tema === temaNo && uygun.has(d.id)),
     [temaNo, uygun],
   );
+  const [oneri, setOneri] = useState<HaftaOnerisi | null>(null);
+  useEffect(() => {
+    let iptal = false;
+    // "Bugün" UI katmanında; plan modülü (kazanimlar.json) ana pakete girmesin diye dinamik.
+    void import('../../ogretmen/yillikPlan').then((m) => {
+      if (!iptal) setOneri(m.buHaftaninOnerisi(yerelGun(new Date()), uygun));
+    });
+    return () => {
+      iptal = true;
+    };
+  }, [uygun]);
+  const oneriyiSec = () => {
+    if (!oneri) return;
+    setDolu(false);
+    setSecili(oneri.dugumler);
+    const ilk = skillsData.find((d) => d.id === oneri.dugumler[0]);
+    if (ilk) setTemaNo(ilk.tema);
+  };
   const etiket = (id: SkillId): string => skillsData.find((d) => d.id === id)?.childLabel ?? id;
 
   const degistir = (id: SkillId) => {
@@ -83,6 +106,11 @@ export function SetHazirla() {
         <p style={{ fontSize: 'var(--text-adult)', color: COLOR.inkSoft, margin: 0 }}>
           En çok {SET_EN_FAZLA_DUGUM} etkinlik seç; farklı konulardan olabilir. Seçim yalnız bu açık oturumda kalır.
         </p>
+        {oneri && (
+          <p style={{ fontSize: 'var(--text-adult)', color: COLOR.ink, margin: 0 }}>
+            Bu haftanın önerisi ({oneri.hafta.hafta.no}. hafta): {oneri.dugumler.map(etiket).join(', ')}
+          </p>
+        )}
         <ul
           aria-label="Seçilen etkinlikler"
           style={{ display: 'flex', flexWrap: 'wrap', gap: 8, listStyle: 'none', margin: 0, padding: 0 }}
@@ -146,6 +174,18 @@ export function SetHazirla() {
           alignContent: 'start',
         }}
       >
+        {oneri && (
+          // Öneri kartı ızgaranın ilk hücresi: tema satırını büyütüp kartları sıkıştırmasın (tablet yüksekliği).
+          <BigButton
+            label="Bu haftanın önerisini seç"
+            size="tapMin"
+            variant="solid"
+            onPress={oneriyiSec}
+            style={{ width: '100%', padding: '8px 12px', fontSize: 'var(--text-adult)', fontWeight: 700 }}
+          >
+            ★ Bu haftanın önerisi
+          </BigButton>
+        )}
         {dugumler.map((d) => {
           const secildi = secili.includes(d.id);
           return (

@@ -81,6 +81,16 @@ export function VeliPaneli() {
         </Bolum>
       )}
 
+      <Bolum baslik="Haftalık plan">
+        <p style={{ ...bilgiMetniStili, marginTop: 0 }}>
+          MEB çalışma takvimi ve ders saatlerinden: bu hafta hangi kazanım, hangi etkinlik. Okulunuzun yıllık planı
+          farklıysa kendi planınızı esas alın.
+        </p>
+        <BigButton label="Haftalık planı aç" size="control" variant="accent" onPress={() => ekranGit('haftalikPlan')} style={{ padding: '0 24px', fontSize: 'var(--text-adult)' }}>
+          Haftalık planı aç
+        </BigButton>
+      </Bolum>
+
       <Bolum baslik="Bu sürümde kayıt tutulmaz">
         <div role="status" aria-live="polite" style={mahremiyetKutusuStili}>
           <strong style={{ color: COLOR.ink }}>Henüz öğrenci geçmişi gösterilmiyor.</strong>

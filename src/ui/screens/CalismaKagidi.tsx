@@ -77,6 +77,7 @@ function Secim<T extends string | number>({
 export function CalismaKagidi() {
   const ekranGit = useAppStore((s) => s.ekranGit);
   const kagitSeti = useAppStore((s) => s.kagitSeti);
+  const oncekiEkran = useAppStore((s) => s.oncekiEkran);
   const [maddeSayisi, setMaddeSayisi] = useState<MaddeSayisi>(6);
   const [duzen, setDuzen] = useState<KagitDuzeni>('2x3');
   const [yanitTercihi, setYanitTercihi] = useState<YanitTercihi>('daireIcineAl');
@@ -222,7 +223,7 @@ export function CalismaKagidi() {
       </div>
 
       <footer style={{ flex: '0 0 auto', display: 'flex', gap: 'var(--size-gap-tight)', alignItems: 'center' }}>
-        <BigButton label="Geri" size="tapMin" variant="ghost" onPress={() => ekranGit('setHazirla')} style={{ padding: '0 20px' }}>
+        <BigButton label="Geri" size="tapMin" variant="ghost" onPress={() => ekranGit(oncekiEkran === 'haftalikPlan' ? 'haftalikPlan' : 'setHazirla')} style={{ padding: '0 20px' }}>
           ← Geri
         </BigButton>
         <BigButton

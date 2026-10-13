@@ -43,6 +43,7 @@ export type Ekran =
   | 'kaynaklar'
   | 'sorunBildir'
   | 'setHazirla'
+  | 'haftalikPlan'
   | 'calismaKagidi'
   | 'sinifTuruKurulum'
   | 'sinifTuru'
