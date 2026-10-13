@@ -7,6 +7,7 @@ import { ErrorBoundary } from './ui/ErrorBoundary.tsx'
 import { ekranSaglayicisiAyarla } from './hata/hataKaydi.ts'
 import { useAppStore } from './store/appStore.ts'
 import { acilistaTemizle } from './persistence/acilistaTemizle.ts'
+import { eveLinkiAcilistaOku, tarayiciAdresi } from './platform/eveLinkAcilis.ts'
 import { gelistirmeHatasiTetikle, hataDinleyicileriniKur } from './hata/dinleyiciler.ts'
 
 // Adım 23: yakalanmamış hatalar yalnız bellekteki yerel günlüğe (ADR-0005).
@@ -14,6 +15,8 @@ ekranSaglayicisiAyarla(() => useAppStore.getState().ekran)
 hataDinleyicileriniKur()
 gelistirmeHatasiTetikle()
 void acilistaTemizle()
+// Adım 42: eve link hash'i okunur ve adresten hemen silinir (ADR-0010); set yalnız bellekte.
+useAppStore.getState().evSetiAyarla(eveLinkiAcilistaOku(tarayiciAdresi()))
 
 /*
  * Hata sınırı EN DIŞTA. Bir render hatası aksi hâlde #root'u tamamen boşaltır
