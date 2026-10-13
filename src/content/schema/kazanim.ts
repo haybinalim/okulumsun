@@ -16,6 +16,8 @@
  * — önce docs/meb-matematik-2024-metin.txt içindeki kaynak sayfaya bakın.
  */
 
+// CSP: jitless ayarı bu şemadan ÖNCE çalışmalı (paylaşılan parçada da; KG-64).
+import './zodAyari';
 import { z } from 'zod';
 import type { KazanimKodu } from '../../exercises/types';
 

@@ -4,6 +4,8 @@
  * Her tema için veliye 3 cümle: gözlem, soru, ev nesnesiyle etkinlik. Dil yetişkine, sade;
  * "yanlış" sözcüğü kullanılmaz. Kişisel veri YOK.
  */
+// CSP: jitless ayarı bu şemadan ÖNCE çalışmalı (paylaşılan parçada da; KG-64).
+import './zodAyari';
 import { z } from 'zod';
 
 const Cumle = z
