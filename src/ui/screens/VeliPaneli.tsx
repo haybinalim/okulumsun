@@ -13,6 +13,9 @@ import { SURUM_METNI } from '../../hata/surum';
 import { useCihazProfili } from '../../design/CihazProfiliBaglami';
 import type { DeviceProfile } from '../../design/tokens';
 import { EKRAN_BOYUTU_SECENEKLERI } from '../../design/ekranBoyutu';
+import { useSyncExternalStore } from 'react';
+import { dersteTamEkranMi, dersteTamEkranAyarla, dersAyariniDinle } from '../../platform/dersAyari';
+import { tamEkranIste, tamEkrandanCik } from '../../platform/tamEkran';
 
 
 const PROFIL_ADI: Record<DeviceProfile, string> = { board: 'akıllı tahta', tablet: 'tablet', phone: 'telefon' };
@@ -137,6 +140,8 @@ export function VeliPaneli() {
           Lisanslar ve gizlilik →
         </button>
       </Bolum>
+
+      <TamEkranAyari />
 
       <Bolum baslik="Sorun bildir">
         <p style={{ ...bilgiMetniStili, marginBottom: 12 }}>
@@ -326,3 +331,30 @@ const aktifButtonStyle: React.CSSProperties = {
   fontSize: 'var(--text-adult)',
   cursor: 'pointer',
 };
+
+/** "Derste tam ekran": tahtada varsayılan açık, diğerlerinde kapalı; yalnız bellekte. */
+function TamEkranAyari() {
+  const { profil } = useCihazProfili();
+  const acik = useSyncExternalStore(dersAyariniDinle, () => dersteTamEkranMi(profil));
+  return (
+    <Bolum baslik="Derste tam ekran">
+      <p style={{ ...bilgiMetniStili, marginBottom: 12 }}>
+        Açıkken uygulama ilk dokunuşta tam ekrana geçer. Bu tercih yalnız bu açılışta geçerlidir.
+      </p>
+      <BigButton
+        label={acik ? 'Derste tam ekran: açık' : 'Derste tam ekran: kapalı'}
+        size="control"
+        variant={acik ? 'accent' : 'ghost'}
+        ariaPressed={acik}
+        onPress={() => {
+          dersteTamEkranAyarla(!acik);
+          if (acik) void tamEkrandanCik();
+          else void tamEkranIste();
+        }}
+        style={{ minHeight: 'max(64px, var(--size-control))', padding: '0 16px', fontSize: 'var(--text-adult)' }}
+      >
+        {acik ? 'Açık' : 'Kapalı'}
+      </BigButton>
+    </Bolum>
+  );
+}

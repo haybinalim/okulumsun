@@ -5,7 +5,7 @@
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
 > Tarih: 13 Ekim 2026 (Adım 27 — cihaz profili ayarı)
 
-<!-- durum:birim_test=295 durum:birim_dosya=35 durum:e2e_dosya=10 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
+<!-- durum:birim_test=300 durum:birim_dosya=37 durum:e2e_dosya=11 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
 
 ## Yönetici özeti
 
@@ -54,6 +54,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 25 | PWA kurulabilirlik: ikonlar, yatay/dikey, krem tema rengi | ✅ PR #25 (`511c93c`); Lighthouse canlı yayın bekliyor (KG-34) |
 | 26 | E2E genişletme + gizlilik kanıtı (çevrimdışı tam oturum, iki modda ağ/depolama, PWA manifest), K5 boyut bütçesi | ✅ PR #26 (`0001a86`) |
 | 27 | Cihaz profili ayar ekranı (yetişkin alanı → "Ekran boyutu"), elle geçersiz kılma kalıcı | ✅ |
+| 28 | Tam ekran + Wake Lock (tahtada ses kilidi dokunuşunda tam ekran; ders ekranlarında ekran uyanık; veli paneli "Derste tam ekran") | ✅ |
 
 Adım 28–58: depo dışındaki geliştirme planı v2.
 
