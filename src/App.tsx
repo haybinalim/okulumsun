@@ -18,6 +18,9 @@ import { useAppStore, accentBul } from './store/appStore';
 import { useDeviceProfile } from './design/useDeviceProfile';
 import { CihazProfiliBaglami } from './design/CihazProfiliBaglami';
 import { createRng } from './exercises/rng';
+import { useUyanikTut } from './ui/useUyanikTut';
+import { dersteTamEkranMi, dersAyariniDinle } from './platform/dersAyari';
+import { useSyncExternalStore } from 'react';
 import { useKisiselOturum } from './ui/useKisiselOturum';
 import { skillsData } from './content/skillsData';
 import { REGISTRY } from './exercises/registry';
@@ -85,13 +88,15 @@ export default function App() {
   }, [secilenDugumId, tahtaTohumu]);
 
   const kisiselOturum = useKisiselOturum(ekran, mod);
+  useUyanikTut(ekran);
+  const tamEkran = useSyncExternalStore(dersAyariniDinle, () => dersteTamEkranMi(profile));
 
   // Ses kilidi ekranı — her zaman en başta
   if (ekran === 'audioUnlock') {
     return (
       <BoardHarness profile={profile}>
         <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <AudioUnlock onUnlocked={() => useAppStore.getState().ekranGit('modSecimi')} />
+          <AudioUnlock tamEkran={tamEkran} onUnlocked={() => useAppStore.getState().ekranGit('modSecimi')} />
         </div>
       </BoardHarness>
     );

@@ -1187,6 +1187,7 @@ okulumsun/
 │   ├── exercises/
 │   ├── hata/
 │   ├── persistence/
+│   ├── platform/
 │   ├── progress/
 │   ├── store/
 │   └── ui/
@@ -1224,7 +1225,7 @@ Her adımın **"Bitti tanımı"** vardır: listedeki her madde doğrulanmadan ad
 ve bir sonraki adıma geçilemez. Durum sütunu bu repodaki gerçeği yansıtır; bir adımı
 bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 
-<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=35 durum:e2e_dosya=10 durum:adr=14 -->
+<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=37 durum:e2e_dosya=11 durum:adr=14 -->
 
 | # | İş | Durum | Bitti tanımı |
 |---|---|---|---|
@@ -1258,6 +1259,7 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 25 | PWA kurulabilirlik: kendi ikonumuz (Bahçem çiçeği, KG-37, `npm run ikon:uret`; 192/512/maskable/apple-touch), `orientation: 'any'`, tema ve arka plan rengi `COLOR.bg` (krem, KG-36), manifest tek kaynak `scripts/yayin/pwaAyari.ts`, göreli favicon; Vite şablon logosu ve `icons.svg` kaldırıldı | ✅ PR #25 (`511c93c`); Lighthouse ve cihazda kurulum denemesi canlı yayın bekliyor (KG-34) | `manifest.spec.ts`, e2e `onizleme-pwa.spec.ts` |
 | 26 | E2E genişletme ve gizlilik kanıtı: Playwright `onizleme` projesi (e2e kancalı test derlemesi `dist-e2e/` + `vite preview`, KG-38), tablet kişisel tam oturum, tahta sınıfça akış, çevrimdışı tam oturum + SW önbelleğinden ses, manifest/ikon 200, iki modda ağ/depolama gizlilik kanıtı (tuzaklı); ortak geometri yardımcısı; `depolamaIzinListesi` (`izinliMi`), birim `depolamaCasusu`; K5 boyut bütçesi (`npm run boyut`, `docs/boyut-butcesi.json`); e2e `main` push + PR, 3 projeli matris | ✅ | 9 e2e dosyası (board/tablet/onizleme), `depolamaIzinListesi.spec.ts`, `boyutButcesi.spec.ts` |
 | 27 | Cihaz profili ayar ekranı: yetişkin alanında "Ekran boyutu" (Otomatik / Akıllı tahta / Tablet / Telefon, 4 büyük düğme, gerçek boyutta önizleme kartı), `CihazProfiliBaglami` + `useCihazProfili`, `useDeviceProfile` `elleSecilen` döndürür ve seçimi aynı karede uygular; yalnız `okulumsun.deviceOverride` yazılır; birim depolama casusu happy-dom bağlı yöntem açığı kapatıldı | ✅ | `cihazProfiliAyari.spec.ts`, e2e `cihaz-ayari.spec.ts` (tahta → `--scale` 1.6 → yenilemede kalıcı → Otomatik → tablet), gizlilik e2e akışında ayar seçimi |
+| 28 | `src/platform/{tamEkran,uyanikTut,dersAyari}.ts`, `useUyanikTut`, AudioUnlock jestinde `tamEkranIste`, veli paneli "Derste tam ekran" (bellekte, yeni depolama yok) | ✅ | `tamEkran.spec.ts`, `uyanikTut.spec.ts`, e2e `board-tam-ekran.spec.ts` |
 
 Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **35 şablon / ~3 haftaya** büyüdü
 (şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**

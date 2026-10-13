@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { BigButton } from '../primitives/BigButton';
 import { speech } from '../../audio/speech';
 import { CORE_KEYS } from '../../audio/audioManifest.generated';
+import { tamEkranIste } from '../../platform/tamEkran';
 
 /**
  * Ses kilidi ekranı — uygulamanın ilk ekranı.
@@ -12,7 +13,7 @@ import { CORE_KEYS } from '../../audio/audioManifest.generated';
  * Tek büyük daire, tek anlam, sıfır metin bağımlılığı: çocuk okuyamıyor ama
  * "oynat" üçgeni evrensel. Dokunduğu an ses açılır ve karşılama duyulur.
  */
-export function AudioUnlock({ onUnlocked }: { onUnlocked: () => void }) {
+export function AudioUnlock({ onUnlocked, tamEkran = false }: { onUnlocked: () => void; tamEkran?: boolean }) {
   const [busy, setBusy] = useState(false);
 
   const handlePress = () => {
@@ -21,6 +22,8 @@ export function AudioUnlock({ onUnlocked }: { onUnlocked: () => void }) {
 
     // prime() jestin İÇİNDEN senkron başlamalı — await'ten sonra çağrılırsa
     // tarayıcı artık kullanıcı etkileşimi saymaz ve kilit açılmaz.
+    // Tam ekran da jestin içinden, aynı senkron akışta istenir; hata yutulur.
+    if (tamEkran) void tamEkranIste();
     void speech
       .prime()
       .then(() => {
