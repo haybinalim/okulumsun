@@ -18,6 +18,7 @@
     "validate": "tsx scripts/validate-content.ts",
     "durum": "tsx scripts/durum.ts",
     "ikon:uret": "tsx scripts/ikon-uret.ts",
+    "glif:formu": "tsx scripts/icerik/glif-formu.ts",
     "gizlilik:tara": "tsx scripts/gizlilik-tarama.ts",
     "lisans:denetle": "tsx scripts/lisans-denetimi.ts",
     "claude:taslak": "tsx scripts/claude-destek-taslak.ts"

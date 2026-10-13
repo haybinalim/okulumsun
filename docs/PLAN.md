@@ -1168,6 +1168,7 @@ Bugünkü klasörler (üretilmiş, elle düzenlemeyin):
 okulumsun/
 ├── docs/
 │   ├── ADR/
+│   ├── icerik/
 │   └── ses/
 ├── public/
 │   ├── audio/
@@ -1177,6 +1178,7 @@ okulumsun/
 ├── scripts/
 │   ├── denetim/
 │   ├── gizlilik/
+│   ├── icerik/
 │   ├── ses/
 │   └── yayin/
 ├── src/
@@ -1226,7 +1228,7 @@ Her adımın **"Bitti tanımı"** vardır: listedeki her madde doğrulanmadan ad
 ve bir sonraki adıma geçilemez. Durum sütunu bu repodaki gerçeği yansıtır; bir adımı
 bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 
-<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=40 durum:e2e_dosya=11 durum:adr=14 -->
+<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=41 durum:e2e_dosya=11 durum:adr=14 -->
 
 | # | İş | Durum | Bitti tanımı |
 |---|---|---|---|
@@ -1262,6 +1264,7 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 27 | Cihaz profili ayar ekranı: yetişkin alanında "Ekran boyutu" (Otomatik / Akıllı tahta / Tablet / Telefon, 4 büyük düğme, gerçek boyutta önizleme kartı), `CihazProfiliBaglami` + `useCihazProfili`, `useDeviceProfile` `elleSecilen` döndürür ve seçimi aynı karede uygular; yalnız `okulumsun.deviceOverride` yazılır; birim depolama casusu happy-dom bağlı yöntem açığı kapatıldı | ✅ | `cihazProfiliAyari.spec.ts`, e2e `cihaz-ayari.spec.ts` (tahta → `--scale` 1.6 → yenilemede kalıcı → Otomatik → tablet), gizlilik e2e akışında ayar seçimi |
 | 28 | `src/platform/{tamEkran,uyanikTut,dersAyari}.ts`, `useUyanikTut`, AudioUnlock jestinde `tamEkranIste`, veli paneli "Derste tam ekran" (bellekte, yeni depolama yok) | ✅ | `tamEkran.spec.ts`, `uyanikTut.spec.ts`, e2e `board-tam-ekran.spec.ts` |
 | 29 | Ürün hijyeni: `OturumDurumlari` (kırmızı yok, ham hata yok, hata yerel günlüğe), `acilistaTemizle` (mod bağımsız açılış silmesi), bugünün bahçesi (`bugunTamamlanan`, bellekte), `scripts/denetim/kirmiziYok.ts` K9a bağlı, `.gitignore` claude-cikti. Ses klipleri (3) Adım 18 anahtarı bekler | ✅ | `acilistaTemizle.spec.ts`, `bugununBahcesi.spec.ts`, `kirmiziYok.spec.ts` |
+| 30 | Rakam glifleri doğrulaması (MEB dik temel): path verisi tek kaynak `src/ui/svg/rakamGlifleri.ts` (`RAKAM_GLIFLERI`, `Visual.tsx` `Rakam` kullanır, çizgi kalınlığı `GLIF` belirteci), DEV glif kartı `src/dev/GlifKarti.tsx` (`?gelistirme=glif`), öğretmen görüş formu `docs/icerik/rakam-glifleri.md` + yazdırılabilir A4 form `npm run glif:formu`. Path'ler değişmedi | ⚠ kod hazır, öğretmen formları bekleniyor (iki aşamalı, KG-42) | `rakamGlifleri.spec.ts` (10 glif, kancalı 1, çizgisiz 7, Visual tek kaynak) |
 
 Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **35 şablon / ~3 haftaya** büyüdü
 (şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**

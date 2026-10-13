@@ -20,10 +20,18 @@ void acilistaTemizle()
  * ve kullanıcı bembeyaz bir sayfa görür — sınıfta çöken uygulama sessizce
  * çöker (plan §16 risk 7). Sınır, en azından "yeniden dene" sunar.
  */
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <ErrorBoundary>
-      <App />
-    </ErrorBoundary>
-  </StrictMode>,
-)
+const kok = createRoot(document.getElementById('root')!)
+
+// Adım 30: rakam glif kartı YALNIZ geliştirmede (`?gelistirme=glif`); üretim
+// derlemesinde DEV `false` olduğundan dal ve dinamik içe aktarma atılır.
+if (import.meta.env.DEV && new URLSearchParams(location.search).get('gelistirme') === 'glif') {
+  void import('./dev/GlifKarti.tsx').then(({ GlifKarti }) => kok.render(<GlifKarti />))
+} else {
+  kok.render(
+    <StrictMode>
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
+    </StrictMode>,
+  )
+}

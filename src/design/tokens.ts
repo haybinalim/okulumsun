@@ -66,6 +66,14 @@ export const TEXT = {
 } as const;
 
 /**
+ * Rakam glifleri (plan v2 Adım 30). Çizgi kalınlığı 100×100 viewBox birimi;
+ * ekran, glif kartı ve öğretmen formu aynı değeri kullanır.
+ */
+export const GLIF = {
+  cizgiKalinligi: 6,
+} as const;
+
+/**
  * Renk paleti.
  *
  * Kırmızı bilerek yok: yanlış cevap hiçbir koşulda cezalandırıcı gösterilmez
