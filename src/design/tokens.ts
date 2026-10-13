@@ -112,6 +112,31 @@ export const ACCENTS = [
   { id: 'sari', hex: '#CA8A04', speechKey: 'renk.sari' },
 ] as const;
 
+/**
+ * Renk körlüğü dostu palet (plan v2 Adım 55; yetişkin ayarı, varsayılan kapalı).
+ *
+ * Vurgular aynı ad/ses anahtarını korur (çocuk "mor" duyar, koyu mor görür). Her renk zemine ve
+ * beyaza ≥4,5:1 (grafik eşiği; Onayla'daki beyaz yazı büyük metin → WCAG 1.4.6 AAA büyük metin
+ * eşiği 4,5:1) ve döteranopi/protanopi/tritanopi benzetiminde çiftler arası ΔE ≥10 — test hesaplar
+ * (`tests/unit/kapsayicilik.spec.ts`). Doğru/tekrar dene: mavi ↔ koyu turuncu (yeşil/amber üç
+ * renk körlüğü türünde de ayrışır). Renk yine tek başına anlam taşımaz (ikon + ses + hareket).
+ */
+export const ACCENTS_RENK_KORLUGU: Readonly<Record<Accent['id'], string>> = {
+  mor: '#4F0AA7',
+  turuncu: '#8F3B0A',
+  yesil: '#107B4A',
+  mavi: '#0B3982',
+  pembe: '#9D0663',
+  sari: '#847413',
+};
+
+export const COLOR_RENK_KORLUGU = {
+  correct: '#0B5FA5',
+  correctSoft: '#DCEBF7',
+  retry: '#A34700',
+  retrySoft: '#FBE3D0',
+} as const satisfies Partial<Record<keyof typeof COLOR, string>>;
+
 /** Animasyon süreleri (ms). `prefers-reduced-motion` hepsini 0'a indirir. */
 export const MOTION = {
   /** Doğru cevap kutlaması — kısa, çünkü 8 soruda 8 kez tekrarlanıyor. */
