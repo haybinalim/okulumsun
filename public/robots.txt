@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
-# Sitemap: Adım 48 (tanıtım sayfası) ile eklenecek.
+# Adım 48: kâğıt arşivi ve statik sayfalar.
+Sitemap: https://okulumsun-tc.vercel.app/sitemap.xml

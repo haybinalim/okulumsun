@@ -7,7 +7,7 @@
  * `public/sitemap.xml` yazılır. Kanonik barındırıcının (Vercel) derlemesinde Chromium yoktur; çıktılar commitlenir
  * (öğretmen sayfası `kart.png` düzeni) ve `arsivDizini.spec.ts` tazeliklerini denetler.
  *
- * `--yalniz-dizin`: PDF basmadan yalnız dizin sayfalarını ve sitemap'i yazar (hızlı; içerik değişmediyse).
+ * `--eksik`: yalnız eksik PDF'leri basar. `--yalniz-dizin`: PDF basmadan yalnız dizin sayfalarını ve sitemap'i yazar (hızlı; içerik değişmediyse).
  * PDF'lerde tarih alanları sabitlenir; aynı Chromium sürümüyle aynı bayt.
  */
 import { spawn } from 'node:child_process';
@@ -217,8 +217,16 @@ async function pdfleriBas(kok: string, kayitlar: readonly ArsivKaydi[]): Promise
     const tarayici = await chromium.launch();
     const sayfa = await tarayici.newPage();
     for (const [i, x] of kayitlar.entries()) {
-      await sayfa.goto(`${adres}/?arsiv=${encodeURIComponent(x.kagitKodu)}`);
-      await sayfa.waitForSelector('[data-arsiv-hazir]', { timeout: 20_000 });
+      // Yük altında ilk açılış ara sıra gecikir: bir kez yeniden dene.
+      for (let deneme = 0; ; deneme++) {
+        try {
+          await sayfa.goto(`${adres}/?arsiv=${encodeURIComponent(x.kagitKodu)}`);
+          await sayfa.waitForSelector('[data-arsiv-hazir]', { timeout: 20_000 });
+          break;
+        } catch (e) {
+          if (deneme >= 1) throw e;
+        }
+      }
       await sayfa.evaluate(() => document.fonts.ready);
       const pdf = await sayfa.pdf({ format: 'A4', printBackground: true, preferCSSPageSize: true });
       const hedef = path.join(kok, 'public', x.yol);
@@ -239,7 +247,11 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   if (!process.argv.includes('--yalniz-dizin')) {
     const { kayitlar } = arsivGirdileri(kok);
     const sec = process.argv.find((a) => a.startsWith('--sinir='));
-    await pdfleriBas(kok, sec ? kayitlar.slice(0, Number(sec.slice(8))) : kayitlar);
+    // `--eksik`: yalnız public/ altında PDF'i olmayan kayıtlar (yarıda kalan üretimi tamamlamak için).
+    const hedef = process.argv.includes('--eksik')
+      ? kayitlar.filter((x) => !existsSync(path.join(kok, 'public', x.yol)))
+      : kayitlar;
+    await pdfleriBas(kok, sec ? hedef.slice(0, Number(sec.slice(8))) : hedef);
     console.log('PDF arşivi yazıldı.');
   }
 }

@@ -137,6 +137,7 @@ footer{margin-top:3em;color:var(--murekkep-acik);font-size:.9rem}
 <div class="kartlar">
 ${kartlar.map(([b, m]) => `<article class="kart"><h3>${k(b)}</h3><p>${k(m)}</p></article>`).join('\n')}
 </div>
+<p><a href="../kagitlar/">Hazır çalışma kâğıtları: her kazanım için cevap anahtarlı A4 PDF</a></p>
 </section>
 
 <section aria-labelledby="nasil">
