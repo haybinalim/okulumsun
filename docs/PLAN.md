@@ -1095,6 +1095,10 @@ Yan dal: [4] → [K] Keşif Masası (iki modda; soru/puan yok; onluk çerçeve �
   [1] ses kilidi → **Evde çalış** (set tabanlı 8 soru, adaptif değil) → kutlama → [Ev] mod seçimi. Bozuk/fazla alanlı
   bağlantı olağan açılışa düşer. Set yalnız bellekte; sonuç tutulmaz.
   Öğretmen tarafı: "Bugünün seti" (tahta) ve ders sonu özetinde **Eve gönder** → büyük QR (yerel) + bağlantı + Kopyala.
+- **[4f] Tema turu** (plan v2 Adım 46, KG-66/67): [4b] konu seçiminin son kartı "Tema turu" → temanın becerilerini
+  dolaşan 8–10 soru (≤10 düğüm hepsi, fazlası eşit aralıklı 10) → kutlama → yetişkine beceri başına nitel düzey
+  (Rahat / Biraz destek gerekti / Tekrar çalışılabilir; ders özeti eşikleri, tek madde yeterli; sayı/yüzde yok) →
+  "Bitti" → [4]. Kişisel modda aynı tur veli panelinden başlar. Olaylar yalnız tur ekranında; kapanınca silinir.
 
 **Veli paneli [9] — içerik listesi (ilk sürüm, bu kadarı ZORUNLU, fazlası değil):**
 
@@ -1110,6 +1114,8 @@ Yan dal: [4] → [K] Keşif Masası (iki modda; soru/puan yok; onluk çerçeve �
 
 Kişisel modda ek bölüm (plan v2 Adım 43): "Evde 10 dakika başlat" — bu haftanın MEB konusundan 8 soru,
 sonunda veliye 3 cümlelik ipucu kartı (gözlem, soru, ev nesnesiyle etkinlik). Yanıt/puan gösterilmez, saklanmaz.
+Kişisel modda ek bölüm (plan v2 Adım 46): "Tema turu başlat" — açık temalardan biri seçilir (varsayılan en son açılan),
+[4f] turu oynanır, sonunda yetişkine beceri başına nitel düzey.
 
 **Alıştırma ekranı anatomisi** (yatay):
 
@@ -1260,7 +1266,7 @@ Her adımın **"Bitti tanımı"** vardır: listedeki her madde doğrulanmadan ad
 ve bir sonraki adıma geçilemez. Durum sütunu bu repodaki gerçeği yansıtır; bir adımı
 bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 
-<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=68 durum:e2e_dosya=22 durum:adr=14 -->
+<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=68 durum:e2e_dosya=23 durum:adr=14 -->
 
 | # | İş | Durum | Bitti tanımı |
 |---|---|---|---|
@@ -1307,7 +1313,7 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 42 | Eve link (ADR-0010 Kabul): aşama 1 (KG-58) `src/ogretmen/eveLink.ts` (SAF; `<kök>/#ev=1.<set kodu>`, veri yalnız hash'te, katı çözücü: fazla alan/sürüm/karakter → null, ≤40 karakter). Aşama 2 (KG-59) `src/platform/eveLinkAcilis.ts` (açılışta eve link girişimi `history.replaceState` ile adresten silinir, geçerliyse `appStore.evSeti` yalnız bellekte), `EvdeCalis` (ses kilidi → set tabanlı 8 soru → kutlama → Ev; sonuç tutulmaz). Aşama 3 (KG-60) `EveGonder` (tembel yüklenir; yerel QR `src/ogretmen/qrMatrisi.ts` + `qrcode-generator` MIT, K10 envanteri; kısa bağlantı, Kopyala/pano, Geri), `src/platform/kanonikKok.ts` (http(s) ise açılan kök, değilse kanonik yayın adresi), `SetHazirla` (tahta) ve `DersSonuOzeti` "Eve gönder", `/gizlilik` "Eve link" bölümü. `ev.okuldaki-konu`/`ev.bitti` klipleri Adım 31'de | ✅ (ses klipleri Adım 31'de) | `eveLink.spec.ts`, `eveLinkAcilis.spec.ts`, `eveGonder.spec.ts` (QR determinizmi/sürüm ≤5, kök, durum, lisans), e2e `eve-link.spec.ts` (8 soru, hash silinir, ağ isteklerinde set kodu yok, depolama boş; bozuk link olağan açılış), `eve-gonder.spec.ts` (set → QR + bağlantı, tahta geometrisi, pano, bağlantı ev çalışmasını açar) |
 | 43 | Evde 10 dakika (kişisel mod): aşama 1 (KG-61) `src/content/evIpuclari.json` + `schema/evIpucu.ts` (7 tema × gözlem/soru/etkinlik, "yanlış" yok), `src/ogretmen/evdeOnDakika.ts` (SAF: bu hafta + 1 hatırlama, ≤4 düğüm), validate. Aşama 2 (KG-62): `src/ogretmen/evdeOnDakikaBaglama.ts` (tembel; plan düğümleri oynatılabilir düğümlere süzülür, tema → ipucu), `src/content/evIpuclari.ts`, veli paneli "Evde 10 dakika başlat", `EvdeCalis` sonunda yetişkine "İpucu kartı", `VeliIpucuKarti` (tembel), `appStore.evdeOnDakikaTema` (yalnız bellekte). `ev.yetiskine-ver` sesi Adım 31; iki öğretmen okuması kullanıcıda | ✅ | `evdeOnDakika.spec.ts`, `evIpuclari.spec.ts`, `evdeOnDakikaBaglama.spec.ts`, e2e `evde-10-dakika.spec.ts` |
 | 44 | Keşif Masası: aşama 1 (KG-63) `src/kesif/kesifMasasi.ts` (SAF indirgeyici: onluk çerçeve 20 göz, nesne kümesi ≤20, sayı doğrusu 0–20, terazi kefe ≤10, ayır-birleştir toplam ≤20; geçersiz olay durumu değiştirmez; seslendirme yalnız mevcut `sayi.*`/`op.*`/`esit.*` klipleri). Aşama 2 (KG-64): `KesifMasasi` ekranı (tembel; üst bölge yalnız büyük rakam, araç + alt düğme sırası alt bölgede, ≥ `--size-tap-min`), `src/ui/kesif/{OnlukCerceveAraci,NesneKumesiAraci,SayiDogrusuAraci,ortak}.tsx` + `kesifEkrani.ts` (sayı doğrusu 11 noktalık pencere), AnaEkran girişi (tahtada 5 sütunlu ızgarada kart, kişiselde Başla yanında), `Ekran` += `kesifMasasi`; CSP düzeltmesi: zod kullanan her şema dosyası `zodAyari`'nı ilk içe aktarır (paylaşılan parça girişten önce çalışınca `jitless` geç kalıyordu; `zodAyari.spec.ts`). Aşama 3 (KG-65): `TeraziAraci` (kefe başına −1/+1, eğim yalnız `rotate`, ±16°; genel +1/−1 gizli), `AyirBirlestirAraci` (sayaca dokun = oradan ayır, ikinci parça başka renk; "Birleştir"), üst gösterim `gosterilenMetin` ("2 + 3", "1 = 1"), tanıtım sayfasına Keşif Masası kartı. `kesif.*` sesleri Adım 31 | ✅ | `kesifMasasi.spec.ts`, `kesifMasasiEkrani.spec.ts`, `zodAyari.spec.ts`, e2e `board-kesif-masasi.spec.ts`, `kesif-masasi.spec.ts` |
-| 46 | Tema sonu turu: aşama 1 (KG-66) `src/ogretmen/temaTuru.ts` (SAF: 8–10 madde; temanın hazır düğümleri ≤10 ise hepsi, fazlaysa öğretim sırasını eşit aralıkla örnekleyen 10 düğüm; set bellekte, kodlanmaz). Aşama 2 (KonuSecimi "Tema turu" kartı, veli paneli düğmesi, TemaTuruSonu nitel düzey, e2e) sırada; `tematuru.*` sesleri Adım 31. Adım 45 (derin tema girişi) Adım 31'in 28 klibine bağlı, atlandı | ⏳ | `temaTuru.spec.ts` |
+| 46 | Tema sonu turu: aşama 1 (KG-66) `src/ogretmen/temaTuru.ts` (SAF: 8–10 madde; temanın hazır düğümleri ≤10 ise hepsi, fazlaysa öğretim sırasını eşit aralıkla örnekleyen 10 düğüm; set bellekte, kodlanmaz). Aşama 2 (KG-67): `temaTuruOzeti` (SAF; ders özeti eşikleri `duzeyVePuan`, tek madde yeterli, sayı/yüzde alanı yok), `src/ogretmen/temaTuruBaglama.ts` (oynatılabilir düğümler), `TemaTuru` ekranı (tembel; 8–10 soru, küçük "Turu bitir", kutlama → "Yetişkin: tur özetini aç" → nitel düzey listesi → Bitti), `KonuSecimi` son kart "Tema turu" (tahta), veli paneli "Tema turu" bölümü (kişisel; açık tema seçimi), `appStore.temaTuru` (yalnız bellekte), `Ekran` += `temaTuru`. `tematuru.*` sesleri Adım 31 (şimdilik `ui.oturum-bitti`). Adım 45 (derin tema girişi) Adım 31'in 28 klibine bağlı, atlandı | ✅ (ses klipleri Adım 31'de) | `temaTuru.spec.ts` (plan, özet, bağlama, store), e2e `tema-turu.spec.ts` (tahta + kişisel; ≥8 soru, nitel özet, puan/yüzde yok, ağ ve depolama temiz) |
 
 Adım 10, ilk tahmindeki "13 şablon / 6–7 gün"den **35 şablon / ~3 haftaya** büyüdü
 (şablonların incelmesi §5.2). Toplam tahmin: **7–9 hafta / tek geliştirici.**

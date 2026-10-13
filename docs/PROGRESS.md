@@ -3,9 +3,9 @@
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
-> Tarih: 13 Ekim 2026 (Adım 44 — Keşif Masası)
+> Tarih: 13 Ekim 2026 (Adım 46 — Tema sonu turu)
 
-<!-- durum:birim_test=490 durum:birim_dosya=68 durum:e2e_dosya=22 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
+<!-- durum:birim_test=495 durum:birim_dosya=68 durum:e2e_dosya=23 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
 
 ## Yönetici özeti
 
@@ -67,6 +67,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 42 | Eve link: öğretmen bugünün setinden veya ders sonu özetinden "Eve gönder" ile büyük bir QR kodu ve kısa bağlantı gösterir (cihazda üretilir, Kopyala); bağlantı yalnız etkinlik kodu + tohum taşır, adresin hash parçasında kalır ve açılınca adresten silinir; çocuk aynı setten 8 soruluk ev çalışması yapar, hiçbir şey saklanmaz | ✅ (ses klipleri Adım 31'de) |
 | 43 | Evde 10 dakika: veli, yetişkin alanından tek dokunuşla bu haftanın okul konusundan 8 soruluk kısa oturum başlatır (bu hafta + geçen haftadan 1 hatırlama); sonunda telefon büyüğe verilir ve 3 cümlelik ipucu kartı (gözlem, soru, evdeki nesnelerle etkinlik) açılır. Yanıt/puan gösterilmez, hiçbir şey saklanmaz | ✅ (ses klibi Adım 31'de; iki öğretmen okuması bekliyor) |
 | 44 | Keşif Masası: soru ve puan olmadan dokunarak sayı kurulan alan, iki modda (tahtada öğretmenin anlatım aracı): onluk çerçeve (iki onluk), nesneler (en çok 20), sayı doğrusu (0–20), terazi (kefe başına en çok 10; ağır taraf iner, eşitse "=") ve ayır-birleştir ("2 + 3"). Her değişiklik mevcut sayı/işlem klipleriyle seslendirilir, hiçbir şey saklanmaz | ✅ (yeni hoş geldin/denge sesleri Adım 31'de; eski tahta tarayıcısında akıcılık Adım 41'de) |
+| 46 | Tema sonu turu: temanın bütün becerilerini dolaşan 8–10 soruluk kısa tur (tahtada konu seçiminin son kartı, kişiselde yetişkin alanından); sonunda çocuğa kutlama, yetişkine beceri başına nitel düzey (Rahat / Biraz destek gerekti / Tekrar çalışılabilir). Sayı/yüzde/puan yok, sonuçlar tur kapanınca silinir | ✅ (tur sesleri Adım 31'de; Adım 45 derin tema girişi Adım 31'e bağlı) |
 
 Adım 31–33 ve 35–58: depo dışındaki geliştirme planı v2.
 

@@ -3,7 +3,13 @@ import { describe, expect, it } from 'vitest';
 import { skillsData } from '../../src/content/skillsData';
 import { REGISTRY } from '../../src/exercises/registry';
 import { setSorusu, setlenebilirDugumler } from '../../src/ogretmen/gunlukSet';
-import { TEMA_TURU_MADDE, esitAralikliIndeksler, temaTuruOzeti, temaTuruPlani, type TemaNo } from '../../src/ogretmen/temaTuru';
+import {
+  TEMA_TURU_MADDE,
+  esitAralikliIndeksler,
+  temaTuruOzeti,
+  temaTuruPlani,
+  type TemaNo,
+} from '../../src/ogretmen/temaTuru';
 import { temaTuruHazirla } from '../../src/ogretmen/temaTuruBaglama';
 import type { DersOlayi } from '../../src/ogretmen/dersOzeti';
 
@@ -84,7 +90,11 @@ describe('temaTuruOzeti (aşama 2, KG-67)', () => {
     expect(ozet).toEqual([{ skillId: a, baslik: expect.any(String), duzey: 'destekle' }]);
   });
   it('çıktıda sayı/yüzde alanı yok', () => {
-    const ozet = temaTuruOzeti(plan, plan.dugumler.map((d) => olay(d, true)), skillsData);
+    const ozet = temaTuruOzeti(
+      plan,
+      plan.dugumler.map((d) => olay(d, true)),
+      skillsData,
+    );
     for (const d of ozet) expect(Object.keys(d).sort()).toEqual(['baslik', 'duzey', 'skillId']);
   });
 });
@@ -94,5 +104,18 @@ describe('temaTuruHazirla (bağlama)', () => {
     for (const t of TEMALAR) expect(temaTuruHazirla(t, 1)).toEqual(temaTuruPlani(t, adaylar, 1));
     expect(temaTuruHazirla(0, 1)).toBeNull();
     expect(temaTuruHazirla(8, 1)).toBeNull();
+  });
+});
+
+describe('appStore tema turu (bellek)', () => {
+  it('başlat → temaTuru ekranı ve plan; kapat → null, ana ekran', async () => {
+    const { useAppStore } = await import('../../src/store/appStore');
+    const plan = temaTuruHazirla(4, 2)!;
+    useAppStore.getState().temaTuruBaslat(4, plan);
+    expect(useAppStore.getState().ekran).toBe('temaTuru');
+    expect(useAppStore.getState().temaTuru).toEqual({ tema: 4, plan });
+    useAppStore.getState().temaTuruKapat();
+    expect(useAppStore.getState().temaTuru).toBeNull();
+    expect(useAppStore.getState().ekran).toBe('anaEkran');
   });
 });

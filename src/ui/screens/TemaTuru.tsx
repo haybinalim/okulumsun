@@ -123,10 +123,12 @@ export function TemaTuruSonu({
           Tema turu: {temaAdi}
         </h1>
         <p style={{ margin: 0, fontSize: 'var(--text-adult)', color: COLOR.inkSoft }}>
-          Her beceri bu turda çoğunlukla tek soruyla görüldü; düzey bir gözlemdir, not değildir. Hiçbir şey
-          kaydedilmez.
+          Her beceri bu turda çoğunlukla tek soruyla görüldü; düzey bir gözlemdir, not değildir. Hiçbir şey kaydedilmez.
         </p>
-        <ul aria-label="Beceri düzeyleri" style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <ul
+          aria-label="Beceri düzeyleri"
+          style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 6 }}
+        >
           {ozet.map((d) => (
             <li
               key={d.skillId}
