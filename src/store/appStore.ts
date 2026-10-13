@@ -16,6 +16,7 @@ import { create } from 'zustand';
 import { ACCENTS, type Accent } from '../design/tokens';
 import { OGRENCI_VERISI_SAKLANIR_MI } from '../persistence/veriSaklamaPolitikasi';
 import type { GunlukSet } from '../ogretmen/gunlukSet';
+import type { TemaTuruPlani } from '../ogretmen/temaTuru';
 import type { Renk } from '../exercises/types';
 import {
   sinifTuruBaslat as sinifTuruDurumuBaslat,
@@ -52,6 +53,7 @@ export type Ekran =
   | 'evdeCalis'
   | 'veliIpucuKarti'
   | 'kesifMasasi'
+  | 'temaTuru'
   | 'eveGonder';
 
 /** Sınıf Turu durumunun yaşadığı ekranlar; başka ekrana geçişte durum `null` olur. */
@@ -148,6 +150,8 @@ interface AppStore {
   eveGonderSeti: GunlukSet | null;
   /** Evde 10 dakika (Adım 43): veli başlattıysa ipucu temasının numarası; yalnız bellekte. */
   evdeOnDakikaTema: number | null;
+  /** Tema sonu turu (Adım 46): plan yalnız bellekte; tur kapanınca `null`. Sonuçlar ekranda yerel. */
+  temaTuru: { readonly tema: number; readonly plan: TemaTuruPlani } | null;
 
   // --- Actions
   ekranGit: (ekran: Ekran) => void;
@@ -181,6 +185,10 @@ interface AppStore {
   evdeOnDakikaBitir: () => void;
   /** Öğretmen: seti eve link/QR olarak göster. */
   eveGonder: (set: GunlukSet) => void;
+  /** Tema sonu turunu başlat (tahtada konu seçiminden, kişiselde yetişkin alanından). */
+  temaTuruBaslat: (tema: number, plan: TemaTuruPlani) => void;
+  /** Turu kapat: plan silinir, ana ekrana dönülür. */
+  temaTuruKapat: () => void;
   sifirla: () => void;
   // --- Kalıcılık (Adım 9)
   profildenYukle: (profil: Partial<AppStore>) => void;
@@ -206,6 +214,7 @@ const baslangicDurumu = {
   evSeti: null as GunlukSet | null,
   eveGonderSeti: null as GunlukSet | null,
   evdeOnDakikaTema: null as number | null,
+  temaTuru: null as { readonly tema: number; readonly plan: TemaTuruPlani } | null,
 };
 
 export const useAppStore = create<AppStore>((set) => ({
@@ -320,6 +329,11 @@ export const useAppStore = create<AppStore>((set) => ({
     set((s) => ({ evSeti: null, evdeOnDakikaTema: null, ekran: 'anaEkran', oncekiEkran: s.ekran })),
 
   eveGonder: (eveGonderSeti) => set((s) => ({ eveGonderSeti, ekran: 'eveGonder', oncekiEkran: s.ekran })),
+
+  temaTuruBaslat: (tema, plan) =>
+    set((s) => ({ temaTuru: { tema, plan }, aktifSet: null, ekran: 'temaTuru', oncekiEkran: s.ekran })),
+
+  temaTuruKapat: () => set((s) => ({ temaTuru: null, ekran: 'anaEkran', oncekiEkran: s.ekran })),
 
   sifirla: () => set({ ...baslangicDurumu }),
 

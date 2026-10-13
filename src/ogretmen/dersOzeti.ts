@@ -37,8 +37,11 @@ export interface DersOzeti {
   readonly yarinIcinSet: GunlukSet | null;
 }
 
-/** Zorluk puanı yalnız sıralama içindir; dışarı verilmez. */
-function duzeyVePuan(olaylar: readonly DersOlayi[]): { duzey: RahatlikDuzeyi; puan: number } {
+/**
+ * Bir düğümün olaylarından nitel düzey. Zorluk puanı yalnız sıralama içindir; ekrana verilmez.
+ * Tema sonu turu (Adım 46) da aynı eşikleri kullanır.
+ */
+export function duzeyVePuan(olaylar: readonly DersOlayi[]): { duzey: RahatlikDuzeyi; puan: number } {
   const n = olaylar.length;
   const yanlis = olaylar.filter((o) => !o.ilkDenemeDogru).length / n;
   const yardim = olaylar.filter((o) => o.yardimKademesi >= 2).length / n;

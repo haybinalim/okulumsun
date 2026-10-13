@@ -11,6 +11,8 @@
  * Saat ve rastgelelik yok; tohumu UI verir.
  */
 import type { SkillNode } from '../content/schema/skill';
+import type { SkillId } from '../exercises/types';
+import { duzeyVePuan, type DersOlayi, type RahatlikDuzeyi } from './dersOzeti';
 import { SET_SURUMU, type GunlukSet } from './gunlukSet';
 
 export const TEMA_TURU_MADDE = { enAz: 8, enFazla: 10 } as const;
@@ -38,4 +40,30 @@ export function temaTuruPlani(tema: TemaNo, dugumler: readonly SkillNode[], tohu
   const secilen = esitAralikliIndeksler(temanin.length, TEMA_TURU_MADDE.enFazla).map((i) => temanin[i].id);
   const maddeSayisi = Math.min(TEMA_TURU_MADDE.enFazla, Math.max(TEMA_TURU_MADDE.enAz, secilen.length));
   return { surum: SET_SURUMU, dugumler: secilen, tohum: tohum >>> 0, maddeSayisi };
+}
+
+export interface TemaTuruDuzeyi {
+  readonly skillId: SkillId;
+  readonly baslik: string;
+  readonly duzey: RahatlikDuzeyi;
+}
+
+/**
+ * Tur sonu yetişkin özeti (aşama 2, KG-67): planın her düğümü için ders özeti eşikleriyle nitel düzey.
+ * Ders özetinden farkı: tek madde de yeterli (turda düğüm başına çoğunlukla 1 soru). Olayı olmayan
+ * düğüm atlanır. Sıra plan sırasıdır (öğretim sırası). Sayı/yüzde alanı yok.
+ */
+export function temaTuruOzeti(
+  plan: Pick<GunlukSet, 'dugumler'>,
+  olaylar: readonly DersOlayi[],
+  dugumler: readonly SkillNode[],
+): TemaTuruDuzeyi[] {
+  const sonuc: TemaTuruDuzeyi[] = [];
+  for (const skillId of plan.dugumler) {
+    const liste = olaylar.filter((o) => o.skillId === skillId);
+    const dugum = dugumler.find((d) => d.id === skillId);
+    if (liste.length === 0 || !dugum) continue;
+    sonuc.push({ skillId, baslik: dugum.baslik, duzey: duzeyVePuan(liste).duzey });
+  }
+  return sonuc;
 }
