@@ -54,7 +54,9 @@ export function ArsivKagidi({ kod }: { kod: string }) {
       style={{ padding: 24, fontFamily: 'inherit' }}
     >
       <p role="status">{plan ? `Kâğıt kodu: ${plan.kod}` : 'Kâğıt hazırlanıyor…'}</p>
-      {plan && <KagitSayfalari plan={plan} duzen={istek.duzen} cevapAnahtariDahil siyahBeyaz={false} kopya="onizleme" />}
+      {plan && (
+        <KagitSayfalari plan={plan} duzen={istek.duzen} cevapAnahtariDahil siyahBeyaz={false} kopya="onizleme" />
+      )}
       {kap &&
         plan &&
         createPortal(

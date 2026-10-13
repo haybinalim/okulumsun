@@ -17,7 +17,12 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { COLOR } from '../src/design/tokens.ts';
 import { skillsData } from '../src/content/skillsData.ts';
 import { KANONIK_YAYIN_ADRESI } from '../src/platform/kanonikKok.ts';
-import { ARSIV_KOK_DIZINI, arsivKayitlari, kazanimDizini, type ArsivKaydi } from '../src/ogretmen/calismaKagidi/arsiv.ts';
+import {
+  ARSIV_KOK_DIZINI,
+  arsivKayitlari,
+  kazanimDizini,
+  type ArsivKaydi,
+} from '../src/ogretmen/calismaKagidi/arsiv.ts';
 
 export interface DizinDugumu {
   readonly skillId: string;
@@ -112,7 +117,9 @@ ${kazanimSirasi
         const d = dugumBul.get(id);
         const ks = buKazanim.filter((x) => x.skillId === id);
         const baglantilar = ks
-          .map((x, i) => `<li><a href="${path.posix.basename(x.yol)}">Kâğıt ${i + 1} (PDF)</a> · ${k(x.kagitKodu)}</li>`)
+          .map(
+            (x, i) => `<li><a href="${path.posix.basename(x.yol)}">Kâğıt ${i + 1} (PDF)</a> · ${k(x.kagitKodu)}</li>`,
+          )
           .join('\n');
         return `<section class="kart">
 <h2>${k(d?.childLabel ?? id)}</h2>

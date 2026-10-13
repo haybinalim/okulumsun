@@ -61,3 +61,10 @@ CSP raporlama uç noktası kurulmaz (veri toplamama ilkesi).
 
 Çıktı göreli yollarla (`base: './'`) çalışır; okul sunucusu alt dizini ve USB/`file://` açılışı Adım 49'da kanıtlanır.
 `file://` açılışında HTTP başlığı olmadığı için CSP uygulanmaz; ağ yasağı orada uygulama kodunun kendisine dayanır.
+
+## Çalışma kâğıdı arşivi (plan v2 Adım 48, KG-70)
+
+`public/kagitlar/` (165 PDF + dizin sayfaları) ve `public/sitemap.xml` commitlenir; Vercel derlemesi yalnız kopyalar.
+Beceri, şablon, kâğıt yerleşimi ya da `tr.json` metni değişince: `npm run build && npm run arsiv` → değişen PDF'leri
+commitleyin. `tests/unit/arsivDizini.spec.ts` dizin/sitemap bayatlığını ve eksik PDF'yi CI'da yakalar (PDF içeriğinin
+bayatlığını yakalamaz; içerik değişikliği PR'larında arşivi yeniden üretmek gözden geçirme maddesidir).

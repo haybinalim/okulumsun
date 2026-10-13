@@ -50,7 +50,10 @@ describe('dizin içeriği', () => {
     }
   });
   it('pdfTarihleriniSabitle yalnız tarih alanlarını değiştirir', () => {
-    const girdi = Buffer.from('%PDF-1.4 /CreationDate (D:20261013101010+00\'00\') /ModDate (D:20261013101010Z) /Title (x)', 'latin1');
+    const girdi = Buffer.from(
+      "%PDF-1.4 /CreationDate (D:20261013101010+00'00') /ModDate (D:20261013101010Z) /Title (x)",
+      'latin1',
+    );
     const cikti = pdfTarihleriniSabitle(girdi).toString('latin1');
     expect(cikti).toBe('%PDF-1.4 /CreationDate (D:20260101000000Z) /ModDate (D:20260101000000Z) /Title (x)');
   });
