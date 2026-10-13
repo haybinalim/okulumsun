@@ -51,6 +51,7 @@ export type Ekran =
   | 'dersSonuOzeti'
   | 'evdeCalis'
   | 'veliIpucuKarti'
+  | 'kesifMasasi'
   | 'eveGonder';
 
 /** Sınıf Turu durumunun yaşadığı ekranlar; başka ekrana geçişte durum `null` olur. */

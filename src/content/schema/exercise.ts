@@ -22,6 +22,8 @@
  *   · testlerde jeneratör çıktısını bağımsız bir kanaldan denetlerken.
  */
 
+// CSP: jitless ayarı bu şemadan ÖNCE çalışmalı (paylaşılan parçada da; KG-64).
+import './zodAyari';
 import { z } from 'zod';
 import { AUDIO_MANIFEST } from '../../audio/audioManifest.generated';
 import type { SpeechKey } from '../../audio/audioManifest.generated';

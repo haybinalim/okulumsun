@@ -17,6 +17,8 @@
  * program sürümü değişse bile öğrenme haritası ve ilerleme kayıtları ayakta kalır.
  */
 
+// CSP: jitless ayarı bu şemadan ÖNCE çalışmalı (paylaşılan parçada da; KG-64).
+import './zodAyari';
 import { z } from 'zod';
 import { TUM_HATA_ETIKETLERI, type HataEtiketi } from '../../exercises/distractors';
 import type { SkillId } from '../../exercises/types';

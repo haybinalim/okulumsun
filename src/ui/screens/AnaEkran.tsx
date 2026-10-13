@@ -201,10 +201,11 @@ export function AnaEkran() {
           transition={{ duration: reducedMotion ? 0 : MOTION.screen / 1000 }}
           style={{
             display: 'grid',
-            gridTemplateColumns: `repeat(4, minmax(${mod === 'tahta' ? 150 : 120}px, 1fr))`,
+            // Tahtada 5 sütun: 7 tema + Sınıf Turu + Keşif Masası iki sıraya sığar (üst %35'e taşmaz).
+            gridTemplateColumns: `repeat(${mod === 'tahta' ? 5 : 4}, minmax(${mod === 'tahta' ? 150 : 120}px, 1fr))`,
             gap: 'var(--size-gap-tight)',
-            width: 'min(100%, 960px)',
-            maxWidth: mod === 'tahta' ? 960 : 600,
+            width: mod === 'tahta' ? 'min(100%, 1120px)' : 'min(100%, 960px)',
+            maxWidth: mod === 'tahta' ? 1120 : 600,
           }}
         >
           {TEMALAR.map((tema, i) => {
@@ -243,6 +244,27 @@ export function AnaEkran() {
               <span style={{ fontSize: 16, textAlign: 'center', fontWeight: 700 }}>Sınıf Turu</span>
             </BigButton>
           )}
+          {/* Keşif Masası (Adım 44): tahtada öğretmenin anlatım aracı. */}
+          {mod === 'tahta' && (
+            <BigButton
+              label="Keşif Masası"
+              size="tapMin"
+              variant="solid"
+              onPress={() => ekranGit('kesifMasasi')}
+              style={{
+                width: 180,
+                height: 180,
+                background: COLOR.surface,
+                color: COLOR.ink,
+                border: `4px dashed ${COLOR.border}`,
+                flexDirection: 'column',
+                gap: 4,
+              }}
+            >
+              <KesifIkon boyut={70} />
+              <span style={{ fontSize: 16, textAlign: 'center', fontWeight: 700 }}>Keşif Masası</span>
+            </BigButton>
+          )}
           {mod === 'tahta' && (
             <BigButton
               label="Dersi bitir"
@@ -258,25 +280,36 @@ export function AnaEkran() {
         </motion.div>
       </section>
 
-      {/* Alt: Başla butonu (kişisel modda) */}
+      {/* Alt (kişisel mod): Başla + Keşif Masası (tema kartlarından ayrı; Adım 44). Tahtada giriş kart ızgarasında. */}
       {mod === 'kisisel' && (
-        <footer
-          style={{
-            flex: '0 0 auto',
-            display: 'flex',
-            justifyContent: 'center',
-            paddingBottom: SIZE.edgeBottom,
-          }}
+      <footer
+        style={{
+          flex: '0 0 auto',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 'var(--size-gap)',
+          paddingBottom: SIZE.edgeBottom,
+        }}
+      >
+        <BigButton
+          label="Başla"
+          size="primary"
+          variant="accent"
+          onPress={handleBasla}
         >
-          <BigButton
-            label="Başla"
-            size="primary"
-            variant="accent"
-            onPress={handleBasla}
-          >
-            Başla
-          </BigButton>
-        </footer>
+          Başla
+        </BigButton>
+        <BigButton
+          label="Keşif Masası"
+          size="control"
+          variant="solid"
+          onPress={() => ekranGit('kesifMasasi')}
+          style={{ padding: '0 calc(16px * var(--scale))', gap: 8, border: `3px dashed ${COLOR.border}` }}
+        >
+          <KesifIkon boyut={40} />
+        </BigButton>
+      </footer>
       )}
     </main>
   );
@@ -337,6 +370,18 @@ function TemaKart({
           )}
         </BigButton>
     </motion.div>
+  );
+}
+
+/** Keşif Masası ikonu: onluk çerçeve parçası (3 dolu göz). */
+function KesifIkon({ boyut }: { boyut: number }) {
+  return (
+    <svg viewBox="0 0 60 28" width={boyut} height={(boyut * 28) / 60} aria-hidden="true">
+      <rect x="1.5" y="1.5" width="57" height="25" rx="3" fill="none" stroke={COLOR.ink} strokeWidth="3" />
+      {[0, 1, 2, 3, 4].map((i) => (
+        <circle key={i} cx={8 + i * 11} cy="14" r="4" fill={i < 3 ? 'var(--color-accent)' : COLOR.border} />
+      ))}
+    </svg>
   );
 }
 

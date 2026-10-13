@@ -4,6 +4,8 @@
  * Okulların yıllık planı MEB sırasından sapabilir; öğretmen görüşüyle bir haftanın kazanımları
  * elle düzeltilir. Her düzeltme gerekçe taşır. Kişisel veri YOK.
  */
+// CSP: jitless ayarı bu şemadan ÖNCE çalışmalı (paylaşılan parçada da; KG-64).
+import './zodAyari';
 import { z } from 'zod';
 import type { KazanimKodu } from '../../exercises/types';
 
