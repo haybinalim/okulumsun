@@ -3,9 +3,9 @@
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
-> Tarih: 13 Ekim 2026 (Adım 55 — Kapsayıcılık ayarları)
+> Tarih: 13 Ekim 2026 (Adım 56 — Gömülü mod)
 
-<!-- durum:birim_test=535 durum:birim_dosya=73 durum:e2e_dosya=26 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
+<!-- durum:birim_test=542 durum:birim_dosya=74 durum:e2e_dosya=27 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
 
 ## Yönetici özeti
 
@@ -71,6 +71,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 48 | Çalışma kâğıdı arşivi: her kazanım için hazır, cevap anahtarlı A4 PDF kâğıtlar (55 etkinlik × 3 kâğıt = 165 PDF) ve arama motorlarının bulabileceği statik dizin sayfaları (`/kagitlar/`, sitemap). Kâğıtlar uygulamadaki çalışma kâğıdıyla aynı üretimdir, para şematiktir; uygulamanın çevrimdışı önbelleğine girmez | ✅ (arama motoru kaydı yayından sonra kendiliğinden) |
 | 49 | Okul ağı ve yerel dağıtım: okul sunucusuna ya da alt klasöre kopyalanabilen `dist-okul.zip` paketi (kurulum notu, lisans, sürüm, dosya özetleri), alt klasörden tam akış e2e ile kanıtlı; filtre listesine eklenecek tek alan adı belgeli. Dosyaya çift tıklayarak açılış tarayıcı güvenliği nedeniyle çalışmaz, ekranda yönerge çıkar | ✅ (okul/kurum dağıtımı için yazılı izin metni kullanıcıda; Release eki o zaman) |
 | 55 | Kapsayıcılık ayarları: yetişkin/öğretmen alanında altı ayar — yavaş tempo, talimat tekrarı (8 sn dokunulmazsa soru bir kez yeniden okunur), renk körlüğü dostu renkler, sol el (Onayla solda), büyük hedef (küçük düğmeler büyür), hareketi azalt. Hepsi varsayılan kapalı, bu açılışta geçerli; tahtada ayarlar adrese eklenir, öğretmen yer imiyle ertesi gün aynı ayarlarla açar. Veli "Ses hızı" ayarı artık gerçekten uygulanıyor | ✅ (özel eğitim öğretmeniyle görev analizi kullanıcıda; protokol hazır) |
+| 56 | Gömülü mod: uygulama EBA veya okul portalının içinde (iframe) `?gomulu=eba` ile açılınca sadeleşir — başka adrese bağlantı üreten "Eve gönder" gizlenir, tam ekran yalnız portal izin veriyorsa çıkar; portal sayfasıyla hiçbir bilgi alışverişi yapılmaz. Başka kökenden gömme EBA'nın alan adları teyit edilince açılacak. Başvuru dosyaları sırada | ⏳ (başvurular ve EBA alan adı teyidi kullanıcıda) |
 
 Adım 31–33 ve 35–58: depo dışındaki geliştirme planı v2.
 

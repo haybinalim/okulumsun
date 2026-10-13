@@ -46,7 +46,10 @@ async function portaliAc(page: Page, baseURL: string, sorgu: string): Promise<Fr
   return frame!;
 }
 
-test('gömülü (EBA): iframe içinde tahta akışı, Eve gönder yok, aynı köken, postMessage yok', async ({ page, baseURL }) => {
+test('gömülü (EBA): iframe içinde tahta akışı, Eve gönder yok, aynı köken, postMessage yok', async ({
+  page,
+  baseURL,
+}) => {
   test.setTimeout(90_000);
   await postMessageCasusu(page);
   const ag = agKaydet(page);

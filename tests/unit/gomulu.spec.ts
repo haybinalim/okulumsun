@@ -23,12 +23,22 @@ describe('gomuluBaglam', () => {
 
 describe('gomuluKisitlari', () => {
   it('gömülü değilken her şey açık', () => {
-    expect(gomuluKisitlari('yok', false)).toEqual({ eveGonder: true, tamEkran: true, sorunBildir: true, kaynaklar: true });
+    expect(gomuluKisitlari('yok', false)).toEqual({
+      eveGonder: true,
+      tamEkran: true,
+      sorunBildir: true,
+      kaynaklar: true,
+    });
   });
 
   it('gömülüyken Eve gönder kapalı; tam ekran iframe iznine bağlı; Sorun bildir ve Kaynaklar açık', () => {
     for (const b of ['eba', 'okul-portali'] as const) {
-      expect(gomuluKisitlari(b, false)).toEqual({ eveGonder: false, tamEkran: false, sorunBildir: true, kaynaklar: true });
+      expect(gomuluKisitlari(b, false)).toEqual({
+        eveGonder: false,
+        tamEkran: false,
+        sorunBildir: true,
+        kaynaklar: true,
+      });
       expect(gomuluKisitlari(b, true).tamEkran).toBe(true);
     }
   });
