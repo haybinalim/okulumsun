@@ -26,21 +26,26 @@ test('tahta: Keşif Masası üç araç, geometri ve sınırlar', async ({ page, 
   await page.getByRole('button', { name: 'Göz 3, boş' }).click();
   await page.getByRole('button', { name: 'Göz 12, boş' }).click();
   await expect.poll(() => sayi(page)).toBe('2');
+  await page.waitForTimeout(260); // aynı düğmeye ardışık dokunuş soğuması (250 ms)
   await page.getByRole('button', { name: 'Göz 3, dolu' }).click();
   await expect.poll(() => sayi(page)).toBe('1');
   // Azaltılmış hareket: sayaç anında tam görünür (ölçek/saydamlık animasyonu yok).
   const stil = await page
     .getByRole('button', { name: 'Göz 12, dolu' })
-    .locator('span[aria-hidden="true"]')
-    .last()
+    .locator('span:has(> svg)')
     .evaluate((el) => ({ op: getComputedStyle(el).opacity, tr: getComputedStyle(el).transform }));
   expect(stil.op).toBe('1');
   expect(['none', 'matrix(1, 0, 0, 1, 0, 0)']).toContain(stil.tr);
 
-  // Nesneler: +1 ile 25 kez → 20'de durur; nesneye dokunmak bir çıkarır.
+  // Nesneler: +1 ile 22 kez → 20'de durur; nesneye dokunmak bir çıkarır.
   await page.getByRole('button', { name: 'Nesneler' }).click();
   await expect.poll(() => sayi(page)).toBe('0');
-  for (let i = 0; i < 25; i++) await page.getByRole('button', { name: 'Bir ekle' }).click({ delay: 0 });
+  // Aynı düğmeye ardışık dokunuşlar arasında 250 ms soğuma var (BigButton); her dokunuşu bekle.
+  for (let i = 1; i <= 22; i++) {
+    await page.getByRole('button', { name: 'Bir ekle' }).click();
+    await expect.poll(() => sayi(page)).toBe(String(Math.min(i, 20)));
+    await page.waitForTimeout(260);
+  }
   await expect.poll(() => sayi(page)).toBe('20');
   await geometriTemiz(page, 'Keşif Masası — 20 nesne');
   await page.getByRole('button', { name: 'Nesne 5', exact: true }).click();
@@ -50,6 +55,8 @@ test('tahta: Keşif Masası üç araç, geometri ve sınırlar', async ({ page, 
   await page.getByRole('button', { name: 'Sayı doğrusu' }).click();
   await geometriTemiz(page, 'Keşif Masası — sayı doğrusu');
   await page.getByRole('button', { name: 'Sayı 10', exact: true }).click();
+  await expect.poll(() => sayi(page)).toBe('10');
+  await page.waitForTimeout(260);
   await page.getByRole('button', { name: 'Bir ekle' }).click();
   await expect.poll(() => sayi(page)).toBe('11');
   await expect(page.getByRole('button', { name: 'Sayı 20', exact: true })).toBeVisible();

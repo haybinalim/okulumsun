@@ -9,6 +9,9 @@ test('tablet: kişisel modda Keşif Masası', async ({ page }, testInfo) => {
   await page.getByRole('button', { name: 'Keşif Masası' }).click();
   for (const arac of ['Onluk çerçeve', 'Nesneler', 'Sayı doğrusu']) {
     await page.getByRole('button', { name: arac, exact: true }).click();
+    await expect(page.getByRole('main', { name: 'Keşif Masası' })).toHaveAttribute('data-kesif-sayi', '0');
+    // Aynı düğmeye ardışık dokunuşlar arasında 250 ms soğuma var (BigButton); test bunu bekler.
+    await page.waitForTimeout(300);
     await page.getByRole('button', { name: 'Bir ekle' }).click();
     await expect(page.getByRole('main', { name: 'Keşif Masası' })).toHaveAttribute('data-kesif-sayi', '1');
     await geometriTemiz(page, `Keşif Masası — ${arac} (tablet)`);
