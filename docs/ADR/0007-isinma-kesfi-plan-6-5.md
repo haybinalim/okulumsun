@@ -1,6 +1,6 @@
 # ADR-0007: Isınma Keşfi ve PLAN §6.5
 
-- **Durum:** Taslak
+- **Durum:** Önerildi
 - **Tarih:** 2026-10-12
 - **Karar sahibi:** Geliştirici + kullanıcı · **Kullanıcı onayı:** Gerekecek
 - **İlgili:** PLAN §6.5, Adım 47
@@ -17,7 +17,12 @@ PLAN §6.5 seviye tespitini okul ayına göre tema açma ile yapıyor. Kısa bir
 
 ## Karar
 
-Henüz karar verilmedi. Bu kayıt seçenekleri ve kabul koşullarını sabitler; bağlı adım başlamadan önce `Önerildi` durumuna getirilir. Eğilim: 2.
+**Önerilen (2026-10-13, KG-68): Seçenek 2.** Isınma Keşfi varsayılan **kapalı**dır; yalnız kişisel modda veli açar
+(yetişkin alanında "Oturuma kısa ısınmayla başla", yalnız bellekte). En çok 8 madde; en kolay işaretten başlar, doğruda
+2 işaret yukarı, yanlışta 1 aşağı iner; ardışık 2 yanlışta biter (ilk deneyim başarısızlıkla uzamaz). Isınmada boncuk yolu
+gösterilmez. Sonuç yalnız o oturumun başlangıç noktasını belirler; ADR-0002 B'de bile saklanmaz. PLAN §6.5'e "Isınma Keşfi
+(isteğe bağlı)" alt başlığı eklenir: "ilk oturumda kalibrasyon testi yapılmaz" kuralı varsayılan davranış olarak kalır.
+Kullanıcı onayı gelene kadar kod davranışı değişmez; Adım 47 beklemede.
 
 ## Sonuçlar
 
