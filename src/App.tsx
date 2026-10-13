@@ -30,6 +30,8 @@ import { SinifTuruEkrani } from './ui/screens/SinifTuruEkrani';
 import { SinifTuruSonu } from './ui/screens/SinifTuruSonu';
 // Çalışma kâğıdı (Adım 35) ana pakete girmez: yazdırma ekranı açılınca yüklenir.
 const CalismaKagidi = lazy(() => import('./ui/screens/CalismaKagidi'));
+// Haftalık plan (Adım 37) ve plan verisi (kazanimlar.json) ana pakete girmez.
+const HaftalikPlan = lazy(() => import('./ui/screens/HaftalikPlan'));
 import { setSorusu } from './ogretmen/gunlukSet';
 import { setSorusuUret, tahtaSorusuUret } from './ogretmen/tahtaSorusu';
 
@@ -164,6 +166,19 @@ export default function App() {
         <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <Suspense fallback={<OturumYukleniyor />}>
             <CalismaKagidi />
+          </Suspense>
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Haftalık MEB planı (Adım 37)
+  if (ekran === 'haftalikPlan') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <Suspense fallback={<OturumYukleniyor />}>
+            <HaftalikPlan />
           </Suspense>
         </div>
       </BoardHarness>

@@ -80,7 +80,7 @@ test('tahta: dörtten fazla etkinlik seçilemez', async ({ page }) => {
   for (const sayi of sirali) await page.getByRole('button', { name: `${sayi}, sıradaki sayı olarak seç` }).click();
   await page.getByRole('button', { name: 'Bugünün setini hazırla' }).click();
   await page.getByRole('button', { name: 'Sayılar', exact: true }).click();
-  const kartlar = page.locator('section[aria-label="Etkinlikler"] button');
+  const kartlar = page.locator('section[aria-label="Etkinlikler"] button:not([aria-label="Bu haftanın önerisini seç"])');
   const adet = await kartlar.count();
   expect(adet).toBeGreaterThan(4);
   for (let i = 0; i < 5; i++) await kartlar.nth(i).click();
