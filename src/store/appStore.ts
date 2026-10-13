@@ -35,7 +35,8 @@ export type Ekran =
   | 'veliPaneli'
   | 'kaynaklar'
   | 'sorunBildir'
-  | 'setHazirla';
+  | 'setHazirla'
+  | 'calismaKagidi';
 
 /** Kullanım modu — plan §3.3. */
 export type Mod = 'tahta' | 'kisisel';
@@ -118,6 +119,8 @@ interface AppStore {
   bugunTamamlanan: number;
   /** Bugünün seti (Adım 34): yalnız bellekte, yenilemede kaybolur; kalıcılık için set kodu yer imine eklenir. */
   aktifSet: GunlukSet | null;
+  /** Çalışma kâğıdı için hazırlanan set (Adım 35): yalnız bellekte; kâğıt saklanmaz, koddan yeniden üretilir. */
+  kagitSeti: GunlukSet | null;
 
   // --- Actions
   ekranGit: (ekran: Ekran) => void;
@@ -133,6 +136,7 @@ interface AppStore {
   oturumuTamamla: () => void;
   setBaslat: (set: GunlukSet) => void;
   setBitir: () => void;
+  kagitIcinSet: (set: GunlukSet) => void;
   sifirla: () => void;
   // --- Kalıcılık (Adım 9)
   profildenYukle: (profil: Partial<AppStore>) => void;
@@ -153,6 +157,7 @@ const baslangicDurumu = {
   oturumTamamlandi: false,
   bugunTamamlanan: 0,
   aktifSet: null as GunlukSet | null,
+  kagitSeti: null as GunlukSet | null,
 };
 
 export const useAppStore = create<AppStore>((set) => ({
@@ -219,6 +224,9 @@ export const useAppStore = create<AppStore>((set) => ({
     }),
 
   setBitir: () => set((s) => ({ aktifSet: null, ekran: 'anaEkran', oncekiEkran: s.ekran })),
+
+  kagitIcinSet: (kagitSeti) =>
+    set((s) => ({ kagitSeti, ekran: 'calismaKagidi', oncekiEkran: s.ekran })),
 
   sifirla: () => set({ ...baslangicDurumu }),
 

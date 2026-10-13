@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { lazy, Suspense, useState, useMemo } from 'react';
 import { BoardHarness } from './dev/BoardHarness';
 import { AudioUnlock } from './ui/screens/AudioUnlock';
 import { ExerciseScreen } from './ui/screens/ExerciseScreen';
@@ -25,6 +25,8 @@ import { useKisiselOturum } from './ui/useKisiselOturum';
 import { REGISTRY } from './exercises/registry';
 import type { Exercise } from './exercises/types';
 import { SetHazirla } from './ui/screens/SetHazirla';
+// Çalışma kâğıdı (Adım 35) ana pakete girmez: yazdırma ekranı açılınca yüklenir.
+const CalismaKagidi = lazy(() => import('./ui/screens/CalismaKagidi'));
 import { setSorusu } from './ogretmen/gunlukSet';
 import { setSorusuUret, tahtaSorusuUret } from './ogretmen/tahtaSorusu';
 
@@ -136,6 +138,19 @@ export default function App() {
       <BoardHarness profile={profile}>
         <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <SetHazirla />
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Çalışma kâğıdı (Adım 35)
+  if (ekran === 'calismaKagidi') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <Suspense fallback={<OturumYukleniyor />}>
+            <CalismaKagidi />
+          </Suspense>
         </div>
       </BoardHarness>
     );

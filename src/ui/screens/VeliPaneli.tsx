@@ -70,6 +70,17 @@ export function VeliPaneli() {
         </Bolum>
       )}
 
+      {!tahta && (
+        <Bolum baslik="Çalışma kâğıdı">
+          <p style={{ ...bilgiMetniStili, marginTop: 0 }}>
+            En çok 4 etkinlik seçin; bunlardan A4 çalışma kâğıdı ve cevap anahtarı hazırlanır. Hiçbir şey kaydedilmez.
+          </p>
+          <BigButton label="Çalışma kâğıdı hazırla" size="control" variant="accent" onPress={() => ekranGit('setHazirla')} style={{ padding: '0 24px', fontSize: 'var(--text-adult)' }}>
+            Çalışma kâğıdı hazırla
+          </BigButton>
+        </Bolum>
+      )}
+
       <Bolum baslik="Bu sürümde kayıt tutulmaz">
         <div role="status" aria-live="polite" style={mahremiyetKutusuStili}>
           <strong style={{ color: COLOR.ink }}>Henüz öğrenci geçmişi gösterilmiyor.</strong>
