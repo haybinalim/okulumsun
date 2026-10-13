@@ -14,6 +14,7 @@
 
 import { create } from 'zustand';
 import { ACCENTS, type Accent } from '../design/tokens';
+import { VARSAYILAN_KAPSAYICILIK, type KapsayicilikAyarlari } from '../design/kapsayicilik';
 import { OGRENCI_VERISI_SAKLANIR_MI } from '../persistence/veriSaklamaPolitikasi';
 import type { GunlukSet } from '../ogretmen/gunlukSet';
 import type { TemaTuruPlani } from '../ogretmen/temaTuru';
@@ -128,6 +129,8 @@ interface AppStore {
   readingLevel: ReadingLevel;
   okulAyiIndex: number; // 0–9 (0=Eylül)
   sesHizi: number; // 1.0 normal
+  /** Kapsayıcılık ayarları (Adım 55): yalnız bellekte; tahtada `#ayar=` hash'i yer imiyle taşır. */
+  kapsayicilik: KapsayicilikAyarlari;
 
   // --- Veli
   veliGecildi: boolean;
@@ -161,6 +164,8 @@ interface AppStore {
   readingLevelAyarla: (level: ReadingLevel) => void;
   okulAyiAyarla: (index: number) => void;
   sesHiziAyarla: (hiz: number) => void;
+  /** Bir veya birkaç kapsayıcılık ayarını değiştirir; diğerleri aynen kalır. */
+  kapsayicilikAyarla: (degisiklik: Partial<KapsayicilikAyarlari>) => void;
   veliGec: (gecildi: boolean) => void;
   temaSec: (temaNo: number) => void;
   dugumSec: (dugumId: string) => void;
@@ -203,6 +208,7 @@ const baslangicDurumu = {
   readingLevel: 0 as ReadingLevel,
   okulAyiIndex: 0, // Eylül varsayımı
   sesHizi: 1.0,
+  kapsayicilik: VARSAYILAN_KAPSAYICILIK as KapsayicilikAyarlari,
   veliGecildi: false,
   secilenTemaNo: null as number | null,
   secilenDugumId: null as string | null,
@@ -246,6 +252,7 @@ export const useAppStore = create<AppStore>((set) => ({
   readingLevelAyarla: (level) => set({ readingLevel: level }),
   okulAyiAyarla: (index) => set({ okulAyiIndex: Math.max(0, Math.min(index, 9)) }),
   sesHiziAyarla: (hiz) => set({ sesHizi: Math.max(0.5, Math.min(hiz, 1.5)) }),
+  kapsayicilikAyarla: (degisiklik) => set((s) => ({ kapsayicilik: { ...s.kapsayicilik, ...degisiklik } })),
 
   veliGec: (gecildi) => set({ veliGecildi: gecildi }),
 
