@@ -34,3 +34,22 @@ test('öğretmen sayfası: aynı köken, çerez yok, CSP temiz, uygulamaya bağl
   await page.getByRole('link', { name: 'Uygulamayı aç' }).click();
   await expect(page.getByRole('button', { name: 'Başla' })).toBeVisible();
 });
+
+/** Plan v2 Adım 39 aşama 1 (KG-53): /gizlilik/ ve KVKK taslağı aynı koşullarla açılır. */
+test('gizlilik sayfası ve KVKK taslağı: aynı köken, çerez yok, CSP metni başlıkla aynı', async ({ page, context }) => {
+  const koken = new URL(ONIZLEME_URL).origin;
+  const istekler: string[] = [];
+  page.on('request', (r) => istekler.push(r.url()));
+
+  const yanit = await page.goto(new URL('gizlilik/', ONIZLEME_URL).href);
+  expect(yanit!.status()).toBe(200);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Gizlilik: ne toplamıyoruz, nasıl doğrularsınız');
+  // Sayfadaki CSP metni, sunucunun gönderdiği başlıkla aynı (yayın doğrulamasında da geçerli).
+  await expect(page.getByLabel('Content-Security-Policy')).toHaveText(yanit!.headers()['content-security-policy']);
+
+  await page.getByRole('link', { name: 'KVKK beyanı' }).click();
+  await expect(page.getByText('TASLAK — hukuki görüş alınmadı', { exact: false })).toBeVisible();
+
+  expect(istekler.filter((u) => !u.startsWith('data:') && new URL(u).origin !== koken)).toEqual([]);
+  expect(await context.cookies()).toEqual([]);
+});

@@ -148,6 +148,7 @@ ${adimlar.map((a) => `<li>${k(a)}</li>`).join('\n')}
 <div class="veri">
 <p><b>Çocuğun adı, sesi, fotoğrafı, cevapları ve ilerlemesi hiçbir yere gönderilmez ve saklanmaz.</b> Hesap, çerez, reklam ve izleyici yok. Tahtada yalnız bir ayar kalır: ekran boyutu tercihi.</p>
 <p>Çalışma anında yapay zekâ ve veri yok. EBA'nın yerine değil, yanında açılan bir ders aracıdır.</p>
+<p><a href="../gizlilik/">Gizlilik ayrıntıları ve kendiniz nasıl doğrularsınız</a></p>
 </div>
 </section>
 

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Okulumsun — gizlilik</title>
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:'Andika';src:url('../fonts/Andika-Regular-latin.woff2') format('woff2');font-weight:400;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+2000-206F,U+20BA}
+@font-face{font-family:'Andika';src:url('../fonts/Andika-Regular-latin-ext.woff2') format('woff2');font-weight:400;font-display:swap;unicode-range:U+0100-02BA,U+1E00-1E9F,U+20A0-20AB,U+20AD-20C0}
+@font-face{font-family:'Andika';src:url('../fonts/Andika-Bold-latin.woff2') format('woff2');font-weight:700;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+2000-206F,U+20BA}
+@font-face{font-family:'Andika';src:url('../fonts/Andika-Bold-latin-ext.woff2') format('woff2');font-weight:700;font-display:swap;unicode-range:U+0100-02BA,U+1E00-1E9F,U+20A0-20AB,U+20AD-20C0}
+:root{--bg:#FFFDF8;--yuzey:#FFFFFF;--murekkep:#2B2B2B;--murekkep-acik:#6B6B6B;--kenar:#E2DED4;--dogru:#16A34A;--dogru-acik:#DCFCE7;--uyari:#F59E0B;--uyari-acik:#FEF3C7;--odak:#1D4ED8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--murekkep);font-family:'Andika',system-ui,sans-serif;font-size:19px;line-height:1.55}
+main{max-width:960px;margin:0 auto;padding:32px 20px 64px}
+h1{font-size:2rem;line-height:1.2;margin:.2em 0 .3em}
+h2{font-size:1.4rem;margin:2em 0 .6em}
+.kutu{background:var(--dogru-acik);border:2px solid var(--dogru);border-radius:16px;padding:18px}
+.taslak{background:var(--uyari-acik);border:2px solid var(--uyari);border-radius:16px;padding:12px 18px;font-weight:700}
+.alt{color:var(--murekkep-acik)}
+table{border-collapse:collapse;width:100%;background:var(--yuzey)}
+th,td{border:2px solid var(--kenar);padding:8px 10px;text-align:left;vertical-align:top}
+code,pre{font-family:ui-monospace,monospace;font-size:.85rem}
+pre{white-space:pre-wrap;word-break:break-word;background:var(--yuzey);border:2px solid var(--kenar);border-radius:12px;padding:12px}
+a:focus-visible{outline:4px solid var(--odak);outline-offset:3px}
+footer{margin-top:3em;color:var(--murekkep-acik);font-size:.9rem}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>Gizlilik: ne toplamıyoruz, nasıl doğrularsınız</h1>
+<div class="kutu"><p><b>Bu geliştirme sürümünde öğrenci veya veli verisi saklanmaz; sayfa yenilendiğinde oturum bilgileri silinir.</b></p>
+<p>Hesap, çerez, reklam, analitik ve izleyici yok. Çalışırken yapay zekâ kullanılmaz.</p></div>
+</header>
+
+<section aria-labelledby="toplanmaz">
+<h2 id="toplanmaz">Ne toplanmaz</h2>
+<ul>
+<li>ad, soyad</li>
+<li>fotoğraf</li>
+<li>ses kaydı</li>
+<li>konum</li>
+<li>cevaplar</li>
+<li>ilerleme ve oturum geçmişi</li>
+<li>hesap, e-posta</li>
+</ul>
+<p>Bu liste iki mod için de geçerlidir. <b>Tahta modu</b>: her koşulda sıfır öğrenci verisi; tahtada kim oynadığı bilinmez. <b>Kişisel mod</b>: avatar ve renk seçimi yalnız açık oturumda bellekte kalır, sayfa yenilenince silinir.</p>
+</section>
+
+<section aria-labelledby="cihaz">
+<h2 id="cihaz">Cihazda ne kalır</h2>
+<table>
+<thead><tr><th scope="col">Anahtar</th><th scope="col">Yer</th><th scope="col">Neden</th></tr></thead>
+<tbody>
+<tr><td><code>okulumsun.deviceOverride</code></td><td>localStorage</td><td>cihaz profili ayarı (PLAN §3.1)</td></tr>
+</tbody>
+</table>
+<p class="alt">Ayrıca tarayıcı, uygulamanın kendi dosyalarını (kod, ses, font, görsel) internetsiz çalışabilmek için önbelleğe alır; bunlar kişisel veri değildir ve herkeste aynıdır. IndexedDB'de boş bir <code>okulumsun</code> veritabanı görünebilir: önceki geliştirme sürümlerinden kalmış kayıtları silmek için açılır, içinde kayıt yoktur.</p>
+</section>
+
+<section aria-labelledby="ag">
+<h2 id="ag">Ağ</h2>
+<p>Uygulama yalnız kendi adresinden dosya indirir (kod, ses, font, görsel). Başka bir adrese istek gitmez; hiçbir istek veri göndermez. Tarayıcı bunu aşağıdaki güvenlik politikasıyla da zorlar.</p>
+<pre aria-label="Content-Security-Policy">default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'none'; object-src 'none'</pre>
+</section>
+
+<section aria-labelledby="dogrula">
+<h2 id="dogrula">Kendiniz doğrulayın (3 adım)</h2>
+<ol>
+<li><b>Ağ:</b> Tarayıcıda uygulamayı açın, geliştirici araçlarını açın (F12 ya da sağ tık → İncele), <i>Ağ</i> sekmesinde bir oturum boyunca başka bir alan adına istek gitmediğini görün.</li>
+<li><b>Depolama:</b> <i>Uygulama</i> (Application) → <i>Depolama</i> bölümünde yerel depoda yalnız yukarıdaki tabloda yazan anahtarın olduğunu, çerez olmadığını görün.</li>
+<li><b>Güvenlik politikası:</b> <i>Ağ</i> sekmesinde ilk belgeye tıklayın; <i>Yanıt başlıkları</i> içinde <code>Content-Security-Policy</code> satırının yukarıdakiyle aynı olduğunu görün.</li>
+</ol>
+<p class="alt">Aynı denetimler her değişiklikte otomatik testlerle de yapılır (tam oturum boyunca ağ istekleri ve depolama).</p>
+</section>
+
+<section aria-labelledby="kvkk">
+<h2 id="kvkk">KVKK</h2>
+<p><a href="kvkk.html">KVKK beyanı</a> (taslak — hukuki görüş alınmadı).</p>
+</section>
+
+<footer>
+<p>Okulumsun v0.1.0. Bu sayfa bir dosyadır; dış kaynak yüklemez. <a href="../ogretmen/">Öğretmenler için</a> · <a href="../">Uygulamayı aç</a></p>
+</footer>
+</main>
+</body>
+</html>

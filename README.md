@@ -2,7 +2,7 @@
 
 **Okulumsun**, MEB 2024 İlkokul Matematik Dersi Öğretim Programı ile uyumlu, 1. sınıf için tasarlanmış çevrimdışı öncelikli bir matematik PWA'sıdır. React, TypeScript, Vite, Zustand, Dexie ve Piper TTS kullanır. Çocuk arayüzünde görsel ve sesli yönlendirme; yetişkin arayüzünde ise yapılandırma ve gizlilik bilgisi sunar.
 
-Öğretmenler için tanıtım sayfası: [`/ogretmen/`](public/ogretmen/index.html) (statik; `npm run ogretmen:sayfa [-- --kart]` ile kod ve ölçümlerden üretilir, elle düzenlenmez; dayanak `docs/konumlandirma.md`).
+Öğretmenler için tanıtım sayfası: [`/ogretmen/`](public/ogretmen/index.html) (statik; `npm run ogretmen:sayfa [-- --kart]` ile kod ve ölçümlerden üretilir, elle düzenlenmez; dayanak `docs/konumlandirma.md`). Gizlilik kanıt sayfası: [`/gizlilik/`](public/gizlilik/index.html) ve KVKK beyanı taslağı (`npm run gizlilik:sayfa`).
 
 ## Geliştirme sürümünde veri saklama politikası
 
