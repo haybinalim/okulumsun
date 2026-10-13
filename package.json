@@ -22,7 +22,8 @@
     "gizlilik:tara": "tsx scripts/gizlilik-tarama.ts",
     "lisans:denetle": "tsx scripts/lisans-denetimi.ts",
     "claude:taslak": "tsx scripts/claude-destek-taslak.ts",
-    "tekil-soru": "tsx scripts/tekil-soru-sayisi.ts"
+    "tekil-soru": "tsx scripts/tekil-soru-sayisi.ts",
+    "ogretmen:sayfa": "tsx scripts/ogretmen-sayfasi.ts"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.4",
