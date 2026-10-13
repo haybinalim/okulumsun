@@ -47,7 +47,8 @@ export type Ekran =
   | 'calismaKagidi'
   | 'sinifTuruKurulum'
   | 'sinifTuru'
-  | 'sinifTuruSonu';
+  | 'sinifTuruSonu'
+  | 'dersSonuOzeti';
 
 /** Sınıf Turu durumunun yaşadığı ekranlar; başka ekrana geçişte durum `null` olur. */
 export const SINIF_TURU_EKRANLARI: ReadonlySet<Ekran> = new Set<Ekran>(['sinifTuruKurulum', 'sinifTuru', 'sinifTuruSonu']);

@@ -243,6 +243,18 @@ export function AnaEkran() {
               <span style={{ fontSize: 16, textAlign: 'center', fontWeight: 700 }}>Sınıf Turu</span>
             </BigButton>
           )}
+          {mod === 'tahta' && (
+            <BigButton
+              label="Dersi bitir"
+              size="tapMin"
+              variant="ghost"
+              data-yetiskin=""
+              onPress={() => ekranGit('dersSonuOzeti')}
+              style={{ minHeight: 102, padding: '0 24px', fontSize: 'var(--text-adult)' }}
+            >
+              Dersi bitir
+            </BigButton>
+          )}
         </motion.div>
       </section>
 

@@ -90,6 +90,15 @@ export function SinifTuruSonu() {
           Yeni Sınıf Turu
         </BigButton>
         <BigButton
+          label="Dersi bitir"
+          size="tapMin"
+          variant="ghost"
+          onPress={() => useAppStore.getState().ekranGit('dersSonuOzeti')}
+          style={{ padding: '0 24px', fontSize: 'var(--text-adult)' }}
+        >
+          Dersi bitir
+        </BigButton>
+        <BigButton
           label="Ana ekran"
           size="tapMin"
           variant="accent"
