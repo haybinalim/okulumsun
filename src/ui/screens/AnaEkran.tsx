@@ -258,16 +258,18 @@ export function AnaEkran() {
         </motion.div>
       </section>
 
-      {/* Alt: Başla butonu (kişisel modda) */}
-      {mod === 'kisisel' && (
-        <footer
-          style={{
-            flex: '0 0 auto',
-            display: 'flex',
-            justifyContent: 'center',
-            paddingBottom: SIZE.edgeBottom,
-          }}
-        >
+      {/* Alt: Başla butonu (kişisel modda) + Keşif Masası (iki modda, tema kartlarından ayrı; Adım 44) */}
+      <footer
+        style={{
+          flex: '0 0 auto',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 'var(--size-gap)',
+          paddingBottom: mod === 'kisisel' ? SIZE.edgeBottom : 0,
+        }}
+      >
+        {mod === 'kisisel' && (
           <BigButton
             label="Başla"
             size="primary"
@@ -276,8 +278,18 @@ export function AnaEkran() {
           >
             Başla
           </BigButton>
-        </footer>
-      )}
+        )}
+        <BigButton
+          label="Keşif Masası"
+          size="control"
+          variant="solid"
+          onPress={() => ekranGit('kesifMasasi')}
+          style={{ padding: '0 calc(16px * var(--scale))', gap: 8, border: `3px dashed ${COLOR.border}` }}
+        >
+          <span aria-hidden="true">▦</span>
+          <span aria-hidden="true">●●</span>
+        </BigButton>
+      </footer>
     </main>
   );
 }

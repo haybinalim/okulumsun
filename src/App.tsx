@@ -40,6 +40,8 @@ const HaftalikPlan = lazy(() => import('./ui/screens/HaftalikPlan'));
 const EveGonder = lazy(() => import('./ui/screens/EveGonder'));
 // Evde 10 dakika ipucu kartı (Adım 43) ve ipucu verisi ana pakete girmez.
 const VeliIpucuKarti = lazy(() => import('./ui/screens/VeliIpucuKarti'));
+// Keşif Masası (Adım 44) ana pakete girmez.
+const KesifMasasi = lazy(() => import('./ui/screens/KesifMasasi'));
 import { setSorusu } from './ogretmen/gunlukSet';
 import { setSorusuUret, tahtaSorusuUret } from './ogretmen/tahtaSorusu';
 
@@ -112,6 +114,19 @@ export default function App() {
         <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <Suspense fallback={<OturumYukleniyor />}>
             <VeliIpucuKarti />
+          </Suspense>
+        </div>
+      </BoardHarness>
+    );
+  }
+
+  // Keşif Masası: serbest manipülatif alanı, iki modda (Adım 44)
+  if (ekran === 'kesifMasasi') {
+    return (
+      <BoardHarness profile={profile}>
+        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+          <Suspense fallback={<OturumYukleniyor />}>
+            <KesifMasasi />
           </Suspense>
         </div>
       </BoardHarness>
