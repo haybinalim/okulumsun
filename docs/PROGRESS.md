@@ -3,9 +3,9 @@
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
-> Tarih: 13 Ekim 2026 (Adım 38 — öğretmen tanıtım sayfası)
+> Tarih: 13 Ekim 2026 (Adım 39 aşama 1 — gizlilik sayfası)
 
-<!-- durum:birim_test=408 durum:birim_dosya=53 durum:e2e_dosya=16 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
+<!-- durum:birim_test=414 durum:birim_dosya=54 durum:e2e_dosya=16 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
 
 ## Yönetici özeti
 
@@ -62,6 +62,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 36 | Sınıf Turu: tahtada 2–4 takımlı iş birlikçi oyun (kurulum, sıra duyurusu, gömülü soru, tur kutlaması, kavanoz kutlaması); puan/skor/kazanan yok, durum yalnız bellekte. 10 yeni ses klibi Adım 31'e ertelendi; ADR-0008 Kabul (KG-49) | ✅ (sesler hariç) |
 | 37 | Haftalık MEB planı: 2026–27 öğretim takvimi, ders saatlerinden haftalık kazanım/etkinlik planı; öğretmen ekranı (bu hafta vurgusu, haftadan tahtada set ve çalışma kâğıdı), CSV/HTML yerel indirme (ağ yok), "Bugünün seti"nde bu haftanın önerisi | ✅ (iki öğretmenin resmî planla karşılaştırması bekliyor) |
 | 38 | Öğretmen tanıtım sayfası `/ogretmen/`: statik, betiksiz, yalnız aynı kökenden; ölçülmüş içerik hacmi (en az 66.000 farklı soru), veri almıyoruz kutusu, SSS, pilot etiketi, paylaşım kartı; sayılar kodla birlikte denetleniyor | ✅ (video, danışmanlar, iletişim adresi, öğretmen testi ve yayın kullanıcıda) |
+| 39a | Gizlilik sayfası `/gizlilik/`: ne toplanmaz, cihazda ne kalır, ağ, güvenlik politikasının tam metni ve 3 adımda kendin doğrula; KVKK beyanı taslak (hukuki görüş bekliyor). Kanıt raporu ve rozet yol haritası aşama 2'de | 🟡 (aşama 1) |
 
 Adım 31–33 ve 35–58: depo dışındaki geliştirme planı v2.
 
