@@ -1,4 +1,6 @@
-import { useState, type ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
+import { basitMaddeSonucu } from '../../progress/basitMaddeSonucu';
+import type { MaddeSonuc } from '../../progress/itemLifecycle';
 import { GameShell } from '../layout/GameShell';
 import { ChoiceCard, type ChoiceState } from '../primitives/ChoiceCard';
 import { secenekErisimEtiketi } from '../primitives/choiceErisim';
@@ -31,29 +33,32 @@ export function ExerciseScreen({
 }: {
   exercise: Exercise;
   accent: Accent;
-  onDone: (dogruMu: boolean) => void;
+  onDone: (sonuc: MaddeSonuc) => void;
 }) {
+  // Adım 36: alt ekranlar "doğru mu" bildirir; burada MaddeSonuc'a çevrilir.
+  const baslangicMs = useRef(Date.now());
+  const bitir = (dogruMu: boolean): void => onDone(basitMaddeSonucu(dogruMu, baslangicMs.current, Date.now()));
   // Adım 26: yalnız geliştirme/test derlemesinde etkin e2e kapısı (üretimde ağaçtan atılır).
-  useE2eAlistirma(exercise, onDone);
+  useE2eAlistirma(exercise, bitir);
 
   // Etkileşim türüne göre ilgili ekrana yönlendir.
   if (exercise.kind === 'TAP_COUNT') {
-    return <TapCountScreen exercise={exercise} accent={accent} onDone={onDone} />;
+    return <TapCountScreen exercise={exercise} accent={accent} onDone={bitir} />;
   }
   if (exercise.kind === 'TAP_TO_PLACE') {
-    return <TapToPlaceScreen exercise={exercise} accent={accent} onDone={onDone} />;
+    return <TapToPlaceScreen exercise={exercise} accent={accent} onDone={bitir} />;
   }
   if (exercise.kind === 'SEQUENCE_ORDER') {
-    return <SequenceOrderScreen exercise={exercise} accent={accent} onDone={onDone} />;
+    return <SequenceOrderScreen exercise={exercise} accent={accent} onDone={bitir} />;
   }
   if (exercise.kind === 'MATCH_PAIRS') {
-    return <MatchPairsScreen exercise={exercise} accent={accent} onDone={onDone} />;
+    return <MatchPairsScreen exercise={exercise} accent={accent} onDone={bitir} />;
   }
   if (exercise.kind === 'HOTSPOT_FIND') {
-    return <HotspotFindScreen exercise={exercise} accent={accent} onDone={onDone} />;
+    return <HotspotFindScreen exercise={exercise} accent={accent} onDone={bitir} />;
   }
   if (exercise.kind === 'AUDIO_TO_IMAGE') {
-    return <AudioToImageFlow exercise={exercise} accent={accent} onDone={onDone} />;
+    return <AudioToImageFlow exercise={exercise} accent={accent} onDone={bitir} />;
   }
 
   // Henüz ekranı yazılmamış etkileşim biçimleri sessizce yanlış

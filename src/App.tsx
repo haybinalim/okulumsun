@@ -244,7 +244,7 @@ export default function App() {
             key={kisiselOturum.exercise.itemId}
             exercise={kisiselOturum.exercise}
             accent={accent}
-            onDone={kisiselOturum.cevapla}
+            onDone={(sonuc) => void kisiselOturum.cevapla(sonuc.dogru)}
           />
         )
     : (
