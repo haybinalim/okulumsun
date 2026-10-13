@@ -59,7 +59,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 30 | Rakam glifleri doğrulaması: path tek kaynak (`RAKAM_GLIFLERI`), DEV glif kartı, öğretmen görüş formu (md + yazdırılabilir A4) | ⚠ kod hazır, öğretmen formları bekleniyor |
 | 34 | Bugünün seti: öğretmen ≤4 etkinlik seçip tahtada başlatır (`src/ogretmen/`, `SetHazirla`, kararlı düğüm kodları); set yalnız bellekte | ✅ |
 | 35 | Yazdırılabilir çalışma kâğıdı + cevap anahtarı (`src/ogretmen/calismaKagidi/`, `CalismaKagidi`, `KagitSayfalari`; ADR-0006 Kabul); 23 uygun · 14 uyarlanır · 2 uygun değil şablon | ✅ (iki öğretmen incelemesi ve elle siyah-beyaz baskı bekliyor) |
-| 36 | Sınıf Turu: tahtada 2–4 takımlı iş birlikçi oyun (kurulum, sıra duyurusu, gömülü soru, tur kutlaması, kavanoz kutlaması); puan/skor/kazanan yok, durum yalnız bellekte. 10 yeni ses klibi Adım 31'e ertelendi; ADR-0008 `Kabul` kullanıcı onayı bekliyor | ✅ (sesler hariç) |
+| 36 | Sınıf Turu: tahtada 2–4 takımlı iş birlikçi oyun (kurulum, sıra duyurusu, gömülü soru, tur kutlaması, kavanoz kutlaması); puan/skor/kazanan yok, durum yalnız bellekte. 10 yeni ses klibi Adım 31'e ertelendi; ADR-0008 Kabul (KG-49) | ✅ (sesler hariç) |
 | 37a | Haftalık MEB planı aşama 1: 2026–27 öğretim takvimi, ders saatlerinden haftalık kazanım/etkinlik planı, CSV/HTML dışa aktarım metni (saf); ekran ve indirme aşama 2'de | 🟡 (aşama 1) |
 
 Adım 31–33 ve 35–58: depo dışındaki geliştirme planı v2.

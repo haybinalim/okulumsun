@@ -1,8 +1,8 @@
 # ADR-0008: Sınıf Turu: iş birlikçi gösterim
 
-- **Durum:** Önerildi
+- **Durum:** Kabul
 - **Tarih:** 2026-10-13
-- **Karar sahibi:** Geliştirici + kullanıcı · **Kullanıcı onayı:** Gerekecek
+- **Karar sahibi:** Geliştirici + kullanıcı · **Kullanıcı onayı:** Verildi (2026-10-13)
 - **İlgili:** Adım 36, PLAN §7
 
 ## Bağlam
@@ -17,7 +17,7 @@ Tahtada grup oyunu istendi. Takım skorları ve sıralama, PLAN §7.1'in "cezala
 
 ## Karar
 
-Önerilen: **1 — ortak kavanoz** (plan v2 Adım 36, KG-45–47 ile uygulandı; `Kabul` kullanıcı onayı bekliyor).
+Kabul edildi: **1 — ortak kavanoz** (plan v2 Adım 36, KG-45–47 ile uygulandı; kullanıcı 2026-10-13'te onayladı, KG-49). İkinci yanlışta doğru cevap ekranda otomatik gösterilmez; sınıf "Hep birlikte sayalım." ile birlikte çözer; puan, skor ve kazanan yoktur.
 
 - Tamamlanan her tur (ilk denemede doğru, yanlıştan sonra doğru ya da birlikte çözülmüş) kavanoza bir
   yaprak, sıradaki takıma bir yıldız ekler. Doğru sayısı, hız ve süre ölçülmez/gösterilmez; kazanan,
