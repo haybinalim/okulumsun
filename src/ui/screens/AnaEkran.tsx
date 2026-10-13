@@ -107,6 +107,28 @@ export function AnaEkran() {
           </div>
         )}
 
+        {/* Tahtada öğretmen girişi (Adım 34): veli kapısına gider; yetişkin girişi, çocuk erişim bölgesi dışında. */}
+        {mod === 'tahta' && (
+          <button
+            type="button"
+            data-yetiskin=""
+            aria-label="Öğretmen"
+            onClick={handleDisli}
+            style={{
+              minHeight: 44,
+              padding: '0 14px',
+              border: 'none',
+              borderRadius: 8,
+              background: 'transparent',
+              color: COLOR.inkSoft,
+              cursor: 'pointer',
+              fontSize: 'var(--text-adult)',
+            }}
+          >
+            Öğretmen
+          </button>
+        )}
+
         {/* Dişli — veli kapısına gider */}
         <button
           type="button"

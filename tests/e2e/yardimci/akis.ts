@@ -125,5 +125,5 @@ export async function yetiskinAlaniniAc(page: Page): Promise<void> {
     b.map((x) => Number(x.getAttribute('aria-label')?.split(',')[0])).sort((a, c) => c - a),
   );
   for (const sayi of sirali) await page.getByRole('button', { name: `${sayi}, sıradaki sayı olarak seç` }).click();
-  await expect(page.getByRole('heading', { name: 'Yetişkin alanı' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Yetişkin alanı|Öğretmen alanı/ })).toBeVisible();
 }

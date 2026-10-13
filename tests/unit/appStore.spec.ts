@@ -242,7 +242,7 @@ describe('Veli paneli — geçici saklama politikası', () => {
   beforeEach(sifirla);
 
   it('VeliPaneli mahremiyet, ayar, konu, kaynak ve sorun bildir bölümlerini içermeli (kaynak kod kontrolü)', async () => {
-    // VeliPaneli kaynak kodunu oku ve 7 Bolum (Adım 23: Sorun bildir, Adım 27: Ekran boyutu) bileşeni olduğunu doğrula
+    // VeliPaneli kaynak kodunu oku ve 8 Bolum (Adım 23: Sorun bildir, Adım 27: Ekran boyutu, Adım 34: Bugünün seti) bileşeni olduğunu doğrula
     const fs = await import('node:fs');
     const path = await import('node:path');
     const kaynak = fs.readFileSync(
@@ -250,7 +250,7 @@ describe('Veli paneli — geçici saklama politikası', () => {
       'utf-8',
     );
     const bolumSayisi = (kaynak.match(/<Bolum/g) || []).length;
-    expect(bolumSayisi).toBe(7);
+    expect(bolumSayisi).toBe(8);
     expect(kaynak).toContain('baslik="Ekran boyutu"');
   });
 
@@ -269,6 +269,30 @@ describe('Veli paneli — geçici saklama politikası', () => {
     expect(kaynak).toContain('tarayıcı yenilendiğinde varsayılan değerlere döner');
     expect(kaynak).not.toContain('Dışa Aktar');
     expect(kaynak).not.toContain('İçe Aktar');
+  });
+});
+
+describe('Bugünün seti (Adım 34)', () => {
+  beforeEach(sifirla);
+
+  it('setBaslat aktif seti bellekte tutar ve alıştırmaya geçer; setBitir ana ekrana döner', () => {
+    const set = { surum: 1 as const, dugumler: ['mat.uzam.konum-ifadeleri' as const], tohum: 5 };
+    useAppStore.getState().setBaslat(set);
+    expect(useAppStore.getState().aktifSet).toEqual(set);
+    expect(useAppStore.getState().ekran).toBe('alistirma');
+    useAppStore.getState().setBitir();
+    expect(useAppStore.getState().aktifSet).toBeNull();
+    expect(useAppStore.getState().ekran).toBe('anaEkran');
+  });
+
+  it('tek konu seçimi seti kapatır; sıfırla seti siler', () => {
+    const set = { surum: 1 as const, dugumler: ['mat.uzam.konum-ifadeleri' as const], tohum: 5 };
+    useAppStore.getState().setBaslat(set);
+    useAppStore.getState().dugumSec('mat.uzam.eslik');
+    expect(useAppStore.getState().aktifSet).toBeNull();
+    useAppStore.getState().setBaslat(set);
+    useAppStore.getState().sifirla();
+    expect(useAppStore.getState().aktifSet).toBeNull();
   });
 });
 

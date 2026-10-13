@@ -15,6 +15,7 @@
 import { create } from 'zustand';
 import { ACCENTS, type Accent } from '../design/tokens';
 import { OGRENCI_VERISI_SAKLANIR_MI } from '../persistence/veriSaklamaPolitikasi';
+import type { GunlukSet } from '../ogretmen/gunlukSet';
 
 // ---------------------------------------------------------------- tipler
 
@@ -33,7 +34,8 @@ export type Ekran =
   | 'veliKapisi'
   | 'veliPaneli'
   | 'kaynaklar'
-  | 'sorunBildir';
+  | 'sorunBildir'
+  | 'setHazirla';
 
 /** Kullanım modu — plan §3.3. */
 export type Mod = 'tahta' | 'kisisel';
@@ -114,6 +116,8 @@ interface AppStore {
   oturumTamamlandi: boolean;
   /** Bugünün bahçesi: yalnız bellekte, yenilemede sıfırlanır (Adım 29). */
   bugunTamamlanan: number;
+  /** Bugünün seti (Adım 34): yalnız bellekte, yenilemede kaybolur; kalıcılık için set kodu yer imine eklenir. */
+  aktifSet: GunlukSet | null;
 
   // --- Actions
   ekranGit: (ekran: Ekran) => void;
@@ -127,6 +131,8 @@ interface AppStore {
   temaSec: (temaNo: number) => void;
   dugumSec: (dugumId: string) => void;
   oturumuTamamla: () => void;
+  setBaslat: (set: GunlukSet) => void;
+  setBitir: () => void;
   sifirla: () => void;
   // --- Kalıcılık (Adım 9)
   profildenYukle: (profil: Partial<AppStore>) => void;
@@ -146,6 +152,7 @@ const baslangicDurumu = {
   secilenDugumId: null as string | null,
   oturumTamamlandi: false,
   bugunTamamlanan: 0,
+  aktifSet: null as GunlukSet | null,
 };
 
 export const useAppStore = create<AppStore>((set) => ({
@@ -188,6 +195,7 @@ export const useAppStore = create<AppStore>((set) => ({
   dugumSec: (dugumId: string) =>
     set({
       secilenDugumId: dugumId,
+      aktifSet: null,
       ekran: 'alistirma',
       oncekiEkran: 'konuSecimi',
       oturumTamamlandi: false,
@@ -200,6 +208,17 @@ export const useAppStore = create<AppStore>((set) => ({
       ekran: 'oturumSonu',
       oncekiEkran: 'alistirma',
     })),
+
+  setBaslat: (aktifSet) =>
+    set({
+      aktifSet,
+      secilenDugumId: null,
+      ekran: 'alistirma',
+      oncekiEkran: 'setHazirla',
+      oturumTamamlandi: false,
+    }),
+
+  setBitir: () => set((s) => ({ aktifSet: null, ekran: 'anaEkran', oncekiEkran: s.ekran })),
 
   sifirla: () => set({ ...baslangicDurumu }),
 
