@@ -1,4 +1,7 @@
+import { mkdirSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
 import type { Page, Request } from '@playwright/test';
+import type { KanitKaydi } from '../../../scripts/gizlilik/kanitRaporu';
 import { IZINLI_ANAHTARLAR } from '../../../src/persistence/depolamaIzinListesi';
 
 /** Plan v2 Adım 26: ağ ve depolama gizlilik kanıtı için ortak denetçiler. */
@@ -77,7 +80,44 @@ export function depolamaIhlalleri(d: DepolamaDurumu): string[] {
   if (d.cerez) sorunlar.push(`çerez: ${d.cerez}`);
   for (const [db, depolar] of Object.entries(d.indexedDB)) {
     if (db !== 'okulumsun') sorunlar.push(`beklenmeyen IndexedDB: ${db}`);
-    for (const [depo, adet] of Object.entries(depolar)) if (adet > 0) sorunlar.push(`IndexedDB ${db}.${depo}: ${adet} kayıt`);
+    for (const [depo, adet] of Object.entries(depolar))
+      if (adet > 0) sorunlar.push(`IndexedDB ${db}.${depo}: ${adet} kayıt`);
   }
   return sorunlar;
+}
+
+/**
+ * Plan v2 Adım 39 aşama 2 (KG-54): akışın ağ + depolama kanıtını `test-results/gizlilik-kanit/<ad>.json`'a yazar;
+ * `npm run gizlilik:rapor` bunları `docs/gizlilik/kanit-raporu.md`'ye çevirir.
+ */
+export function kanitKaydet(
+  ad: string,
+  koken: string,
+  ag: { readonly istekler: readonly AgKaydi[]; readonly soketler: readonly string[] },
+  d: DepolamaDurumu,
+): void {
+  const dizin = path.join(process.cwd(), 'test-results', 'gizlilik-kanit');
+  mkdirSync(dizin, { recursive: true });
+  const kayit: KanitKaydi = {
+    akis: ad,
+    koken,
+    istekler: ag.istekler.map((i) => ({ url: i.url, method: i.method, govdeli: !!i.govde })),
+    soketler: [...ag.soketler],
+    localStorage: d.localStorage,
+    sessionStorage: d.sessionStorage,
+    cerezVar: d.cerez !== '',
+    indexedDB: d.indexedDB,
+  };
+  writeFileSync(
+    path.join(
+      dizin,
+      `${ad
+        .toLocaleLowerCase('tr-TR')
+        .replace(/ı/g, 'i')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')}.json`,
+    ),
+    JSON.stringify(kayit, null, 2),
+  );
 }

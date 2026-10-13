@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { alistirmalariCoz, kisiselModaGir, oturumuBitir, temayiBaslat, yetiskinAlaniniAc } from './yardimci/akis';
-import { agIhlalleri, agKaydet, depolamaDurumu, depolamaIhlalleri } from './yardimci/gizlilik';
+import { agIhlalleri, agKaydet, depolamaDurumu, depolamaIhlalleri, kanitKaydet } from './yardimci/gizlilik';
 
 /**
  * Plan v2 Adım 26 — gizlilik kanıtı (dinamik katman; statik katman K9 `gizlilik:tara`).
@@ -27,9 +27,11 @@ test.describe('gizlilik: ağ ve depolama', () => {
     await yetiskinAlaniniAc(page);
     await page.getByRole('group', { name: 'Ekran boyutu' }).getByRole('button', { name: 'Akıllı tahta' }).click();
 
+    const depo = await depolamaDurumu(page);
+    kanitKaydet('kişisel mod: tam oturum + Bahçem', koken, ag, depo);
     expect(agIhlalleri(ag.istekler, koken)).toEqual([]);
     expect(ag.soketler).toEqual([]);
-    expect(depolamaIhlalleri(await depolamaDurumu(page))).toEqual([]);
+    expect(depolamaIhlalleri(depo)).toEqual([]);
   });
 
   test('tahta modu: tema + 5 soru', async ({ page }) => {
@@ -48,9 +50,11 @@ test.describe('gizlilik: ağ ve depolama', () => {
     await page.getByRole('button', { name: ilk!, exact: true }).first().click();
     await alistirmalariCoz(page, 5);
 
+    const depo = await depolamaDurumu(page);
+    kanitKaydet('tahta modu: tema + 5 soru', koken, ag, depo);
     expect(agIhlalleri(ag.istekler, koken)).toEqual([]);
     expect(ag.soketler).toEqual([]);
-    expect(depolamaIhlalleri(await depolamaDurumu(page))).toEqual([]);
+    expect(depolamaIhlalleri(depo)).toEqual([]);
   });
 
   test('tahta modu: Sınıf Turu (2 takım, küçük kavanoz) baştan sona', async ({ page }) => {
@@ -74,9 +78,11 @@ test.describe('gizlilik: ağ ve depolama', () => {
     await expect(page.getByRole('heading', { name: 'Kavanozu birlikte doldurduk!' })).toBeVisible();
     await page.getByRole('button', { name: 'Ana ekran' }).click();
 
+    const depo = await depolamaDurumu(page);
+    kanitKaydet('tahta modu: Sınıf Turu', koken, ag, depo);
     expect(agIhlalleri(ag.istekler, koken)).toEqual([]);
     expect(ag.soketler).toEqual([]);
-    expect(depolamaIhlalleri(await depolamaDurumu(page))).toEqual([]);
+    expect(depolamaIhlalleri(depo)).toEqual([]);
   });
 
   test('tuzak: dış adrese istek ve izinsiz depolama yakalanır', async ({ page }) => {

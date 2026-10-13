@@ -50,3 +50,12 @@ jobs:
           key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
       - run: npx playwright install --with-deps chromium
       - run: npx playwright test --project=${{ matrix.proje }}
+      # Adım 39 (KG-54): gizlilik e2e kayıtlarından insan okur kanıt raporu; temiz değilse adım kırmızı.
+      - name: Gizlilik kanıt raporu
+        if: matrix.proje == 'onizleme'
+        run: npm run gizlilik:rapor
+      - uses: actions/upload-artifact@v4
+        if: matrix.proje == 'onizleme'
+        with:
+          name: gizlilik-kanit-raporu
+          path: docs/gizlilik/kanit-raporu.md

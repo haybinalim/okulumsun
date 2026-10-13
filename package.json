@@ -24,7 +24,8 @@
     "claude:taslak": "tsx scripts/claude-destek-taslak.ts",
     "tekil-soru": "tsx scripts/tekil-soru-sayisi.ts",
     "ogretmen:sayfa": "tsx scripts/ogretmen-sayfasi.ts",
-    "gizlilik:sayfa": "tsx scripts/gizlilik-sayfasi.ts"
+    "gizlilik:sayfa": "tsx scripts/gizlilik-sayfasi.ts",
+    "gizlilik:rapor": "tsx scripts/gizlilik-raporu.ts"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.4",
