@@ -21,7 +21,8 @@
     "glif:formu": "tsx scripts/icerik/glif-formu.ts",
     "gizlilik:tara": "tsx scripts/gizlilik-tarama.ts",
     "lisans:denetle": "tsx scripts/lisans-denetimi.ts",
-    "claude:taslak": "tsx scripts/claude-destek-taslak.ts"
+    "claude:taslak": "tsx scripts/claude-destek-taslak.ts",
+    "tekil-soru": "tsx scripts/tekil-soru-sayisi.ts"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.4",
