@@ -31,6 +31,9 @@ import { REGISTRY } from '../src/exercises/registry';
 import { DUGUM_KODLARI, SILINEN_KODLAR } from '../src/ogretmen/dugumKodlari';
 import { YAZDIRMA_SINIFI } from '../src/ogretmen/calismaKagidi/yazdirmaUygunlugu';
 import type { ExerciseGenerator } from '../src/exercises/types';
+import { OGRETIM_HAFTALARI } from '../src/content/okulTakvimi';
+import { PlanDuzeltmeleriSchema } from '../src/content/schema/haftalikPlan';
+import { haftalikPlanUret } from '../src/ogretmen/haftalikPlan';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel: string): unknown => JSON.parse(readFileSync(path.join(ROOT, rel), 'utf8'));
@@ -230,6 +233,32 @@ for (const g of JENERATORLER) {
 sonuc.istatistik.push(
   `jeneratörler: ${JENERATORLER.length} uygulandı (${[...UYGULANMIS_SABLONLAR].join(', ')}).`,
 );
+
+// ------------------------------------------------ haftalık MEB planı (Adım 37)
+try {
+  const plan = haftalikPlanUret(
+    kazanimlariDogrula(kazanimHam),
+    OGRETIM_HAFTALARI,
+    skillGrafiniAyristir(skillsHam),
+    PlanDuzeltmeleriSchema.parse(read('src/content/planDuzeltmeleri.json')),
+  );
+  if (plan.length !== OGRETIM_HAFTALARI.length) {
+    hata(`haftalık plan: ${plan.length} hafta, takvimde ${OGRETIM_HAFTALARI.length}.`);
+  }
+  for (const d of PlanDuzeltmeleriSchema.parse(read('src/content/planDuzeltmeleri.json')).duzeltmeler) {
+    if (!OGRETIM_HAFTALARI.some((h) => h.no === d.hafta)) hata(`planDuzeltmeleri.json: hafta ${d.hafta} takvimde yok.`);
+    for (const k of d.kazanimKodlari) if (!kazanimKodlari.has(k)) hata(`planDuzeltmeleri.json: '${k}' kazanimlar.json'da yok.`);
+  }
+  const plandaki = new Set(plan.flatMap((p) => p.dugumler));
+  for (const d of skillGrafiniAyristir(skillsHam).filter((x) => x.durum === 'hazir')) {
+    if (!plandaki.has(d.id)) hata(`${d.id}: hazır düğüm haftalık planda hiçbir haftaya düşmüyor.`);
+  }
+  sonuc.istatistik.push(
+    `haftalık plan: ${plan.length} öğretim haftası · ${plan.filter((p) => p.temaNo != null).length} program haftası`,
+  );
+} catch (e) {
+  hata(`haftalık plan: ${(e as Error).message}`);
+}
 
 // -------------------------------------------------------------------- rapor
 for (const s of sonuc.istatistik) console.log(`  ${s}`);
