@@ -68,3 +68,8 @@ CSP raporlama uç noktası kurulmaz (veri toplamama ilkesi).
 Beceri, şablon, kâğıt yerleşimi ya da `tr.json` metni değişince: `npm run build && npm run arsiv` → değişen PDF'leri
 commitleyin. `tests/unit/arsivDizini.spec.ts` dizin/sitemap bayatlığını ve eksik PDF'yi CI'da yakalar (PDF içeriğinin
 bayatlığını yakalamaz; içerik değişikliği PR'larında arşivi yeniden üretmek gözden geçirme maddesidir).
+
+## Okul paketi (plan v2 Adım 49, KG-71)
+
+`main` push'unda CI `dist-okul.zip` artefaktını üretir (`npm run okul-paketi`; 30 gün saklanır). GitHub Release eki
+yapılmaz: okul/kurum ağı dağıtımı ADR-0013 gereği yazılı izin ister. Kurulum: `docs/kurulum/okul-agi.md`.

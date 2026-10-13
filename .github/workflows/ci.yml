@@ -30,6 +30,16 @@ jobs:
       # E2E kancası (src/dev/e2eKanca.ts) üretim derlemesine girmemeli (KG-38).
       - name: E2E kancası üretimde yok
         run: "! grep -rq __okulumsunE2E dist/"
+      # Adım 49 (KG-71): okul ağı paketi; yalnız main'de artefakt (Release eki yok — kurum dağıtımı yazılı izin ister).
+      - name: Okul paketi
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: npm run okul-paketi
+      - uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        with:
+          name: okul-paketi
+          path: dist-okul.zip
+          retention-days: 30
   e2e:
     runs-on: ubuntu-latest
     # Adım 26: main'e push'ta ve PR'da koşar (diğer dallardaki push'lar PR ile sınanır).
