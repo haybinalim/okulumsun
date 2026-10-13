@@ -47,7 +47,7 @@ export function DersSonuOzeti() {
               <span aria-hidden="true">{DUZEY[z.duzey].simge} </span>
               {DUZEY[z.duzey].metin}
             </p>
-            {z.baskinTani && <p style={{ margin: '4px 0', fontSize: 20 }}>{z.baskinTani.aciklama}</p>}
+            {z.baskinTani && <p data-testid="ozet-tani" style={{ margin: '4px 0', fontSize: 20 }}>{z.baskinTani.aciklama}</p>}
             <p style={{ margin: '4px 0', fontSize: 20 }}>Sınıfta: {z.sinifEtkinligi}</p>
           </article>
         ))}

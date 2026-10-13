@@ -17,6 +17,7 @@ import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { useGeriBildirim } from '../useGeriBildirim';
 import type { MatchPairsExercise, EslesmeKarti } from '../../exercises/types';
 import type { Accent } from '../../design/tokens';
+import { BILGISIZ_YANLIS, type YanlisBilgisi } from '../../progress/basitMaddeSonucu';
 
 export function MatchPairsScreen({
   exercise,
@@ -28,7 +29,7 @@ export function MatchPairsScreen({
   accent: Accent;
   onDone: (dogruMu: boolean) => void;
   /** Adım 36: her yanlış denemede (Sınıf Turu ikinci yanlışı sayar). */
-  onYanlis?: () => void;
+  onYanlis?: (bilgi: YanlisBilgisi) => void;
 }) {
   useScreenSpeech(exercise.prompt.ses, [exercise.itemId]);
   const geriBildirim = useGeriBildirim(exercise.itemId);
@@ -86,7 +87,7 @@ export function MatchPairsScreen({
       setHataCifti([seciliSol, id]);
       setCozum('tekrar');
       void speak(geriBildirim.tekrar());
-      onYanlis?.();
+      onYanlis?.(BILGISIZ_YANLIS);
       window.setTimeout(() => {
         setCozum('bos');
         setSeciliSol(null);

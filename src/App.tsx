@@ -3,6 +3,7 @@ import { BoardHarness } from './dev/BoardHarness';
 import { AudioUnlock } from './ui/screens/AudioUnlock';
 import { DersSonuOzeti } from './ui/screens/DersSonuOzeti';
 import { useDersOturumu } from './ui/useDersOturumu';
+import { dersOlayiUret } from './ogretmen/dersOzeti';
 import { ExerciseScreen } from './ui/screens/ExerciseScreen';
 import { ModSecimi } from './ui/screens/ModSecimi';
 import { AvatarSecimi } from './ui/screens/AvatarSecimi';
@@ -296,13 +297,9 @@ export default function App() {
           exercise={tahtaExercise}
           accent={accent}
           onYanlis={() => { yanlisVar.current = true; }}
-          onDone={() => {
-            useDersOturumu.getState().kaydet({
-              skillId: tahtaExercise.skillIds[0],
-              ilkDenemeDogru: !yanlisVar.current,
-              yardimKademesi: 0,
-              tani: null,
-            });
+          onDone={(sonuc) => {
+            // Adım 40 aşama 3: tanı ve yardım kademesi MaddeSonuc'tan taşınır (yalnız bellekte).
+            useDersOturumu.getState().kaydet(dersOlayiUret(tahtaExercise.skillIds[0], sonuc, yanlisVar.current));
             yanlisVar.current = false;
             if (aktifSet) setSetSirasi((sira) => sira + 1);
             else setTahtaTohumu((tohum) => tohum + 1);
