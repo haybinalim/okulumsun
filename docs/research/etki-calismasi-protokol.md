@@ -28,7 +28,7 @@ durum raporda yazılır; deneme oturumları ön testten en az bir hafta önce bi
 |---|---|
 | MEM araştırma izni başvurusu | 11–14 Aralık 2026 (53a); onay en geç **12 Mart 2027** |
 | Ölçme aracı + `v0.3.1-etki` dondurma | 1–2 Şubat 2027 (53b) |
-| **Ön test** (Form A) | **15–19 Mart 2027** — her sınıfta müdahalenin ilk oturumundan **önce** |
+| **Ön test** (Form A) | **15–19 Mart 2027** — her sınıfta müdahalenin ilk oturumundan **önce** (kullanıcı onaylı, KG-94) |
 | **Müdahale** | **15 Mart – 9 Nisan 2027** (öğretim haftaları 23–26) |
 | **Son test** (Form B) | **12–16 Nisan 2027** |
 | Hariç | 8–12 Mart 2027 ara tatili; 23 Nisan 2027 |

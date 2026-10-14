@@ -116,7 +116,7 @@ onayı bekliyor); özet: [protokol, Ek A](etki-calismasi-protokol.md#ek-a--form-
 | 53a — ön kayıt, protokol, MEM izin başvurusu | 11–14 Aralık 2026 |
 | MEM araştırma izni onayı (en geç) | 12 Mart 2027 — gecikirse saha 2027 güzüne kayar (R2) |
 | 53b — ölçme aracı ve `v0.3.1-etki` dondurma | 1–2 Şubat 2027 |
-| Ön test (Form A) | 15–19 Mart 2027 |
+| Ön test (Form A) | 15–19 Mart 2027 — her sınıfta müdahalenin ilk oturumundan önce (KG-94) |
 | Müdahale | 15 Mart – 9 Nisan 2027 (4 öğretim haftası) |
 | Son test (Form B) | 12–16 Nisan 2027 |
 | Hariç | 8–12 Mart 2027 ara tatili; 23 Nisan 2027 |
