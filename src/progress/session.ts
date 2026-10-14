@@ -86,6 +86,11 @@ export function oturumBaslat(
   sonCevaplar: readonly boolean[],
   sonTaniEtiketleri: readonly string[],
   aktifTaniEtiketi: string | null,
+  /** Isınma Keşfi tahmini (PLAN §6.5, ADR-0007): yalnız planlamada kullanılır, oturuma yazılmaz. */
+  isinmaTahmini: {
+    readonly oturumIciAcikDugumler: ReadonlySet<SkillId>;
+    readonly hedefZorlukBaslangici: number;
+  } | null = null,
 ): AktifOturum {
   const girdi: PlanlayiciGirdi = {
     duzen,
@@ -98,6 +103,12 @@ export function oturumBaslat(
     sonCevaplar,
     sonTaniEtiketleri,
     aktifTaniEtiketi,
+    ...(isinmaTahmini
+      ? {
+          oturumIciAcikDugumler: isinmaTahmini.oturumIciAcikDugumler,
+          hedefZorlukBaslangici: isinmaTahmini.hedefZorlukBaslangici,
+        }
+      : {}),
   };
 
   const secilenSorular = oturumPlanla(girdi);

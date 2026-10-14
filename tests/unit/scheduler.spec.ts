@@ -246,3 +246,40 @@ describe('oturum seçici — plan §15', () => {
     expect(sonuc.every((s) => s.seed !== undefined)).toBe(true);
   });
 });
+
+describe('Isınma Keşfi girdileri (plan v2 Adım 47, ADR-0007)', () => {
+  it('yeni girdiler yokken davranış birebir aynı (500 tohum)', () => {
+    for (let t = 0; t < 500; t++) {
+      const kayitlar = new Map<SkillId, MasteryRecord>(t % 2 ? [[DUGUMLER[0].id, masteredKayit(DUGUMLER[0].id)]] : []);
+      const temel = bosGirdi({ oturumTohumu: t, kayitlar });
+      const ayni = oturumPlanla({ ...temel, oturumIciAcikDugumler: undefined, hedefZorlukBaslangici: undefined });
+      expect(ayni).toEqual(oturumPlanla(temel));
+      // Boş açık küme ve varsayılan hedef (3) de aynı planı verir.
+      expect(oturumPlanla({ ...temel, oturumIciAcikDugumler: new Set(), hedefZorlukBaslangici: 3 })).toEqual(
+        oturumPlanla(temel),
+      );
+    }
+  });
+
+  it('oturum içi açık ön koşul kilitli düğümü aday yapar; kayıt değişmez', () => {
+    const kilitli = testDugum('mat.test.kilitli' as SkillId, {
+      tema: 2,
+      isEntryPoint: false,
+      prerequisites: [{ id: DUGUMLER[0].id, type: 'hard' }],
+    });
+    const duzen = [DUGUMLER[0], kilitli];
+    const kayitlar = new Map<SkillId, MasteryRecord>();
+    const tohumlar = Array.from({ length: 50 }, (_, i) => i);
+    const kapali = tohumlar.flatMap((t) =>
+      oturumPlanla(bosGirdi({ duzen, oturumTohumu: t, kayitlar })).map((s) => s.skillId),
+    );
+    const acik = tohumlar.flatMap((t) =>
+      oturumPlanla(
+        bosGirdi({ duzen, oturumTohumu: t, kayitlar, oturumIciAcikDugumler: new Set([DUGUMLER[0].id]) }),
+      ).map((s) => s.skillId),
+    );
+    expect(kapali).not.toContain(kilitli.id);
+    expect(acik).toContain(kilitli.id);
+    expect(kayitlar.size).toBe(0);
+  });
+});

@@ -1,8 +1,8 @@
 # ADR-0007: Isınma Keşfi ve PLAN §6.5
 
-- **Durum:** Önerildi
+- **Durum:** Kabul
 - **Tarih:** 2026-10-12
-- **Karar sahibi:** Geliştirici + kullanıcı · **Kullanıcı onayı:** Gerekecek
+- **Karar sahibi:** Geliştirici + kullanıcı · **Kullanıcı onayı:** Verildi (2026-10-14)
 - **İlgili:** PLAN §6.5, Adım 47
 
 ## Bağlam
@@ -17,17 +17,20 @@ PLAN §6.5 seviye tespitini okul ayına göre tema açma ile yapıyor. Kısa bir
 
 ## Karar
 
-**Önerilen (2026-10-13, KG-68): Seçenek 2.** Isınma Keşfi varsayılan **kapalı**dır; yalnız kişisel modda veli açar
+**Kabul (2026-10-14, kullanıcı onayı, KG-76; öneri 2026-10-13, KG-68): Seçenek 2.** Isınma Keşfi varsayılan **kapalı**dır; yalnız kişisel modda veli açar
 (yetişkin alanında "Oturuma kısa ısınmayla başla", yalnız bellekte). En çok 8 madde; en kolay işaretten başlar, doğruda
 2 işaret yukarı, yanlışta 1 aşağı iner; ardışık 2 yanlışta biter (ilk deneyim başarısızlıkla uzamaz). Isınmada boncuk yolu
 gösterilmez. Sonuç yalnız o oturumun başlangıç noktasını belirler; ADR-0002 B'de bile saklanmaz. PLAN §6.5'e "Isınma Keşfi
 (isteğe bağlı)" alt başlığı eklenir: "ilk oturumda kalibrasyon testi yapılmaz" kuralı varsayılan davranış olarak kalır.
-Kullanıcı onayı gelene kadar kod davranışı değişmez; Adım 47 beklemede.
+Isınma Keşfi tahta/sınıf modunda yoktur (tahtada içeriği öğretmen seçer, PLAN §3.3); ısınmada puan/skor gösterilmez.
+Kullanıcı Seçenek 2'yi 2026-10-14'te onayladı; Adım 47 bu karara göre uygulanır.
 
 ## Sonuçlar
 
-- Değişen dosyalar / PLAN bölümleri: PLAN §6.5, seçici.
-- Test / kanıt: sonucun hiçbir depoya yazılmadığı birim testi.
+- Değişen dosyalar / PLAN bölümleri: PLAN §6.5 ("Isınma Keşfi (isteğe bağlı)"), §17 sabitleri; `src/progress/seviyeTespiti.ts`
+  (SAF), `scheduler.ts` (isteğe bağlı oturum içi girdiler), kişisel oturum bağlaması ve veli paneli anahtarı.
+- Test / kanıt: `tests/unit/seviyeTespiti.spec.ts` (≤8 madde, kolaydan başlar, +2/−1, ardışık 2 yanlışta biter, SAF,
+  sonucun hiçbir depoya yazılmadığı casus testi); `scheduler.spec.ts` (yeni girdiler yokken davranış aynı).
 
 ## Gizlilik etkisi
 
@@ -43,5 +46,5 @@ Düşük.
 
 ## Kabul koşulları
 
-- [ ] PLAN §6.5 ile çelişki çözüldü.
-- [ ] Kullanıcı onayı.
+- [x] PLAN §6.5 ile çelişki çözüldü (2026-10-14: §6.5'e "Isınma Keşfi (isteğe bağlı)" alt başlığı; varsayılan kural aynen kalır).
+- [x] Kullanıcı onayı (2026-10-14, Seçenek 2).

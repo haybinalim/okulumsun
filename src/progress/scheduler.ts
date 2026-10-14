@@ -87,6 +87,13 @@ export interface PlanlayiciGirdi {
   readonly sonTaniEtiketleri: readonly string[];
   /** Aktif tanı etiketi varsa (remediation kovası için). */
   readonly aktifTaniEtiketi: string | null;
+  /**
+   * Isınma Keşfi (PLAN §6.5, ADR-0007; isteğe bağlı): bu oturumda sert ön koşulu karşılanmış
+   * sayılan düğümler. Yalnız bellekte; yoksa davranış aynı.
+   */
+  readonly oturumIciAcikDugumler?: ReadonlySet<SkillId>;
+  /** Isınma Keşfi: yeterli cevap birikene dek hedef zorluk (yoksa 3). */
+  readonly hedefZorlukBaslangici?: number;
 }
 
 /** Düğüm sayacı — tohum türetme için (plan §5.4). */
@@ -149,8 +156,8 @@ export function tohumTuret(
 }
 
 /** Bir düğümün son 4 maddede başarı oranına göre hedef zorluk. */
-function hedefZorluk(sonCevaplar: readonly boolean[]): number {
-  if (sonCevaplar.length < 4) return 3; // varsayılan orta
+function hedefZorluk(sonCevaplar: readonly boolean[], baslangic: number | undefined): number {
+  if (sonCevaplar.length < 4) return baslangic ?? 3; // varsayılan orta (Isınma Keşfi açıkken onun tahmini)
   const son4 = sonCevaplar.slice(-4);
   const basari = son4.filter(Boolean).length / son4.length;
   if (basari >= 0.75) return 4; // kolay gidiyor → zorlaştır
@@ -197,8 +204,8 @@ function interleave(skillId: SkillId, duzen: readonly SkillNode[], gecmis: reado
 }
 
 /** Plan §6.4: difficultyFit. */
-function difficultyFit(dugum: SkillNode, sonCevaplar: readonly boolean[]): number {
-  const hedef = hedefZorluk(sonCevaplar);
+function difficultyFit(dugum: SkillNode, sonCevaplar: readonly boolean[], baslangic: number | undefined): number {
+  const hedef = hedefZorluk(sonCevaplar, baslangic);
   return Math.max(0, 1 - Math.abs(dugum.difficulty - hedef) / 5);
 }
 
@@ -213,7 +220,7 @@ function adayPuani(
   const r = readingFit(dugum, girdi.readingLevel);
   const a = assetReady(dugum);
   const i = interleave(dugum.id, girdi.duzen, girdi.oturumGecmisi);
-  const d = difficultyFit(dugum, girdi.sonCevaplar);
+  const d = difficultyFit(dugum, girdi.sonCevaplar, girdi.hedefZorlukBaslangici);
   return u * n * r * a * i * d;
 }
 
@@ -248,6 +255,8 @@ function kovaAdaylari(
       const hard = dugum.prerequisites.filter((p) => p.type === 'hard');
       if (hard.length > 0) {
         const tumMastered = hard.every((p) => {
+          // Isınma Keşfi: oturum içi açık sayılan ön koşul (yalnız bellek).
+          if (girdi.oturumIciAcikDugumler?.has(p.id)) return true;
           const pk = girdi.kayitlar.get(p.id);
           return pk && pk.strength >= 0.85 && pk.streak >= 3 && pk.distinctDays >= 2;
         });
