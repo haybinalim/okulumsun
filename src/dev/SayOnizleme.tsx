@@ -27,7 +27,14 @@ export function SayOnizleme() {
   const exercise = useMemo(
     () =>
       uretSay(
-        { seed: tohum, difficulty: 3, adet, layout: yerlesim, optionCount: sik, mod: profile === 'board' ? 'tahta' : 'kisisel' },
+        {
+          seed: tohum,
+          difficulty: 3,
+          adet,
+          layout: yerlesim,
+          optionCount: sik,
+          mod: profile === 'board' ? 'tahta' : 'kisisel',
+        },
         createRng(tohum),
       ) as TapCountExercise,
     [adet, yerlesim, sik, tohum, profile],
@@ -35,7 +42,11 @@ export function SayOnizleme() {
   const a = ACCENTS[0];
   return (
     <div style={{ height: '100dvh' }} data-say-onizleme>
-      <TapCountScreen exercise={exercise} accent={{ id: a.id, hex: a.hex, speechKey: a.speechKey }} onDone={() => undefined} />
+      <TapCountScreen
+        exercise={exercise}
+        accent={{ id: a.id, hex: a.hex, speechKey: a.speechKey }}
+        onDone={() => undefined}
+      />
     </div>
   );
 }

@@ -77,7 +77,10 @@ for (const buyukHedef of [false, true]) {
       }
       expect(await geometriIhlalleri(page)).toBe('');
 
-      if (process.env.SAY_EKRAN_GORUNTUSU) await page.screenshot({ path: `${process.env.SAY_EKRAN_GORUNTUSU}/${cihaz}-${adet}-${yerlesim}${buyukHedef ? '-b' : ''}.png` });
+      if (process.env.SAY_EKRAN_GORUNTUSU)
+        await page.screenshot({
+          path: `${process.env.SAY_EKRAN_GORUNTUSU}/${cihaz}-${adet}-${yerlesim}${buyukHedef ? '-b' : ''}.png`,
+        });
 
       // Davranış: her nesneye bir kez dokunulur, sayaç ilerler; şık + Onayla erişilebilir.
       await page.getByRole('button', { name: 'nesne 1', exact: true }).click();
