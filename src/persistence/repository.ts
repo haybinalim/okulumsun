@@ -119,7 +119,7 @@ export async function olaylariBuda(maxKayit = 2000): Promise<void> {
   if (sayi <= maxKayit) return;
 
   const silinecek = sayi - maxKayit;
-  const eskiKayitlar = await db.events.orderBy('seq').limit(silinecek).toArray();
+  const eskiKayitlar = await db.events.ilkN(silinecek);
   const silinecekIdler = eskiKayitlar.map((k) => k.seq!).filter(Boolean);
   await db.events.bulkDelete(silinecekIdler);
 }
@@ -130,7 +130,7 @@ export async function olaylariBuda(maxKayit = 2000): Promise<void> {
 export async function oturumOzetleriniOku(gunSiniri = 90): Promise<readonly SessionRecord[]> {
   if (!OGRENCI_VERISI_SAKLANIR_MI) return [];
   const esim = Date.now() - gunSiniri * 24 * 60 * 60 * 1000;
-  return db.sessions.where('bitisTs').above(esim).toArray();
+  return db.sessions.ustu('bitisTs', esim);
 }
 
 /** Oturum özeti yaz — geçici saklama politikası nedeniyle no-op. */
@@ -148,7 +148,7 @@ export async function oturumOzetiYaz(ozet: OturumOzeti, mod: Mod): Promise<void>
 export async function oturumOzetleriniBuda(gunSiniri = 90): Promise<void> {
   if (!OGRENCI_VERISI_SAKLANIR_MI) return;
   const esim = Date.now() - gunSiniri * 24 * 60 * 60 * 1000;
-  const eskiKayitlar = await db.sessions.where('bitisTs').below(esim).toArray();
+  const eskiKayitlar = await db.sessions.alti('bitisTs', esim);
   const silinecekIdler = eskiKayitlar.map((k) => k.sessionId);
   await db.sessions.bulkDelete(silinecekIdler);
 }

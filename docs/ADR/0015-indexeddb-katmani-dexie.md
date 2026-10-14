@@ -1,8 +1,8 @@
 # ADR-0015: IndexedDB katmanı (Dexie'yi küçültme veya değiştirme)
 
-- **Durum:** Önerildi
+- **Durum:** Kabul
 - **Tarih:** 2026-10-14
-- **Karar sahibi:** Kullanıcı · **Kullanıcı onayı:** Bekliyor (ADR taslağı 14 Eki 2026'da onaylandı; karar verilmedi) — plan v2 KG-88
+- **Karar sahibi:** Kullanıcı · **Kullanıcı onayı:** 14 Eki 2026, Seçenek 3 — plan v2 KG-89 (taslak: KG-88)
 - **İlgili:** PLAN §10, Adım 26 (K5 boyut bütçesi), ADR-0002, `docs/boyut-analizi.md`, KG-87
 
 ## Bağlam
@@ -98,13 +98,20 @@ Seçenek 2 ve 3'ün ortak özellikleri:
 
 ## Karar
 
-**Önerilen: Seçenek 3** — doğrudan IndexedDB üzerinde kendi ince sarmalayıcımız, aynı ad (`okulumsun`),
-IndexedDB sürümü 10 ve aynı depolarla; Dexie `devDependencies`'e iner ve yalnız uyum testinde kullanılır.
+**Seçenek 3** (kullanıcı kararı, 14 Eki 2026, plan v2 KG-89): doğrudan IndexedDB üzerinde kendi ince
+sarmalayıcımız (`src/persistence/db.ts`, `Tablo` sınıfı), aynı ad (`okulumsun`), IndexedDB sürümü 10 ve aynı
+depolarla; Dexie `devDependencies`'e iner ve yalnız uyum testinde kullanılır.
 Gerekçe: en büyük kazanç (−93,7 KB, K5 payı ~2 KB → ~96 KB), yeni üçüncü taraf bağımlılık ve lisans kaydı yok,
 kullanılan yüzey küçük (tek depolu işlemler, 3 basit sorgu, göç ve canlı sorgu yok) ve bugün yalnız açılış
-temizliği çalışıyor. Seçenek 2 yakın ikinci: 2,9 KB daha büyük ama işlem/hata kenar durumlarını olgun bir
-kütüphaneye bırakır; kullanıcı yeni bağımlılığı tercih ederse aynı arayüzle uygulanır. Seçenek 1/1b önerilmez
-(K5'i çözmez veya ölçütü gevşetir). **Bu ADR `Önerildi` durumundayken kod değişmez.**
+temizliği çalışıyor. Seçenek 2 yakın ikinciydi (2,9 KB daha büyük, kenar durumları kütüphanede); Seçenek 1/1b
+K5'i çözmediği veya ölçütü gevşettiği için seçilmedi.
+
+Uygulama kuralları: sürüm sabit **10** (`IDB_SURUMU`); `onupgradeneeded` yalnız eksik depoyu kurar;
+`onversionchange` ve `onclose`'da bağlantı bırakılır, sonraki çağrı yeniden açar; `onblocked` sonsuz beklemek
+yerine `DbHatasi('engellendi')` ile reddeder (geç gelen bağlantı kapatılır); açılış hatası önbelleğe alınmaz;
+her çağrı tek işlemdir ve sonuç `oncomplete`'te döner, istek hatası/iptal `DbHatasi('islem-iptal')` verir
+(`bulkPut`/`bulkDelete` hepsi-ya-hiçbiri). Sorgu karşılıkları: `orderBy('seq').limit(n)` → `ilkN(n)`,
+`where(i).above(x)` → `ustu(i, x)`, `where(i).below(x)` → `alti(i, x)`.
 
 ## Sonuçlar
 
@@ -137,7 +144,7 @@ IndexedDB sürümünü 10'un üstüne çıkarmak olur (Dexie `version(1)` daha y
 
 ## Kabul koşulları
 
-- [ ] Kullanıcı seçeneği onayladı (3, 2 veya 1/1b).
+- [x] Kullanıcı seçeneği onayladı: Seçenek 3 (14 Eki 2026, KG-89).
 - [ ] IndexedDB sürümü sabit 10; ad ve depo/anahtar/indeks tanımları birebir (uyum testi).
 - [ ] Birim testler, e2e gizlilik kanıtı ve K5 (`npm run boyut`) yeşil; boyut düşüşü `docs/boyut-analizi.md`'ye işlendi.
 - [ ] K10 lisans envanteri ve `LICENSES.md` güncel.

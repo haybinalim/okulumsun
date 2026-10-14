@@ -96,7 +96,7 @@ Ayrıntı ve durum sözlüğü: `docs/ADR/README.md`.
 | 0012 | Çok dilli ses | Kabul | 58 |
 | 0013 | Uygulama lisansı | Kabul | 20 |
 | 0014 | Ticari model ve üçüncü taraf varlık izinleri | Kabul | 21, 29, 35, 48, 56 |
-| 0015 | IndexedDB katmanı (Dexie'yi küçültme veya değiştirme) | Önerildi | 26 |
+| 0015 | IndexedDB katmanı (Dexie'yi küçültme veya değiştirme) | Kabul | 26 |
 
 ## Teknik doğrulama (son çalıştırma: 13 Ekim 2026)
 

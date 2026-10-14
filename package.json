@@ -32,7 +32,6 @@
   },
   "dependencies": {
     "canvas-confetti": "^1.9.4",
-    "dexie": "^4.4.4",
     "framer-motion": "^12.42.2",
     "qrcode-generator": "^2.0.4",
     "react": "^19.2.7",
@@ -48,6 +47,7 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
+    "dexie": "^4.4.4",
     "fake-indexeddb": "^6.2.5",
     "happy-dom": "^21.0.1",
     "oxlint": "^1.71.0",

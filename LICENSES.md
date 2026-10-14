@@ -24,7 +24,6 @@ Uygulamadaki Kaynaklar ekranı aynı listeyi çizer.
 | react | MIT | Meta Platforms, Inc. | — |
 | react-dom | MIT | Meta Platforms, Inc. | — |
 | zustand | MIT | Paul Henschel | — |
-| dexie | Apache-2.0 | David Fahlander | — |
 | zod | MIT | Colin McDonnell | — |
 | framer-motion | MIT | Matt Perry | — |
 | qrcode-generator | MIT | Kazuhiko Arase | yalnız Eve gönder ekranıyla tembel yüklenir (Adım 42) |
@@ -59,6 +58,7 @@ Uygulamadaki Kaynaklar ekranı aynı listeyi çizer.
 | vitest | MIT | Anthony Fu ve Vitest katkıcıları | — |
 | happy-dom | MIT | David Ortner | — |
 | fake-indexeddb | Apache-2.0 | Jeremy Scheff | — |
+| dexie | Apache-2.0 | David Fahlander | Yalnız IndexedDB biçim uyum testinde (ADR-0015); uygulama kendi sarmalayıcısını kullanır |
 | Piper | GPL-3.0 | Open Home Foundation | Yalnız geliştirme makinesinde; ürettiği ses dosyalarına lisans geçirmez |
 <!-- lisans:bitir -->
 

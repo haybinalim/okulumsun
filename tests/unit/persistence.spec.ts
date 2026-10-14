@@ -82,7 +82,7 @@ describe('Geçici veri saklama politikası', () => {
     expect(persistenceEnabled(null)).toBe(false);
   });
 
-  it('Dexie şeması yalnız mevcut kullanıcı verilerini temizlemek için erişilebilir kalır', () => {
+  it('IndexedDB şeması yalnız mevcut kullanıcı verilerini temizlemek için erişilebilir kalır', () => {
     expect(MEVCUT_SEMA_SURUMU).toBe(1);
     expect(db.learner_mastery).toBeDefined();
     expect(db.learner_profile).toBeDefined();
