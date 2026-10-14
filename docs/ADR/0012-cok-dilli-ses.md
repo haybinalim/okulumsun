@@ -1,8 +1,8 @@
 # ADR-0012: Çok dilli ses
 
-- **Durum:** Taslak
+- **Durum:** Kabul
 - **Tarih:** 2026-10-12
-- **Karar sahibi:** Geliştirici + kullanıcı · **Kullanıcı onayı:** Gerekecek
+- **Karar sahibi:** Geliştirici + kullanıcı · **Kullanıcı onayı:** 14 Eki 2026 — plan v2 KG-83
 - **İlgili:** Adım 58, ADR-0004
 
 ## Bağlam
@@ -17,7 +17,9 @@
 
 ## Karar
 
-Henüz karar verilmedi. Bu kayıt seçenekleri ve kabul koşullarını sabitler; bağlı adım başlamadan önce `Önerildi` durumuna getirilir. Eğilim: 1.
+**Seçenek 1** (kullanıcı kararı, 14 Eki 2026): anahtar alt kümesi + dil başına ayrı ses kaynağı ve lisans kaydı (dil başına ayrı `sesKaynagi` girdisi). Gerekçe: her dilin kaynağı ve lisansı ADR-0004 ölçütleriyle ayrı elenir; tek kaynağın her dili kapsaması gerekmez.
+
+- Bu karar bugün **kod değişikliği getirmez**; uygulama ilk ek dil belli olunca yapılır (Adım 58).
 
 ## Sonuçlar
 
@@ -38,5 +40,6 @@ Düşük.
 
 ## Kabul koşulları
 
+- [x] Kullanıcı seçeneği onayladı (14 Eki 2026, Seçenek 1).
 - [ ] İlk ek dil belli.
 - [ ] O dilin ses kaynağı eleme ölçütlerini geçti.

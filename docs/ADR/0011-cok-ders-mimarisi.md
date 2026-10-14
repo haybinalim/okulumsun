@@ -1,8 +1,8 @@
 # ADR-0011: Çok ders mimarisi
 
-- **Durum:** Taslak
+- **Durum:** Kabul
 - **Tarih:** 2026-10-12
-- **Karar sahibi:** Geliştirici · **Kullanıcı onayı:** Gerekmez
+- **Karar sahibi:** Geliştirici + kullanıcı · **Kullanıcı onayı:** 14 Eki 2026 — plan v2 KG-82
 - **İlgili:** Adım 57, PLAN §14 "Sonraya bırakılanlar"
 
 ## Bağlam
@@ -17,7 +17,9 @@ Türkçe ilk okuma-yazma ve Hayat Bilgisi ileride eklenebilir. Bugünkü içerik
 
 ## Karar
 
-Henüz karar verilmedi. Bu kayıt seçenekleri ve kabul koşullarını sabitler; bağlı adım başlamadan önce `Önerildi` durumuna getirilir. Eğilim: 1, ama ikinci ders başlayana kadar uygulanmaz.
+**Seçenek 1, ders paketi** (kullanıcı kararı, 14 Eki 2026): tek uygulama, `DersKodu` + ders başına içerik dizini, paylaşılan motor. Gerekçe: motor ve içerik doğrulaması tek yerde kalır; ikinci ayrı uygulama motoru çoğaltırdı.
+
+- Eğilim olduğu gibi korunur: ikinci ders başlayana kadar uygulanmaz. Bu karar bugün **kod değişikliği getirmez**; `DersKodu` ve içerik dizini taşıması ikinci dersin ilk adımında yapılır (Adım 57).
 
 ## Sonuçlar
 
@@ -38,4 +40,5 @@ Orta (içerik dizini taşıması).
 
 ## Kabul koşulları
 
-- [ ] İkinci dersin kapsamı belli.
+- [x] Kullanıcı seçeneği onayladı (14 Eki 2026, Seçenek 1).
+- [ ] İkinci dersin kapsamı belli (uygulama bu koşula bağlı; o zamana dek kod değişikliği yok).

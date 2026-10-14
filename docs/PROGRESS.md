@@ -84,18 +84,18 @@ Ayrıntı ve durum sözlüğü: `docs/ADR/README.md`.
 |---|---|---|---|
 | 0001 | Karar kayıtları ve birleştirme yöntemi | Kabul | 17 |
 | 0002 | Öğrenci verisi saklama | Önerildi | 39, 52 |
-| 0003 | Tek yayın kaynağı ve güvenlik başlıkları | Önerildi | 22 |
+| 0003 | Tek yayın kaynağı ve güvenlik başlıkları | Kabul | 22 |
 | 0004 | Ses kaynağı ve lisans | Önerildi | 15, 18, 31, 54, 58 |
-| 0005 | Yerel hata günlüğü | Önerildi | 23 |
-| 0006 | Çalışma kâğıdı: HTML ve yazdırma | Taslak | 35, 48 |
+| 0005 | Yerel hata günlüğü | Kabul | 23 |
+| 0006 | Çalışma kâğıdı: HTML ve yazdırma | Kabul | 35, 48 |
 | 0007 | Isınma Keşfi ve PLAN §6.5 | Kabul | 47 |
-| 0008 | Sınıf Turu: iş birlikçi gösterim | Önerildi | 36 |
+| 0008 | Sınıf Turu: iş birlikçi gösterim | Kabul | 36 |
 | 0009 | Mağaza varlığı | Taslak | 50, 51 |
 | 0010 | Eve link URL sözleşmesi | Kabul | 42 |
-| 0011 | Çok ders mimarisi | Taslak | 57 |
-| 0012 | Çok dilli ses | Taslak | 58 |
-| 0013 | Uygulama lisansı | Önerildi | 20 |
-| 0014 | Ticari model ve üçüncü taraf varlık izinleri | Önerildi | 21, 29, 35, 48, 56 |
+| 0011 | Çok ders mimarisi | Kabul | 57 |
+| 0012 | Çok dilli ses | Kabul | 58 |
+| 0013 | Uygulama lisansı | Kabul | 20 |
+| 0014 | Ticari model ve üçüncü taraf varlık izinleri | Kabul | 21, 29, 35, 48, 56 |
 
 ## Teknik doğrulama (son çalıştırma: 13 Ekim 2026)
 
