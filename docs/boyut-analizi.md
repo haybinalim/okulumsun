@@ -29,8 +29,8 @@ Kaynak haritasıyla modül başına küçültülmüş bayt (`vite build --source
    exit/transition, AnimatePresence) `domAnimation` içinde; `strict` ile `motion` kullanımı çalışma anında hata
    verir, birim test de kaynakta yakalar.
 
-## Sonra: 809,5 KB (~828 900 B) — bütçe içinde (K5 ✓)
+## Sonra: 813,5 KB (833 008 B, TapCountScreen düzeni PR #69 dahil) — bütçe içinde (K5 ✓)
 
 Kalan büyükler: react-dom 174, dexie 93, motion-dom 59, framer-motion 16, qrcode 20 (tembel), uygulama ~400.
-Pay ~6 KB; sonraki büyük adımlar gerekirse: dexie yerine ince IndexedDB sarmalayıcı (ADR gerektirir),
+Pay ~2,3 KB (bir sonraki özellik bütçeyi yeniden aşabilir); sonraki büyük adımlar gerekirse: dexie yerine ince IndexedDB sarmalayıcı (ADR gerektirir),
 `BoardHarness`'ın yalnız `?harness=1` ile tembel yüklenmesi (~4 KB).

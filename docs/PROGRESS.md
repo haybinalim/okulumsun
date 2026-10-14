@@ -102,7 +102,7 @@ Ayrıntı ve durum sözlüğü: `docs/ADR/README.md`.
 - `npm test` → ✅ 310/310, 41 dosya
 - `npm run glif:formu -- --cikti <pdf>` → rakam glifleri öğretmen görüş formu (A4, 2 öğretmen × 3 sayfa; WeasyPrint gerekir)
 - `npm run e2e` → ✅ 9 dosya, 3 proje (board, tablet, onizleme); onizleme: e2e kancalı test derlemesi + `vite preview` (CSP, SW, çevrimdışı, manifest, gizlilik)
-- `npm run boyut` → ✅ K5 JS bütçesi tabanı `docs/boyut-butcesi.json` (v0.3.0'a kadar uyarı); 14 Eki 2026: 929,7 → 809,5 KB, bütçe içinde (KG-87, `docs/boyut-analizi.md`)
+- `npm run boyut` → ✅ K5 JS bütçesi tabanı `docs/boyut-butcesi.json` (v0.3.0'a kadar uyarı); 14 Eki 2026: 929,7 → 813,5 KB, bütçe içinde (KG-87, `docs/boyut-analizi.md`)
 - `npm run durum -- --denetle` → ✅ PROGRESS ve PLAN blokları + §12 ağacı kodla eşleşiyor
 - `npm run lisans:denetle` → ✅ envanter, LICENSES ve node_modules lisansları eşleşiyor
 - `npm run validate` → ✅ 19 kazanım · 57 beceri · 15/15 hata etiketi · 39 jeneratör
