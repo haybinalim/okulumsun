@@ -10,7 +10,7 @@
 import { useAppStore, AVATARLAR } from '../../store/appStore';
 import { BigButton } from '../primitives/BigButton';
 import { useScreenSpeech } from '../../audio/useSpeak';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { COLOR, SIZE } from '../../design/tokens';
 
@@ -43,7 +43,7 @@ export function AvatarSecimi() {
         }}
       >
         {AVATARLAR.map((avatar, i) => (
-          <motion.div
+          <m.div
             key={avatar.id}
             initial={reducedMotion ? {} : { scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -66,7 +66,7 @@ export function AvatarSecimi() {
             >
               <AvatarIkon id={avatar.id} size={SIZE.choice * 0.4} />
             </BigButton>
-          </motion.div>
+          </m.div>
         ))}
       </div>
     </main>

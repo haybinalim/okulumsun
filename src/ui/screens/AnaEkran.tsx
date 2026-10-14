@@ -18,7 +18,7 @@ import { BigButton } from '../primitives/BigButton';
 import { Maskot } from '../feedback/Maskot';
 import { YonlendirmeSeridi } from '../feedback/YonlendirmeSeridi';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { COLOR, MOTION, SIZE } from '../../design/tokens';
 import { SinifKavanozu } from '../svg/SinifKavanozu';
@@ -197,7 +197,7 @@ export function AnaEkran() {
         )}
 
         {/* Tahtada 4+3 kart, küçük ekranda satıra taşar. */}
-        <motion.div
+        <m.div
           initial={reducedMotion ? {} : { opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: reducedMotion ? 0 : MOTION.screen / 1000 }}
@@ -279,7 +279,7 @@ export function AnaEkran() {
               Dersi bitir
             </BigButton>
           )}
-        </motion.div>
+        </m.div>
       </section>
 
       {/* Alt (kişisel mod): Başla + Keşif Masası (tema kartlarından ayrı; Adım 44). Tahtada giriş kart ızgarasında. */}
@@ -337,7 +337,7 @@ function TemaKart({
 }) {
   const kartSize = boardMode ? 180 : 120;
   return (
-    <motion.div
+    <m.div
       initial={reducedMotion ? {} : { scale: 0.8, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{
@@ -371,7 +371,7 @@ function TemaKart({
             <span aria-hidden="true" style={{ position: 'absolute', top: 10, right: 10, fontSize: 22 }}>🔒</span>
           )}
         </BigButton>
-    </motion.div>
+    </m.div>
   );
 }
 

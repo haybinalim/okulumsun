@@ -2,7 +2,7 @@
  * Terazi aracı (plan v2 Adım 44 aşama 3): iki kefe, her biri en çok 10 nesne. Ağır taraf aşağı iner
  * (yalnız `transform: rotate`, ≤0,4 sn; azaltılmış harekette 0). Her kefenin altında "−1 / +1".
  */
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { BigButton } from '../primitives/BigButton';
 import { KESIF_KEFE_SINIRI } from '../../kesif/kesifMasasi';
@@ -65,7 +65,7 @@ export function TeraziAraci({ sol, sag, gonder }: { sol: number; sag: number; go
       data-egim={derece}
       style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: izgaraBoslugu }}
     >
-      <motion.div
+      <m.div
         animate={{ rotate: derece }}
         transition={{ duration: az ? 0 : 0.4 }}
         style={{
@@ -77,7 +77,7 @@ export function TeraziAraci({ sol, sag, gonder }: { sol: number; sag: number; go
       >
         <Kefe adet={sol} taraf="Sol" />
         <Kefe adet={sag} taraf="Sağ" />
-      </motion.div>
+      </m.div>
       <div
         aria-hidden="true"
         style={{

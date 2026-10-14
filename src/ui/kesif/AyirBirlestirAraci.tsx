@@ -3,7 +3,7 @@
  * dokunmak bütünü oradan ikiye ayırır: o sayaca kadar olanlar bir renk, sonrakiler başka renk ve hafif
  * aralıklı (parça-bütün). "Birleştir" tek renge döndürür; "+1/−1" bütünü değiştirir (ayırma kalkar).
  */
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { BigButton } from '../primitives/BigButton';
 import { KESIF_NESNE_SINIRI } from '../../kesif/kesifMasasi';
@@ -51,14 +51,14 @@ export function AyirBirlestirAraci({
               onPress={() => gonder({ tur: 'dokun', hedef: `ayir:${i + 1}` })}
               style={{ width: 'var(--size-tap-min)', height: 'var(--size-tap-min)', padding: 0 }}
             >
-              <motion.span
+              <m.span
                 aria-hidden="true"
                 animate={{ x: ikinci ? 8 : 0, scale: ikinci ? 0.92 : 1 }}
                 transition={{ duration: az ? 0 : 0.3 }}
                 style={{ display: 'inline-flex', width: '85%', height: '85%' }}
               >
                 <Sayac boyut="100%" renk={ikinci ? 'var(--color-retry)' : undefined} />
-              </motion.span>
+              </m.span>
             </BigButton>
           );
         })}

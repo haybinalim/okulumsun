@@ -11,7 +11,7 @@
  */
 
 import { useEffect, useState, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { COLOR, MOTION } from '../../design/tokens';
 import { BigButton } from '../primitives/BigButton';
@@ -74,16 +74,16 @@ export function OturumSonu({ oturumTamamlandi, onBahcem }: OturumSonuProps) {
       }}
     >
       {/* Maskot — sevinmiş durumda */}
-      <motion.div
+      <m.div
         initial={reducedMotion ? {} : { scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: reducedMotion ? 0 : MOTION.screen / 1000 }}
       >
         <Maskot durum="sevinmis" size={120} />
-      </motion.div>
+      </m.div>
 
       {/* "Çıkartma kazandın!" mesajı */}
-      <motion.div
+      <m.div
         initial={reducedMotion ? {} : { y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: reducedMotion ? 0 : MOTION.screen / 1000, delay: 0.2 }}
@@ -94,12 +94,12 @@ export function OturumSonu({ oturumTamamlandi, onBahcem }: OturumSonuProps) {
         }}
       >
         🎁
-      </motion.div>
+      </m.div>
 
       {/* "Devam" butonu — bahçeye git */}
       <AnimatePresence>
         {gecisHazir && (
-          <motion.div
+          <m.div
             initial={reducedMotion ? {} : { y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -113,7 +113,7 @@ export function OturumSonu({ oturumTamamlandi, onBahcem }: OturumSonuProps) {
             >
               Bahçem
             </BigButton>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 

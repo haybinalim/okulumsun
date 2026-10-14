@@ -12,7 +12,7 @@ import { useAppStore } from '../../store/appStore';
 import { BigButton } from '../primitives/BigButton';
 import { YonlendirmeSeridi } from '../feedback/YonlendirmeSeridi';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { COLOR } from '../../design/tokens';
 import { skillsData } from '../../content/skillsData';
@@ -125,7 +125,7 @@ export function KonuSecimi() {
           }}
         >
           {temaDugumleri.map((dugum, i) => (
-            <motion.div
+            <m.div
               key={dugum.id}
               initial={reducedMotion ? {} : { scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -160,7 +160,7 @@ export function KonuSecimi() {
                   </>
                 )}
               </BigButton>
-            </motion.div>
+            </m.div>
           ))}
           {turVar && (
             <BigButton

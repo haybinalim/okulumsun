@@ -11,7 +11,7 @@ import { useEffect } from 'react';
 import { useAppStore, TEMALAR } from '../../store/appStore';
 import { Maskot } from '../feedback/Maskot';
 import { useScreenSpeech } from '../../audio/useSpeak';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { COLOR, MOTION } from '../../design/tokens';
 
@@ -48,16 +48,16 @@ export function TemaGirisi() {
         padding: 'var(--size-edge)',
       }}
     >
-      <motion.div
+      <m.div
         initial={reducedMotion ? {} : { scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: reducedMotion ? 0 : MOTION.screen / 1000 }}
       >
         <Maskot durum="konusuyor" size={120} />
-      </motion.div>
+      </m.div>
 
       {tema && (
-        <motion.div
+        <m.div
           initial={reducedMotion ? {} : { y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: reducedMotion ? 0 : MOTION.screen / 1000, delay: 0.3 }}
@@ -71,7 +71,7 @@ export function TemaGirisi() {
           }}
         >
           {tema.ad}
-        </motion.div>
+        </m.div>
       )}
     </main>
   );
