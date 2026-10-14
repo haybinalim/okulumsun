@@ -46,7 +46,6 @@ export const UCUNCU_TARAF_VARLIKLAR: readonly UcuncuTarafVarlik[] = [
   { ad: 'react', tur: 'bagimlilik', lisans: 'MIT', sahip: 'Meta Platforms, Inc.', kaynakUrl: 'https://github.com/facebook/react', dagitimdaVar: true },
   { ad: 'react-dom', tur: 'bagimlilik', lisans: 'MIT', sahip: 'Meta Platforms, Inc.', kaynakUrl: 'https://github.com/facebook/react', dagitimdaVar: true },
   { ad: 'zustand', tur: 'bagimlilik', lisans: 'MIT', sahip: 'Paul Henschel', kaynakUrl: 'https://github.com/pmndrs/zustand', dagitimdaVar: true },
-  { ad: 'dexie', tur: 'bagimlilik', lisans: 'Apache-2.0', sahip: 'David Fahlander', kaynakUrl: 'https://github.com/dexie/Dexie.js', dagitimdaVar: true },
   { ad: 'zod', tur: 'bagimlilik', lisans: 'MIT', sahip: 'Colin McDonnell', kaynakUrl: 'https://github.com/colinhacks/zod', dagitimdaVar: true },
   { ad: 'framer-motion', tur: 'bagimlilik', lisans: 'MIT', sahip: 'Matt Perry', kaynakUrl: 'https://github.com/motiondivision/motion', dagitimdaVar: true },
   { ad: 'qrcode-generator', tur: 'bagimlilik', lisans: 'MIT', sahip: 'Kazuhiko Arase', kaynakUrl: 'https://github.com/kazuhikoarase/qrcode-generator', dagitimdaVar: true, kosul: 'yalnız Eve gönder ekranıyla tembel yüklenir (Adım 42)' },
@@ -74,6 +73,7 @@ export const UCUNCU_TARAF_VARLIKLAR: readonly UcuncuTarafVarlik[] = [
   { ad: 'vitest', tur: 'arac', lisans: 'MIT', sahip: 'Anthony Fu ve Vitest katkıcıları', kaynakUrl: 'https://github.com/vitest-dev/vitest', dagitimdaVar: false },
   { ad: 'happy-dom', tur: 'arac', lisans: 'MIT', sahip: 'David Ortner', kaynakUrl: 'https://github.com/capricorn86/happy-dom', dagitimdaVar: false },
   { ad: 'fake-indexeddb', tur: 'arac', lisans: 'Apache-2.0', sahip: 'Jeremy Scheff', kaynakUrl: 'https://github.com/dumbmatter/fakeIndexedDB', dagitimdaVar: false },
+  { ad: 'dexie', tur: 'arac', lisans: 'Apache-2.0', sahip: 'David Fahlander', kaynakUrl: 'https://github.com/dexie/Dexie.js', dagitimdaVar: false, kosul: 'Yalnız IndexedDB biçim uyum testinde (ADR-0015); uygulama kendi sarmalayıcısını kullanır' },
   { ad: 'Piper', tur: 'arac', lisans: 'GPL-3.0', sahip: 'Open Home Foundation', kaynakUrl: 'https://github.com/OHF-Voice/piper1-gpl', dagitimdaVar: false, kosul: 'Yalnız geliştirme makinesinde; ürettiği ses dosyalarına lisans geçirmez' },
 ];
 

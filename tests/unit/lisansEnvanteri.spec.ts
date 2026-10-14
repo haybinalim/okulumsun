@@ -34,9 +34,9 @@ describe('lisans envanteri (K10)', () => {
 
   it('depo temiz; envanterde olmayan bağımlılık yakalanır (tuzak)', () => {
     expect(denetle(kok)).toEqual([]);
-    const eksik = UCUNCU_TARAF_VARLIKLAR.filter((v) => v.ad !== 'dexie');
+    const eksik = UCUNCU_TARAF_VARLIKLAR.filter((v) => v.ad !== 'zustand');
     const sorunlar = denetle(kok, eksik);
-    expect(sorunlar).toContain('envanterde yok: bağımlılık "dexie" (src/content/ucuncuTarafVarliklar.ts)');
+    expect(sorunlar).toContain('envanterde yok: bağımlılık "zustand" (src/content/ucuncuTarafVarliklar.ts)');
     expect(sorunlar.some((s) => s.startsWith('LICENSES.md: tablo bölümü'))).toBe(true);
   });
 });
