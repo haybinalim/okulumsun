@@ -161,6 +161,8 @@ export function VeliPaneli() {
         </AyarSatir>
       </Bolum>
 
+      {!tahta && <IsinmaBolumu />}
+
       <KapsayicilikBolumu tahta={tahta} />
 
       <Bolum baslik="Bu ay açık konular">
@@ -548,6 +550,39 @@ const KAPSAYICILIK_SATIRLARI: readonly {
  * "Kapsayıcılık" bölümü (plan v2 Adım 55): altı ayar, varsayılan hepsi kapalı, yalnız bellekte.
  * Tahtada ayarlar adres çubuğuna (`#ayar=…`) yazılır; öğretmen yer imine ekler.
  */
+/**
+ * Isınma Keşfi anahtarı (plan v2 Adım 47, ADR-0007 Kabul): yalnız kişisel modda, varsayılan kapalı,
+ * yalnız bellekte. Sonuç yalnız o oturumun başlangıç noktasını belirler, hiçbir yere yazılmaz.
+ */
+function IsinmaBolumu() {
+  const acik = useAppStore((s) => s.isinmaAcik);
+  const ayarla = useAppStore((s) => s.isinmaAyarla);
+  return (
+    <Bolum baslik="Isınma">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+        <BigButton
+          label={`Oturuma kısa ısınmayla başla: ${acik ? 'açık' : 'kapalı'}`}
+          size="control"
+          variant={acik ? 'accent' : 'ghost'}
+          ariaPressed={acik}
+          onPress={() => ayarla(!acik)}
+          style={{ minHeight: 'max(64px, var(--size-control))', padding: '0 16px', fontSize: 'var(--text-adult)' }}
+        >
+          {acik ? 'Açık' : 'Kapalı'}
+        </BigButton>
+        <div>
+          <div style={{ fontSize: 'var(--text-adult)', color: COLOR.ink }}>Oturuma kısa ısınmayla başla</div>
+          <p style={bilgiMetniStili}>
+            Bir sonraki oturumdan önce en çok 8 kısa soru: en kolaydan başlar, bildikçe zorlaşır, iki kez üst üste
+            zorlanınca biter. Puan ya da sonuç gösterilmez; yalnız o oturumun nereden başlayacağını belirler ve
+            hiçbir yere kaydedilmez. Uygulama kapanınca anahtar kapanır.
+          </p>
+        </div>
+      </div>
+    </Bolum>
+  );
+}
+
 function KapsayicilikBolumu({ tahta }: { tahta: boolean }) {
   const kapsayicilik = useAppStore((s) => s.kapsayicilik);
   const ayarla = useAppStore((s) => s.kapsayicilikAyarla);

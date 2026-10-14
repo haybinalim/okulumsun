@@ -7,6 +7,14 @@ import type { MasteryRecord } from '../progress/mastery';
 import { oturumDuzenuSec, guncelSecilenSoru, secilenSoruyuUret } from '../progress/oturumRuntime';
 import { oturumBaslat, oturumOzeti, soruCevapla, tazeMi, type AktifOturum } from '../progress/session';
 import {
+  isinmaBaslat,
+  isinmaIlerlet,
+  isinmaMaddesi,
+  seviyeTahmini,
+  type IsinmaDurumu,
+  type SeviyeTahmini,
+} from '../progress/seviyeTespiti';
+import {
   aktifOturumOku,
   aktifOturumSil,
   aktifOturumYaz,
@@ -25,7 +33,11 @@ export interface KisiselOturumDurumu {
   readonly exercise: Exercise | null;
   readonly yukleniyor: boolean;
   readonly hata: string | null;
+  /** Isınma Keşfi maddesi gösteriliyor (PLAN §6.5; boncuk yolu/puan yok). */
+  readonly isinmada: boolean;
   cevapla(dogru: boolean): Promise<void>;
+  /** Ekrandaki maddede yanlış deneme oldu (ısınmada ilk deneme doğruluğu için). */
+  yanlisBildir(): void;
 }
 
 function kayitHaritasi(kayitlar: readonly MasteryRecord[]): Map<MasteryRecord['skillId'], MasteryRecord> {
@@ -46,6 +58,12 @@ export function useKisiselOturum(ekran: string, mod: Mod | null): KisiselOturumD
   const [kayitlar, setKayitlar] = useState<Map<MasteryRecord['skillId'], MasteryRecord>>(new Map());
   const cevapDevamEdiyor = useRef(false);
   const soruBaslangicMs = useRef(Date.now());
+  // Isınma Keşfi (ADR-0007): durum ve tahmin YALNIZ bu bileşenin belleğinde; hiçbir depoya yazılmaz.
+  const [isinma, setIsinma] = useState<IsinmaDurumu | null>(null);
+  const isinmaTohumu = useRef(0);
+  const isinmaYapildi = useRef(false);
+  const isinmaTahmini = useRef<SeviyeTahmini | null>(null);
+  const maddedeYanlisVar = useRef(false);
 
   const readingLevel = useAppStore((s) => s.readingLevel);
   const okulAyiIndex = useAppStore((s) => s.okulAyiIndex);
@@ -53,6 +71,7 @@ export function useKisiselOturum(ekran: string, mod: Mod | null): KisiselOturumD
   const avatarId = useAppStore((s) => s.avatarId);
   const accentId = useAppStore((s) => s.accentId);
   const secilenTemaNo = useAppStore((s) => s.secilenTemaNo);
+  const isinmaAcik = useAppStore((s) => s.isinmaAcik);
   const oturumuTamamla = useAppStore((s) => s.oturumuTamamla);
   const profildenYukle = useAppStore((s) => s.profildenYukle);
 
@@ -118,9 +137,27 @@ export function useKisiselOturum(ekran: string, mod: Mod | null): KisiselOturumD
     [secilenTemaNo],
   );
 
-  // Alıştırma ekranına ilk geçişte yeni sekiz soruluk plan oluşturulur.
+  // Veli anahtarı her açılışında ısınma bir kez yeniden hak kazanır; kapatınca süren ısınma biter.
   useEffect(() => {
-    if (yukleniyor || mod !== 'kisisel' || ekran !== 'alistirma' || oturum) return;
+    isinmaYapildi.current = false;
+    isinmaTahmini.current = null;
+    if (!isinmaAcik) setIsinma(null);
+  }, [isinmaAcik]);
+
+  // Alıştırma ekranına ilk geçişte (ısınma varsa bittikten sonra) yeni sekiz soruluk plan oluşturulur.
+  useEffect(() => {
+    if (yukleniyor || mod !== 'kisisel' || ekran !== 'alistirma' || oturum || isinma) return;
+
+    // Anahtar açıksa ve bu açılışta henüz yapılmadıysa önce ısınma (PLAN §6.5, ADR-0007).
+    if (isinmaAcik && !isinmaYapildi.current) {
+      isinmaYapildi.current = true;
+      const baslangic = isinmaBaslat(duzen, okulAyiIndex);
+      if (!baslangic.bitti) {
+        isinmaTohumu.current = hash32(`isinma|${Date.now()}`);
+        setIsinma(baslangic);
+        return;
+      }
+    }
 
     const simdiMs = Date.now();
     const profilTohumu = hash32(`${avatarId ?? 'varsayilan'}|${accentId ?? 'mavi'}`);
@@ -134,7 +171,10 @@ export function useKisiselOturum(ekran: string, mod: Mod | null): KisiselOturumD
       [],
       [],
       null,
+      isinmaTahmini.current,
     );
+    // Tahmin yalnız bu planı başlatır; sonra bellekten de atılır.
+    isinmaTahmini.current = null;
 
     if (yeniOturum.secilenSorular.length === 0) {
       setHata('Bu tema için üretilebilir alıştırma bulunamadı.');
@@ -146,21 +186,51 @@ export function useKisiselOturum(ekran: string, mod: Mod | null): KisiselOturumD
     void aktifOturumYaz(yeniOturum, mod).catch((err: unknown) => {
       setHata(`Yeni oturum kaydedilemedi: ${(err as Error).message}`);
     });
-  }, [accentId, avatarId, duzen, ekran, kayitlar, mod, oturum, readingLevel, yukleniyor]);
+  }, [accentId, avatarId, duzen, ekran, isinma, isinmaAcik, kayitlar, mod, okulAyiIndex, oturum, readingLevel, yukleniyor]);
 
   const exercise = useMemo(() => {
-    if (!oturum || mod !== 'kisisel') return null;
+    if (mod !== 'kisisel') return null;
+    if (isinma && !isinma.bitti) return secilenSoruyuUret(isinmaMaddesi(isinma, duzen, isinmaTohumu.current), duzen, mod);
+    if (!oturum) return null;
     const secilen = guncelSecilenSoru(oturum);
     return secilen ? secilenSoruyuUret(secilen, duzen, mod) : null;
-  }, [duzen, mod, oturum]);
+  }, [duzen, isinma, mod, oturum]);
 
   const exerciseItemId = exercise?.itemId;
   useEffect(() => {
     if (exerciseItemId) soruBaslangicMs.current = Date.now();
+    maddedeYanlisVar.current = false;
   }, [exerciseItemId]);
 
+  const yanlisBildir = useCallback((): void => {
+    maddedeYanlisVar.current = true;
+  }, []);
+
   const cevapla = useCallback(async (dogru: boolean): Promise<void> => {
-    if (!oturum || mod !== 'kisisel' || cevapDevamEdiyor.current) return;
+    if (mod !== 'kisisel' || cevapDevamEdiyor.current) return;
+
+    // Isınma maddesi: yalnız bellekteki ısınma durumu ilerler. Ustalık kaydı, olay, oturum
+    // özeti ve aktif oturum YAZILMAZ (ADR-0007). Doğruluk ilk denemedir.
+    if (isinma && !isinma.bitti) {
+      const simdiMs = Date.now();
+      const sonraki = isinmaIlerlet(isinma, {
+        dogru: dogru && !maddedeYanlisVar.current,
+        kullanilanYardimKademesi: 0,
+        latencyMs: Math.max(0, simdiMs - soruBaslangicMs.current),
+        tani: null,
+        zamanMs: simdiMs,
+      });
+      maddedeYanlisVar.current = false;
+      if (sonraki.bitti) {
+        isinmaTahmini.current = seviyeTahmini(sonraki, duzen);
+        setIsinma(null);
+      } else {
+        setIsinma(sonraki);
+      }
+      return;
+    }
+
+    if (!oturum) return;
     const secilen = guncelSecilenSoru(oturum);
     if (!secilen) return;
 
@@ -207,7 +277,7 @@ export function useKisiselOturum(ekran: string, mod: Mod | null): KisiselOturumD
     } finally {
       cevapDevamEdiyor.current = false;
     }
-  }, [duzen, kayitlar, mod, oturum, oturumuTamamla]);
+  }, [duzen, isinma, kayitlar, mod, oturum, oturumuTamamla]);
 
-  return { exercise, yukleniyor, hata, cevapla };
+  return { exercise, yukleniyor, hata, isinmada: isinma !== null && !isinma.bitti, cevapla, yanlisBildir };
 }
