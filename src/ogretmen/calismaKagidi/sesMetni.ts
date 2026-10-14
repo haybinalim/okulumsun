@@ -30,6 +30,9 @@ export function trDuzlestir(agac: Readonly<Record<string, unknown>>): Record<str
 
 const SEMBOL: Readonly<Record<string, string>> = { 'op.arti': '+', 'op.eksi': '−', 'op.esit': '=' };
 
+/** Sayıya bağlı birim anahtarları (yalnız para birimi; "Kaç lira?" gibi soru kalıpları değil). */
+const BIRIM = /^para\.lira$/;
+
 const buyukHarf = (s: string): string => (s.length === 0 ? s : s.charAt(0).toLocaleUpperCase('tr') + s.slice(1));
 const kucukHarf = (s: string): string => (s.length === 0 ? s : s.charAt(0).toLocaleLowerCase('tr') + s.slice(1));
 
@@ -70,6 +73,8 @@ export function sesMetni(s: SpeakSource, tr: Readonly<Record<string, string>>): 
     if (oncekiTur === 'bos') cikti = parca;
     else if (oncekiTur === 'sayi' && tur === 'sayi') cikti += `, ${parca}`;
     else if (oncekiTur === 'yon' && k.startsWith('adim.')) cikti += `, ${parca}`;
+    // Para birimi sayının parçasıdır, yeni cümle değil: [sayi.5, para.lira] → "beş lira" ("beş. Lira" değil).
+    else if (oncekiTur === 'sayi' && BIRIM.test(k)) cikti += ` ${kucukHarf(tr[k] ?? k)}`;
     else if (oncekiTur === 'sayi' && tur === 'metin' && !islemli) cikti += `. ${buyukHarf(tr[k] ?? k)}`;
     else cikti += ` ${parca}`;
     oncekiTur = tur;
