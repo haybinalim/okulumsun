@@ -3,6 +3,7 @@
 > **TASLAK — pilot bulguları (Adım 32) ve kullanıcı onayı bekliyor.**
 > Hiçbir okula, MEM'e ya da veliye gönderilmedi (⛔ O6). Hipotez, ölçütler ve analiz planı
 > [ön kayıt taslağındadır](etki-calismasi-on-kayit.md); bu belge sahada **nasıl** yürüneceğini yazar.
+> §9 imha tarihleri kullanıcı onaylı (KG-92); Ek A ölçme aracı Adım 53b üreticisiyle (KG-93), içerik geçerliği onayı bekliyor.
 
 ## 1. Desen
 
@@ -87,7 +88,7 @@ sunulmaz ("Bugün birlikte birkaç bilmece çözeceğiz").
 4. Ham Ç-kodlu tablo **depoya girmez**; depoya yalnız toplulaştırılmış tablo (ortalama, SS, n, etki büyüklüğü, GA) ve analiz
    betiği girer.
 
-## 9. Veri imha planı (öneri — MEM izni farklı bir süre öngörürse o uygulanır)
+## 9. Veri imha planı (kullanıcı onaylı (KG-92) — MEM izni farklı bir süre öngörürse o uygulanır)
 
 | Ne | Nerede | Ne zaman imha |
 |---|---|---|
@@ -113,44 +114,53 @@ sınırlar, sapmalar). Sonuç ne olursa olsun yayımlanır; düzeltme yalnız ta
 
 ---
 
-## Ek A — Form A ve Form B taslak madde listesi önerisi
+## Ek A — Form A ve Form B (ölçme aracı, Adım 53b)
 
-> Öneri; içerik geçerliği onayı ve Adım 53b'deki `scripts/etki-formu-uret.ts` ile kesinleşir. **Yeni kod gerekmedi:** iki form
-> bugünkü çalışma kâğıdı üreticisiyle (Adım 35) üretildi; kodlar uygulamada `?arsiv=<kâğıt kodu>` adresiyle açılıp
-> yazdırılabilir. Yanıt tercihi "yazmalı da olur" (müdahale haftalarının şablonlarının çoğu kâğıtta yazı ister).
+> Formlar `scripts/etki-formu-uret.ts` ile koddan üretilir (KG-93; çekirdek `src/ogretmen/calismaKagidi/etkiFormu.ts`).
+> Tam madde listesi, cevap anahtarı ve puanlama yönergesi: [ölçme aracı](olcme-araci/README.md). **İçerik geçerliği onayı
+> (2 öğretmen + 1 alan uzmanı) ve çalışma dışı 3–5 çocukla ön deneme bekliyor;** değişiklik gerekirse desen/tohum değişir ve
+> ön kayıt damgasından önce kesinleşir. KG-90'daki eski öneri (bugünkü üreticiden iki ayrı arşiv kâğıdı) bunun yerine geçti.
 
-**Plan (her iki form):** iki kâğıt, toplam 20 madde.
+**Yazdırma:** uygulamada `?arsiv=ETKI-1-A` (ön test) ve `?arsiv=ETKI-1-B` (son test); A4, 2×3 düzen. Kâğıtta ad yerine
+**Ç-kodu** satırı; cevap anahtarı forma basılmaz. Bölüm 2 yeni sayfadan başlar (ön test iki oturuma bölünecekse buradan).
 
-| Bölüm | Etkinlikler (düğüm kodu) | Madde | Şablon dağılımı |
+**Üretim kuralı.** Çalışma kâğıdı altyapısı (Adım 35) aynen kullanılır; tek fark seçimdir. 20 yuvalık sabit bir desen her yuvaya
+düğüm + şablon + **zorluk düzeyi** atar ve iki form bu deseni sırayla doldurur:
+
+| Bölüm | Etkinlik (düğüm kodu) — çıktı | Madde | Zorluk düzeyleri (her iki formda) |
 |---|---|---|---|
-| 1 | Üstüne say (d3), Ona tamamla (d4), Onu geçen toplama (d5), Geriye sayarak çıkar (d8) — MAT.1.2.2 | 12 | M-TOPLA-GORSEL 3 · M-TOPLA-SEMBOL 3 · M-TOPLA-ONA-TUMLE 3 · M-CIKAR-GORSEL 3 |
-| 2 | İki taraf eşit (db), Eşitliği değiştir (dc), Kaç tane eksik? (dd), Tersini yap (de) — MAT.1.2.3, MAT.1.2.4 | 8 | M-ESIT-DENGE 4 · M-EKSIK-TOPLANAN 2 · M-TERS-ISLEM 2 |
+| 1 | Üstüne say (d3) — MAT.1.2.2 | 3 | 1 · 1 · 1 |
+| 1 | Ona tamamla (d4) — MAT.1.2.2 | 3 | 1 · 1 · 1 |
+| 1 | Geriye sayarak çıkar (d8) — MAT.1.2.2 | 3 | 1 · 2 · 3 |
+| 1 | Onu geçen toplama (d5) — MAT.1.2.2 | 3 | 2 · 3 · 3 |
+| 2 | İki taraf eşit (db) — MAT.1.2.3 | 2 | 1 · 2 |
+| 2 | Eşitliği değiştir (dc) — MAT.1.2.3 | 2 | 1 · 3 |
+| 2 | Kaç tane eksik? (dd) — MAT.1.2.4, 1.2.3 | 2 | 2 · 3 |
+| 2 | Tersini yap (de) — MAT.1.2.4 | 2 | 2 · 3 |
 
-"Zihinden bul" (d6, M-TAHMIN-ISLEM) bilerek dışarıda: kâğıtta tahmin ile hesaplama ayrılamaz.
+- **Zorluk düzeyi** maddedeki toplama gerçeğinden (x + y = z; çıkarma z − y = x): 1 = 10 içinde; 2 = 20 içinde, onluk geçmeden;
+  3 = onluk geçen. Eşlemede kartların en zoru. Toplam 9 · 5 · 6 (her iki form). Üstüne say ve ona tamamla şablonları yalnız 10
+  içinde üretir; bu yüzden onluk geçen maddeler d5, d8 ve bölüm 2'dedir.
+- **Ortak madde yok:** Form B, Form A'da geçen her işlem ifadesini (ve işlem kartını) dışlar; form içinde de ifade yinelenmez.
+- **Determinizm:** tohumlar 53101 (A) ve 53201 (B); aynı kod → aynı form. `tests/unit/etkiFormu.spec.ts` 20 maddeyi, sıra sıra
+  şablon/zorluk eşitliğini, kazanım kapsamını, cevap anahtarını, ortak madde yokluğunu, determinizmi ve belge tazeliğini denetler.
+- "Zihinden bul" (d6) dışarıda: kâğıtta tahmin ile hesaplama ayrılamaz.
 
-| Form | Bölüm 1 kâğıt kodu | Bölüm 2 kâğıt kodu |
-|---|---|---|
-| A (ön test) | `OK-1.d3d4d5d8.14z1-12-2x3-y` (tohum 53101) | `OK-1.dbdcddde.14z2-8-2x3-y` (tohum 53102) |
-| B (son test) | `OK-1.d3d4d5d8.151t-12-2x3-y` (tohum 53201) | `OK-1.dbdcddde.151u-8-2x3-y` (tohum 53202) |
+**Form A (yönerge özü → cevap):** 1. 6 + 2 → 8 · 2. 8 + ? = 10 → B · 3. 9 − 7 → 2 · 4. 13 + 3 → 16 · 5. 8 + 1 → 9 ·
+6. 4 + ? = 10 → C · 7. 16 − 1 → 15 · 8. 7 + 9 → 16 · 9. 6 + 3 → 9 · 10. 5 + ? = 10 → A · 11. 12 − 5 → 7 · 12. 5 + 8 → 13 ·
+13. 3 + ? = 10 → A · 14. 14 + ? = 16 → C · 15. 2 + ? = 10 → C · 16. tersini yap (eşleme) → 2–A, 1–C, 3–B · 17. 2 + ? = 12 → C ·
+18. 7 + ? = 15 → B · 19. 2 + ? = 11 → C · 20. tersini yap (eşleme) → 3–A, 1–C, 2–B.
 
-**Form A maddeleri (yönerge → cevap):**
-1. 10'a tamamlamak için kaç gerekir? → C · 2. 11 + 5 kaç eder? → 16 · 3. 5 + 1 kaç eder? → 6 · 4. 16 − 7 kaç eder? → 9 ·
-5. 5 + 2 kaç eder? → 7 · 6. 10'a tamamlamak için kaç gerekir? → C · 7. 15 + 3 kaç eder? → 18 · 8. 11 − 3 kaç eder? → 8 ·
-9. 13 − 3 kaç eder? → 10 · 10. 9 + 1 kaç eder? → 10 · 11. 10'a tamamlamak için kaç gerekir? → C · 12. 9 + 3 kaç eder? → 12 ·
-13–14, 16–19. Eksik sayıyı bul (eşitlik/eksik toplanan, 6 madde) · 15, 20. Ters işlemi bul (eşleme, 2 madde).
+**Form B (yönerge özü → cevap):** 1. 8 + 2 → 10 · 2. 7 + ? = 10 → A · 3. 10 − 6 → 4 · 4. 12 + 3 → 15 · 5. 5 + 1 → 6 ·
+6. 6 + ? = 10 → C · 7. 15 − 5 → 10 · 8. 7 + 4 → 11 · 9. 7 + 1 → 8 · 10. 9 + ? = 10 → A · 11. 13 − 7 → 6 · 12. 8 + 9 → 17 ·
+13. 3 + ? = 4 → C · 14. 1 + ? = 18 → A · 15. 1 + ? = 6 → A · 16. tersini yap (eşleme) → 2–B, 3–A, 1–C · 17. 10 + ? = 12 → B ·
+18. 5 + ? = 14 → C · 19. 9 + ? = 13 → A · 20. tersini yap (eşleme) → 1–C, 2–A, 3–B.
 
-**Form B maddeleri (yönerge → cevap):**
-1. 8 + 2 kaç eder? → 10 · 2. 15 − 8 kaç eder? → 7 · 3. 7 + 3 kaç eder? → 10 · 4. 10'a tamamlamak için kaç gerekir? → B ·
-5. 8 + 1 kaç eder? → 9 · 6. 10'a tamamlamak için kaç gerekir? → C · 7. 12 − 4 kaç eder? → 8 · 8. 14 + 3 kaç eder? → 17 ·
-9. 10 − 4 kaç eder? → 6 · 10. 5 + 2 kaç eder? → 7 · 11. 6 + 5 kaç eder? → 11 · 12. 10'a tamamlamak için kaç gerekir? → A ·
-13, 14, 15, 17, 19, 20. Eksik sayıyı bul (6 madde) · 16, 18. Ters işlemi bul (eşleme, 2 madde).
+Harfli cevaplar kâğıttaki seçenek harfidir (bölüm 2 ve ona tamamla maddelerinde seçenekler kart olarak basılır).
 
-Harfli cevaplar (A/B/C) kâğıttaki seçenek harfidir; tam sahne ve seçenekler kâğıt kodu açılınca görünür. Bölüm 2'de madde
-sırası iki formda farklıdır (aynı dağılım).
-
-**53b'de giderilecek bulgular:**
-- Bölüm 1'de onluk geçen işlem (MAT.1.2.2'nin asıl zorluğu) bu tohumlarla iki formda da 3 maddede (A: 16 − 7, 11 − 3, 9 + 3;
-  B: 15 − 8, 12 − 4, 6 + 5), ama bu eşitlik tohumdan gelir: üretici şablon dağılımını eşitler, zorluğu eşitlemez →
-  `etkiFormu.spec.ts` zorluk dağılımını da denetlemeli.
-- "10'a tamamla" maddesi Form A'da üç kez aynı yönergeyle geliyor; madde çeşitliliği öğretmen görüşüne sunulmalı.
-- Form A'da 3. madde (5 + 1) çok kolay; tavan/taban etkisi ön denemede (3–5 çocuk) bakılmalı.
+**İçerik geçerliği incelemesine sunulacaklar:**
+- "Ona tamamla" yönergesi her formda üç kez aynıdır (şablon tek yönergeli); Form A'da 13 ve 15 de 10'a tamamlama biçimindedir.
+- Form B'de 14. madde (1 + ? = 18) ve 13. madde (3 + ? = 4) uç değerlerdedir; zorluk düzeyleri desene uyar ama öğretmen görüşüyle
+  değiştirilebilir (tohum veya desen değişir, iki form birlikte yeniden üretilir).
+- Eşitlik maddelerinde kâğıt yalnız iki sayı ve kutu gösterir; tahtadaki terazi görseli kâğıtta sadeleşir — anlaşılırlık ön denemede
+  bakılmalı. Taban/tavan etkisi (1, 5, 9 numaralı kolay maddeler) ön denemede bakılmalı.

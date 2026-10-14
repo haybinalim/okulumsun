@@ -38,7 +38,7 @@
 |---|---|---|
 | 1 | Araştırma protokolü (amaç, desen, örneklem, takvim, müdahale, sadakat, etik) | [`../etki-calismasi-protokol.md`](../etki-calismasi-protokol.md) |
 | 2 | Ön kayıt (hipotez, birincil/ikincil ölçütler, analiz planı, karar kuralı) | [`../etki-calismasi-on-kayit.md`](../etki-calismasi-on-kayit.md) |
-| 3 | Ölçme aracı tarifi ve taslak form örneği (20 maddelik kâğıt test, Form A/B) | Protokol Ek A; kesin form Adım 53b (`docs/research/olcme-araci/`) |
+| 3 | Ölçme aracı tarifi ve form örneği (20 maddelik kâğıt test, Form A/B) | Protokol Ek A; formlar `docs/research/olcme-araci/` (Adım 53b, içerik geçerliği onayı bekliyor) |
 | 4 | Veli onam formu | [`../formlar/etki-veli-onami.md`](../formlar/etki-veli-onami.md) |
 | 5 | Veri imha planı | Protokol §9 (aşağıda özet) |
 | 6 | Uygulamanın gizlilik açıklaması | `/gizlilik/` sayfası ve `docs/basvuru/gizlilik-ozeti.md` |
@@ -55,7 +55,7 @@
   ölçeği, öğretmen için 5 maddelik yük/fayda anketi.
 - Test not yerine geçmez, karneye ya da okul kayıtlarına girmez.
 
-## 4. Veri imha planı (özet)
+## 4. Veri imha planı (özet; kullanıcı onaylı (KG-92))
 
 - Ad–kod listesi okulda öğretmende kalır; son test puanlaması bitince, en geç **30 Nisan 2027**'de imha edilir.
 - Test kâğıtları, formlar ve kodlu puan tablosu rapor yayımlanınca, en geç **4 Haziran 2027**'de imha edilir.
