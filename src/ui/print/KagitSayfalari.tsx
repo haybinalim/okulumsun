@@ -35,6 +35,8 @@ export interface KagitSayfalariProps {
   readonly cevapAnahtariDahil: boolean;
   readonly siyahBeyaz: boolean;
   readonly kopya: 'onizleme' | 'baski';
+  /** Üst bilgideki yazma satırının etiketi; varsayılan "Adım:" (etki formunda "Ç-kodu:", KG-93). */
+  readonly adEtiketi?: string;
 }
 
 function Ikon({ ikon }: { ikon: YonergeIkonu }) {
@@ -220,7 +222,14 @@ function Anahtar({ satirlar }: { satirlar: readonly CevapSatiri[] }) {
   );
 }
 
-export function KagitSayfalari({ plan, duzen, cevapAnahtariDahil, siyahBeyaz, kopya }: KagitSayfalariProps) {
+export function KagitSayfalari({
+  plan,
+  duzen,
+  cevapAnahtariDahil,
+  siyahBeyaz,
+  kopya,
+  adEtiketi = 'Adım:',
+}: KagitSayfalariProps) {
   const toplam = plan.sayfalar.length + (cevapAnahtariDahil ? 1 : 0);
   return (
     <div
@@ -235,7 +244,7 @@ export function KagitSayfalari({ plan, duzen, cevapAnahtariDahil, siyahBeyaz, ko
           <section key={i} className="kg-sayfa" data-sayfa={i + 1} aria-label={`Çalışma kâğıdı, sayfa ${i + 1}`}>
             <header className="kg-ust">
               <span className="kg-ad">
-                Adım: <span className="kg-cizgi" />
+                {adEtiketi} <span className="kg-cizgi" />
               </span>
             </header>
             <div className={`kg-izgara kg-izgara--${duzen}`}>

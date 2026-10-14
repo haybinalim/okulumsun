@@ -32,3 +32,17 @@ test('kâğıt arşivi: dizin aynı köken, çerez yok, PDF iner; arşiv görün
   await expect(page.getByRole('button', { name: 'Başla' })).toHaveCount(0);
   await expect(page.locator('.kg-kok--onizleme .kg-sayfa').first()).toBeVisible();
 });
+
+/** Plan v2 Adım 53b (KG-93): `?arsiv=ETKI-1-A|B` etki formunu çizer — 20 madde, Ç-kodu satırı, cevap anahtarı yok. */
+test('etki formu görünümü: 20 madde, Ç-kodu, cevap anahtarı basılmaz', async ({ page }) => {
+  for (const form of ['A', 'B']) {
+    await page.goto(new URL(`?arsiv=ETKI-1-${form}`, ONIZLEME_URL).href);
+    await expect(page.locator('[data-arsiv-hazir]')).toBeVisible();
+    const onizleme = page.locator('.kg-kok--onizleme');
+    await expect(onizleme).toHaveAttribute('data-kagit-kodu', `ETKI-1-${form}`);
+    await expect(onizleme.locator('.kg-madde')).toHaveCount(20);
+    await expect(onizleme.locator('.kg-ust').first()).toContainText('Ç-kodu:');
+    await expect(onizleme.locator('.kg-sayfa--anahtar')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Başla' })).toHaveCount(0);
+  }
+});

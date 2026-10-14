@@ -4,11 +4,16 @@
  * `scripts/calisma-kagidi-arsivi.ts` bu görünümü önizleme sunucusunda açıp A4 PDF basar. Uygulama kabuğu, ses ve
  * depolama yoktur; kod geçersizse kısa bir bilgi metni. Kâğıt uygulamadaki çalışma kâğıdıyla aynı üretimdir
  * (`kagitPlaniUret`), cevap anahtarı dâhil, renkli; para her zaman şematik (KG-19: kâğıt ve arşiv aynı strateji, TCMB izni yok).
+ *
+ * Adım 53b (KG-93): `?arsiv=ETKI-1-A` / `ETKI-1-B` etki çalışmasının ön/son test formunu çizer (`etkiFormlariUret`).
+ * Ad yerine Ç-kodu satırı; cevap anahtarı forma basılmaz (çocuğa dağıtılan kâğıtta durmasın; anahtar
+ * `docs/research/olcme-araci/` belgesinde).
  */
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { skillsData } from '../../content/skillsData';
 import { kagitKoduCoz, kagitPlaniUret } from '../../ogretmen/calismaKagidi/kagitPlani';
+import { ETKI_DUZENI, etkiFormlariUret, etkiFormuKoduCoz } from '../../ogretmen/calismaKagidi/etkiFormu';
 import { kagitMetinOzeti } from '../../ogretmen/calismaKagidi/arsiv';
 import { trDuzlestir } from '../../ogretmen/calismaKagidi/sesMetni';
 import { KagitSayfalari } from './KagitSayfalari';
@@ -16,7 +21,8 @@ import { KagitSayfalari } from './KagitSayfalari';
 const GECERLI = new Set(skillsData.filter((d) => d.durum === 'hazir').map((d) => d.id));
 
 export function ArsivKagidi({ kod }: { kod: string }) {
-  const istek = useMemo(() => kagitKoduCoz(kod, GECERLI), [kod]);
+  const etkiFormu = useMemo(() => etkiFormuKoduCoz(kod), [kod]);
+  const istek = useMemo(() => (etkiFormu ? null : kagitKoduCoz(kod, GECERLI)), [kod, etkiFormu]);
   const [tr, setTr] = useState<Record<string, string> | null>(null);
   useEffect(() => {
     let iptal = false;
@@ -27,7 +33,12 @@ export function ArsivKagidi({ kod }: { kod: string }) {
       iptal = true;
     };
   }, []);
-  const plan = useMemo(() => (istek && tr ? kagitPlaniUret(istek, tr) : null), [istek, tr]);
+  const plan = useMemo(
+    () => (!tr ? null : etkiFormu ? etkiFormlariUret(tr)[etkiFormu] : istek ? kagitPlaniUret(istek, tr) : null),
+    [istek, etkiFormu, tr],
+  );
+  const duzen = etkiFormu ? ETKI_DUZENI : istek?.duzen;
+  const sayfaAyari = { cevapAnahtariDahil: !etkiFormu, adEtiketi: etkiFormu ? 'Ç-kodu:' : undefined } as const;
 
   const [kap, setKap] = useState<HTMLElement | null>(null);
   useEffect(() => {
@@ -39,7 +50,7 @@ export function ArsivKagidi({ kod }: { kod: string }) {
     return () => el.remove();
   }, []);
 
-  if (!istek) {
+  if (!duzen) {
     return (
       <main style={{ padding: 24, fontFamily: 'inherit' }}>
         <p role="status">Bu kâğıt kodu geçersiz.</p>
@@ -54,13 +65,11 @@ export function ArsivKagidi({ kod }: { kod: string }) {
       style={{ padding: 24, fontFamily: 'inherit' }}
     >
       <p role="status">{plan ? `Kâğıt kodu: ${plan.kod}` : 'Kâğıt hazırlanıyor…'}</p>
-      {plan && (
-        <KagitSayfalari plan={plan} duzen={istek.duzen} cevapAnahtariDahil siyahBeyaz={false} kopya="onizleme" />
-      )}
+      {plan && <KagitSayfalari plan={plan} duzen={duzen} {...sayfaAyari} siyahBeyaz={false} kopya="onizleme" />}
       {kap &&
         plan &&
         createPortal(
-          <KagitSayfalari plan={plan} duzen={istek.duzen} cevapAnahtariDahil siyahBeyaz={false} kopya="baski" />,
+          <KagitSayfalari plan={plan} duzen={duzen} {...sayfaAyari} siyahBeyaz={false} kopya="baski" />,
           kap,
         )}
     </main>
