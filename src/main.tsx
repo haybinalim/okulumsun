@@ -44,6 +44,9 @@ if (arsivKodu) {
 } else if (import.meta.env.DEV && new URLSearchParams(location.search).get('gelistirme') === 'say') {
   // KG-86: M-SAY yerleşim önizlemesi (e2e tahta/tablet boyut denetimi); yalnız geliştirme.
   void import('./dev/SayOnizleme.tsx').then(({ SayOnizleme }) => kok.render(<SayOnizleme />))
+} else if (import.meta.env.DEV && new URLSearchParams(location.search).get('gelistirme') === 'hikaye') {
+  // KG-91: maskot hikâyesi sahne önizlemesi (tema arka planı + poz + görsel); yalnız geliştirme, uygulamaya bağlı değil.
+  void import('./dev/HikayeOnizleme.tsx').then(({ HikayeOnizleme }) => kok.render(<HikayeOnizleme />))
 } else {
   kok.render(
     <StrictMode>

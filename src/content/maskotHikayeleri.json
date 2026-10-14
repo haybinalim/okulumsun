@@ -1,0 +1,312 @@
+{
+  "$aciklama": "Plan v2 Adım 54: maskotun tema hikâyeleri (7 tema × 3 sahne). Ses anahtarları tr.json'da YOK, klip yok (Adım 31 + maskot sesi kararı); uygulamaya bağlı değil (KG-91). Maskotun adı pilot sınıf oylamasını bekliyor, metinlerde ad geçmez. Öğretmen okuması ve 3 çocuk + 1 öğretmen izlemesi bekliyor.",
+  "hikayeler": [
+    {
+      "tema": 1,
+      "sahne": "park",
+      "baslik": "Parkta kayıp top",
+      "sahneler": [
+        {
+          "no": 1,
+          "sesAnahtari": "hikaye.t1-1",
+          "metin": "Parka geldik! Topum bir yere kaçtı, birlikte arayalım mı?",
+          "poz": "konusuyor",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "top",
+            "adet": 1,
+            "layout": "sira"
+          }
+        },
+        {
+          "no": 2,
+          "sesAnahtari": "hikaye.t1-2",
+          "metin": "Bankın altına mı baksak, ağacın arkasına mı? Yerleri birlikte söyleyelim.",
+          "poz": "dinliyor",
+          "gorsel": {
+            "type": "konumSahnesi",
+            "iliski": "altinda",
+            "hedef": "top",
+            "referans": "kutu"
+          }
+        },
+        {
+          "no": 3,
+          "sesAnahtari": "hikaye.t1-3",
+          "metin": "Top kaydırağın yanındaymış! Yarın parkta yine oynarız.",
+          "poz": "sevinmis",
+          "gorsel": {
+            "type": "konumSahnesi",
+            "iliski": "yaninda",
+            "hedef": "top",
+            "referans": "sepet"
+          }
+        }
+      ]
+    },
+    {
+      "tema": 2,
+      "sahne": "bahce",
+      "baslik": "Bahçede sayı sayıyoruz",
+      "sahneler": [
+        {
+          "no": 1,
+          "sesAnahtari": "hikaye.t2-1",
+          "metin": "Bahçemde çiçekler açıyor. Hadi birlikte sayalım!",
+          "poz": "konusuyor",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "cicek",
+            "adet": 3,
+            "layout": "gruplu"
+          }
+        },
+        {
+          "no": 2,
+          "sesAnahtari": "hikaye.t2-2",
+          "metin": "Kelebekler de geldi. Her birine bir sayı söyleyelim.",
+          "poz": "dinliyor",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "kelebek",
+            "adet": 5,
+            "layout": "gruplu"
+          }
+        },
+        {
+          "no": 3,
+          "sesAnahtari": "hikaye.t2-3",
+          "metin": "Ağacımda tam on elma var. Saydığın her şey bahçede büyüyor.",
+          "poz": "sevinmis",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "elma",
+            "adet": 10,
+            "layout": "onlukCerceve"
+          }
+        }
+      ]
+    },
+    {
+      "tema": 3,
+      "sahne": "mutfak",
+      "baslik": "Mutfakta kurabiye",
+      "sahneler": [
+        {
+          "no": 1,
+          "sesAnahtari": "hikaye.t3-1",
+          "metin": "Mutfakta kurabiye yapacağız. Önce kaplarımızı seçelim.",
+          "poz": "konusuyor",
+          "gorsel": {
+            "type": "sekil",
+            "sekil": "dikdortgen"
+          }
+        },
+        {
+          "no": 2,
+          "sesAnahtari": "hikaye.t3-2",
+          "metin": "Hangi kalem uzun, hangisi kısa? Rafa birlikte bakalım.",
+          "poz": "dinliyor",
+          "gorsel": {
+            "type": "olcumKarsilastirma",
+            "boyut": "uzunluk",
+            "sol": {
+              "nesne": "kalem",
+              "renk": "mavi",
+              "deger": 5
+            },
+            "sag": {
+              "nesne": "kalem",
+              "renk": "turuncu",
+              "deger": 3
+            }
+          }
+        },
+        {
+          "no": 3,
+          "sesAnahtari": "hikaye.t3-3",
+          "metin": "Teraziyle tarttık, kurabiyeler hazır! Ölçmek ne güzel.",
+          "poz": "sevinmis",
+          "gorsel": {
+            "type": "olcumKarsilastirma",
+            "boyut": "kutle",
+            "sol": {
+              "nesne": "elma",
+              "renk": "yesil",
+              "deger": 3
+            },
+            "sag": {
+              "nesne": "top",
+              "renk": "mor",
+              "deger": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "tema": 4,
+      "sahne": "gol",
+      "baslik": "Göldeki ördekler",
+      "sahneler": [
+        {
+          "no": 1,
+          "sesAnahtari": "hikaye.t4-1",
+          "metin": "Gölde ördekler yüzüyor. Bazıları geliyor, bazıları gidiyor.",
+          "poz": "konusuyor",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "kus",
+            "adet": 3,
+            "layout": "sira"
+          }
+        },
+        {
+          "no": 2,
+          "sesAnahtari": "hikaye.t4-2",
+          "metin": "İki ördek daha geldi. Hepsini birlikte sayalım.",
+          "poz": "dinliyor",
+          "gorsel": {
+            "type": "islemSahnesi",
+            "nesne": "kus",
+            "ilkAdet": 3,
+            "degisimAdedi": 2,
+            "islem": "+"
+          }
+        },
+        {
+          "no": 3,
+          "sesAnahtari": "hikaye.t4-3",
+          "metin": "Akşam oldu, ördekler yuvasına dönüyor. Gölde bugün çok şey öğrendik.",
+          "poz": "sevinmis",
+          "gorsel": {
+            "type": "islemSahnesi",
+            "nesne": "kus",
+            "ilkAdet": 5,
+            "degisimAdedi": 3,
+            "islem": "-"
+          }
+        }
+      ]
+    },
+    {
+      "tema": 5,
+      "sahne": "pazar",
+      "baslik": "Pazar alışverişi",
+      "sahneler": [
+        {
+          "no": 1,
+          "sesAnahtari": "hikaye.t5-1",
+          "metin": "Pazara geldik! Kesemde biraz param var.",
+          "poz": "konusuyor",
+          "gorsel": {
+            "type": "banknot",
+            "deger": 5
+          }
+        },
+        {
+          "no": 2,
+          "sesAnahtari": "hikaye.t5-2",
+          "metin": "Tezgâhta mis kokulu elmalar var. Hangi parayla alabiliriz?",
+          "poz": "dinliyor",
+          "gorsel": {
+            "type": "banknot",
+            "deger": 10
+          }
+        },
+        {
+          "no": 3,
+          "sesAnahtari": "hikaye.t5-3",
+          "metin": "Elmalarımızı aldık. Paraları tanımak alışverişi kolaylaştırıyor.",
+          "poz": "sevinmis",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "elma",
+            "adet": 3,
+            "layout": "sira"
+          }
+        }
+      ]
+    },
+    {
+      "tema": 6,
+      "sahne": "atolye",
+      "baslik": "Atölyede blok ev",
+      "sahneler": [
+        {
+          "no": 1,
+          "sesAnahtari": "hikaye.t6-1",
+          "metin": "Atölyemde bloklarla bir ev yapacağım. Duvar için kare lazım.",
+          "poz": "konusuyor",
+          "gorsel": {
+            "type": "sekil",
+            "sekil": "kare"
+          }
+        },
+        {
+          "no": 2,
+          "sesAnahtari": "hikaye.t6-2",
+          "metin": "Çatı için de üçgen seçelim. Şekilleri birlikte bulalım.",
+          "poz": "dinliyor",
+          "gorsel": {
+            "type": "sekil",
+            "sekil": "ucgen"
+          }
+        },
+        {
+          "no": 3,
+          "sesAnahtari": "hikaye.t6-3",
+          "metin": "Ev bitti! Penceresi de çember oldu.",
+          "poz": "sevinmis",
+          "gorsel": {
+            "type": "sekil",
+            "sekil": "cember"
+          }
+        }
+      ]
+    },
+    {
+      "tema": 7,
+      "sahne": "ciftlik",
+      "baslik": "Çiftlikte sayım",
+      "sahneler": [
+        {
+          "no": 1,
+          "sesAnahtari": "hikaye.t7-1",
+          "metin": "Çiftliğe hoş geldin! Burada hayvanları sayıp panoya işliyoruz.",
+          "poz": "konusuyor",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "kus",
+            "adet": 4,
+            "layout": "gruplu"
+          }
+        },
+        {
+          "no": 2,
+          "sesAnahtari": "hikaye.t7-2",
+          "metin": "Her hayvan için panoya bir çizgi çekelim.",
+          "poz": "dinliyor",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "kus",
+            "adet": 3,
+            "layout": "sira"
+          }
+        },
+        {
+          "no": 3,
+          "sesAnahtari": "hikaye.t7-3",
+          "metin": "Pano doldu! Çizgilere bakınca kaç hayvan olduğunu hemen görüyoruz.",
+          "poz": "sevinmis",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "yildiz",
+            "adet": 5,
+            "layout": "gruplu"
+          }
+        }
+      ]
+    }
+  ]
+}

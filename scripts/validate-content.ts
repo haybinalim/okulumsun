@@ -35,6 +35,7 @@ import { OGRETIM_HAFTALARI } from '../src/content/okulTakvimi';
 import { PlanDuzeltmeleriSchema } from '../src/content/schema/haftalikPlan';
 import { haftalikPlanUret } from '../src/ogretmen/haftalikPlan';
 import { EvIpuclariSchema } from '../src/content/schema/evIpucu';
+import { MaskotHikayeleriSchema } from '../src/content/schema/maskotHikayesi';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel: string): unknown => JSON.parse(readFileSync(path.join(ROOT, rel), 'utf8'));
@@ -241,6 +242,14 @@ try {
   sonuc.istatistik.push(`ev ipuçları: ${ev.ipuclari.length} tema`);
 } catch (e) {
   hata(`evIpuclari.json: ${e instanceof Error ? e.message : String(e)}`);
+}
+
+// ------------------------------------------------ maskot tema hikâyeleri (Adım 54)
+try {
+  const mh = MaskotHikayeleriSchema.parse(read('src/content/maskotHikayeleri.json'));
+  sonuc.istatistik.push(`maskot hikâyeleri: ${mh.hikayeler.length} tema × ${mh.hikayeler[0]?.sahneler.length ?? 0} sahne`);
+} catch (e) {
+  hata(`maskotHikayeleri.json: ${e instanceof Error ? e.message : String(e)}`);
 }
 
 // ------------------------------------------------ haftalık MEB planı (Adım 37)
