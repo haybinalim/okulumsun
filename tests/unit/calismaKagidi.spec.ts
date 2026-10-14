@@ -155,6 +155,27 @@ describe('sesMetni', () => {
     expect(metin({ kind: 'key', key: 'soru.hangisi-cok' })).toBe('Hangisinde daha çok var?');
   });
 
+  it('para tutarı tek cümle: "beş lira" ("beş. Lira" değil)', () => {
+    expect(metin({ kind: 'sequence', keys: ['sayi.5', 'para.lira'] })).toBe('beş lira');
+    expect(metin({ kind: 'sequence', keys: ['sayi.100', 'para.lira'] })).toBe('yüz lira');
+    expect(metin({ kind: 'sequence', keys: ['sayi.20', 'para.lira'] })).toBe('yirmi lira');
+    // Soru kalıbı yine yeni cümle başlatır.
+    expect(metin({ kind: 'sequence', keys: ['sayi.15', 'sayi.16', 'soru.hangisi-gelir'] })).toBe(
+      '15, 16. Sırada hangisi gelir?',
+    );
+  });
+
+  it('hiçbir kâğıt yönergesinde "sayı. Lira" kalıbı yok (tüm şablonlar × 200 tohum)', () => {
+    for (const [t] of REGISTRY) {
+      if (yazdirmaSinifi(t) === 'uygunDegil') continue;
+      for (let s = 1; s <= 200; s++) {
+        const m = kagitMaddesiYap(uret(t, s, ((s % 5) + 1) as 1 | 2 | 3 | 4 | 5), 1, metin);
+        if (!m) continue;
+        expect(m.yonergeMetni, `${t}#${s}`).not.toMatch(/\. Lira/);
+      }
+    }
+  });
+
   it('sayiYazisi 0–100', () => {
     expect([0, 7, 10, 19, 20, 45, 99, 100].map(sayiYazisi)).toEqual([
       'sıfır', 'yedi', 'on', 'on dokuz', 'yirmi', 'kırk beş', 'doksan dokuz', 'yüz',
