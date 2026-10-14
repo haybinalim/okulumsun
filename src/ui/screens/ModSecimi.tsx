@@ -13,7 +13,7 @@ import { useAppStore } from '../../store/appStore';
 import { BigButton } from '../primitives/BigButton';
 import { YonlendirmeSeridi } from '../feedback/YonlendirmeSeridi';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { COLOR, MOTION, SIZE } from '../../design/tokens';
 
@@ -49,7 +49,7 @@ export function ModSecimi() {
     >
       <YonlendirmeSeridi metin="Dinle, sonra birlikte ya da tek başına çalışmayı seç." />
 
-      <motion.div
+      <m.div
         initial={reducedMotion ? {} : { scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: reducedMotion ? 0 : MOTION.screen / 1000 }}
@@ -76,7 +76,7 @@ export function ModSecimi() {
           etiket="Kendi başıma çalışacağım."
           onSelect={handleKisisel}
         />
-      </motion.div>
+      </m.div>
     </main>
   );
 }

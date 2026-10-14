@@ -53,6 +53,16 @@ for (const buyukHedef of [false, true]) {
       );
       await expect(page.getByRole('button', { name: `nesne ${adet}`, exact: true })).toBeVisible();
       await expect(page.getByRole('button', { name: 'Onayla' })).toBeVisible();
+      // Yerleşim oturana kadar bekle (profil değişkenleri ve ölçüm aynı karede olmayabilir).
+      let onceki = '';
+      await expect
+        .poll(async () => {
+          const simdi = JSON.stringify(await olc(page));
+          const sabit = simdi === onceki;
+          onceki = simdi;
+          return sabit;
+        })
+        .toBe(true);
       const o = await olc(page);
       const beklenenTap = cihaz === 'board' ? (buyukHedef ? 118 : 102) : buyukHedef ? 74 : 64;
       expect(Math.round(o.tapMin)).toBe(beklenenTap);

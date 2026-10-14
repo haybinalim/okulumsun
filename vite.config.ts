@@ -5,6 +5,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 import { guvenlikBasliklari } from './scripts/yayin/basliklar.ts';
 import pkg from './package.json' with { type: 'json' };
 import { PWA_EK_VARLIKLAR, PWA_MANIFESTI } from './scripts/yayin/pwaAyari.ts';
+import { icerikDogrulama } from './scripts/yayin/icerikDogrulama.ts';
 
 // Adım 23: sürüm kimliği. GitHub Actions → GITHUB_SHA, Vercel → VERCEL_GIT_COMMIT_SHA.
 const derlemeSha = process.env.GITHUB_SHA ?? process.env.VERCEL_GIT_COMMIT_SHA;
@@ -15,6 +16,8 @@ export default defineConfig({
     __DERLEME_KIMLIGI__: JSON.stringify(derlemeSha ? derlemeSha.slice(0, 7) : 'yerel'),
   },
   plugins: [
+    // KG-87: içerik JSON'ları derleme zamanında zod ile doğrulanır; üretim paketinde zod yok.
+    icerikDogrulama(),
     react(),
     tailwindcss(),
     VitePWA({

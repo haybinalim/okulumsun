@@ -16,7 +16,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { COLOR, MOTION, KONFETI, KUTLAMA } from '../../design/tokens';
 
@@ -54,7 +54,7 @@ export function DogruKutlama({ aktif, onBitti }: DogruKutlamaProps) {
   if (!aktif) return null;
 
   return (
-    <motion.div
+    <m.div
       initial={reducedMotion ? { opacity: 1 } : { scale: 0, opacity: 0 }}
       animate={reducedMotion ? { opacity: 1 } : { scale: 1, opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -68,7 +68,7 @@ export function DogruKutlama({ aktif, onBitti }: DogruKutlamaProps) {
         zIndex: 100,
       }}
     >
-      <motion.div
+      <m.div
         animate={
           reducedMotion
             ? {}
@@ -99,8 +99,8 @@ export function DogruKutlama({ aktif, onBitti }: DogruKutlamaProps) {
             strokeLinejoin="round"
           />
         </svg>
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 }
 
@@ -171,7 +171,7 @@ export function OturumSonuKutlama({ aktif, onAtla }: OturumSonuKutlamaProps) {
 
   return (
     <AnimatePresence>
-      <motion.div
+      <m.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -194,7 +194,7 @@ export function OturumSonuKutlama({ aktif, onAtla }: OturumSonuKutlamaProps) {
             🎉
           </div>
         </div>
-      </motion.div>
+      </m.div>
     </AnimatePresence>
   );
 }

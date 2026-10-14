@@ -12,7 +12,7 @@
  *  · Yeni sahne açıldığsa küçük kutlama.
  */
 
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import {
   type CikartmaKoleksiyonu,
@@ -109,7 +109,7 @@ export function Bahcem({ koleksiyon, onEv }: BahcemProps) {
           minHeight: 0,
         }}
       >
-        <motion.div
+        <m.div
           initial={reducedMotion ? {} : { scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: reducedMotion ? 0 : MOTION.screen / 1000 }}
@@ -119,7 +119,7 @@ export function Bahcem({ koleksiyon, onEv }: BahcemProps) {
           }}
         >
           {sahne}
-        </motion.div>
+        </m.div>
       </section>
 
       {/* Orta: çıkartma koleksiyonu — 5 sütun × 6 satır ızgara */}
@@ -136,7 +136,7 @@ export function Bahcem({ koleksiyon, onEv }: BahcemProps) {
         }}
       >
         {yuvalar.map((dolu, i) => (
-          <motion.div
+          <m.div
             key={i}
             initial={reducedMotion ? {} : { scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -146,7 +146,7 @@ export function Bahcem({ koleksiyon, onEv }: BahcemProps) {
             }}
           >
             <CikartmaIkon sahne={sahne} dolu={dolu} />
-          </motion.div>
+          </m.div>
         ))}
       </section>
 

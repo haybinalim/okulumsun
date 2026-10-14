@@ -12,7 +12,7 @@
  */
 
 import { memo } from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { type MaskotDurumu } from './maskotState';
 import { COLOR, SIZE, MOTION } from '../../design/tokens';
@@ -165,7 +165,7 @@ export const Maskot = memo(function Maskot({ durum, size, onDokun }: MaskotProps
   const reducedMotion = useHareketAzalt();
 
   return (
-    <motion.button
+    <m.button
       type="button"
       aria-label="Yardım"
       onClick={onDokun}
@@ -198,6 +198,6 @@ export const Maskot = memo(function Maskot({ durum, size, onDokun }: MaskotProps
         <Govde renk={renk} />
         <YuzVeKollar durum={durum} renk={renk} />
       </svg>
-    </motion.button>
+    </m.button>
   );
 });

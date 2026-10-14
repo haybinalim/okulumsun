@@ -81,7 +81,14 @@ export function TapCountScreen({
     const ro = new ResizeObserver(olc);
     ro.observe(alan);
     ro.observe(cubuk);
-    return () => ro.disconnect();
+    // Profil/kapsayıcılık CSS değişkenleri kökte değişince (ör. ilk açılışta üst bileşenin efekti bu
+    // efektten SONRA çalışır) yeniden ölç; aksi hâlde kart/boşluk eski değerle hesaplanabilir.
+    const mo = new MutationObserver(olc);
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['style', 'data-device'] });
+    return () => {
+      ro.disconnect();
+      mo.disconnect();
+    };
   }, []);
 
   // Sahne bir nesneKumesi olmalı (M-SAY her zaman öyle üretir).

@@ -1,5 +1,6 @@
 import './content/schema/zodAyari.ts'
 import { StrictMode } from 'react'
+import { LazyMotion, domAnimation } from 'framer-motion'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
@@ -47,7 +48,10 @@ if (arsivKodu) {
   kok.render(
     <StrictMode>
       <ErrorBoundary>
-        <App />
+        {/* KG-87: `m` bileşenleri + yalnız domAnimation özellikleri (tam `motion` paketi yerine); strict → `motion` kullanımı hata verir. */}
+        <LazyMotion features={domAnimation} strict>
+          <App />
+        </LazyMotion>
       </ErrorBoundary>
     </StrictMode>,
   )

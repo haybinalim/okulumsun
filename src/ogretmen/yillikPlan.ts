@@ -7,8 +7,8 @@
  */
 import kazanimlarHam from '../content/kazanimlar.json';
 import duzeltmelerHam from '../content/planDuzeltmeleri.json';
-import { kazanimlariDogrula } from '../content/schema/kazanim';
-import { PlanDuzeltmeleriSchema } from '../content/schema/haftalikPlan';
+import type { KazanimlarDosyasi } from '../content/schema/kazanim';
+import type { PlanDuzeltmeleri } from '../content/schema/haftalikPlan';
 import { OGRETIM_HAFTALARI, OKUL_YILI } from '../content/okulTakvimi';
 import { skillsData } from '../content/skillsData';
 import { TEMALAR } from '../store/appStore';
@@ -17,11 +17,12 @@ import { buHafta, haftaSetDugumleri, haftalikPlanUret, varsayilanHaftaIndeksi, t
 import type { DisaAktarEtiketleri } from './planDisaAktar';
 import { SET_EN_FAZLA_DUGUM } from './gunlukSet';
 
+// İki JSON derleme zamanında şemayla doğrulanır (KG-87, scripts/yayin/icerikDogrulama.ts); zod pakete girmez.
 export const YILLIK_PLAN: readonly PlanHaftasi[] = haftalikPlanUret(
-  kazanimlariDogrula(kazanimlarHam),
+  kazanimlarHam as unknown as KazanimlarDosyasi,
   OGRETIM_HAFTALARI,
   skillsData,
-  PlanDuzeltmeleriSchema.parse(duzeltmelerHam),
+  duzeltmelerHam as unknown as PlanDuzeltmeleri,
 );
 
 export const PLAN_ETIKETLERI: DisaAktarEtiketleri = {

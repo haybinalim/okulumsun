@@ -7,7 +7,7 @@
  * ekrandan çıkınca silinir. Bu ekran tembel yüklenir.
  */
 import { useEffect, useReducer, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { useAppStore } from '../../store/appStore';
 import { BigButton } from '../primitives/BigButton';
@@ -62,7 +62,7 @@ export default function KesifMasasi() {
         aria-live="polite"
         style={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       >
-        <motion.output
+        <m.output
           key={`${durum.arac}-${metin}`}
           initial={az ? false : { scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -77,7 +77,7 @@ export default function KesifMasasi() {
           }}
         >
           {metin}
-        </motion.output>
+        </m.output>
       </section>
 
       {/* Orta-alt: araç. */}

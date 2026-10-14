@@ -12,7 +12,7 @@ import { ACCENTS } from '../../design/tokens';
 import { paletliVurgu } from '../../design/kapsayicilik';
 import { BigButton } from '../primitives/BigButton';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { COLOR } from '../../design/tokens';
 
@@ -46,7 +46,7 @@ export function RenkSecimi() {
         }}
       >
         {ACCENTS.map((a, i) => (
-          <motion.div
+          <m.div
             key={a.id}
             initial={reducedMotion ? {} : { scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -71,7 +71,7 @@ export function RenkSecimi() {
             >
               <span aria-hidden="true" style={{ display: 'none' }}>renk</span>
             </BigButton>
-          </motion.div>
+          </m.div>
         ))}
       </div>
     </main>
