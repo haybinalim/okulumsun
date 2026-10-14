@@ -95,15 +95,17 @@ describe('yerel indirme', () => {
     const birak = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined);
     const fetchCasus = vi.fn();
     vi.stubGlobal('fetch', fetchCasus);
-    let tiklanan: HTMLAnchorElement | null = null;
+    const tiklananlar: HTMLAnchorElement[] = [];
     vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) {
-      tiklanan = this;
+      tiklananlar.push(this);
     });
     dosyaIndir('plan.csv', `${CSV_BOM}a;b`, 'text/csv;charset=utf-8');
     expect(olustur).toHaveBeenCalledTimes(1);
+    expect(tiklananlar).toHaveLength(1);
+    const tiklanan = tiklananlar[0];
     expect((olustur.mock.calls[0][0] as Blob).type).toBe('text/csv;charset=utf-8');
-    expect(tiklanan!.download).toBe('plan.csv');
-    expect(tiklanan!.getAttribute('href')).toBe('blob:yerel/1');
+    expect(tiklanan.download).toBe('plan.csv');
+    expect(tiklanan.getAttribute('href')).toBe('blob:yerel/1');
     expect(document.querySelectorAll('a').length).toBe(0);
     expect(birak).not.toHaveBeenCalled();
     vi.advanceTimersByTime(10_000);
