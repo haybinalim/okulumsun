@@ -4,12 +4,14 @@
 > Bu belge henüz **kayıt değildir**. Herkese açık bir kayıt (OSF veya benzeri) **yapılmadı**; hiçbir kuruma, okula ya da veliye
 > bir şey gönderilmedi (⛔ O6). Pilot bulguları gelince ölçme aracı ve takvim gözden geçirilir; kullanıcı onaylayınca belge
 > **veri toplanmadan önce** damgalanır (aşağıdaki "Damga" bölümü) ve o andan sonra yalnız tarihli değişiklik ekiyle değişir.
+> Kullanıcı 2026-10-14'te üç eki onayladı (KG-92): tek gruplu desende g_av + bootstrap %95 GA (§6), dışlama kuralları (§7),
+> imha tarihleri (protokol §9). Belge yine **taslaktır**: pilot bulguları, OSF kararı ve MEM başvurusu kullanıcıda.
 
 ## Damga
 
 | Alan | Değer |
 |---|---|
-| Belge sürümü | 0.1-taslak (2026-10-14) |
+| Belge sürümü | 0.2-taslak (2026-10-14; §6–7 kullanıcı onaylı, KG-92) |
 | Depo damgası (commit) | Kullanıcı onayından sonra bu satıra onaylı commit SHA'sı yazılır |
 | Herkese açık kayıt | Yok. Kullanıcı onaylarsa OSF benzeri bir kayıt; bağlantı buraya (⛔ O6) |
 | Veri toplama başlangıcı | Ön test 15 Mart 2027 Pazartesi — damga bu tarihten **önce** olmalı |
@@ -54,13 +56,16 @@ aracı veri toplanmadan önce o haftaların çıktılarına göre yeniden üreti
 
 - **Form A** ön test (15–19 Mart 2027), **Form B** son test (12–16 Nisan 2027).
 - İki form uygulamanın çalışma kâğıdı üreticisinden (Adım 35) **sabit ve farklı tohumlarla**, aynı şablon ve zorluk dağılımıyla
-  üretilir (Adım 53b, `scripts/etki-formu-uret.ts`); yalnız müdahale haftalarının çıktılarını kapsar.
+  üretilir (Adım 53b, `scripts/etki-formu-uret.ts`, KG-93); yalnız müdahale haftalarının çıktılarını kapsar. İki form aynı
+  20 yuvalık deseni doldurur: her sıra numarasında düğüm, şablon ve zorluk düzeyi (10 içinde / onluk geçmeden / onluk geçen)
+  aynıdır; iki form arasında ortak madde yoktur.
 - Öğretmen yönergeyi sesli okur (çocuktan okuma beklenmez); yanıt daire içine alma, kutuya yazma veya çizgiyle eşleme.
 - Puan = doğru madde sayısı (0–20). Eşleme maddesi yalnız bütün eşler doğruysa 1 puan. Boş madde 0.
 - Puanlama iki kişiyle bağımsız yapılır; madde düzeyinde uyuşma oranı raporlanır, ayrılıklar üçüncü bakışla çözülür.
 - İçerik geçerliği: 2 sınıf öğretmeni + 1 alan uzmanı onayı; çalışma dışı 3–5 çocukla ön deneme (Adım 53b).
 
-Taslak madde listesi önerisi: [protokol, Ek A](etki-calismasi-protokol.md#ek-a--form-a-ve-form-b-taslak-madde-listesi-önerisi).
+Madde listesi, cevap anahtarı ve puanlama yönergesi: [ölçme aracı](olcme-araci/README.md) (koddan üretilir; içerik geçerliği
+onayı bekliyor); özet: [protokol, Ek A](etki-calismasi-protokol.md#ek-a--form-a-ve-form-b-ölçme-aracı-adım-53b).
 
 ## 5. İkincil ölçütler (keşif)
 
@@ -73,7 +78,7 @@ Taslak madde listesi önerisi: [protokol, Ek A](etki-calismasi-protokol.md#ek-a-
 
 **Etki büyüklüğü: Hedges g, %95 güven aralığıyla.**
 
-- **Tek gruplu desen** (karşılaştırma sınıfı bulunamazsa): g = (son test ortalaması − ön test ortalaması) / ön ve son test
+- **Tek gruplu desen** (karşılaştırma sınıfı bulunamazsa; kullanıcı onaylı (KG-92)): g = (son test ortalaması − ön test ortalaması) / ön ve son test
   standart sapmalarının ortalaması (g_av), küçük örneklem düzeltmesi J = 1 − 3 / (4(n − 1) − 1) ile. %95 GA, eşleştirilmiş
   kazançlar üzerinde 10 000 tekrarlı yüzdelik bootstrap (sabit tohum, betikte yazılı). Ek olarak eşleştirilmiş t testi raporlanır.
 - **Karşılaştırma sınıfı varsa**: ön test ortak değişkenli **ANCOVA** — son test ~ ön test + grup. Grup katsayısı ve %95 GA'sı
@@ -86,7 +91,7 @@ Taslak madde listesi önerisi: [protokol, Ek A](etki-calismasi-protokol.md#ek-a-
   geri çekildi, nakil) raporlanır; doldurma (imputation) yapılmaz.
 - **Araç:** `docs/research/analiz/` altında Python veya R betiği (Adım 53c); girdi yalnız Ç-kodlu puan tablosu.
 
-## 7. Dışlama kuralları (öneri — damgadan önce kesinleşir)
+## 7. Dışlama kuralları (kullanıcı onaylı (KG-92))
 
 1. Veli onamı olmayan veya çocuğun sözlü onay vermediği/istemediği her ölçüm alınmaz (dışarıda kalan çocuk sınıftaki
    uygulamaya katılabilir; yalnız ölçüme girmez).
@@ -128,3 +133,4 @@ Depoya yalnız toplulaştırılmış tablo girer. Ayrıntı ve imha planı: [pro
 | Tarih | Değişiklik |
 |---|---|
 | 2026-10-14 | İlk taslak (KG-90). Kayıt yapılmadı. |
+| 2026-10-14 | Kullanıcı onayı (KG-92): §6 tek gruplu desen analizi (g_av, J düzeltmesi, 10 000 tekrarlı bootstrap %95 GA), §7 dışlama kuralları, protokol §9 imha tarihleri. §4 ölçme aracı Adım 53b üreticisine bağlandı (KG-93). Kayıt yapılmadı. |
