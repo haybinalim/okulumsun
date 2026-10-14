@@ -5,7 +5,7 @@
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
 > Tarih: 14 Ekim 2026 (Adım 47 — Isınma Keşfi)
 
-<!-- durum:birim_test=578 durum:birim_dosya=78 durum:e2e_dosya=29 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
+<!-- durum:birim_test=580 durum:birim_dosya=78 durum:e2e_dosya=29 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
 
 ## Yönetici özeti
 
