@@ -82,8 +82,8 @@ test('haftalık plan: seçili haftanın seti tahtada başlar', async ({ page }) 
   await expect
     .poll(() => page.evaluate(() => window.__okulumsunE2E?.alistirma?.itemId ?? null), { timeout: 15_000 })
     .not.toBeNull();
-  // Soru ekranı geometrisi burada denetlenmez: set soruları bugunun-seti/board-* testlerinde denetlenir;
-  // 5. haftanın sayma (tapCount) sorusu tahtada 64 px nesne kullanıyor — bilinen eksik, KG-50 notu.
+  // Soru ekranı geometrisi burada denetlenmez: set soruları bugunun-seti/board-* testlerinde, sayma (M-SAY)
+  // ekranı tahta/tablet profillerinde say-yerlesimi.spec.ts'te denetlenir (KG-50 notundaki eksik KG-86 ile kapandı).
   await page.getByRole('button', { name: 'Seti bitir' }).click();
   await expect(page.getByRole('button', { name: 'Öğretmen', exact: true })).toBeVisible();
 });

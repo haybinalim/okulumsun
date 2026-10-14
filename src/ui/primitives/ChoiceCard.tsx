@@ -18,9 +18,14 @@ export interface ChoiceCardProps {
   size: number;
   state: ChoiceState;
   onSelect: () => void;
+  /**
+   * `size` kartın kesin boyu olsun (BigButton'ın `--size-choice` alt sınırı yerine). Yalnız ekran
+   * kendi ölçtüğü bir token'ı (ör. `--size-choice-min`) verdiğinde kullanılır (M-SAY, KG-86).
+   */
+  sabitBoyut?: boolean;
 }
 
-export function ChoiceCard({ option, size, state, onSelect }: ChoiceCardProps) {
+export function ChoiceCard({ option, size, state, onSelect, sabitBoyut = false }: ChoiceCardProps) {
   const selected = state === 'secili';
   const isCorrect = state === 'dogru';
   const isRetry = state === 'tekrar';
@@ -29,6 +34,7 @@ export function ChoiceCard({ option, size, state, onSelect }: ChoiceCardProps) {
   const style: CSSProperties = {
     width: size,
     height: size,
+    ...(sabitBoyut ? { minWidth: size, minHeight: size } : null),
     background: 'var(--color-surface)',
     border: `${selected || isCorrect ? 5 : 3}px solid ${borderColor(state)}`,
     boxShadow: isCorrect
