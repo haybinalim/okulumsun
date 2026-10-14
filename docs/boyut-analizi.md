@@ -32,5 +32,5 @@ Kaynak haritasıyla modül başına küçültülmüş bayt (`vite build --source
 ## Sonra: 813,5 KB (833 008 B, TapCountScreen düzeni PR #69 dahil) — bütçe içinde (K5 ✓)
 
 Kalan büyükler: react-dom 174, dexie 93, motion-dom 59, framer-motion 16, qrcode 20 (tembel), uygulama ~400.
-Pay ~2,3 KB (bir sonraki özellik bütçeyi yeniden aşabilir); sonraki büyük adımlar gerekirse: dexie yerine ince IndexedDB sarmalayıcı (ADR gerektirir),
+Pay ~2,3 KB (bir sonraki özellik bütçeyi yeniden aşabilir); sonraki büyük adımlar gerekirse: dexie yerine ince IndexedDB sarmalayıcı ([ADR-0015](ADR/0015-indexeddb-katmani-dexie.md), `Önerildi`: ölçülen −93,7 KB),
 `BoardHarness`'ın yalnız `?harness=1` ile tembel yüklenmesi (~4 KB).

@@ -43,7 +43,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 14 | PR #14 — erişilebilir şık etiketleri, veli kapısı/panel, `adult-area` e2e | ✅ |
 | 15 | Ses kökeni envanteri + acil lisans beyanı düzeltmesi + `audio:audit` köken denetimi | ✅ |
 | 16 | Durumu gerçeğe döndürme (PLAN §14, PROGRESS, TEST-PROTOKOLU, README, LICENSES) + `belgeTutarliligi.spec.ts` | ✅ |
-| 17 | ADR altyapısı (`docs/ADR/` 0000–0014 + dizin), PR şablonu, `adrBicimi.spec.ts` | ✅ |
+| 17 | ADR altyapısı (`docs/ADR/` 0000–0015 + dizin), PR şablonu, `adrBicimi.spec.ts` | ✅ |
 | 18 | Ses kaynağı kararı (ADR-0004): `bekleyen` kaynak, `googleTts.ts`, `--ornek` | 🔄 kısmi — GCP anahtarı ve ses seçimi bekliyor |
 | 19 | Bayatlık kapısı K8: `npm run durum -- --denetle` (CI), PLAN §14 durum bloğu, PLAN §12 üretilmiş ağaç | ✅ |
 | 20 | Uygulama lisansı: tüm hakları saklı (ADR-0013 Kabul), `LICENSE` + `CONTENT-LICENSE` | ✅ |
@@ -96,6 +96,7 @@ Ayrıntı ve durum sözlüğü: `docs/ADR/README.md`.
 | 0012 | Çok dilli ses | Kabul | 58 |
 | 0013 | Uygulama lisansı | Kabul | 20 |
 | 0014 | Ticari model ve üçüncü taraf varlık izinleri | Kabul | 21, 29, 35, 48, 56 |
+| 0015 | IndexedDB katmanı (Dexie'yi küçültme veya değiştirme) | Önerildi | 26 |
 
 ## Teknik doğrulama (son çalıştırma: 13 Ekim 2026)
 
