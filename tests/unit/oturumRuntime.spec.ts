@@ -111,3 +111,17 @@ describe('oturum çalışma zamanı köprüsü', () => {
     expect(eksikEslesmeler).toEqual([]);
   });
 });
+
+describe('secilenSoruyuUret yedek tohum (plan v2 Adım 47, KG-77)', () => {
+  it('ölçtüğü düğüm sayılara bağlı şablonda (M-KARSILASTIR → birebir eşleme) her tohum için hedefi ölçen madde', () => {
+    const duzen = skillsData.filter((d) => d.durum === 'hazir');
+    for (let seed = 0; seed < 300; seed++) {
+      const e = secilenSoruyuUret(
+        { skillId: 'mat.karsilastirma.birebir-esleme' as SkillId, templateId: 'M-KARSILASTIR', seed, kova: 'new' },
+        duzen,
+        'kisisel',
+      );
+      expect(e.skillIds).toContain('mat.karsilastirma.birebir-esleme');
+    }
+  });
+});

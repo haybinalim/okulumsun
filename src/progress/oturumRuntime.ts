@@ -8,7 +8,7 @@
 
 import type { SkillNode } from '../content/schema/skill';
 import { REGISTRY } from '../exercises/registry';
-import { createRng } from '../exercises/rng';
+import { createRng, hash32 } from '../exercises/rng';
 import type { Exercise, SkillId } from '../exercises/types';
 import type { AktifOturum } from './session';
 import type { SecilenSoru } from './scheduler';
@@ -74,16 +74,22 @@ export function secilenSoruyuUret(
         ? { hedefSkillId: secilen.skillId }
         : {};
 
-  const exercise = generator.uret(
-    { seed: secilen.seed, difficulty: dugum.difficulty, mod, ...hedefParametreleri },
-    createRng(secilen.seed),
-  );
-
-  if (!exercise.skillIds.includes(secilen.skillId as SkillId)) {
-    throw new Error(
-      `Şablon ${secilen.templateId}, seçilen ${secilen.skillId} düğümünü ölçmüyor.`,
+  // Bazı şablonlar ölçtüğü düğümü maddenin sayılarına göre belirler (ör. M-KARSILASTIR yalnız küçük
+  // farkta birebir eşlemeyi ölçer). Seçilen tohum hedef düğümü ölçmüyorsa tohumdan türetilen
+  // yedek tohumlar sırayla denenir (deterministik; Adım 47, KG-77). İlk tohum ölçüyorsa davranış aynı.
+  for (let deneme = 0; deneme < YEDEK_TOHUM_DENEMESI; deneme++) {
+    const seed = deneme === 0 ? secilen.seed : hash32(`${secilen.seed}:yedek:${deneme}`);
+    const exercise = generator.uret(
+      { seed, difficulty: dugum.difficulty, mod, ...hedefParametreleri },
+      createRng(seed),
     );
+    if (exercise.skillIds.includes(secilen.skillId as SkillId)) return exercise;
   }
 
-  return exercise;
+  throw new Error(
+    `Şablon ${secilen.templateId}, seçilen ${secilen.skillId} düğümünü ölçmüyor.`,
+  );
 }
+
+/** Hedef düğümü ölçen madde için denenecek en çok tohum (ilki planlayıcının tohumu). */
+export const YEDEK_TOHUM_DENEMESI = 32;

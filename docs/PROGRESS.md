@@ -3,9 +3,9 @@
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
-> Tarih: 13 Ekim 2026 (Adım 56 — Gömülü mod ve başvuru dosyaları)
+> Tarih: 14 Ekim 2026 (Adım 47 — Isınma Keşfi)
 
-<!-- durum:birim_test=545 durum:birim_dosya=75 durum:e2e_dosya=27 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
+<!-- durum:birim_test=564 durum:birim_dosya=76 durum:e2e_dosya=27 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=14 -->
 
 ## Yönetici özeti
 
@@ -68,6 +68,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 43 | Evde 10 dakika: veli, yetişkin alanından tek dokunuşla bu haftanın okul konusundan 8 soruluk kısa oturum başlatır (bu hafta + geçen haftadan 1 hatırlama); sonunda telefon büyüğe verilir ve 3 cümlelik ipucu kartı (gözlem, soru, evdeki nesnelerle etkinlik) açılır. Yanıt/puan gösterilmez, hiçbir şey saklanmaz | ✅ (ses klibi Adım 31'de; iki öğretmen okuması bekliyor) |
 | 44 | Keşif Masası: soru ve puan olmadan dokunarak sayı kurulan alan, iki modda (tahtada öğretmenin anlatım aracı): onluk çerçeve (iki onluk), nesneler (en çok 20), sayı doğrusu (0–20), terazi (kefe başına en çok 10; ağır taraf iner, eşitse "=") ve ayır-birleştir ("2 + 3"). Her değişiklik mevcut sayı/işlem klipleriyle seslendirilir, hiçbir şey saklanmaz | ✅ (yeni hoş geldin/denge sesleri Adım 31'de; eski tahta tarayıcısında akıcılık Adım 41'de) |
 | 46 | Tema sonu turu: temanın bütün becerilerini dolaşan 8–10 soruluk kısa tur (tahtada konu seçiminin son kartı, kişiselde yetişkin alanından); sonunda çocuğa kutlama, yetişkine beceri başına nitel düzey (Rahat / Biraz destek gerekti / Tekrar çalışılabilir). Sayı/yüzde/puan yok, sonuçlar tur kapanınca silinir | ✅ (tur sesleri Adım 31'de; Adım 45 derin tema girişi Adım 31'e bağlı) |
+| 47 | Isınma Keşfi (isteğe bağlı, varsayılan kapalı): veli kişisel modda açarsa oturum en çok 8 maddelik kısa bir ısınmayla başlar; en kolaydan başlar, bilince iki basamak zorlaşır, bilemeyince bir basamak kolaylaşır, üst üste iki yanlışta biter. Puan, skor ya da ilerleme boncuğu yok; sonuç yalnız o oturumun nereden başlayacağını belirler ve hiçbir yere kaydedilmez. Tahtada yok. Aşama 1: saf ısınma mantığı ve planlayıcı girdileri testli | 🔄 aşama 1 (veli anahtarı ve bağlama aşama 2'de) |
 | 48 | Çalışma kâğıdı arşivi: her kazanım için hazır, cevap anahtarlı A4 PDF kâğıtlar (55 etkinlik × 3 kâğıt = 165 PDF) ve arama motorlarının bulabileceği statik dizin sayfaları (`/kagitlar/`, sitemap). Kâğıtlar uygulamadaki çalışma kâğıdıyla aynı üretimdir, para şematiktir; uygulamanın çevrimdışı önbelleğine girmez | ✅ (arama motoru kaydı yayından sonra kendiliğinden) |
 | 49 | Okul ağı ve yerel dağıtım: okul sunucusuna ya da alt klasöre kopyalanabilen `dist-okul.zip` paketi (kurulum notu, lisans, sürüm, dosya özetleri), alt klasörden tam akış e2e ile kanıtlı; filtre listesine eklenecek tek alan adı belgeli. Dosyaya çift tıklayarak açılış tarayıcı güvenliği nedeniyle çalışmaz, ekranda yönerge çıkar | ✅ (okul/kurum dağıtımı için yazılı izin metni kullanıcıda; Release eki o zaman) |
 | 55 | Kapsayıcılık ayarları: yetişkin/öğretmen alanında altı ayar — yavaş tempo, talimat tekrarı (8 sn dokunulmazsa soru bir kez yeniden okunur), renk körlüğü dostu renkler, sol el (Onayla solda), büyük hedef (küçük düğmeler büyür), hareketi azalt. Hepsi varsayılan kapalı, bu açılışta geçerli; tahtada ayarlar adrese eklenir, öğretmen yer imiyle ertesi gün aynı ayarlarla açar. Veli "Ses hızı" ayarı artık gerçekten uygulanıyor | ✅ (özel eğitim öğretmeniyle görev analizi kullanıcıda; protokol hazır) |
@@ -87,7 +88,7 @@ Ayrıntı ve durum sözlüğü: `docs/ADR/README.md`.
 | 0004 | Ses kaynağı ve lisans | Önerildi | 15, 18, 31, 54, 58 |
 | 0005 | Yerel hata günlüğü | Önerildi | 23 |
 | 0006 | Çalışma kâğıdı: HTML ve yazdırma | Taslak | 35, 48 |
-| 0007 | Isınma Keşfi ve PLAN §6.5 | Taslak | 47 |
+| 0007 | Isınma Keşfi ve PLAN §6.5 | Kabul | 47 |
 | 0008 | Sınıf Turu: iş birlikçi gösterim | Önerildi | 36 |
 | 0009 | Mağaza varlığı | Taslak | 50, 51 |
 | 0010 | Eve link URL sözleşmesi | Kabul | 42 |
