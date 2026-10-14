@@ -10,7 +10,7 @@
 | 5 çocuk pilotu ve dinleme testi | Yapılmadı | 32 |
 | Fiziksel akıllı tahta denemesi | Yapılmadı | 33, 41 |
 | Öğretmen görüşleri (plan, ipucu kartı, tanı açıklamaları) | Yapılmadı | 37, 40, 43 |
-| Etki çalışması | Yapılmadı | 53 |
+| Etki çalışması | Yapılmadı (ön kayıt, protokol, izin dosyası ve onam formu **taslak**: `docs/research/`) | 53 |
 
 Başvuruda önerilen dil: "Ürün geliştirme ve otomatik doğrulama aşamasında; saha denemesi için iş birliği arıyoruz."
 "Kanıtlandı" veya etki iddiası kullanılmaz.
