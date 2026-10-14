@@ -371,6 +371,7 @@ export default function App() {
             key={kisiselOturum.exercise.itemId}
             exercise={kisiselOturum.exercise}
             accent={accent}
+            onYanlis={kisiselOturum.yanlisBildir}
             onDone={(sonuc) => void kisiselOturum.cevapla(sonuc.dogru)}
           />
         )
@@ -424,7 +425,10 @@ export default function App() {
 
   return (
     <BoardHarness profile={profile}>
-      <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+      <div
+        style={{ height: '100%', ['--color-accent' as string]: accent.hex }}
+        data-isinma={mod === 'kisisel' && kisiselOturum.isinmada ? '' : undefined}
+      >
         {import.meta.env.DEV && (
           <div
             data-harness
