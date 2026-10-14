@@ -122,6 +122,8 @@ her çağrı tek işlemdir ve sonuç `oncomplete`'te döner, istek hatası/iptal
 - Test / kanıt: yeni `tests/unit/indexeddbUyum.spec.ts` (Dexie v1 ile yaz → sarmalayıcıyla oku/yaz → Dexie ile
   yeniden aç), mevcut `persistence.spec.ts`, `acilistaTemizle.spec.ts`, e2e `onizleme-gizlilik-ag`;
   `npm run boyut` toplamı ≤ 745 000 B.
+- **Uygulandı (14 Eki 2026, KG-89):** toplam 833 147 → **740 264 B** (−92 883 B; K5 payı 95 110 B), ilk yük
+  699 526 → 606 643 B. Ayrıntı `docs/boyut-analizi.md`.
 
 ## Gizlilik etkisi
 
@@ -145,6 +147,6 @@ IndexedDB sürümünü 10'un üstüne çıkarmak olur (Dexie `version(1)` daha y
 ## Kabul koşulları
 
 - [x] Kullanıcı seçeneği onayladı: Seçenek 3 (14 Eki 2026, KG-89).
-- [ ] IndexedDB sürümü sabit 10; ad ve depo/anahtar/indeks tanımları birebir (uyum testi).
-- [ ] Birim testler, e2e gizlilik kanıtı ve K5 (`npm run boyut`) yeşil; boyut düşüşü `docs/boyut-analizi.md`'ye işlendi.
-- [ ] K10 lisans envanteri ve `LICENSES.md` güncel.
+- [x] IndexedDB sürümü sabit 10; ad ve depo/anahtar/indeks tanımları birebir (uyum testi `indexeddbUyum.spec.ts`).
+- [x] Birim testler, e2e gizlilik kanıtı ve K5 (`npm run boyut`) yeşil; boyut düşüşü `docs/boyut-analizi.md`'ye işlendi.
+- [x] K10 lisans envanteri ve `LICENSES.md` güncel (`dexie` geliştirme aracı, dağıtılmaz).

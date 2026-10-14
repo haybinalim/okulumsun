@@ -145,7 +145,7 @@ Ayrıca programın vurgusu "işlem yapma"dan çok **muhakeme**de: `MAT.1.2.2` ta
 | PWA | **`vite-plugin-pwa`** (Workbox) | Tüm varlıklar precache → tam çevrimdışı. |
 | Stil | **Tailwind v4** + `src/design/tokens.ts` | Tahta ↔ telefon ölçekleme tek kaynaktan. |
 | State | **Zustand** + açık persistence katmanı | Otomatik middleware yok — migrasyon kontrolü elde kalsın. |
-| Kalıcılık | **Dexie (IndexedDB)** | `localStorage` yalnız `activeProfileId`, `schemaVersion`. |
+| Kalıcılık | **IndexedDB** (kendi ince sarmalayıcı, ADR-0015; biçim Dexie v1 ile aynı) | `localStorage` yalnız `activeProfileId`, `schemaVersion`. |
 | Animasyon | **Framer Motion** + lazy `canvas-confetti` | Yalnız `transform`/`opacity` — ucuz Android tablette akıcılık. |
 | Test | **Vitest** + **Playwright** | Kritik parçalar (jeneratör, ustalık motoru) saf TS. |
 | Doğrulama | **Zod** | İçerik JSON'ları + kayıtlı ilerleme şeması. |
@@ -972,7 +972,7 @@ açıkken poz değişir ama animasyon yoktur (anlık geçiş).
 
 ## 10. Veri Katmanı
 
-**IndexedDB (Dexie), `src/persistence/db.ts`:**
+**IndexedDB (kendi sarmalayıcı, ADR-0015 Kabul), `src/persistence/db.ts`:**
 
 | Store | İçerik |
 |---|---|
@@ -985,8 +985,9 @@ açıkken poz değişir ama animasyon yoktur (anlık geçiş).
 
 `localStorage` yalnız: `activeProfileId`, `contentPackVersion`, `dbSchemaVersion`.
 
-**Dexie şema tanımı — birebir bu.** Sürüm numarası ve indeksler uygulayıcının seçimine
-bırakılmaz; farklı oturumlarda farklı şema yazılırsa migrasyon zinciri kopar:
+**Şema tanımı — birebir bu** (Dexie gösterimi; `db.ts` `SEMA` aynı depo/anahtar/indeksleri ham IndexedDB ile
+kurar, IndexedDB sürümü **10** = Dexie v1×10, ADR-0015; uyum `tests/unit/indexeddbUyum.spec.ts`). Sürüm numarası
+ve indeksler uygulayıcının seçimine bırakılmaz; farklı oturumlarda farklı şema yazılırsa migrasyon zinciri kopar:
 
 ```ts
 // src/persistence/db.ts
@@ -1041,7 +1042,7 @@ dönünce kaldığı sorudan devam" der — bu, uygulama tamamen kapansa da geç
 {
   "format": "okulumsun-yedek",
   "formatVersion": 1,          // yedek biçiminin sürümü
-  "dbSchemaVersion": 1,        // yazıldığı andaki Dexie şema sürümü
+  "dbSchemaVersion": 1,        // yazıldığı andaki şema sürümü (MEVCUT_SEMA_SURUMU)
   "olusturulmaTs": 1754400000000,
   "uygulamaSurumu": "0.1.0",
   "veri": {
@@ -1285,7 +1286,7 @@ Her adımın **"Bitti tanımı"** vardır: listedeki her madde doğrulanmadan ad
 ve bir sonraki adıma geçilemez. Durum sütunu bu repodaki gerçeği yansıtır; bir adımı
 bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 
-<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=79 durum:e2e_dosya=29 durum:adr=15 -->
+<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=287 durum:birim_dosya=80 durum:e2e_dosya=29 durum:adr=15 -->
 
 | # | İş | Durum | Bitti tanımı |
 |---|---|---|---|
@@ -1317,7 +1318,7 @@ bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 | 23 | Yerel hata günlüğü (ADR-0005 Kabul): `src/hata/hataKaydi.ts` bellekte 20 kayıtlık halka tampon, `ErrorBoundary` + `error`/`unhandledrejection` + ses klibi hataları; yetişkin alanında "Sorun bildir" (kopyala/temizle, gönderim yok); sürüm kimliği `v0.1.0 · <sha>` | ✅ PR #23 (`ad0e235`); canlıya alma ertelendi (Vercel tetiği ulaşmıyor, KG-34) | `hataKaydi.spec.ts` (depolama/ağ casusu), e2e `sorun-bildir.spec.ts` |
 | 24 | Deterministik geri bildirim sesi (`randomPraise(tohum)`/`randomRetry(tohum, denemeNo)`, `useGeriBildirim`; `Math.random` 0) + K9 gizlilik statik taraması (`npm run gizlilik:tara`, `scripts/gizlilik/kurallar.ts`, `depolamaIzinListesi.ts`) CI'da | ✅ PR #24 (`ae7f0d9`) | `geriBildirimSesi.spec.ts` (dağılım, ardışık farklı), `gizlilikTarama.spec.ts` (tuzak) |
 | 25 | PWA kurulabilirlik: kendi ikonumuz (Bahçem çiçeği, KG-37, `npm run ikon:uret`; 192/512/maskable/apple-touch), `orientation: 'any'`, tema ve arka plan rengi `COLOR.bg` (krem, KG-36), manifest tek kaynak `scripts/yayin/pwaAyari.ts`, göreli favicon; Vite şablon logosu ve `icons.svg` kaldırıldı | ✅ PR #25 (`511c93c`); Lighthouse ve cihazda kurulum denemesi canlı yayın bekliyor (KG-34) | `manifest.spec.ts`, e2e `onizleme-pwa.spec.ts` |
-| 26 | E2E genişletme ve gizlilik kanıtı: Playwright `onizleme` projesi (e2e kancalı test derlemesi `dist-e2e/` + `vite preview`, KG-38), tablet kişisel tam oturum, tahta sınıfça akış, çevrimdışı tam oturum + SW önbelleğinden ses, manifest/ikon 200, iki modda ağ/depolama gizlilik kanıtı (tuzaklı); ortak geometri yardımcısı; `depolamaIzinListesi` (`izinliMi`), birim `depolamaCasusu`; K5 boyut bütçesi (`npm run boyut`, `docs/boyut-butcesi.json`); e2e `main` push + PR, 3 projeli matris | ✅ | 9 e2e dosyası (board/tablet/onizleme), `depolamaIzinListesi.spec.ts`, `boyutButcesi.spec.ts` |
+| 26 | E2E genişletme ve gizlilik kanıtı: Playwright `onizleme` projesi (e2e kancalı test derlemesi `dist-e2e/` + `vite preview`, KG-38), tablet kişisel tam oturum, tahta sınıfça akış, çevrimdışı tam oturum + SW önbelleğinden ses, manifest/ikon 200, iki modda ağ/depolama gizlilik kanıtı (tuzaklı); ortak geometri yardımcısı; `depolamaIzinListesi` (`izinliMi`), birim `depolamaCasusu`; K5 boyut bütçesi (`npm run boyut`, `docs/boyut-butcesi.json`; 14 Eki 2026 Dexie → kendi IndexedDB sarmalayıcısı, ADR-0015 Kabul, KG-89: 833 147 → 740 264 B); e2e `main` push + PR, 3 projeli matris | ✅ | 9 e2e dosyası (board/tablet/onizleme), `depolamaIzinListesi.spec.ts`, `boyutButcesi.spec.ts`, `indexeddbUyum.spec.ts` |
 | 27 | Cihaz profili ayar ekranı: yetişkin alanında "Ekran boyutu" (Otomatik / Akıllı tahta / Tablet / Telefon, 4 büyük düğme, gerçek boyutta önizleme kartı), `CihazProfiliBaglami` + `useCihazProfili`, `useDeviceProfile` `elleSecilen` döndürür ve seçimi aynı karede uygular; yalnız `okulumsun.deviceOverride` yazılır; birim depolama casusu happy-dom bağlı yöntem açığı kapatıldı | ✅ | `cihazProfiliAyari.spec.ts`, e2e `cihaz-ayari.spec.ts` (tahta → `--scale` 1.6 → yenilemede kalıcı → Otomatik → tablet), gizlilik e2e akışında ayar seçimi |
 | 28 | `src/platform/{tamEkran,uyanikTut,dersAyari}.ts`, `useUyanikTut`, AudioUnlock jestinde `tamEkranIste`, veli paneli "Derste tam ekran" (bellekte, yeni depolama yok) | ✅ | `tamEkran.spec.ts`, `uyanikTut.spec.ts`, e2e `board-tam-ekran.spec.ts` |
 | 29 | Ürün hijyeni: `OturumDurumlari` (kırmızı yok, ham hata yok, hata yerel günlüğe), `acilistaTemizle` (mod bağımsız açılış silmesi), bugünün bahçesi (`bugunTamamlanan`, bellekte), `scripts/denetim/kirmiziYok.ts` K9a bağlı, `.gitignore` claude-cikti. Ses klipleri (3) Adım 18 anahtarı bekler | ✅ | `acilistaTemizle.spec.ts`, `bugununBahcesi.spec.ts`, `kirmiziYok.spec.ts` |

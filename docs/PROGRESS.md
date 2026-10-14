@@ -5,7 +5,7 @@
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
 > Tarih: 14 Ekim 2026 (Adım 47 — Isınma Keşfi)
 
-<!-- durum:birim_test=584 durum:birim_dosya=79 durum:e2e_dosya=29 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=15 -->
+<!-- durum:birim_test=594 durum:birim_dosya=80 durum:e2e_dosya=29 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=15 -->
 
 ## Yönetici özeti
 
@@ -52,7 +52,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 23 | Yerel hata günlüğü + "Sorun bildir" + sürüm kimliği (ADR-0005 Kabul) | ✅ PR #23 (`ad0e235`); canlıya alma ertelendi (KG-34) |
 | 24 | Deterministik geri bildirim sesi + K9 gizlilik taraması | ✅ PR #24 (`ae7f0d9`) |
 | 25 | PWA kurulabilirlik: ikonlar, yatay/dikey, krem tema rengi | ✅ PR #25 (`511c93c`); Lighthouse canlı yayın bekliyor (KG-34) |
-| 26 | E2E genişletme + gizlilik kanıtı (çevrimdışı tam oturum, iki modda ağ/depolama, PWA manifest), K5 boyut bütçesi | ✅ PR #26 (`0001a86`) |
+| 26 | E2E genişletme + gizlilik kanıtı (çevrimdışı tam oturum, iki modda ağ/depolama, PWA manifest), K5 boyut bütçesi (14 Eki: Dexie → kendi IndexedDB sarmalayıcısı, ADR-0015) | ✅ PR #26 (`0001a86`) |
 | 27 | Cihaz profili ayar ekranı (yetişkin alanı → "Ekran boyutu"), elle geçersiz kılma kalıcı | ✅ |
 | 28 | Tam ekran + Wake Lock (tahtada ses kilidi dokunuşunda tam ekran; ders ekranlarında ekran uyanık; veli paneli "Derste tam ekran") | ✅ |
 | 29 | Ürün hijyeni (hata/yükleme ekranı, açılış temizliği, bugünün bahçesi, kırmızı denetimi) | ✅ |
@@ -103,7 +103,7 @@ Ayrıntı ve durum sözlüğü: `docs/ADR/README.md`.
 - `npm test` → ✅ 310/310, 41 dosya
 - `npm run glif:formu -- --cikti <pdf>` → rakam glifleri öğretmen görüş formu (A4, 2 öğretmen × 3 sayfa; WeasyPrint gerekir)
 - `npm run e2e` → ✅ 9 dosya, 3 proje (board, tablet, onizleme); onizleme: e2e kancalı test derlemesi + `vite preview` (CSP, SW, çevrimdışı, manifest, gizlilik)
-- `npm run boyut` → ✅ K5 JS bütçesi tabanı `docs/boyut-butcesi.json` (v0.3.0'a kadar uyarı); 14 Eki 2026: 929,7 → 813,5 KB, bütçe içinde (KG-87, `docs/boyut-analizi.md`)
+- `npm run boyut` → ✅ K5 JS bütçesi tabanı `docs/boyut-butcesi.json` (v0.3.0'a kadar uyarı); 14 Eki 2026: 929,7 → 813,5 KB, bütçe içinde (KG-87); Dexie yerine kendi IndexedDB sarmalayıcısı (ADR-0015 Kabul, KG-89) → 740 264 B, pay 95 110 B (`docs/boyut-analizi.md`)
 - `npm run durum -- --denetle` → ✅ PROGRESS ve PLAN blokları + §12 ağacı kodla eşleşiyor
 - `npm run lisans:denetle` → ✅ envanter, LICENSES ve node_modules lisansları eşleşiyor
 - `npm run validate` → ✅ 19 kazanım · 57 beceri · 15/15 hata etiketi · 39 jeneratör
@@ -120,8 +120,8 @@ Ayrıntı ve durum sözlüğü: `docs/ADR/README.md`.
   `npm run audio:audit` ticari izinsiz aktif kaynakta çıkış 1 verir; yerelde ve CI'da
   `SES_GECIS_MODU=1` ile çalıştırılır. Klipler Adım 31'de Google Cloud TTS Chirp 3 HD ile
   yeniden üretilecek. Karar `src/content/sesKaynagi.json` → `bekleyen` alanında (Adım 18).
-- **Veri saklanmıyor (Seçenek A).** Öğrenci ve veli verisi saklanmaz; Dexie kalıcılık katmanı
-  kodda var ama politika modülü (`veriSaklamaPolitikasi.ts`) kapalı tutuyor. LICENSES gizlilik
+- **Veri saklanmıyor (Seçenek A).** Öğrenci ve veli verisi saklanmaz; IndexedDB kalıcılık katmanı
+  (kendi sarmalayıcı, ADR-0015) kodda var ama politika modülü (`veriSaklamaPolitikasi.ts`) kapalı tutuyor. LICENSES gizlilik
   paragrafı veli panelindeki `VERI_SAKLAMA_BILDIRIMI` cümlesini birebir içerir (testle korunur);
   Kaynaklar ekranı aynı politikayı kendi metniyle anlatır.
 - **Bilinen hatalar** (plan v2'de adımlara bağlı): Bahçem sahne toplamı sabit `3`.
