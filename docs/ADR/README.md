@@ -18,8 +18,8 @@ Geri dönüş maliyeti olan her karar burada numaralı bir kayıtla tutulur. Kur
 | [0008](0008-sinif-turu-isbirlikci-gosterim.md) | Sınıf Turu: iş birlikçi gösterim | Kabul | 36 |
 | [0009](0009-magaza-varligi.md) | Mağaza varlığı | Taslak | 50, 51 |
 | [0010](0010-eve-link-url-sozlesmesi.md) | Eve link URL sözleşmesi | Kabul | 42 |
-| [0011](0011-cok-ders-mimarisi.md) | Çok ders mimarisi | Taslak | 57 |
-| [0012](0012-cok-dilli-ses.md) | Çok dilli ses | Taslak | 58 |
+| [0011](0011-cok-ders-mimarisi.md) | Çok ders mimarisi | Kabul | 57 |
+| [0012](0012-cok-dilli-ses.md) | Çok dilli ses | Kabul | 58 |
 | [0013](0013-uygulama-lisansi.md) | Uygulama lisansı | Kabul | 20 |
 | [0014](0014-ticari-model-ve-ucuncu-taraf-varliklar.md) | Ticari model ve üçüncü taraf varlık izinleri | Kabul | 21, 29, 35, 48, 56 |
 

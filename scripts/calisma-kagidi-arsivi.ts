@@ -71,7 +71,7 @@ footer{margin-top:3em;color:${COLOR.inkSoft};font-size:.9rem}
 <body>
 <main>
 ${govde}
-<footer><p>Okulumsun · MEB 2024 1. sınıf matematik. Kâğıtlar ücretsizdir; yazdırıp çoğaltabilirsiniz. Bu sayfa dış kaynak yüklemez.</p></footer>
+<footer><p>Okulumsun · MEB 2024 1. sınıf matematik. Kâğıtlar ücretsizdir. Sınıfınız için yazdırabilirsiniz. Bu sayfa dış kaynak yüklemez.</p></footer>
 </main>
 </body>
 </html>
