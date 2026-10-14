@@ -41,6 +41,9 @@ if (arsivKodu) {
   void import('./ui/print/ArsivKagidi.tsx').then(({ ArsivKagidi }) => kok.render(<ArsivKagidi kod={arsivKodu} />))
 } else if (import.meta.env.DEV && new URLSearchParams(location.search).get('gelistirme') === 'glif') {
   void import('./dev/GlifKarti.tsx').then(({ GlifKarti }) => kok.render(<GlifKarti />))
+} else if (import.meta.env.DEV && new URLSearchParams(location.search).get('gelistirme') === 'say') {
+  // KG-86: M-SAY yerleşim önizlemesi (e2e tahta/tablet boyut denetimi); yalnız geliştirme.
+  void import('./dev/SayOnizleme.tsx').then(({ SayOnizleme }) => kok.render(<SayOnizleme />))
 } else {
   kok.render(
     <StrictMode>
