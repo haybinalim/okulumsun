@@ -39,7 +39,9 @@ describe('TemelYazi harfleri (KG-96)', () => {
   });
 
   it('çocuk yığını TemelYazi ile başlar; yetişkin yığını Andika harfleri', () => {
-    expect(FONT_YIGINI.startsWith("'TemelYazi', 'TemelYaziRakam', 'Andika'")).toBe(true);
+    // SVG <text>: aynı harf dosyası, size-adjust'sız yüz (sabit kutular Andika ölçüsünde).
+    expect(FONT_YIGINI.startsWith("'TemelYaziSvg', 'TemelYaziRakam', 'Andika'")).toBe(true);
+    expect(css).toMatch(/font-family: 'TemelYaziSvg';\s*src: url\('\/fonts\/TemelYazi-Harf\.woff2'\)/);
     expect(css).toMatch(/\[data-yazi='yetiskin'\],\s*\[data-yetiskin\]\s*\{\s*font-family: var\(--font-yetiskin\);/);
     expect(css).toContain('size-adjust: 120%');
   });

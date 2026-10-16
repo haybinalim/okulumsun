@@ -82,6 +82,20 @@
     U+00C7, U+00CE, U+00D6, U+00DB-00DC, U+00E2, U+00E7, U+00EE, U+00F6, U+00FB-00FC, U+011E-011F, U+0130-0131,
     U+015E-015F, U+2018-2019, U+201C-201D, U+20BA, U+2212;
 }
+/*
+ * Aynı dosya, size-adjust'sız: SVG `<text>` (FONT_YIGINI) sabit kutulara Andika ölçüsüyle
+ * yerleştirildi (banknot dairesi, işaret kartı); TemelYazi'nin büyük harf/rakam boyu %100'de
+ * Andika'yla aynıdır (0,70 em), %120 taşırdı. Aynı URL: ikinci indirme olmaz.
+ */
+@font-face {
+  font-family: 'TemelYaziSvg';
+  src: url('/fonts/TemelYazi-Harf.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0020-0022, U+0025-005A, U+005E-005F, U+0061-007A, U+007C, U+007E, U+00AB, U+00BB, U+00C2,
+    U+00C7, U+00CE, U+00D6, U+00DB-00DC, U+00E2, U+00E7, U+00EE, U+00F6, U+00FB-00FC, U+011E-011F, U+0130-0131,
+    U+015E-015F, U+2018-2019, U+201C-201D, U+20BA, U+2212;
+}
 
 @theme {
   --font-sans: 'TemelYazi', 'TemelYaziRakam', 'Andika', system-ui, sans-serif;

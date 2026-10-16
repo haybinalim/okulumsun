@@ -20,7 +20,7 @@ import { YonlendirmeSeridi } from '../feedback/YonlendirmeSeridi';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { m } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
-import { COLOR, MOTION, SIZE } from '../../design/tokens';
+import { COLOR, FONT_YIGINI, MOTION, SIZE } from '../../design/tokens';
 import { SinifKavanozu } from '../svg/SinifKavanozu';
 
 export function AnaEkran() {
@@ -400,7 +400,7 @@ function TemaIkon({ no, size, color }: { no: number; size: number; color: string
     case 2: // Sayılar
       return (
         <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden="true" fill={color}>
-          <text x="20" y="28" fontSize="22" textAnchor="middle" fill={color}>123</text>
+          <text x="20" y="28" fontFamily={FONT_YIGINI} fontSize="22" textAnchor="middle" fill={color}>123</text>
         </svg>
       );
     case 3: // Ölçme
@@ -420,7 +420,7 @@ function TemaIkon({ no, size, color }: { no: number; size: number; color: string
       return (
         <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden="true" fill={color}>
           <circle cx="20" cy="20" r="14" />
-          <text x="20" y="25" fontSize="12" textAnchor="middle" fill={COLOR.mascot}>₺</text>
+          <text x="20" y="25" fontFamily={FONT_YIGINI} fontSize="12" textAnchor="middle" fill={COLOR.mascot}>₺</text>
         </svg>
       );
     case 6: // Şekiller
