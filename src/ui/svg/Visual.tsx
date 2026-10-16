@@ -78,8 +78,9 @@ export function Visual({
 function Rakam({ sayi, width, height }: { sayi: number; width: number; height: number }) {
   const glifler = String(sayi).split('').map((r) => RAKAM_GLIF_HARITASI[r]).filter((g) => g !== undefined);
   // viewBox birimi: rakam yüksekliği 70 (y 15–85); toplam genişlik glifler + aralıklar.
+  // Rakam yüksekliği kutu yüksekliğinin en çok %63'ü (KG-42 glifleriyle aynı görsel boy).
   const toplam = glifler.reduce((t, g) => t + g.genislik, 0) + RAKAM_ARALIGI * Math.max(0, glifler.length - 1);
-  const olcek = Math.min((width * 0.9) / Math.max(toplam, 1), (height * 0.9) / 70);
+  const olcek = Math.min((width * 0.9) / Math.max(toplam, 1), (height * 0.63) / 70);
   let x = (width - toplam * olcek) / 2;
   const y = (height - 70 * olcek) / 2 - 15 * olcek;
 
