@@ -28,7 +28,7 @@ test('üretim başlıklarıyla CSP ihlali yok; font ve SW çalışıyor', async 
 
   const fontYuklu = await page.evaluate(async () => {
     await document.fonts.ready;
-    return [...document.fonts].some((f) => f.family.includes('Andika') && f.status === 'loaded');
+    return [...document.fonts].some((f) => f.family === 'TemelYazi' && f.status === 'loaded');
   });
   expect(fontYuklu).toBe(true);
 

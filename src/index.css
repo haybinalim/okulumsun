@@ -47,7 +47,9 @@
  * açık üstlü 4, çizgili 7) çıkar; harfler Andika'da kalır. Boşluk karakteri
  * kapsamda olmadığı için satır ölçüleri Andika'dan gelir.
  * Tek dosya (Bold) iki ağırlıkta kullanılır: Andika 400'ün gövdesine en yakın
- * TemelYazi ağırlığı Bold'dur; 700'de tarayıcı kalınlaştırır.
+ * TemelYazi ağırlığı Bold'dur; dosya 'normal' ağırlık işaretli olduğundan 700'de
+ * tarayıcı sentetik kalınlaştırır (KG-96 düzeltmesi). Çocuk yığınında harf dosyası
+ * rakamları da kapsar; bu alt küme yalnız yetişkin yığınında (Andika harfleriyle) kullanılır.
  */
 @font-face {
   font-family: 'TemelYaziRakam';
@@ -57,8 +59,39 @@
   unicode-range: U+0030-0039, U+002B, U+003C-003E, U+2212;
 }
 
+/*
+ * TemelYazi — çocuğa dönük metnin HARFLERİ (KG-96; scripts/rakam-glif-uret.py →
+ * TemelYazi-Harf.woff2). MEB TYMM 2024 dik temel yazı: tek katlı a, MEB'in kuyruklu
+ * harf formları, Türkçe harflerin tamamı. unicode-range dosyanın kapsamıyla aynıdır;
+ * fontta olmayan karakterler ([ ] { } # $ – — … ·) Andika'ya düşer.
+ * Neden Bold konturu 400'de: Regular'ın gövdesi (47/1000 em) Andika 400'ün (93)
+ * yarısı, 12–20 px'te kılcal kalır; Bold (71) gövde metni olur. Dosya 'normal'
+ * ağırlık işaretlidir, 700'de tarayıcı sentetik kalınlaştırır (başlık ayrımı).
+ * size-adjust: TemelYazi'nin x yüksekliği 0,35 em (Andika 0,50); %120 ile 0,42'ye
+ * çıkar, satır genişliği yine Andika'dan dar kalır (taşma yok).
+ * Yetişkin yüzeyleri (öğretmen/veli; `[data-yazi='yetiskin']`, `[data-yetiskin]`)
+ * --font-yetiskin kullanır: harfler Andika, rakamlar TemelYaziRakam (KG-95).
+ */
+@font-face {
+  font-family: 'TemelYazi';
+  src: url('/fonts/TemelYazi-Harf.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+  size-adjust: 120%;
+  unicode-range: U+0020-0022, U+0025-005A, U+005E-005F, U+0061-007A, U+007C, U+007E, U+00AB, U+00BB, U+00C2,
+    U+00C7, U+00CE, U+00D6, U+00DB-00DC, U+00E2, U+00E7, U+00EE, U+00F6, U+00FB-00FC, U+011E-011F, U+0130-0131,
+    U+015E-015F, U+2018-2019, U+201C-201D, U+20BA, U+2212;
+}
+
 @theme {
-  --font-sans: 'TemelYaziRakam', 'Andika', system-ui, sans-serif;
+  --font-sans: 'TemelYazi', 'TemelYaziRakam', 'Andika', system-ui, sans-serif;
+  --font-yetiskin: 'TemelYaziRakam', 'Andika', system-ui, sans-serif;
+}
+
+/* KG-96: öğretmen/veli yüzeyleri Andika'da kalır (src/design/yaziYuzeyi.ts). */
+[data-yazi='yetiskin'],
+[data-yetiskin] {
+  font-family: var(--font-yetiskin);
 }
 
 /*

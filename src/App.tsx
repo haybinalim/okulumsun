@@ -24,6 +24,7 @@ import { Bahcem } from './ui/screens/Bahcem';
 import { OturumHatasi, OturumYukleniyor } from './ui/screens/OturumDurumlari';
 import { useAppStore } from './store/appStore';
 import { useDeviceProfile } from './design/useDeviceProfile';
+import { yaziYuzeyi } from './design/yaziYuzeyi';
 import { CihazProfiliBaglami } from './design/CihazProfiliBaglami';
 import { useUyanikTut } from './ui/useUyanikTut';
 import { dersteTamEkranMi, dersAyariniDinle } from './platform/dersAyari';
@@ -65,6 +66,8 @@ export default function App() {
   );
   const ekran = useAppStore((s) => s.ekran);
   const mod = useAppStore((s) => s.mod);
+  // KG-96: çocuğa dönük ekran TemelYazi, öğretmen/veli ekranı Andika (`src/design/yaziYuzeyi.ts`).
+  const yazi = yaziYuzeyi(ekran);
   const accent = useVurgu();
   const ekranGit = useAppStore((s) => s.ekranGit);
   const secilenDugumId = useAppStore((s) => s.secilenDugumId);
@@ -94,7 +97,7 @@ export default function App() {
   if (ekran === 'audioUnlock') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <AudioUnlock
             tamEkran={tamEkran}
             // Adım 42: geçerli eve link okunduysa ses kilidinden sonra doğrudan ev çalışması.
@@ -109,7 +112,7 @@ export default function App() {
   if (ekran === 'evdeCalis' && evSeti) {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <EvdeCalis set={evSeti} />
         </div>
       </BoardHarness>
@@ -120,7 +123,7 @@ export default function App() {
   if (ekran === 'veliIpucuKarti') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <Suspense fallback={<OturumYukleniyor />}>
             <VeliIpucuKarti />
           </Suspense>
@@ -133,7 +136,7 @@ export default function App() {
   if (ekran === 'kesifMasasi') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <Suspense fallback={<OturumYukleniyor />}>
             <KesifMasasi />
           </Suspense>
@@ -146,7 +149,7 @@ export default function App() {
   if (ekran === 'temaTuru' && temaTuru) {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <Suspense fallback={<OturumYukleniyor />}>
             <TemaTuru tema={temaTuru.tema} plan={temaTuru.plan} />
           </Suspense>
@@ -159,7 +162,7 @@ export default function App() {
   if (ekran === 'modSecimi') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <ModSecimi />
         </div>
       </BoardHarness>
@@ -170,7 +173,7 @@ export default function App() {
   if (ekran === 'avatarSecimi') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <AvatarSecimi />
         </div>
       </BoardHarness>
@@ -181,7 +184,7 @@ export default function App() {
   if (ekran === 'renkSecimi') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <RenkSecimi />
         </div>
       </BoardHarness>
@@ -192,7 +195,7 @@ export default function App() {
   if (ekran === 'veliKapisi') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <VeliKapisi />
         </div>
       </BoardHarness>
@@ -203,7 +206,7 @@ export default function App() {
   if (ekran === 'veliPaneli') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <CihazProfiliBaglami.Provider value={cihazProfili}>
             <VeliPaneli />
           </CihazProfiliBaglami.Provider>
@@ -216,7 +219,7 @@ export default function App() {
   if (ekran === 'setHazirla') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <SetHazirla />
         </div>
       </BoardHarness>
@@ -227,7 +230,7 @@ export default function App() {
   if (ekran === 'sinifTuruKurulum' || ekran === 'sinifTuru' || ekran === 'sinifTuruSonu') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           {ekran === 'sinifTuruKurulum' ? <SinifTuruKurulum /> : ekran === 'sinifTuru' ? <SinifTuruEkrani /> : <SinifTuruSonu />}
         </div>
       </BoardHarness>
@@ -237,7 +240,7 @@ export default function App() {
   if (ekran === 'dersSonuOzeti') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <DersSonuOzeti />
         </div>
       </BoardHarness>
@@ -248,7 +251,7 @@ export default function App() {
   if (ekran === 'calismaKagidi') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <Suspense fallback={<OturumYukleniyor />}>
             <CalismaKagidi />
           </Suspense>
@@ -261,7 +264,7 @@ export default function App() {
   if (ekran === 'eveGonder') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <Suspense fallback={<OturumYukleniyor />}>
             <EveGonder />
           </Suspense>
@@ -274,7 +277,7 @@ export default function App() {
   if (ekran === 'haftalikPlan') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <Suspense fallback={<OturumYukleniyor />}>
             <HaftalikPlan />
           </Suspense>
@@ -287,7 +290,7 @@ export default function App() {
   if (ekran === 'sorunBildir') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <SorunBildir cihaz={profile} />
         </div>
       </BoardHarness>
@@ -298,7 +301,7 @@ export default function App() {
   if (ekran === 'kaynaklar') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <Kaynaklar />
         </div>
       </BoardHarness>
@@ -309,7 +312,7 @@ export default function App() {
   if (ekran === 'anaEkran') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <AnaEkran />
         </div>
       </BoardHarness>
@@ -320,7 +323,7 @@ export default function App() {
   if (ekran === 'temaGirisi') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <TemaGirisi />
         </div>
       </BoardHarness>
@@ -331,7 +334,7 @@ export default function App() {
   if (ekran === 'konuSecimi') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <KonuSecimi />
         </div>
       </BoardHarness>
@@ -342,7 +345,7 @@ export default function App() {
   if (ekran === 'oturumSonu') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <OturumSonu oturumTamamlandi={true} onBahcem={() => ekranGit('bahcem')} />
         </div>
       </BoardHarness>
@@ -353,7 +356,7 @@ export default function App() {
   if (ekran === 'bahcem') {
     return (
       <BoardHarness profile={profile}>
-        <div style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
+        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
           <Bahcem koleksiyon={{ toplam: bugunTamamlanan, sahneIndeksi: 0, sonKazancMs: null }} onEv={() => ekranGit('anaEkran')} />
         </div>
       </BoardHarness>
@@ -426,6 +429,7 @@ export default function App() {
   return (
     <BoardHarness profile={profile}>
       <div
+        data-yazi={yazi}
         style={{ height: '100%', ['--color-accent' as string]: accent.hex }}
         data-isinma={mod === 'kisisel' && kisiselOturum.isinmada ? '' : undefined}
       >

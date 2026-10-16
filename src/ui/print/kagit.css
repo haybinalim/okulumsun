@@ -10,7 +10,8 @@
 
 .kg-kok {
   color: #000;
-  font-family: 'TemelYaziRakam', 'Andika', system-ui, sans-serif;
+  /* KG-96: basılan kâğıt çocuğa dönük — harfler de MEB TemelYazi. */
+  font-family: 'TemelYazi', 'TemelYaziRakam', 'Andika', system-ui, sans-serif;
   display: flex;
   flex-wrap: wrap;
   gap: 8mm;
