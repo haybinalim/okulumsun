@@ -11,12 +11,7 @@
  * — bileşen asla ham piksel yazmaz, ölçek `width`/`height` props'undan gelir.
  * Böylece aynı tarif akıllı tahtada (1.6×) ve telefonda (0.75×) doğru ölçeklenir.
  */
-import type {
-  BanknotDegeri,
-  Renk,
-  SekilAdi,
-  VisualSpec,
-} from '../../exercises/types';
+import type { BanknotDegeri, Renk, SekilAdi, VisualSpec } from '../../exercises/types';
 import { ACCENTS, FONT_YIGINI } from '../../design/tokens';
 import { RAKAM_ARALIGI, RAKAM_GLIF_HARITASI } from './rakamGlifleri';
 import { Sprite } from './Sprite';
@@ -24,19 +19,9 @@ import { RESMI_BANKNOT_GORSELLERI } from './banknotAssets';
 import { nesneKonumlari } from './positions';
 
 /** Renk adını hex'e çevirir — ACCENTS tek kaynak (mor=turuncu=… haritaları çift tutmaz). */
-const RENK_HEX: Record<Renk, string> = Object.fromEntries(
-  ACCENTS.map((a) => [a.id, a.hex]),
-) as Record<Renk, string>;
+const RENK_HEX: Record<Renk, string> = Object.fromEntries(ACCENTS.map((a) => [a.id, a.hex])) as Record<Renk, string>;
 
-export function Visual({
-  spec,
-  width,
-  height,
-}: {
-  spec: VisualSpec;
-  width: number;
-  height: number;
-}) {
+export function Visual({ spec, width, height }: { spec: VisualSpec; width: number; height: number }) {
   switch (spec.type) {
     case 'rakam':
       return <Rakam sayi={spec.sayi} width={width} height={height} />;
@@ -76,7 +61,10 @@ export function Visual({
  * bağlı değil; path verisinin tek kaynağı `rakamGlifleri.ts` (`RAKAM_GLIFLERI`).
  * Basamaklar glif genişliğiyle orantılı dizilir ve tek ölçekle büyütülür. */
 function Rakam({ sayi, width, height }: { sayi: number; width: number; height: number }) {
-  const glifler = String(sayi).split('').map((r) => RAKAM_GLIF_HARITASI[r]).filter((g) => g !== undefined);
+  const glifler = String(sayi)
+    .split('')
+    .map((r) => RAKAM_GLIF_HARITASI[r])
+    .filter((g) => g !== undefined);
   // viewBox birimi: rakam yüksekliği 70 (y 15–85); toplam genişlik glifler + aralıklar.
   // Rakam yüksekliği kutu yüksekliğinin en çok %63'ü (KG-42 glifleriyle aynı görsel boy).
   const toplam = glifler.reduce((t, g) => t + g.genislik, 0) + RAKAM_ARALIGI * Math.max(0, glifler.length - 1);
@@ -119,12 +107,47 @@ function IslemKarti({
   const sembol = spec.islem === '+' ? '+' : '−';
   return (
     <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
-      <rect x={3} y={3} width={width - 6} height={height - 6} rx={Math.min(width, height) * 0.12} fill="#f8fafc" stroke="#cbd5e1" strokeWidth={3} />
-      <g transform={`translate(${konumlar[0] * width} ${(height - rakamGenislik) / 2})`}><Rakam sayi={spec.ilkSayi} width={rakamGenislik} height={rakamGenislik} /></g>
-      <text x={konumlar[1] * width} y={merkezY + sembolBoyutu * 0.34} textAnchor="middle" fontFamily={FONT_YIGINI} fontWeight={700} fontSize={sembolBoyutu} fill="#1d4ed8">{sembol}</text>
-      <g transform={`translate(${(konumlar[1] + 0.06) * width} ${(height - rakamGenislik) / 2})`}><Rakam sayi={spec.ikinciSayi} width={rakamGenislik} height={rakamGenislik} /></g>
-      <text x={konumlar[2] * width} y={merkezY + sembolBoyutu * 0.34} textAnchor="middle" fontFamily={FONT_YIGINI} fontWeight={700} fontSize={sembolBoyutu} fill="#475569">=</text>
-      <g transform={`translate(${konumlar[3] * width} ${(height - rakamGenislik) / 2})`}><Rakam sayi={spec.sonuc} width={rakamGenislik} height={rakamGenislik} /></g>
+      <rect
+        x={3}
+        y={3}
+        width={width - 6}
+        height={height - 6}
+        rx={Math.min(width, height) * 0.12}
+        fill="#f8fafc"
+        stroke="#cbd5e1"
+        strokeWidth={3}
+      />
+      <g transform={`translate(${konumlar[0] * width} ${(height - rakamGenislik) / 2})`}>
+        <Rakam sayi={spec.ilkSayi} width={rakamGenislik} height={rakamGenislik} />
+      </g>
+      <text
+        x={konumlar[1] * width}
+        y={merkezY + sembolBoyutu * 0.34}
+        textAnchor="middle"
+        fontFamily={FONT_YIGINI}
+        fontWeight={700}
+        fontSize={sembolBoyutu}
+        fill="#1d4ed8"
+      >
+        {sembol}
+      </text>
+      <g transform={`translate(${(konumlar[1] + 0.06) * width} ${(height - rakamGenislik) / 2})`}>
+        <Rakam sayi={spec.ikinciSayi} width={rakamGenislik} height={rakamGenislik} />
+      </g>
+      <text
+        x={konumlar[2] * width}
+        y={merkezY + sembolBoyutu * 0.34}
+        textAnchor="middle"
+        fontFamily={FONT_YIGINI}
+        fontWeight={700}
+        fontSize={sembolBoyutu}
+        fill="#475569"
+      >
+        =
+      </text>
+      <g transform={`translate(${konumlar[3] * width} ${(height - rakamGenislik) / 2})`}>
+        <Rakam sayi={spec.sonuc} width={rakamGenislik} height={rakamGenislik} />
+      </g>
     </svg>
   );
 }
@@ -170,15 +193,7 @@ function sekilYolu(sekil: SekilAdi, cx: number, cy: number, r: number) {
  * ibaresi bulunan resmî E9 5. tertip ön yüz örneğini gösterir. Banknot türü
  * yalnızca eşlemesi bulunan gerçek kupürleri kabul eder; stilize geri dönüş yoktur.
  */
-function Banknot({
-  deger,
-  width,
-  height,
-}: {
-  deger: BanknotDegeri;
-  width: number;
-  height: number;
-}) {
+function Banknot({ deger, width, height }: { deger: BanknotDegeri; width: number; height: number }) {
   const resmiGorsel = RESMI_BANKNOT_GORSELLERI[deger];
   const kartGenislik = width * 0.93;
   const kartYukseklik = Math.min(height * 0.7, kartGenislik * 0.5);
@@ -260,15 +275,7 @@ function NesneKumesi({
  * Onluk çerçeve. `gruplar` her çerçevedeki dolu göz sayısı: [10, 3] = 13.
  * Burada mesele nesne değil YAPI (5'li/10'lu görme).
  */
-function OnlukCerceve({
-  gruplar,
-  width,
-  height,
-}: {
-  gruplar: readonly number[];
-  width: number;
-  height: number;
-}) {
+function OnlukCerceve({ gruplar, width, height }: { gruplar: readonly number[]; width: number; height: number }) {
   const cerceveSayisi = gruplar.length;
   const cerceveGenislik = width / cerceveSayisi;
   return (
@@ -283,12 +290,28 @@ function OnlukCerceve({
           const cy = height * 0.15 + satir * height * 0.4;
           const doluMu = i < dolu;
           dots.push(
-            <circle key={i} cx={cx} cy={cy} r={Math.min(cerceveGenislik, height) / 14} fill={doluMu ? 'var(--color-accent)' : '#f3f4f6'} stroke={doluMu ? 'none' : '#e5e7eb'} />,
+            <circle
+              key={i}
+              cx={cx}
+              cy={cy}
+              r={Math.min(cerceveGenislik, height) / 14}
+              fill={doluMu ? 'var(--color-accent)' : '#f3f4f6'}
+              stroke={doluMu ? 'none' : '#e5e7eb'}
+            />,
           );
         }
         return (
           <g key={ci}>
-            <rect x={ox + 4} y={4} width={cerceveGenislik - 8} height={height - 8} rx={8} fill="none" stroke="#d1d5db" strokeWidth="3" />
+            <rect
+              x={ox + 4}
+              y={4}
+              width={cerceveGenislik - 8}
+              height={height - 8}
+              rx={8}
+              fill="none"
+              stroke="#d1d5db"
+              strokeWidth="3"
+            />
             {dots}
           </g>
         );
@@ -326,9 +349,30 @@ function SayiDogrusu({
           <g key={i}>
             <line x1={x} y1={y - 14} x2={x} y2={y + 14} stroke="#6b7280" strokeWidth="4" />
             {isaretli && !eksikte && (
-              <text x={x} y={y - 22} textAnchor="middle" fontFamily={FONT_YIGINI} fontWeight={700} fontSize={fs} fill="var(--color-ink)">{v}</text>
+              <text
+                x={x}
+                y={y - 22}
+                textAnchor="middle"
+                fontFamily={FONT_YIGINI}
+                fontWeight={700}
+                fontSize={fs}
+                fill="var(--color-ink)"
+              >
+                {v}
+              </text>
             )}
-            {eksikte && <rect x={x - fs * 0.6} y={y - fs * 1.4} width={fs * 1.2} height={fs * 1.2} rx={6} fill="#fff7ed" stroke="#fdba74" strokeWidth="3" />}
+            {eksikte && (
+              <rect
+                x={x - fs * 0.6}
+                y={y - fs * 1.4}
+                width={fs * 1.2}
+                height={fs * 1.2}
+                rx={6}
+                fill="#fff7ed"
+                stroke="#fdba74"
+                strokeWidth="3"
+              />
+            )}
           </g>
         );
       })}
@@ -360,7 +404,15 @@ function Oruntu({
         return (
           <g key={i} transform={`translate(${ox} ${oy})`}>
             {eksik ? (
-              <rect width={vSize} height={vSize} rx={10} fill="#fff7ed" stroke="#fdba74" strokeWidth="4" strokeDasharray="8 6" />
+              <rect
+                width={vSize}
+                height={vSize}
+                rx={10}
+                fill="#fff7ed"
+                stroke="#fdba74"
+                strokeWidth="4"
+                strokeDasharray="8 6"
+              />
             ) : (
               <Visual spec={o} width={vSize} height={vSize} />
             )}
@@ -409,21 +461,64 @@ function KonumSahnesi({
 
   switch (spec.iliski) {
     case 'altinda':
-      return <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">{referans(0.5, 0.36)}{hedef(0.5, 0.76)}</svg>;
+      return (
+        <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
+          {referans(0.5, 0.36)}
+          {hedef(0.5, 0.76)}
+        </svg>
+      );
     case 'ustunde':
-      return <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">{hedef(0.5, 0.24)}{referans(0.5, 0.64)}</svg>;
+      return (
+        <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
+          {hedef(0.5, 0.24)}
+          {referans(0.5, 0.64)}
+        </svg>
+      );
     case 'yaninda':
-      return <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">{referans(0.32, 0.54)}{hedef(0.78, 0.54)}</svg>;
+      return (
+        <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
+          {referans(0.32, 0.54)}
+          {hedef(0.78, 0.54)}
+        </svg>
+      );
     case 'disinda':
-      return <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">{referans(0.31, 0.54)}{hedef(0.82, 0.54)}</svg>;
+      return (
+        <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
+          {referans(0.31, 0.54)}
+          {hedef(0.82, 0.54)}
+        </svg>
+      );
     case 'icinde':
-      return <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">{referans(0.5, 0.55, 0.09)}{hedef(0.5, 0.56, hedefBoyutu * 0.76)}{referans(0.5, 0.55, 0)}</svg>;
+      return (
+        <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
+          {referans(0.5, 0.55, 0.09)}
+          {hedef(0.5, 0.56, hedefBoyutu * 0.76)}
+          {referans(0.5, 0.55, 0)}
+        </svg>
+      );
     case 'arasinda':
-      return <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">{referans(0.24, 0.55)}{referans(0.76, 0.55)}{hedef(0.5, 0.55, hedefBoyutu * 0.76)}</svg>;
+      return (
+        <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
+          {referans(0.24, 0.55)}
+          {referans(0.76, 0.55)}
+          {hedef(0.5, 0.55, hedefBoyutu * 0.76)}
+        </svg>
+      );
     case 'onunde':
-      return <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">{referans(0.5, 0.51, 0.12)}{hedef(0.5, 0.65)}{referans(0.5, 0.51, 0)}</svg>;
+      return (
+        <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
+          {referans(0.5, 0.51, 0.12)}
+          {hedef(0.5, 0.65)}
+          {referans(0.5, 0.51, 0)}
+        </svg>
+      );
     case 'arkasinda':
-      return <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">{hedef(0.5, 0.42)}{referans(0.5, 0.55, 0.72)}</svg>;
+      return (
+        <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
+          {hedef(0.5, 0.42)}
+          {referans(0.5, 0.55, 0.72)}
+        </svg>
+      );
   }
 }
 
@@ -451,16 +546,44 @@ function KonumReferansi({
   if (tur === 'sepet') {
     return (
       <g>
-        <path d={`M${x + genislik * 0.22} ${y + yukseklik * 0.34} Q${cx} ${y - yukseklik * 0.12} ${x + genislik * 0.78} ${y + yukseklik * 0.34}`} fill="none" stroke={kenar} strokeWidth={Math.max(3, genislik * 0.035)} strokeLinecap="round" />
-        <path d={`M${x + genislik * 0.12} ${y + yukseklik * 0.3} L${x + genislik * 0.88} ${y + yukseklik * 0.3} L${x + genislik * 0.76} ${y + yukseklik * 0.9} L${x + genislik * 0.24} ${y + yukseklik * 0.9} Z`} fill={dolgu} fillOpacity={doluluk} stroke={kenar} strokeWidth={Math.max(3, genislik * 0.035)} strokeLinejoin="round" />
+        <path
+          d={`M${x + genislik * 0.22} ${y + yukseklik * 0.34} Q${cx} ${y - yukseklik * 0.12} ${x + genislik * 0.78} ${y + yukseklik * 0.34}`}
+          fill="none"
+          stroke={kenar}
+          strokeWidth={Math.max(3, genislik * 0.035)}
+          strokeLinecap="round"
+        />
+        <path
+          d={`M${x + genislik * 0.12} ${y + yukseklik * 0.3} L${x + genislik * 0.88} ${y + yukseklik * 0.3} L${x + genislik * 0.76} ${y + yukseklik * 0.9} L${x + genislik * 0.24} ${y + yukseklik * 0.9} Z`}
+          fill={dolgu}
+          fillOpacity={doluluk}
+          stroke={kenar}
+          strokeWidth={Math.max(3, genislik * 0.035)}
+          strokeLinejoin="round"
+        />
       </g>
     );
   }
 
   return (
     <g>
-      <path d={`M${x + genislik * 0.12} ${y + yukseklik * 0.16} L${x + genislik * 0.12} ${y + yukseklik * 0.88} L${x + genislik * 0.88} ${y + yukseklik * 0.88} L${x + genislik * 0.88} ${y + yukseklik * 0.16}`} fill={dolgu} fillOpacity={doluluk} stroke={kenar} strokeWidth={Math.max(3, genislik * 0.035)} strokeLinecap="round" strokeLinejoin="round" />
-      <path d={`M${x + genislik * 0.12} ${y + yukseklik * 0.16} L${x + genislik * 0.88} ${y + yukseklik * 0.16}`} fill="none" stroke={kenar} strokeWidth={Math.max(3, genislik * 0.035)} strokeLinecap="round" strokeDasharray={doluluk === 0 ? undefined : '0'} />
+      <path
+        d={`M${x + genislik * 0.12} ${y + yukseklik * 0.16} L${x + genislik * 0.12} ${y + yukseklik * 0.88} L${x + genislik * 0.88} ${y + yukseklik * 0.88} L${x + genislik * 0.88} ${y + yukseklik * 0.16}`}
+        fill={dolgu}
+        fillOpacity={doluluk}
+        stroke={kenar}
+        strokeWidth={Math.max(3, genislik * 0.035)}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d={`M${x + genislik * 0.12} ${y + yukseklik * 0.16} L${x + genislik * 0.88} ${y + yukseklik * 0.16}`}
+        fill="none"
+        stroke={kenar}
+        strokeWidth={Math.max(3, genislik * 0.035)}
+        strokeLinecap="round"
+        strokeDasharray={doluluk === 0 ? undefined : '0'}
+      />
     </g>
   );
 }
@@ -481,18 +604,38 @@ function YonKarti({
     const cy = height * 0.5;
     const uz = Math.min(width, height) * 0.22;
     switch (spec.yon) {
-      case 'ileri': return `M${cx} ${cy + uz} L${cx} ${cy - uz} M${cx - uz * 0.52} ${cy - uz * 0.42} L${cx} ${cy - uz} L${cx + uz * 0.52} ${cy - uz * 0.42}`;
-      case 'geri': return `M${cx} ${cy - uz} L${cx} ${cy + uz} M${cx - uz * 0.52} ${cy + uz * 0.42} L${cx} ${cy + uz} L${cx + uz * 0.52} ${cy + uz * 0.42}`;
-      case 'saga': return `M${cx - uz} ${cy} L${cx + uz} ${cy} M${cx + uz * 0.42} ${cy - uz * 0.52} L${cx + uz} ${cy} L${cx + uz * 0.42} ${cy + uz * 0.52}`;
-      case 'sola': return `M${cx + uz} ${cy} L${cx - uz} ${cy} M${cx - uz * 0.42} ${cy - uz * 0.52} L${cx - uz} ${cy} L${cx - uz * 0.42} ${cy + uz * 0.52}`;
+      case 'ileri':
+        return `M${cx} ${cy + uz} L${cx} ${cy - uz} M${cx - uz * 0.52} ${cy - uz * 0.42} L${cx} ${cy - uz} L${cx + uz * 0.52} ${cy - uz * 0.42}`;
+      case 'geri':
+        return `M${cx} ${cy - uz} L${cx} ${cy + uz} M${cx - uz * 0.52} ${cy + uz * 0.42} L${cx} ${cy + uz} L${cx + uz * 0.52} ${cy + uz * 0.42}`;
+      case 'saga':
+        return `M${cx - uz} ${cy} L${cx + uz} ${cy} M${cx + uz * 0.42} ${cy - uz * 0.52} L${cx + uz} ${cy} L${cx + uz * 0.42} ${cy + uz * 0.52}`;
+      case 'sola':
+        return `M${cx + uz} ${cy} L${cx - uz} ${cy} M${cx - uz * 0.42} ${cy - uz * 0.52} L${cx - uz} ${cy} L${cx - uz * 0.42} ${cy + uz * 0.52}`;
     }
   })();
 
   const sayiBoyutu = Math.min(width * 0.44, height * 0.72);
   return (
     <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
-      <rect x={4} y={4} width={width - 8} height={height - 8} rx={Math.min(width, height) * 0.12} fill="#eff6ff" stroke="#93c5fd" strokeWidth={3} />
-      <path d={ok} fill="none" stroke={okRengi} strokeWidth={Math.max(5, sayiBoyutu * 0.12)} strokeLinecap="round" strokeLinejoin="round" />
+      <rect
+        x={4}
+        y={4}
+        width={width - 8}
+        height={height - 8}
+        rx={Math.min(width, height) * 0.12}
+        fill="#eff6ff"
+        stroke="#93c5fd"
+        strokeWidth={3}
+      />
+      <path
+        d={ok}
+        fill="none"
+        stroke={okRengi}
+        strokeWidth={Math.max(5, sayiBoyutu * 0.12)}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
       <g transform={`translate(${width * 0.51} ${(height - sayiBoyutu) / 2})`}>
         <Rakam sayi={spec.adim} width={sayiBoyutu} height={sayiBoyutu} />
       </g>
@@ -543,9 +686,19 @@ function IslemSahnesi({
     const boyut = Math.min(width * 0.065, height * 0.22);
     const sutun = Math.max(1, Math.ceil(Math.sqrt(adet)));
     return Array.from({ length: adet }).map((_, i) => (
-      <g key={`${x}-${y}-${i}`} transform={`translate(${x + (i % sutun) * boyut} ${y + Math.floor(i / sutun) * boyut})`} opacity={soluk ? 0.3 : 1}>
+      <g
+        key={`${x}-${y}-${i}`}
+        transform={`translate(${x + (i % sutun) * boyut} ${y + Math.floor(i / sutun) * boyut})`}
+        opacity={soluk ? 0.3 : 1}
+      >
         <Sprite name={spec.nesne} fill={renk} size={boyut * 0.82} />
-        {soluk && <path d={`M${boyut * 0.1} ${boyut * 0.1} L${boyut * 0.72} ${boyut * 0.72} M${boyut * 0.72} ${boyut * 0.1} L${boyut * 0.1} ${boyut * 0.72}`} stroke="#6B7280" strokeWidth={3} />}
+        {soluk && (
+          <path
+            d={`M${boyut * 0.1} ${boyut * 0.1} L${boyut * 0.72} ${boyut * 0.72} M${boyut * 0.72} ${boyut * 0.1} L${boyut * 0.1} ${boyut * 0.72}`}
+            stroke="#6B7280"
+            strokeWidth={3}
+          />
+        )}
       </g>
     ));
   };
@@ -556,9 +709,29 @@ function IslemSahnesi({
   return (
     <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
       {grup(spec.ilkAdet, ilkX, y)}
-      <text x={width * 0.34} y={height * 0.57} textAnchor="middle" fontFamily={FONT_YIGINI} fontSize={height * 0.26} fontWeight="700" fill="#334155">{spec.islem}</text>
+      <text
+        x={width * 0.34}
+        y={height * 0.57}
+        textAnchor="middle"
+        fontFamily={FONT_YIGINI}
+        fontSize={height * 0.26}
+        fontWeight="700"
+        fill="#334155"
+      >
+        {spec.islem}
+      </text>
       {grup(spec.degisimAdedi, degisimX, y, spec.islem === '-')}
-      <text x={width * 0.65} y={height * 0.57} textAnchor="middle" fontFamily={FONT_YIGINI} fontSize={height * 0.26} fontWeight="700" fill="#334155">=</text>
+      <text
+        x={width * 0.65}
+        y={height * 0.57}
+        textAnchor="middle"
+        fontFamily={FONT_YIGINI}
+        fontSize={height * 0.26}
+        fontWeight="700"
+        fill="#334155"
+      >
+        =
+      </text>
       {grup(sonuc, sonucX, y)}
     </svg>
   );
@@ -584,9 +757,28 @@ function OlcumSahnesi({
 
   return (
     <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
-      <line x1={baslangicX} y1={height * 0.16} x2={baslangicX} y2={height * 0.86} stroke="#64748b" strokeWidth={3} strokeDasharray="5 5" />
-      <rect x={baslangicX} y={cubukY} width={olculenGenislik} height={height * 0.17} rx={height * 0.07} fill={renk} stroke="#334155" strokeWidth={3} />
-      <g transform={`translate(${baslangicX + Math.min(olculenGenislik * 0.08, height * 0.12)} ${cubukY - height * 0.025})`}>
+      <line
+        x1={baslangicX}
+        y1={height * 0.16}
+        x2={baslangicX}
+        y2={height * 0.86}
+        stroke="#64748b"
+        strokeWidth={3}
+        strokeDasharray="5 5"
+      />
+      <rect
+        x={baslangicX}
+        y={cubukY}
+        width={olculenGenislik}
+        height={height * 0.17}
+        rx={height * 0.07}
+        fill={renk}
+        stroke="#334155"
+        strokeWidth={3}
+      />
+      <g
+        transform={`translate(${baslangicX + Math.min(olculenGenislik * 0.08, height * 0.12)} ${cubukY - height * 0.025})`}
+      >
         <Sprite name={spec.nesne} size={Math.min(height * 0.22, olculenGenislik * 0.22)} />
       </g>
       {Array.from({ length: gorunenBirimler }).map((_, i) => {
@@ -596,7 +788,16 @@ function OlcumSahnesi({
         const x = baslangicX + i * birimGenisligi;
         return (
           <g key={i}>
-            <rect x={x + 2} y={birimY} width={birimGenisligi - 4} height={height * 0.16} rx={8} fill="#fef3c7" stroke="#d97706" strokeWidth={2} />
+            <rect
+              x={x + 2}
+              y={birimY}
+              width={birimGenisligi - 4}
+              height={height * 0.16}
+              rx={8}
+              fill="#fef3c7"
+              stroke="#d97706"
+              strokeWidth={2}
+            />
             <g transform={`translate(${x + birimGenisligi * 0.25} ${birimY + height * 0.025})`}>
               <Sprite name={spec.birim} size={Math.min(birimGenisligi * 0.5, height * 0.1)} />
             </g>
@@ -627,11 +828,41 @@ function OlcumKarsilastirma({
     const olcek = (width * 0.68) / enBuyuk;
     return (
       <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
-        <line x1={baslangicX} y1={height * 0.12} x2={baslangicX} y2={height * 0.88} stroke="#64748b" strokeWidth={4} strokeDasharray="6 5" />
-        <rect x={baslangicX} y={height * 0.24} width={spec.sol.deger * olcek} height={height * 0.18} rx={12} fill={solRenk} stroke="#334155" strokeWidth={3} />
-        <rect x={baslangicX} y={height * 0.58} width={spec.sag.deger * olcek} height={height * 0.18} rx={12} fill={sagRenk} stroke="#334155" strokeWidth={3} />
-        <g transform={`translate(${baslangicX + 8} ${height * 0.13})`}><Sprite name={spec.sol.nesne} fill={solRenk} size={height * 0.18} /></g>
-        <g transform={`translate(${baslangicX + 8} ${height * 0.47})`}><Sprite name={spec.sag.nesne} fill={sagRenk} size={height * 0.18} /></g>
+        <line
+          x1={baslangicX}
+          y1={height * 0.12}
+          x2={baslangicX}
+          y2={height * 0.88}
+          stroke="#64748b"
+          strokeWidth={4}
+          strokeDasharray="6 5"
+        />
+        <rect
+          x={baslangicX}
+          y={height * 0.24}
+          width={spec.sol.deger * olcek}
+          height={height * 0.18}
+          rx={12}
+          fill={solRenk}
+          stroke="#334155"
+          strokeWidth={3}
+        />
+        <rect
+          x={baslangicX}
+          y={height * 0.58}
+          width={spec.sag.deger * olcek}
+          height={height * 0.18}
+          rx={12}
+          fill={sagRenk}
+          stroke="#334155"
+          strokeWidth={3}
+        />
+        <g transform={`translate(${baslangicX + 8} ${height * 0.13})`}>
+          <Sprite name={spec.sol.nesne} fill={solRenk} size={height * 0.18} />
+        </g>
+        <g transform={`translate(${baslangicX + 8} ${height * 0.47})`}>
+          <Sprite name={spec.sag.nesne} fill={sagRenk} size={height * 0.18} />
+        </g>
       </svg>
     );
   }
@@ -642,14 +873,55 @@ function OlcumKarsilastirma({
   const sagY = solDahaAgir ? height * 0.46 : height * 0.68;
   return (
     <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
-      <path d={`M${ortaX} ${height * 0.34} L${ortaX - width * 0.32} ${solY} M${ortaX} ${height * 0.34} L${ortaX + width * 0.32} ${sagY}`} stroke="#475569" strokeWidth={7} strokeLinecap="round" />
-      <path d={`M${ortaX - width * 0.12} ${height * 0.84} L${ortaX} ${height * 0.34} L${ortaX + width * 0.12} ${height * 0.84} Z`} fill="#e2e8f0" stroke="#475569" strokeWidth={5} />
-      <line x1={ortaX - width * 0.1} y1={height * 0.84} x2={ortaX + width * 0.1} y2={height * 0.84} stroke="#475569" strokeWidth={7} strokeLinecap="round" />
-      <rect x={width * 0.08} y={solY - height * 0.08} width={width * 0.24} height={height * 0.08} rx={8} fill="#f8fafc" stroke="#64748b" strokeWidth={3} transform={`rotate(${kolAcisi} ${width * 0.2} ${solY})`} />
-      <rect x={width * 0.68} y={sagY - height * 0.08} width={width * 0.24} height={height * 0.08} rx={8} fill="#f8fafc" stroke="#64748b" strokeWidth={3} transform={`rotate(${kolAcisi} ${width * 0.8} ${sagY})`} />
-      <g transform={`translate(${width * 0.15} ${solY - height * 0.24})`}><Sprite name={spec.sol.nesne} fill={solRenk} size={height * 0.22} /></g>
-      <g transform={`translate(${width * 0.73} ${sagY - height * 0.24})`}><Sprite name={spec.sag.nesne} fill={sagRenk} size={height * 0.22} /></g>
+      <path
+        d={`M${ortaX} ${height * 0.34} L${ortaX - width * 0.32} ${solY} M${ortaX} ${height * 0.34} L${ortaX + width * 0.32} ${sagY}`}
+        stroke="#475569"
+        strokeWidth={7}
+        strokeLinecap="round"
+      />
+      <path
+        d={`M${ortaX - width * 0.12} ${height * 0.84} L${ortaX} ${height * 0.34} L${ortaX + width * 0.12} ${height * 0.84} Z`}
+        fill="#e2e8f0"
+        stroke="#475569"
+        strokeWidth={5}
+      />
+      <line
+        x1={ortaX - width * 0.1}
+        y1={height * 0.84}
+        x2={ortaX + width * 0.1}
+        y2={height * 0.84}
+        stroke="#475569"
+        strokeWidth={7}
+        strokeLinecap="round"
+      />
+      <rect
+        x={width * 0.08}
+        y={solY - height * 0.08}
+        width={width * 0.24}
+        height={height * 0.08}
+        rx={8}
+        fill="#f8fafc"
+        stroke="#64748b"
+        strokeWidth={3}
+        transform={`rotate(${kolAcisi} ${width * 0.2} ${solY})`}
+      />
+      <rect
+        x={width * 0.68}
+        y={sagY - height * 0.08}
+        width={width * 0.24}
+        height={height * 0.08}
+        rx={8}
+        fill="#f8fafc"
+        stroke="#64748b"
+        strokeWidth={3}
+        transform={`rotate(${kolAcisi} ${width * 0.8} ${sagY})`}
+      />
+      <g transform={`translate(${width * 0.15} ${solY - height * 0.24})`}>
+        <Sprite name={spec.sol.nesne} fill={solRenk} size={height * 0.22} />
+      </g>
+      <g transform={`translate(${width * 0.73} ${sagY - height * 0.24})`}>
+        <Sprite name={spec.sag.nesne} fill={sagRenk} size={height * 0.22} />
+      </g>
     </svg>
   );
 }
-

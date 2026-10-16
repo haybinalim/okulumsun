@@ -45,22 +45,31 @@ export function GlifKarti() {
     <main style={{ padding: 24, background: COLOR.bg, color: COLOR.ink, fontFamily: 'system-ui, sans-serif' }}>
       <h1 style={{ fontSize: 24 }}>Rakam glifleri (geliştirme) — MEB TYMM TemelYazi (KG-95)</h1>
       <p style={{ maxWidth: 760 }}>
-        Solda uygulamadaki 0–9 glifleri (`RAKAM_GLIFLERI`, TemelYazi-Bold), sağda MEB Kılavuz glifi (kesikli
-        numaralı oklar yazım yönünü ve hamle sırasını gösterir). Metindeki rakamlar: font 'TemelYaziRakam'.
+        Solda uygulamadaki 0–9 glifleri (`RAKAM_GLIFLERI`, TemelYazi-Bold), sağda MEB Kılavuz glifi (kesikli numaralı
+        oklar yazım yönünü ve hamle sırasını gösterir). Metindeki rakamlar: font 'TemelYaziRakam'.
       </p>
       <p data-testid="metin-rakamlari" style={{ fontFamily: 'var(--font-sans)', fontSize: 48, margin: '8px 0 16px' }}>
         0 1 2 3 4 5 6 7 8 9 · 5 + 3 = 8 · 17 &gt; 12 · 9 − 4
       </p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
         {RAKAM_GLIFLERI.map((g) => (
-          <section key={g.rakam} style={{ border: `1px solid ${COLOR.border}`, borderRadius: 12, padding: 12, background: COLOR.surface }}>
+          <section
+            key={g.rakam}
+            style={{ border: `1px solid ${COLOR.border}`, borderRadius: 12, padding: 12, background: COLOR.surface }}
+          >
             <h2 style={{ fontSize: 18, margin: '0 0 8px' }}>{g.rakam}</h2>
             <div style={{ display: 'flex', gap: 8 }}>
               <GlifCizimi d={g.path} boyut={136} etiket={`Rakam ${g.rakam}`} />
-              <GlifCizimi d={RAKAM_KILAVUZ_YOLLARI[g.rakam] ?? g.path} boyut={136} etiket={`Rakam ${g.rakam} yazım yönü`} />
+              <GlifCizimi
+                d={RAKAM_KILAVUZ_YOLLARI[g.rakam] ?? g.path}
+                boyut={136}
+                etiket={`Rakam ${g.rakam} yazım yönü`}
+              />
             </div>
             <ol style={{ fontSize: 13, paddingLeft: 18 }}>
-              {g.yazimSirasi.map((t) => <li key={t}>{t}</li>)}
+              {g.yazimSirasi.map((t) => (
+                <li key={t}>{t}</li>
+              ))}
             </ol>
           </section>
         ))}
