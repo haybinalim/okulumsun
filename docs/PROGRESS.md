@@ -106,7 +106,7 @@ Ayrıntı ve durum sözlüğü: `docs/ADR/README.md`.
 - `npm run glif:formu -- --cikti <pdf>` → rakam glifleri öğretmen görüş formu (A4, 2 öğretmen × 3 sayfa, MEB Kılavuz glifleri; WeasyPrint gerekir)
 - `python3 scripts/rakam-glif-uret.py --kaynak <TemelYazi .otf klasörü>` → MEB TemelYazi'den rakam path'leri ve `TemelYazi-Rakam.woff2` (KG-95; kaynak .otf repoda yok)
 - `npm run e2e` → ✅ 9 dosya, 3 proje (board, tablet, onizleme); onizleme: e2e kancalı test derlemesi + `vite preview` (CSP, SW, çevrimdışı, manifest, gizlilik)
-- `npm run boyut` → ✅ K5 JS bütçesi tabanı `docs/boyut-butcesi.json` (v0.3.0'a kadar uyarı); 14 Eki 2026: 929,7 → 813,5 KB, bütçe içinde (KG-87); Dexie yerine kendi IndexedDB sarmalayıcısı (ADR-0015 Kabul, KG-89) → 740 264 B, pay 95 110 B (`docs/boyut-analizi.md`); etki formu üreticisi (KG-93) → 744 202 B, pay 91 172 B; MEB TemelYazi glifleri (KG-95) → 746 9xx B
+- `npm run boyut` → ✅ K5 JS bütçesi tabanı `docs/boyut-butcesi.json` (v0.3.0'a kadar uyarı); 14 Eki 2026: 929,7 → 813,5 KB, bütçe içinde (KG-87); Dexie yerine kendi IndexedDB sarmalayıcısı (ADR-0015 Kabul, KG-89) → 740 264 B, pay 95 110 B (`docs/boyut-analizi.md`); etki formu üreticisi (KG-93) → 744 202 B, pay 91 172 B; MEB TemelYazi glifleri (KG-95) → 746 968 B, pay 88 406 B (+ font 3 552 B, JS dışı)
 - `npm run durum -- --denetle` → ✅ PROGRESS ve PLAN blokları + §12 ağacı kodla eşleşiyor
 - `npm run lisans:denetle` → ✅ envanter, LICENSES ve node_modules lisansları eşleşiyor
 - `npm run validate` → ✅ 19 kazanım · 57 beceri · 15/15 hata etiketi · 39 jeneratör
