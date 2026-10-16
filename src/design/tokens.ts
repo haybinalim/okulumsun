@@ -66,11 +66,13 @@ export const TEXT = {
 } as const;
 
 /**
- * Rakam yazı tipi yığını (KG-95): rakamlar ve + − = < > MEB TYMM TemelYazi'den
- * ('TemelYaziRakam', unicode-range ile yalnız bu karakterler), gerisi Andika.
- * SVG `<text>` ve üretilen HTML/PDF sayfaları bu yığını kullanır.
+ * Çocuğa dönük yazı tipi yığını (KG-95 rakamlar, KG-96 harfler): harf, rakam ve
+ * temel noktalama MEB TYMM 2024 TemelYazi'den ('TemelYazi', unicode-range), fontta
+ * olmayan karakterler Andika'ya düşer. `src/index.css` --font-sans ve `kagit.css`
+ * ile aynı harfler; SVG `<text>` sabit kutulara yerleştiği için `'TemelYaziSvg'` (aynı dosya,
+ * size-adjust'sız) kullanır. Yetişkin yüzeyleri: --font-yetiskin.
  */
-export const FONT_YIGINI = "'TemelYaziRakam', 'Andika', system-ui, sans-serif";
+export const FONT_YIGINI = "'TemelYaziSvg', 'TemelYaziRakam', 'Andika', system-ui, sans-serif";
 
 /**
  * Renk paleti.

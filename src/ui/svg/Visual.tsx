@@ -556,9 +556,9 @@ function IslemSahnesi({
   return (
     <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
       {grup(spec.ilkAdet, ilkX, y)}
-      <text x={width * 0.34} y={height * 0.57} textAnchor="middle" fontSize={height * 0.26} fontWeight="700" fill="#334155">{spec.islem}</text>
+      <text x={width * 0.34} y={height * 0.57} textAnchor="middle" fontFamily={FONT_YIGINI} fontSize={height * 0.26} fontWeight="700" fill="#334155">{spec.islem}</text>
       {grup(spec.degisimAdedi, degisimX, y, spec.islem === '-')}
-      <text x={width * 0.65} y={height * 0.57} textAnchor="middle" fontSize={height * 0.26} fontWeight="700" fill="#334155">=</text>
+      <text x={width * 0.65} y={height * 0.57} textAnchor="middle" fontFamily={FONT_YIGINI} fontSize={height * 0.26} fontWeight="700" fill="#334155">=</text>
       {grup(sonuc, sonucX, y)}
     </svg>
   );

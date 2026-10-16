@@ -95,8 +95,10 @@ describe('rakam glifleri (KG-95, MEB TemelYazi)', () => {
     const css = readFileSync('src/index.css', 'utf8');
     expect(css).toContain("font-family: 'TemelYaziRakam'");
     expect(css).toMatch(/unicode-range: U\+0030-0039/);
-    expect(css).toContain("--font-sans: 'TemelYaziRakam', 'Andika'");
-    expect(readFileSync('src/ui/print/kagit.css', 'utf8')).toContain("'TemelYaziRakam', 'Andika'");
+    // KG-96: rakam alt kümesi yetişkin yığınında (Andika harfleriyle); çocuk yığınında harf dosyasından sonra.
+    expect(css).toContain("--font-yetiskin: 'TemelYaziRakam', 'Andika'");
+    expect(css).toContain("--font-sans: 'TemelYazi', 'TemelYaziRakam', 'Andika'");
+    expect(readFileSync('src/ui/print/kagit.css', 'utf8')).toContain("'TemelYazi', 'TemelYaziRakam', 'Andika'");
   });
 
   it('Visual Rakam bileşeni RAKAM_GLIFLERI kullanır, dolgulu çizer', () => {

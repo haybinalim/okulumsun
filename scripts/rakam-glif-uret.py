@@ -22,7 +22,20 @@ KONMAZ (lisans metni yok, bkz. public/fonts/LICENSE.md); yalnız aşağıdaki t�
 2. src/ui/svg/rakamGlifYollari.ts
    0-9 Bold konturları, DOLGULU SVG path, 100x100 viewBox: taban y=85,
    rakam yüksekliği 70 birim (ölçek 0,1), glif yatayda x=50'ye ortalı.
-3. src/ui/svg/rakamKilavuzYollari.ts
+3. public/fonts/TemelYazi-Harf.woff2 (KG-96)
+   Çocuğa dönük metnin harfleri: TemelYazi-Bold'dan alt küme — ASCII basılabilir karakterlerin fontta olanları (harf, rakam,
+   temel noktalama, %), Türkçe harfler (ç ğ ı İ ö ş ü, â î û büyük/küçük),
+   ‘ ’ “ ” « », ₺ ve U+2212 (eksi → kısa çizgi glifi). Fontta olmayan
+   karakterler (ör. [ ] { } # – — …) bilerek dışarıda; unicode-range'leri
+   KAPSAM_ARALIGI ile aynıdır, tarayıcı onlar için Andika'ya düşer.
+   kern özelliği korunur. src/index.css 'TemelYazi' (font-weight 400,
+   size-adjust 120%). Neden Bold ve neden tek dosya: Regular'ın gövdesi
+   (47/1000 em) Andika 400'ün (93) yarısı; 12–20 px'te kılcal çizgiye döner
+   (ekran görüntüsüyle bakıldı, KG-96). Bold (71) gövde metni olur; 700'de
+   tarayıcı sentetik kalınlaştırır — bunun için iki dosya da 'normal' ağırlık
+   olarak işaretlenir (normal_agirlik_isaretle). Regular dağıtılmaz (indirilecek
+   ama kullanılmayacak bir woff2 olurdu).
+4. src/ui/svg/rakamKilavuzYollari.ts
    Aynı rakamların TemelYazi-Kilavuz glifleri (MEB'in numaralı yazım yönü
    okları dahil), aynı dönüşümle; gövde Bold path'iyle üst üste gelir.
    Yalnız geliştirme glif kartı ve öğretmen formu kullanır (paket dışı).
@@ -93,23 +106,61 @@ def en_buyuk(konturlar_, glyphset):
     return max(konturlar_, key=alan)
 
 
-def woff2_uret(bold: str, cikti: str) -> int:
+TURKCE = 'ÇçĞğİıÖöŞşÜüÂâÎîÛû'
+EK = '‘’“”«»₺'
+
+
+def harf_kumesi(cmap: dict[int, str]) -> list[int]:
+    """KG-96 harf alt kümesinin kod noktaları (fontta olanlar; U+2212 ayrıca eşlenir)."""
+    istenen = set(range(0x20, 0x7F)) | {ord(c) for c in TURKCE + EK}
+    return sorted(c for c in istenen if c in cmap)
+
+
+def aralik(kodlar: list[int]) -> str:
+    """Kod noktalarını CSS unicode-range metnine çevirir (ardışıklar birleşir)."""
+    parcalar, i = [], 0
+    while i < len(kodlar):
+        j = i
+        while j + 1 < len(kodlar) and kodlar[j + 1] == kodlar[j] + 1:
+            j += 1
+        a, b = kodlar[i], kodlar[j]
+        parcalar.append(f'U+{a:04X}' if a == b else f'U+{a:04X}-{b:04X}')
+        i = j + 1
+    return ', '.join(parcalar)
+
+
+def normal_agirlik_isaretle(font: TTFont) -> None:
+    """Bold konturlu dosyayı 'normal' ağırlık olarak işaretler (konturlar değişmez).
+
+    Chromium, ağırlık sınıfı 700 / BOLD bitli bir yüzü 700'de ayrıca kalınlaştırmaz;
+    @font-face 400 olarak tanımlanan bu dosya 700 istendiğinde ancak böyle sentetik
+    kalınlaşır (başlık/gövde ayrımı korunur).
+    """
+    os2 = font['OS/2']
+    os2.usWeightClass = 400
+    os2.fsSelection = (os2.fsSelection & ~(1 << 5) & ~(1 << 0)) | (1 << 6)
+    font['head'].macStyle &= ~1
+
+
+def woff2_uret(bold: str, cikti: str, unicodes: list[int] | None = None, ozellikler: list[str] | None = None) -> int:
     font = TTFont(bold)
     secenek = subset.Options()
     secenek.flavor = 'woff2'
-    secenek.layout_features = []
+    secenek.layout_features = ozellikler or []
     secenek.name_IDs = ['*']  # telif / tasarımcı kayıtları korunur
     secenek.name_languages = ['*']
     secenek.notdef_outline = True
     secenek.desubroutinize = True
     alt = subset.Subsetter(secenek)
-    alt.populate(unicodes=[*range(0x30, 0x3A), 0x2B, 0x3C, 0x3D, 0x3E], glyphs=['hyphen'])
+    alt.populate(unicodes=unicodes or [*range(0x30, 0x3A), 0x2B, 0x3C, 0x3D, 0x3E], glyphs=['hyphen'])
     alt.subset(font)
     # U+2212 EKSİ fontta yok: işlem kartlarındaki '−' MEB kısa çizgisiyle çıksın.
     for tablo in font['cmap'].tables:
         if tablo.isUnicode():
             tablo.cmap[0x2212] = 'hyphen'
+    normal_agirlik_isaretle(font)
     font['head'].modified = font['head'].created  # deterministik çıktı
+    font.recalcTimestamp = False  # save() aksi hâlde 'modified'i şimdiye çeker
     tampon = io.BytesIO()
     font.flavor = 'woff2'
     font.save(tampon, reorderTables=True)
@@ -130,12 +181,20 @@ BASLIK = """/**
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument('--kaynak', required=True, help='TemelYazi-Bold.otf ve TemelYazi-Kilavuz.otf klasörü')
+    ap.add_argument('--kaynak', required=True, help='TemelYazi.otf, TemelYazi-Bold.otf ve TemelYazi-Kilavuz.otf klasörü')
     a = ap.parse_args()
     bold = os.path.join(a.kaynak, 'TemelYazi-Bold.otf')
     kilavuz = os.path.join(a.kaynak, 'TemelYazi-Kilavuz.otf')
 
     bayt = woff2_uret(bold, os.path.join(KOK, 'public/fonts/TemelYazi-Rakam.woff2'))
+
+    # Kapsam Regular ile Bold'un ORTAK kümesi (ör. '$' yalnız Regular'da, dışarıda kalır):
+    # ileride Regular eklenirse iki dosya aynı unicode-range'i taşır.
+    ortak = set.intersection(*(set(harf_kumesi(TTFont(os.path.join(a.kaynak, k)).getBestCmap())) for k in ('TemelYazi.otf', 'TemelYazi-Bold.otf')))
+    kodlar = sorted(ortak)
+    b = woff2_uret(bold, os.path.join(KOK, 'public/fonts/TemelYazi-Harf.woff2'), kodlar, ['kern'])
+    print(f'TemelYazi-Harf.woff2 {b} B; {len(kodlar)} karakter + U+2212')
+    print(f'unicode-range (KAPSAM_ARALIGI): {aralik(sorted({*kodlar, 0x2212}))}')
 
     bf = TTFont(bold)
     kf = TTFont(kilavuz)
