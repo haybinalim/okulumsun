@@ -1,19 +1,21 @@
 # Rakam glifleri — öğretmen görüş formu (plan v2 Adım 30)
 
-> **Durum:** ⚠ Kod hazır, öğretmen formları bekleniyor (13 Ekim 2026). Form şimdilik **boş**.
-> Path verisi: `src/ui/svg/rakamGlifleri.ts` (`RAKAM_GLIFLERI`, tek kaynak). Path'ler öğretmen görüşü
-> gelmeden değiştirilmez.
+> **Durum (16 Ekim 2026, KG-95):** Rakamlar artık MEB'in Türkiye Yüzyılı Maarif Modeli (2024) için
+> "ders kitapları ve eğitim araçlarında kullanılması amacıyla" yayımladığı resmî temel yazı fontu
+> **TemelYazi**'den (HBY Tasarım) alınır — [MEB TTKB duyurusu](https://ttkb.meb.gov.tr/www/ilkokulturkcedersiogretimprogramiveilkokumayazmaderskitabindayeralanalfabeverakamlaryayimlandi/icerik/610).
+> Bu form artık **isteğe bağlı teyit**tir (sınıfta öğretilen biçim ve yazım yönü). Form şimdilik **boş**.
+> Path verisi: `src/ui/svg/rakamGlifleri.ts` (`RAKAM_GLIFLERI`, tek kaynak; `scripts/rakam-glif-uret.py` üretir).
 
 ## Amaç
 
-Uygulamadaki 0–9 rakam gliflerinin **MEB dik temel harf** formuna uygunluğu iki 1. sınıf öğretmenine sorulur.
-Kâğıt çalışma sayfası (Adım 35) basılmadan önce kapanır.
+Uygulamadaki 0–9 rakamlarının (MEB TemelYazi) ve MEB yazım yönünün sınıfta öğretilen biçimle aynı olduğu iki 1. sınıf
+öğretmenine sorulur (isteğe bağlı).
 
 - Yazdırılabilir form: `npm run glif:formu -- --cikti <dosya.pdf>` (A4; gerçek `RAKAM_GLIFLERI` verisinden çizer,
   her öğretmen için ayrı sayfa takımı). Geliştirmede ekranda: `vite dev` → `?gelistirme=glif`.
-- Planın hedef formu (PLAN §3.4): **kancalı 1**, **çizgisiz 7**.
-- MEB dik temel harf kılavuzunun rakam formlarını içeren güncel resmî belgesi doğrulanmamıştır;
-  öğretmenlerden kaynak (belge adı/yılı) istenir.
+- MEB formu (PLAN §3.4): **bayraklı, tabansız 1**, **açık üstlü 4**, **ortası çizgili 7**. (Eski "çizgisiz 7"
+  varsayımı yanlıştı; KG-95.)
+- Yazım yönü: MEB TemelYazi-Kilavuz fontundaki numaralı oklar (4, 5 ve 7 iki hamle).
 
 ## Gizlilik
 

@@ -7,6 +7,7 @@
  * Bugün kâğıt (Adım 35) ve arşiv (Adım 48) için; Adım 29'da ekran da buna geçer.
  */
 import type { BanknotDegeri } from '../../exercises/types';
+import { FONT_YIGINI } from '../../design/tokens';
 import { SEMATIK_BANKNOT_STILI, type SematikBanknotStili } from '../../content/paraGorseli';
 
 export interface SematikBanknotProps {
@@ -58,17 +59,17 @@ export function SematikBanknot({ deger, genislik }: SematikBanknotProps) {
         y={y / 2}
         textAnchor="middle"
         dominantBaseline="central"
-        fontFamily="Andika, sans-serif"
+        fontFamily={FONT_YIGINI}
         fontWeight="700"
         fontSize={deger >= 100 ? y * 0.26 : y * 0.32}
         fill={stil.kontur}
       >
         {deger}
       </text>
-      <text x={g * 0.72} y={y * 0.42} textAnchor="middle" fontFamily="Andika, sans-serif" fontWeight="700" fontSize={y * 0.22} fill={stil.kontur}>
+      <text x={g * 0.72} y={y * 0.42} textAnchor="middle" fontFamily={FONT_YIGINI} fontWeight="700" fontSize={y * 0.22} fill={stil.kontur}>
         {deger} TL
       </text>
-      <text x={g * 0.72} y={y * 0.72} textAnchor="middle" fontFamily="Andika, sans-serif" fontSize={y * 0.1} fill={stil.kontur}>
+      <text x={g * 0.72} y={y * 0.72} textAnchor="middle" fontFamily={FONT_YIGINI} fontSize={y * 0.1} fill={stil.kontur}>
         OYUN PARASI
       </text>
     </svg>

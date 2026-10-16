@@ -17,8 +17,8 @@ import type {
   SekilAdi,
   VisualSpec,
 } from '../../exercises/types';
-import { ACCENTS, GLIF } from '../../design/tokens';
-import { RAKAM_PATHLERI } from './rakamGlifleri';
+import { ACCENTS, FONT_YIGINI } from '../../design/tokens';
+import { RAKAM_ARALIGI, RAKAM_GLIF_HARITASI } from './rakamGlifleri';
 import { Sprite } from './Sprite';
 import { RESMI_BANKNOT_GORSELLERI } from './banknotAssets';
 import { nesneKonumlari } from './positions';
@@ -72,33 +72,26 @@ export function Visual({
 // --------------------------------------------------------------- basit görseller
 
 /** Rakam/sayı kartı. Rakam okuma yazma değildir — güvenle büyük gösterilir.
- * MEB dik temel SVG glifleri (§3.4) — font bağımlılığı yok; path verisinin tek
- * kaynağı `rakamGlifleri.ts` (`RAKAM_GLIFLERI`, plan v2 Adım 30). */
+ * MEB TYMM TemelYazi glifleri (KG-95), dolgulu SVG path — font yüklenmesine
+ * bağlı değil; path verisinin tek kaynağı `rakamGlifleri.ts` (`RAKAM_GLIFLERI`).
+ * Basamaklar glif genişliğiyle orantılı dizilir ve tek ölçekle büyütülür. */
 function Rakam({ sayi, width, height }: { sayi: number; width: number; height: number }) {
-  const rakamStr = String(sayi);
-  const basamak = rakamStr.length;
-  // Her basamak için genişlik ayarla — çift basamakta daha dar
-  const basamakGenislik = basamak === 1 ? width : width / (basamak + 0.3);
-  const basamakYukseklik = Math.min(basamakGenislik, height) * 0.9;
+  const glifler = String(sayi).split('').map((r) => RAKAM_GLIF_HARITASI[r]).filter((g) => g !== undefined);
+  // viewBox birimi: rakam yüksekliği 70 (y 15–85); toplam genişlik glifler + aralıklar.
+  // Rakam yüksekliği kutu yüksekliğinin en çok %63'ü (KG-42 glifleriyle aynı görsel boy).
+  const toplam = glifler.reduce((t, g) => t + g.genislik, 0) + RAKAM_ARALIGI * Math.max(0, glifler.length - 1);
+  const olcek = Math.min((width * 0.9) / Math.max(toplam, 1), (height * 0.63) / 70);
+  let x = (width - toplam * olcek) / 2;
+  const y = (height - 70 * olcek) / 2 - 15 * olcek;
 
   return (
     <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
-      {rakamStr.split('').map((rakam, i) => {
-        const path = RAKAM_PATHLERI[rakam];
-        if (!path) return null;
-        const offsetX = basamak === 1
-          ? 0
-          : (width - basamak * basamakGenislik) / 2 + i * basamakGenislik;
+      {glifler.map((g, i) => {
+        const gx = x - (50 - g.genislik / 2) * olcek;
+        x += (g.genislik + RAKAM_ARALIGI) * olcek;
         return (
-          <g key={i} transform={`translate(${offsetX}, ${(height - basamakYukseklik) / 2}) scale(${basamakGenislik / 100}, ${basamakYukseklik / 100})`}>
-            <path
-              d={path}
-              fill="none"
-              stroke="var(--color-ink)"
-              strokeWidth={GLIF.cizgiKalinligi}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
+          <g key={i} transform={`translate(${gx}, ${y}) scale(${olcek})`}>
+            <path d={g.path} fill="var(--color-ink)" />
           </g>
         );
       })}
@@ -128,9 +121,9 @@ function IslemKarti({
     <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
       <rect x={3} y={3} width={width - 6} height={height - 6} rx={Math.min(width, height) * 0.12} fill="#f8fafc" stroke="#cbd5e1" strokeWidth={3} />
       <g transform={`translate(${konumlar[0] * width} ${(height - rakamGenislik) / 2})`}><Rakam sayi={spec.ilkSayi} width={rakamGenislik} height={rakamGenislik} /></g>
-      <text x={konumlar[1] * width} y={merkezY + sembolBoyutu * 0.34} textAnchor="middle" fontFamily="'Andika', sans-serif" fontWeight={700} fontSize={sembolBoyutu} fill="#1d4ed8">{sembol}</text>
+      <text x={konumlar[1] * width} y={merkezY + sembolBoyutu * 0.34} textAnchor="middle" fontFamily={FONT_YIGINI} fontWeight={700} fontSize={sembolBoyutu} fill="#1d4ed8">{sembol}</text>
       <g transform={`translate(${(konumlar[1] + 0.06) * width} ${(height - rakamGenislik) / 2})`}><Rakam sayi={spec.ikinciSayi} width={rakamGenislik} height={rakamGenislik} /></g>
-      <text x={konumlar[2] * width} y={merkezY + sembolBoyutu * 0.34} textAnchor="middle" fontFamily="'Andika', sans-serif" fontWeight={700} fontSize={sembolBoyutu} fill="#475569">=</text>
+      <text x={konumlar[2] * width} y={merkezY + sembolBoyutu * 0.34} textAnchor="middle" fontFamily={FONT_YIGINI} fontWeight={700} fontSize={sembolBoyutu} fill="#475569">=</text>
       <g transform={`translate(${konumlar[3] * width} ${(height - rakamGenislik) / 2})`}><Rakam sayi={spec.sonuc} width={rakamGenislik} height={rakamGenislik} /></g>
     </svg>
   );
@@ -333,7 +326,7 @@ function SayiDogrusu({
           <g key={i}>
             <line x1={x} y1={y - 14} x2={x} y2={y + 14} stroke="#6b7280" strokeWidth="4" />
             {isaretli && !eksikte && (
-              <text x={x} y={y - 22} textAnchor="middle" fontFamily="'Andika',sans-serif" fontWeight={700} fontSize={fs} fill="var(--color-ink)">{v}</text>
+              <text x={x} y={y - 22} textAnchor="middle" fontFamily={FONT_YIGINI} fontWeight={700} fontSize={fs} fill="var(--color-ink)">{v}</text>
             )}
             {eksikte && <rect x={x - fs * 0.6} y={y - fs * 1.4} width={fs * 1.2} height={fs * 1.2} rx={6} fill="#fff7ed" stroke="#fdba74" strokeWidth="3" />}
           </g>

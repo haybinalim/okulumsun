@@ -35,6 +35,7 @@ Uygulamadaki Kaynaklar ekranı aynı listeyi çizer.
 | Ad | Lisans | Sahip | Koşul |
 |---|---|---|---|
 | Andika | SIL OFL 1.1 | SIL International | — |
+| TemelYazi | MEB TTKB yayını; gömülü lisans metni yok | T.C. Millî Eğitim Bakanlığı TTKB (tasarım: HBY Tasarım) | Yalnız rakam + işaret alt kümesi (TemelYazi-Rakam.woff2, KG-95). MEB amacı: "ders kitapları ve eğitim araçlarında kullanılması". Ticari dağıtım ve açık repo için MEB TTKB/tasarımcıdan yazılı izin önerilir (henüz istenmedi) |
 
 ### Görseller
 
