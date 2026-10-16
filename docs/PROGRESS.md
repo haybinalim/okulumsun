@@ -3,7 +3,7 @@
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
-> Tarih: 17 Ekim 2026 (Adım 30 — MEB TemelYazi rakamları KG-95, harfleri KG-96)
+> Tarih: 17 Ekim 2026 (Adım 30 — MEB TemelYazi rakamları KG-95, harfleri KG-96; plan v2 ek durum tablosu KG-97)
 
 <!-- durum:birim_test=637 durum:birim_dosya=83 durum:e2e_dosya=29 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=15 -->
 

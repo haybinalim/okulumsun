@@ -20,15 +20,21 @@ import { COLOR } from '../../src/design/tokens';
 import { RAKAM_GLIFLERI, type RakamGlifi } from '../../src/ui/svg/rakamGlifleri';
 import { RAKAM_KILAVUZ_YOLLARI } from '../../src/ui/svg/rakamKilavuzYollari';
 /** Sayfa başına rakamlar: 1. sayfada açıklama var, son sayfada imza bölümü. */
-const SAYFA_DUZENI: readonly (readonly number[])[] = [[0, 1, 2], [3, 4, 5, 6], [7, 8, 9]];
+const SAYFA_DUZENI: readonly (readonly number[])[] = [
+  [0, 1, 2],
+  [3, 4, 5, 6],
+  [7, 8, 9],
+];
 
 function kacis(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 export function glifSvg(glif: RakamGlifi): string {
-  const izgara = Array.from({ length: 11 }, (_, i) =>
-    `<line x1="${i * 10}" y1="0" x2="${i * 10}" y2="100"/><line x1="0" y1="${i * 10}" x2="100" y2="${i * 10}"/>`,
+  const izgara = Array.from(
+    { length: 11 },
+    (_, i) =>
+      `<line x1="${i * 10}" y1="0" x2="${i * 10}" y2="100"/><line x1="0" y1="${i * 10}" x2="100" y2="${i * 10}"/>`,
   ).join('');
   // MEB Kılavuz glifi: gövde + numaralı yazım yönü okları (TemelYazi-Kilavuz, KG-95).
   const kilavuz = RAKAM_KILAVUZ_YOLLARI[glif.rakam] ?? glif.path;
