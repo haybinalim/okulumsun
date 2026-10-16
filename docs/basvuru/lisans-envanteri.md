@@ -10,5 +10,5 @@ Tam liste: [`LICENSES.md`](../../LICENSES.md); makine envanteri `src/content/ucu
 | Üçüncü taraf varlıklar | Envanterdeki her varlığın lisansı ve ticari kullanım izni kayıtlı | K10 |
 | Ses klipleri | Bugünkü klipler geliştirme amaçlı; ticari kullanıma uygun kaynakla yeniden üretim planlandı (ADR-0004 `Önerildi`, Adım 31) — **başvuruda bu açıkça belirtilmeli** | ADR-0004, `LICENSES.md` |
 | Banknot görselleri | TCMB görseli kullanılmaz; her yerde şematik banknot | ADR-0014, KG-19 |
-| Fontlar | Andika (SIL OFL) | `LICENSES.md` |
+| Fontlar | Andika (SIL OFL); rakamlar MEB TYMM **TemelYazi** alt kümesi (MEB TTKB 2024 yayını, gömülü lisans metni yok; ticari kullanım ve açık repo için MEB TTKB/HBY Tasarım'dan yazılı izin önerilir, henüz istenmedi — KG-95) | `LICENSES.md`, `public/fonts/LICENSE.md` |
 | Avukat incelemesi | Okul/kurum lisansı satışından önce gerekli; yapılmadı | ADR-0014 kabul koşulları |

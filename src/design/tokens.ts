@@ -66,12 +66,11 @@ export const TEXT = {
 } as const;
 
 /**
- * Rakam glifleri (plan v2 Adım 30). Çizgi kalınlığı 100×100 viewBox birimi;
- * ekran, glif kartı ve öğretmen formu aynı değeri kullanır.
+ * Rakam yazı tipi yığını (KG-95): rakamlar ve + − = < > MEB TYMM TemelYazi'den
+ * ('TemelYaziRakam', unicode-range ile yalnız bu karakterler), gerisi Andika.
+ * SVG `<text>` ve üretilen HTML/PDF sayfaları bu yığını kullanır.
  */
-export const GLIF = {
-  cizgiKalinligi: 6,
-} as const;
+export const FONT_YIGINI = "'TemelYaziRakam', 'Andika', system-ui, sans-serif";
 
 /**
  * Renk paleti.

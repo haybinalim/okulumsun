@@ -39,8 +39,26 @@
   unicode-range: U+0100-02BA, U+1E00-1E9F, U+20A0-20AB, U+20AD-20C0;
 }
 
+/*
+ * TemelYaziRakam — MEB TTKB'nin TYMM 2024 kapsamında ders kitapları ve eğitim
+ * araçları için yayımladığı resmî temel yazı fontu TemelYazi'nin (HBY Tasarım)
+ * yalnız rakam + işaret alt kümesi (KG-95; scripts/rakam-glif-uret.py).
+ * unicode-range sayesinde metindeki 0–9 ve + − = < > MEB biçiminde (bayraklı 1,
+ * açık üstlü 4, çizgili 7) çıkar; harfler Andika'da kalır. Boşluk karakteri
+ * kapsamda olmadığı için satır ölçüleri Andika'dan gelir.
+ * Tek dosya (Bold) iki ağırlıkta kullanılır: Andika 400'ün gövdesine en yakın
+ * TemelYazi ağırlığı Bold'dur; 700'de tarayıcı kalınlaştırır.
+ */
+@font-face {
+  font-family: 'TemelYaziRakam';
+  src: url('/fonts/TemelYazi-Rakam.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0030-0039, U+002B, U+003C-003E, U+2212;
+}
+
 @theme {
-  --font-sans: 'Andika', system-ui, sans-serif;
+  --font-sans: 'TemelYaziRakam', 'Andika', system-ui, sans-serif;
 }
 
 /*

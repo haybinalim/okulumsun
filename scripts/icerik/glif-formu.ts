@@ -4,8 +4,8 @@
  *   npm run glif:formu -- --cikti cikti/rakam-glifleri-formu.pdf [--html x.html] [--ogretmen 2]
  *
  * Gerçek `RAKAM_GLIFLERI` path verisinden A4, Türkçe, yazdırılabilir bir form
- * üretir: her rakam ızgaralı/çizgili zemin üstünde büyük çizilir, alt yol
- * başlangıçları numaralı okla gösterilir; yanında Uygun / Küçük düzeltme /
+ * üretir: her rakam ızgaralı/çizgili zemin üstünde MEB Kılavuz glifiyle (numaralı
+ * yazım yönü okları dahil, TemelYazi-Kilavuz, KG-95) büyük çizilir; yanında Uygun / Küçük düzeltme /
  * Yanlış kutuları ve not satırları; sonda unvan, okul türü (isteğe bağlı),
  * tarih, ad izni ve imza. Her öğretmen için ayrı sayfa takımı.
  *
@@ -16,10 +16,9 @@ import { execFileSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
-import { COLOR, GLIF } from '../../src/design/tokens';
-import { RAKAM_GLIFLERI, altYolBaslangiclari, type RakamGlifi } from '../../src/ui/svg/rakamGlifleri';
-
-const OK_RENGI = '#1D4ED8';
+import { COLOR } from '../../src/design/tokens';
+import { RAKAM_GLIFLERI, type RakamGlifi } from '../../src/ui/svg/rakamGlifleri';
+import { RAKAM_KILAVUZ_YOLLARI } from '../../src/ui/svg/rakamKilavuzYollari';
 /** Sayfa başına rakamlar: 1. sayfada açıklama var, son sayfada imza bölümü. */
 const SAYFA_DUZENI: readonly (readonly number[])[] = [[0, 1, 2], [3, 4, 5, 6], [7, 8, 9]];
 
@@ -31,39 +30,15 @@ export function glifSvg(glif: RakamGlifi): string {
   const izgara = Array.from({ length: 11 }, (_, i) =>
     `<line x1="${i * 10}" y1="0" x2="${i * 10}" y2="100"/><line x1="0" y1="${i * 10}" x2="100" y2="${i * 10}"/>`,
   ).join('');
-  const oklar = altYolBaslangiclari(glif.path).map((o, i) => {
-    // Ok, çizgiyle çakışmasın diye çizgiye paralel ve glif merkezinden uzak
-    // tarafa 8 birim kaydırılır; başlangıç noktası glifin üstünde işaretlenir.
-    let px = -o.dy;
-    let py = o.dx;
-    if (px * (o.x - 50) + py * (o.y - 50) < 0) { px = -px; py = -py; }
-    const ax = o.x + px * 8;
-    const ay = o.y + py * 8;
-    const bx = ax + o.dx * 16;
-    const by = ay + o.dy * 16;
-    const ux = bx - o.dx * 5;
-    const uy = by - o.dy * 5;
-    const kx = -o.dy * 3;
-    const ky = o.dx * 3;
-    const etiketX = ax - o.dx * 6 - 2.3;
-    const etiketY = ay - o.dy * 6 + 2.6;
-    return `<g>
-      <circle cx="${o.x}" cy="${o.y}" r="3.2" fill="${OK_RENGI}"/>
-      <line x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}" stroke="#FFFFFF" stroke-width="4.2" stroke-linecap="round"/>
-      <line x1="${ax}" y1="${ay}" x2="${ux}" y2="${uy}" stroke="${OK_RENGI}" stroke-width="1.8"/>
-      <polygon points="${bx},${by} ${ux + kx},${uy + ky} ${ux - kx},${uy - ky}" fill="${OK_RENGI}"/>
-      <circle cx="${etiketX + 2.3}" cy="${etiketY - 2.8}" r="4.3" fill="#FFFFFF" stroke="${OK_RENGI}" stroke-width="0.6"/>
-      <text x="${etiketX}" y="${etiketY}" font-size="8" font-weight="bold" fill="${OK_RENGI}">${i + 1}</text>
-    </g>`;
-  }).join('');
+  // MEB Kılavuz glifi: gövde + numaralı yazım yönü okları (TemelYazi-Kilavuz, KG-95).
+  const kilavuz = RAKAM_KILAVUZ_YOLLARI[glif.rakam] ?? glif.path;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-8 -8 116 116" class="glif">
     <rect x="-8" y="-8" width="116" height="116" fill="#FFFFFF"/>
     <g stroke="#E5E7EB" stroke-width="0.35">${izgara}</g>
     <line x1="0" y1="15" x2="100" y2="15" stroke="#9CA3AF" stroke-width="0.6"/>
     <line x1="0" y1="50" x2="100" y2="50" stroke="#9CA3AF" stroke-width="0.6" stroke-dasharray="3 2"/>
     <line x1="0" y1="85" x2="100" y2="85" stroke="#9CA3AF" stroke-width="0.6"/>
-    <path d="${glif.path}" fill="none" stroke="${COLOR.ink}" stroke-width="${GLIF.cizgiKalinligi}" stroke-linecap="round" stroke-linejoin="round"/>
-    ${oklar}
+    <path d="${kilavuz}" fill="${COLOR.ink}"/>
   </svg>`;
 }
 
@@ -73,7 +48,7 @@ function rakamSatiri(glif: RakamGlifi): string {
     <div class="sol">${glifSvg(glif)}</div>
     <div class="sag">
       <h3>Rakam ${glif.rakam}</h3>
-      <p class="kucuk etiket">Uygulamadaki çizim sırası (mavi numaralar):</p>
+      <p class="kucuk etiket">MEB yazım yönü (numaralı oklar):</p>
       <ol class="kucuk">${sira}</ol>
       <p class="kutular"><span>☐ Uygun</span><span>☐ Küçük düzeltme</span><span>☐ Yanlış</span></p>
       <p class="kucuk">Not / düzeltme önerisi:</p>
@@ -85,14 +60,14 @@ function rakamSatiri(glif: RakamGlifi): string {
 function aciklama(): string {
   return `<div class="aciklama">
     <p><strong>Okulumsun</strong>, 1. sınıf matematik dersi için geliştirilen bir eğitim uygulamasıdır. Ekranda rakamlar
-    bir yazı tipinden değil, özel olarak çizilmiş şekillerden gösterilir. Bu formda uygulamadaki <strong>0–9 rakamlarının
-    MEB dik temel harf formuna uygun olup olmadığını</strong> soruyoruz.</p>
+    MEB'in Türkiye Yüzyılı Maarif Modeli (2024) için yayımladığı <strong>TemelYazi</strong> fontundan alınmıştır. Bu formda
+    uygulamadaki <strong>0–9 rakamlarının ve yazım yönlerinin sınıfta öğrettiğiniz biçimle aynı olup olmadığını</strong> soruyoruz.</p>
     <ul>
       <li>Her rakam için bir kutu işaretleyin. “Küçük düzeltme” veya “Yanlış” ise nota kısaca nedenini yazın;
       dilerseniz doğru biçimi rakamın üstüne kalemle çizin.</li>
-      <li>Zemindeki çizgiler: üst çizgi, orta çizgi (kesikli), taban çizgisi. <span class="mavi">Mavi nokta ve numara</span>
-      uygulamadaki çizginin başladığı yeri, ok ilk yönünü gösterir.</li>
-      <li>Rakam formlarını gösteren MEB kılavuzunun adını/yılını biliyorsanız son sayfaya yazmanız bize çok yardımcı olur.</li>
+      <li>Zemindeki çizgiler: üst çizgi, orta çizgi (kesikli), taban çizgisi. <strong>Kesikli ok ve numara</strong>
+      MEB kılavuz fontundaki gibi yazım yönünü ve hamle sırasını gösterir.</li>
+      <li>Sınıfta farklı bir kaynak (ders kitabı, kılavuz) kullanıyorsanız adını/yılını son sayfaya yazmanız bize çok yardımcı olur.</li>
     </ul>
     <p class="kucuk">Kişisel veri toplanmaz; form yalnız görüşünüzü içerir. Adınız yalnız izin verirseniz yazılır.</p>
   </div>`;
@@ -123,7 +98,7 @@ export function formHtml(ogretmenSayisi: number, surum: string): string {
       const son = i === SAYFA_DUZENI.length - 1;
       sayfalar.push(`<div class="sayfa">
         <header><span>Okulumsun · Rakam glifleri öğretmen görüş formu</span><span>Öğretmen ${o} kopyası · Sayfa ${i + 1}/${SAYFA_DUZENI.length}</span></header>
-        ${ilk ? `<h1>Rakam glifleri: MEB dik temel harf formuna uygunluk</h1>${aciklama()}` : ''}
+        ${ilk ? `<h1>Rakam glifleri: MEB TemelYazi formu ve yazım yönü</h1>${aciklama()}` : ''}
         ${rakamlar.map((r) => rakamSatiri(glif(r))).join('')}
         ${son ? imzaBolumu() : ''}
       </div>`);
@@ -131,7 +106,7 @@ export function formHtml(ogretmenSayisi: number, surum: string): string {
   }
   return `<!doctype html><html lang="tr"><head><meta charset="utf-8"><title>Okulumsun · Rakam glifleri öğretmen formu</title>
 <style>
-  @page { size: A4; margin: 11mm 14mm 14mm; @bottom-left { content: 'Glif verisi: RAKAM_GLIFLERI (src/ui/svg/rakamGlifleri.ts) · ${kacis(surum)}'; font-family: 'DejaVu Sans', sans-serif; font-size: 7pt; color: #6B7280; } }
+  @page { size: A4; margin: 11mm 14mm 14mm; @bottom-left { content: 'Glif verisi: MEB TYMM TemelYazi (KG-95) · ${kacis(surum)}'; font-family: 'DejaVu Sans', sans-serif; font-size: 7pt; color: #6B7280; } }
   * { box-sizing: border-box; }
   body { font-family: 'DejaVu Sans', sans-serif; color: #1F2937; font-size: 10pt; margin: 0; }
   .sayfa { page-break-after: always; }
@@ -142,7 +117,6 @@ export function formHtml(ogretmenSayisi: number, surum: string): string {
   .aciklama { font-size: 9.5pt; line-height: 1.4; background: #F3F4F6; border-radius: 2mm; padding: 3mm 4mm; margin-bottom: 4mm; }
   .aciklama p, .aciklama ul { margin: 1mm 0; }
   .aciklama ul { padding-left: 5mm; }
-  .mavi { color: ${OK_RENGI}; font-weight: bold; }
   .satir { display: flex; gap: 6mm; border: 0.5pt solid #D1D5DB; border-radius: 2mm; padding: 2.5mm 3mm; margin-bottom: 3mm; page-break-inside: avoid; }
   .sol { flex: 0 0 46mm; }
   .glif { width: 46mm; height: 46mm; display: block; }

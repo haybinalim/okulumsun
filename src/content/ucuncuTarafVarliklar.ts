@@ -54,6 +54,15 @@ export const UCUNCU_TARAF_VARLIKLAR: readonly UcuncuTarafVarlik[] = [
   { ad: 'workbox-window', tur: 'bagimlilik', lisans: 'MIT', sahip: 'Google LLC', kaynakUrl: 'https://github.com/GoogleChrome/workbox', dagitimdaVar: true, kosul: 'vite-plugin-pwa ile service worker içine derlenir' },
   // --- Font
   { ad: 'Andika', tur: 'font', lisans: 'SIL OFL 1.1', sahip: 'SIL International', kaynakUrl: 'https://fonts.google.com/specimen/Andika/license', dagitimdaVar: true },
+  {
+    ad: 'TemelYazi',
+    tur: 'font',
+    lisans: 'MEB TTKB yayını; gömülü lisans metni yok',
+    sahip: 'T.C. Millî Eğitim Bakanlığı TTKB (tasarım: HBY Tasarım)',
+    kaynakUrl: 'https://ttkb.meb.gov.tr/www/ilkokulturkcedersiogretimprogramiveilkokumayazmaderskitabindayeralanalfabeverakamlaryayimlandi/icerik/610',
+    dagitimdaVar: true,
+    kosul: 'Yalnız rakam + işaret alt kümesi (TemelYazi-Rakam.woff2, KG-95). MEB amacı: "ders kitapları ve eğitim araçlarında kullanılması". Ticari dağıtım ve açık repo için MEB TTKB/tasarımcıdan yazılı izin önerilir (henüz istenmedi)',
+  },
   // --- Görsel
   {
     ad: 'TCMB E9 5. tertip örnek banknot görselleri',
