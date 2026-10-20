@@ -15,7 +15,8 @@ import { arsivIstegi, arsivKayitlari } from '../../src/ogretmen/calismaKagidi/ar
 import { ETKI_DUZENI, etkiFormlariUret } from '../../src/ogretmen/calismaKagidi/etkiFormu';
 import { kagitPlaniUret, type KagitPlani } from '../../src/ogretmen/calismaKagidi/kagitPlani';
 import { trDuzlestir } from '../../src/ogretmen/calismaKagidi/sesMetni';
-import { KAGIT_ALT_YAZI, KagitSayfalari, KisaCizgili, kagitYazisi } from '../../src/ui/print/KagitSayfalari';
+import { KagitSayfalari, KisaCizgili } from '../../src/ui/print/KagitSayfalari';
+import { KAGIT_ALT_YAZI, kagitYazisi } from '../../src/ui/print/kagitYazisi';
 
 const css = readFileSync('src/index.css', 'utf8');
 
