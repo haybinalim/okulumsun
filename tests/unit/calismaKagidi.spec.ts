@@ -105,7 +105,7 @@ describe('kagitMaddesiYap', () => {
             break;
           case 'MATCH_PAIRS':
             expect(m!.yanitBicimi).toBe('cizgiyleEsle');
-            for (const [a, b] of ex.validation.ciftler) expect(m!.cevap).toContain(`${etiketKimden(a)}–${etiketKimden(b)}`);
+            for (const [a, b] of ex.validation.ciftler) expect(m!.cevap).toContain(`${etiketKimden(a)}-${etiketKimden(b)}`);
             break;
           case 'SEQUENCE_ORDER':
             expect(m!.yanitBicimi).toBe('siraNumarasiYaz');
@@ -364,7 +364,7 @@ describe('para görselleri ve baskı kuralları', () => {
     );
     expect(html).toContain('Adım:');
     expect(html).toContain(plan.kod);
-    expect(html).toContain('okulumsun · MEB 2024 1. sınıf matematik');
+    expect(html).toContain('okulumsun, MEB 2024 1. sınıf matematik');
     expect(html).toContain(`Sayfa 1 / ${plan.sayfalar.length + 1}`);
     expect(html).toContain('kg-kok--gri');
     expect(html.toLowerCase()).not.toContain('yanlış');

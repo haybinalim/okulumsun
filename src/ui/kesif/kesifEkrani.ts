@@ -8,7 +8,7 @@ import { doluSayisi, type KesifAraci, type KesifDurumu } from '../../kesif/kesif
 export const EKRAN_ARACLARI: readonly { arac: KesifAraci; ad: string; ikon: string }[] = [
   { arac: 'onlukCerceve', ad: 'Onluk çerçeve', ikon: '▦' },
   { arac: 'nesneKumesi', ad: 'Nesneler', ikon: '●●●' },
-  { arac: 'sayiDogrusu', ad: 'Sayı doğrusu', ikon: '0—10' },
+  { arac: 'sayiDogrusu', ad: 'Sayı doğrusu', ikon: '0-10' },
   { arac: 'terazi', ad: 'Terazi', ikon: '⚖' },
   { arac: 'ayirBirlestir', ad: 'Ayır ve birleştir', ikon: '●●|●' },
 ];

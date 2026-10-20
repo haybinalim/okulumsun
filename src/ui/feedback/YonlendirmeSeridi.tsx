@@ -1,3 +1,4 @@
+import { KART_ETIKETI_YAZI } from '../../design/tokens';
 import { SpeakButton } from '../primitives/SpeakButton';
 
 /**
@@ -22,7 +23,8 @@ export function YonlendirmeSeridi({
         alignItems: 'center',
         justifyContent: 'center',
         gap: 'calc(var(--size-gap-tight) * 0.65)',
-        width: 'min(100%, 620px)',
+        // Tahtada şerit ölçekle genişler (KG-98): büyüyen alt metin iki satırda kalır, şerit uzamaz.
+        width: 'min(100%, calc(620px * var(--scale)))',
         minHeight: 'calc(var(--size-control) * 0.9)',
         padding: '12px 16px',
         border: '3px solid var(--color-border)',
@@ -55,7 +57,7 @@ export function YonlendirmeSeridi({
         <strong style={{ fontSize: 'var(--text-min)', lineHeight: 1.1, color: 'var(--color-ink)' }}>
           Dinle
         </strong>
-        <span style={{ fontSize: 'var(--text-adult)', lineHeight: 1.2, color: 'var(--color-ink-soft)' }}>
+        <span style={{ fontSize: KART_ETIKETI_YAZI, lineHeight: 1.3, color: 'var(--color-ink-soft)', textWrap: 'balance' }}>
           {metin}
         </span>
       </div>

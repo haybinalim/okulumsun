@@ -31,6 +31,11 @@ export interface BigButtonProps {
   className?: string;
   /** Tek seçimli kartlarda seçili durumu yardımcı teknolojilere iletir. */
   ariaPressed?: boolean;
+  /**
+   * Çocuk ekranındaki yetişkin düğmesi (KG-96/98): `<button>`a geçer; yazı Andika olur
+   * (`[data-yetiskin]`, src/index.css) ve e2e geometri denetimi muaf tutar.
+   */
+  'data-yetiskin'?: string;
 }
 
 /**
@@ -55,6 +60,7 @@ export function BigButton({
   style,
   className,
   ariaPressed,
+  'data-yetiskin': yetiskin,
 }: BigButtonProps) {
   // -Infinity, 0 DEĞİL. `performance.now()` sayfa yüklenmesinden bu yana geçen
   // süredir; 0 ile başlatılırsa ilk 250 ms içindeki dokunuş "çok hızlı tekrar"
@@ -78,6 +84,7 @@ export function BigButton({
       type="button"
       aria-label={label}
       aria-pressed={ariaPressed}
+      data-yetiskin={yetiskin}
       // Devre dışı buton yine de dokunulabilir olmalı ki sesli açıklama yapabilsin.
       // `aria-disabled` durumu bildirir, `disabled` niteliği olayı öldürürdü.
       aria-disabled={disabled || undefined}

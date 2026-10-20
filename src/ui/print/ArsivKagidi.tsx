@@ -16,7 +16,7 @@ import { kagitKoduCoz, kagitPlaniUret } from '../../ogretmen/calismaKagidi/kagit
 import { ETKI_DUZENI, etkiFormlariUret, etkiFormuKoduCoz } from '../../ogretmen/calismaKagidi/etkiFormu';
 import { kagitMetinOzeti } from '../../ogretmen/calismaKagidi/arsiv';
 import { trDuzlestir } from '../../ogretmen/calismaKagidi/sesMetni';
-import { KagitSayfalari } from './KagitSayfalari';
+import { KisaCizgili, KagitSayfalari } from './KagitSayfalari';
 
 const GECERLI = new Set(skillsData.filter((d) => d.durum === 'hazir').map((d) => d.id));
 
@@ -64,7 +64,15 @@ export function ArsivKagidi({ kod }: { kod: string }) {
       className="kg-arsiv"
       style={{ padding: 24, fontFamily: 'inherit' }}
     >
-      <p role="status">{plan ? `Kâğıt kodu: ${plan.kod}` : 'Kâğıt hazırlanıyor…'}</p>
+      <p role="status">
+        {plan ? (
+          <>
+            Kâğıt kodu: <KisaCizgili metin={plan.kod} />
+          </>
+        ) : (
+          'Kâğıt hazırlanıyor...'
+        )}
+      </p>
       {plan && <KagitSayfalari plan={plan} duzen={duzen} {...sayfaAyari} siyahBeyaz={false} kopya="onizleme" />}
       {kap &&
         plan &&

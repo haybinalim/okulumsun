@@ -65,7 +65,7 @@ export const EYLEM_METNI: Readonly<Record<YanitBicimi, string>> = {
   daireIcineAl: 'Doğru olanı daire içine al.',
   kutuyaYaz: 'Cevabı kutuya yaz.',
   cizgiyleEsle: 'Eşlerini çizgiyle birleştir.',
-  siraNumarasiYaz: 'Sırayı kutulara yaz: 1, 2, 3…',
+  siraNumarasiYaz: 'Sırayı kutulara yaz: 1, 2, 3...',
 };
 
 /** Seçeneklere harf, hepsi sayıysa sayının kendisi etiket olur. */
@@ -220,7 +220,7 @@ export function kagitMaddesiYap(
         secenekler,
         harfRozeti: true,
         kutular: [],
-        cevap: ex.validation.ciftler.map(([a, b]) => `${et(a)}–${et(b)}`).join(', '),
+        cevap: ex.validation.ciftler.map(([a, b]) => `${et(a)}-${et(b)}`).join(', '),
         celdiriciler: [],
       });
     }

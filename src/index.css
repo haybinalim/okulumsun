@@ -63,7 +63,8 @@
  * TemelYazi — çocuğa dönük metnin HARFLERİ (KG-96; scripts/rakam-glif-uret.py →
  * TemelYazi-Harf.woff2). MEB TYMM 2024 dik temel yazı: tek katlı a, MEB'in kuyruklu
  * harf formları, Türkçe harflerin tamamı. unicode-range dosyanın kapsamıyla aynıdır;
- * fontta olmayan karakterler ([ ] { } # $ – — … ·) Andika'ya düşer.
+ * fontta olmayan karakterler ([ ] { } # $ – — … ·) Andika'ya düşer; çocuk metni ve kâğıtlar
+ * bu yüzden onları kullanmaz (KG-98, tests/unit/temelYaziHarf.spec.ts).
  * Neden Bold konturu 400'de: Regular'ın gövdesi (47/1000 em) Andika 400'ün (93)
  * yarısı, 12–20 px'te kılcal kalır; Bold (71) gövde metni olur. Dosya 'normal'
  * ağırlık işaretlidir, 700'de tarayıcı sentetik kalınlaştırır (başlık ayrımı).
@@ -133,6 +134,7 @@
   --text-ui: 28px;
   --text-min: 24px;
   --text-adult: 18px;
+  --text-kart-etiketi: 20px;
 
   --color-bg: #fffdf8;
   --color-surface: #ffffff;

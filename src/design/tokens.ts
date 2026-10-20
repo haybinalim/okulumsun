@@ -63,7 +63,19 @@ export const TEXT = {
   min: 24,
   /** Veli paneli gibi yetişkin ekranları. */
   adult: 18,
+  /**
+   * Küçük kart etiketi ve yönerge şeridinin alt metni (KG-98): sabit 120 px konu kartına iki satır
+   * sığması için `min`in altında; ikon + renk + ses kanalının yanında ikincil kanal. TemelYazi
+   * (size-adjust %120) x yüksekliği 20 × 0,42 = 8,4 px ≈ Andika 17 px; tahtada 32 px.
+   */
+  kartEtiketi: 20,
 } as const;
+
+/**
+ * Kart etiketi yazı boyutu (KG-98): profil ölçeği uygulanır, ama konu kartı telefon profilinde de
+ * 120 px kaldığı için 20 px'in altına inmez.
+ */
+export const KART_ETIKETI_YAZI = `max(${TEXT.kartEtiketi}px, var(--text-kart-etiketi))`;
 
 /**
  * Çocuğa dönük yazı tipi yığını (KG-95 rakamlar, KG-96 harfler): harf, rakam ve
