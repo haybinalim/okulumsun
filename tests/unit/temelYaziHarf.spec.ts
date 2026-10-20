@@ -15,7 +15,7 @@ import { arsivIstegi, arsivKayitlari } from '../../src/ogretmen/calismaKagidi/ar
 import { ETKI_DUZENI, etkiFormlariUret } from '../../src/ogretmen/calismaKagidi/etkiFormu';
 import { kagitPlaniUret, type KagitPlani } from '../../src/ogretmen/calismaKagidi/kagitPlani';
 import { trDuzlestir } from '../../src/ogretmen/calismaKagidi/sesMetni';
-import { KAGIT_ALT_YAZI, KagitSayfalari, KisaCizgili } from '../../src/ui/print/KagitSayfalari';
+import { KAGIT_ALT_YAZI, KagitSayfalari, KisaCizgili, kagitYazisi } from '../../src/ui/print/KagitSayfalari';
 
 const css = readFileSync('src/index.css', 'utf8');
 
@@ -112,6 +112,12 @@ describe('TemelYazi dışı karakter yok (KG-98)', () => {
     expect(KAGIT_ALT_YAZI).not.toMatch(/[·–—…]/);
   });
 
+  it('kagitYazisi yalnız görüntüyü çevirir: … – — · → ... - - ,', () => {
+    expect(kagitYazisi('Sırayı kutulara yaz: 1, 2, 3…')).toBe('Sırayı kutulara yaz: 1, 2, 3...');
+    expect(kagitYazisi('2–A, 1–C, 3—B')).toBe('2-A, 1-C, 3-B');
+    expect(kagitYazisi('a · b')).toBe('a, b');
+  });
+
   it('kâğıt kodu ve Ç-kodu etiketi: metin aynen kalır, yalnız kısa çizgi görüntüde daraltılır', () => {
     const html = renderToStaticMarkup(KisaCizgili({ metin: 'ETKI-1-A' }));
     expect(gorunenMetin(html).replace(/\s/g, '')).toBe('ETKI-1-A');
@@ -119,7 +125,7 @@ describe('TemelYazi dışı karakter yok (KG-98)', () => {
     expect(readFileSync('src/ui/print/kagit.css', 'utf8')).toMatch(/\.kg-kod-ayrac\s*\{[^}]*scaleX\(0\.5\)/);
   });
 
-  it('çocuk ekranı kaynaklarında · – — … yok (yorumlar ve hata iletileri hariç)', () => {
+  it('çocuk ekranı kaynaklarında · – — … yok (yorumlar, hata iletileri ve kagitYazisi tablosu hariç)', () => {
     const yetiskinDosyalari = new Set(
       [...YETISKIN_EKRANLARI].map((e) => e.charAt(0).toUpperCase() + e.slice(1)),
     );
@@ -134,7 +140,7 @@ describe('TemelYazi dışı karakter yok (KG-98)', () => {
         .replace(/\/\*[\s\S]*?\*\//g, '')
         .replace(/(^|[^:'"`])\/\/.*$/gm, '$1')
         .split('\n')
-        .filter((l) => !/throw new Error/.test(l));
+        .filter((l) => !/throw new Error|\.replace\(\//.test(l)); // hata iletisi; kagitYazisi dönüşüm tablosu
       for (const l of kod) if (/[·–—…]/.test(l)) ihlal.push(`${d}: ${l.trim()}`);
     }
     expect(dosyalar.length).toBeGreaterThan(40);

@@ -35,6 +35,15 @@ export const KAGIT_ALT_YAZI = 'okulumsun, MEB 2024 1. sınıf matematik';
 export const KAGIT_AYRAC = ', ';
 
 /**
+ * Basılan metin için TemelYazi karşılığı (KG-98): '…' → '...', '–'/'—' → '-', '·' → ','. YALNIZ görüntüde;
+ * kâğıt planı (yönerge, cevap "2–A") değişmez, böylece kâğıt kodu ve `kagitMetinOzeti` (arşiv/etki formu
+ * kimliği) aynı kalır.
+ */
+export function kagitYazisi(metin: string): string {
+  return metin.replace(/…/g, '...').replace(/[–—]/g, '-').replace(/ ?· ?/g, ', ');
+}
+
+/**
  * Kısa çizgili metin (KG-98): kâğıt kodu ve "Ç-kodu:" etiketi. Metin aynen kalır ("ETKI-1-A"; kopyala-yapıştır
  * ve `?arsiv=` aynı), yalnız görüntüde '-' daraltılır: TemelYazi'nin '-' glifi MEB işlem çizgisidir (eksi ile
  * aynı, 0,6 em), kodun içinde "ETKI–1–A" gibi uzun görünüyordu.
@@ -101,7 +110,7 @@ function SecenekIcerigi({ deger }: { deger: OptionDeger }) {
     case 'sekilKategorisi':
       return <span className="kg-yazi">{KATEGORI_METNI[deger.kategori] ?? deger.kategori}</span>;
     case 'metin':
-      return <span className="kg-yazi">{deger.metin}</span>;
+      return <span className="kg-yazi">{kagitYazisi(deger.metin)}</span>;
   }
 }
 
@@ -164,8 +173,8 @@ function Madde({ m, duzen }: { m: KagitMaddesi; duzen: KagitDuzeni }) {
         <span className="kg-no">{m.no}</span>
         <Ikon ikon={m.yonergeIkonu} />
         <span className="kg-yonerge-metin">
-          {m.yonergeMetni}
-          <small>{EYLEM_METNI[m.yanitBicimi]}</small>
+          {kagitYazisi(m.yonergeMetni)}
+          <small>{kagitYazisi(EYLEM_METNI[m.yanitBicimi])}</small>
         </span>
       </div>
       {m.yanitBicimi === 'cizgiyleEsle' ? (
@@ -224,7 +233,7 @@ function Anahtar({ satirlar }: { satirlar: readonly CevapSatiri[] }) {
           <tr key={s.no} data-anahtar={s.no}>
             <td>{s.no}</td>
             <td>
-              <strong>{s.dogru}</strong>
+              <strong>{kagitYazisi(s.dogru)}</strong>
             </td>
             <td>
               {s.celdiriciNotlari.length === 0 ? (
@@ -233,7 +242,7 @@ function Anahtar({ satirlar }: { satirlar: readonly CevapSatiri[] }) {
                 <ul>
                   {s.celdiriciNotlari.map((n, i) => (
                     <li key={`${n.secenek}-${i}`}>
-                      {celdiriciCumlesi(n)} <em>{n.ipucu}</em>
+                      {kagitYazisi(celdiriciCumlesi(n))} <em>{kagitYazisi(n.ipucu)}</em>
                     </li>
                   ))}
                 </ul>

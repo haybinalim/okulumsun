@@ -105,7 +105,7 @@ describe('kagitMaddesiYap', () => {
             break;
           case 'MATCH_PAIRS':
             expect(m!.yanitBicimi).toBe('cizgiyleEsle');
-            for (const [a, b] of ex.validation.ciftler) expect(m!.cevap).toContain(`${etiketKimden(a)}-${etiketKimden(b)}`);
+            for (const [a, b] of ex.validation.ciftler) expect(m!.cevap).toContain(`${etiketKimden(a)}–${etiketKimden(b)}`);
             break;
           case 'SEQUENCE_ORDER':
             expect(m!.yanitBicimi).toBe('siraNumarasiYaz');
