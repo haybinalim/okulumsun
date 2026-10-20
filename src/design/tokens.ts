@@ -64,16 +64,17 @@ export const TEXT = {
   /** Veli paneli gibi yetişkin ekranları. */
   adult: 18,
   /**
-   * Küçük kart etiketi ve yönerge şeridinin alt metni (KG-98): sabit 120 px konu kartına iki satır
-   * sığması için `min`in altında; ikon + renk + ses kanalının yanında ikincil kanal. TemelYazi
-   * (size-adjust %120) x yüksekliği 20 × 0,42 = 8,4 px ≈ Andika 17 px; tahtada 32 px.
+   * Küçük kart etiketi ve yönerge şeridinin alt metni (KG-98): 120 px konu kartına iki satır sığması
+   * için `min`in altında; ikon + renk + ses kanalının yanında ikincil kanal. TemelYazi (size-adjust %120)
+   * x yüksekliği 20 × 0,42 = 8,4 px ≈ Andika 17 px. Kart etiketi kart boyutuyla orantılı (120 → 20,
+   * tahtadaki 180 px kart → 30; `AnaEkran.tsx`), şerit alt metni profille ölçeklenir (tahtada 32).
    */
   kartEtiketi: 20,
 } as const;
 
 /**
- * Kart etiketi yazı boyutu (KG-98): profil ölçeği uygulanır, ama konu kartı telefon profilinde de
- * 120 px kaldığı için 20 px'in altına inmez.
+ * Yönerge şeridi alt metni (KG-98): profil ölçeği uygulanır (tahtada 32 px), telefon profilinde de
+ * 20 px'in altına inmez.
  */
 export const KART_ETIKETI_YAZI = `max(${TEXT.kartEtiketi}px, var(--text-kart-etiketi))`;
 

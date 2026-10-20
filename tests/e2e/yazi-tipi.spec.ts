@@ -77,7 +77,7 @@ test('tablet: çocuk akışında Andika indirilmez, kart etiketleri okunur; yeti
   expect(baslikYazisi.startsWith("'TemelYaziRakam', Andika") || baslikYazisi.startsWith('TemelYaziRakam, Andika')).toBe(true);
 });
 
-test('tahta: ana ekran, konu seçimi ve Keşif Masası metni TemelYazi kapsamında; kart etiketleri ≥ 32 px', async ({ page }, testInfo) => {
+test('tahta: ana ekran, konu seçimi ve Keşif Masası metni TemelYazi kapsamında; kart etiketleri ≥ 30 px', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'board', 'Tahta akışı.');
   test.setTimeout(60_000);
   const fontlar = fontIstekleri(page);
@@ -98,7 +98,7 @@ test('tahta: ana ekran, konu seçimi ve Keşif Masası metni TemelYazi kapsamın
   await sesKilidiniAc(page, '/?device=board');
   await page.getByRole('button', { name: 'Tahtada birlikte çalışalım.' }).click();
   await expect(page.getByRole('button', { name: 'Ayarlar' })).toBeVisible();
-  await kartEtiketleriOkunur(page, 32);
+  await kartEtiketleriOkunur(page, 30);
   // Yönerge şeridinin alt metni de aynı ölçüde (tahtada 32 px).
   const serit = await page.locator('aside span').first().evaluate((s) => parseFloat(getComputedStyle(s).fontSize));
   expect(serit).toBeGreaterThanOrEqual(32);

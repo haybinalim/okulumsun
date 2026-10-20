@@ -143,7 +143,7 @@ describe('TemelYazi dışı karakter yok (KG-98)', () => {
 });
 
 describe('küçük metin ölçütü (KG-98)', () => {
-  it('kart etiketi 20 px (tahtada ölçekle 32), telefonda da 20 px altına inmez', () => {
+  it('kart etiketi ölçüsü 20 px; şerit alt metni profille ölçeklenir, 20 px altına inmez', () => {
     expect(TEXT.kartEtiketi).toBe(20);
     expect(KART_ETIKETI_YAZI).toBe('max(20px, var(--text-kart-etiketi))');
     expect(css).toContain('--text-kart-etiketi: 20px;');
@@ -151,7 +151,8 @@ describe('küçük metin ölçütü (KG-98)', () => {
   it('ana ekran kart etiketleri ve yönerge şeridi alt metni bu ölçüyü kullanır; sabit 11/16 px kalmadı', () => {
     const ana = readFileSync('src/ui/screens/AnaEkran.tsx', 'utf8');
     expect(ana).not.toMatch(/fontSize: (boardMode \? 16 : 11|16, textAlign)/);
-    expect(ana.match(/style=\{KART_ETIKETI_STILI\}/g)).toHaveLength(3);
+    expect(ana.match(/style=\{kartEtiketiStili\((kartSize|180)\)\}/g)).toHaveLength(3);
+    expect(ana).toContain('fontSize: Math.round((kartBoyutu * TEXT.kartEtiketi) / 120)');
     expect(readFileSync('src/ui/feedback/YonlendirmeSeridi.tsx', 'utf8')).toContain('fontSize: KART_ETIKETI_YAZI');
   });
 });
