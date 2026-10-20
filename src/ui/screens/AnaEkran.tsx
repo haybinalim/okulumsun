@@ -20,8 +20,28 @@ import { YonlendirmeSeridi } from '../feedback/YonlendirmeSeridi';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { m } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
-import { COLOR, FONT_YIGINI, MOTION, SIZE } from '../../design/tokens';
+import { COLOR, FONT_YIGINI, MOTION, SIZE, TEXT } from '../../design/tokens';
+import type { CSSProperties } from 'react';
 import { SinifKavanozu } from '../svg/SinifKavanozu';
+
+/**
+ * Konu kartı / tahta girişi etiketi (KG-98): yazı boyutu kartın 1/6'sı (120 px kart → 20 px, tahtadaki 180 px
+ * kart → 30 px; `TEXT.kartEtiketi`). Cihaz profiline değil karta bağlı: kart ölçeklenmediği için etiket de
+ * ölçeklenmez, elle seçilen tahta profilinde bile kartın dışına taşmaz. Gerekirse iki satır ("Toplama ve /
+ * Çıkarma"), dengeli kırılır; kart ölçüsü değişmez.
+ */
+function kartEtiketiStili(kartBoyutu: number): CSSProperties {
+  return {
+    fontSize: Math.round((kartBoyutu * TEXT.kartEtiketi) / 120),
+    // TemelYazi %120 ölçüyle çizilir: 1,15'te 'p'/'ş' kuyrukları alt satırın Ç/Ö işaretine değiyordu.
+    lineHeight: 1.3,
+    letterSpacing: 0,
+    textAlign: 'center',
+    fontWeight: 700,
+    padding: '0 6px',
+    textWrap: 'balance',
+  };
+}
 
 export function AnaEkran() {
   const { mod, okulAyiIndex, temaSec, ekranGit, sinifTuruKur } = useAppStore();
@@ -243,7 +263,7 @@ export function AnaEkran() {
               }}
             >
               <SinifKavanozu kavanoz={5} hedef={9} boyut={70} />
-              <span style={{ fontSize: 16, textAlign: 'center', fontWeight: 700 }}>Sınıf Turu</span>
+              <span style={kartEtiketiStili(180)}>Sınıf Turu</span>
             </BigButton>
           )}
           {/* Keşif Masası (Adım 44): tahtada öğretmenin anlatım aracı. */}
@@ -264,7 +284,7 @@ export function AnaEkran() {
               }}
             >
               <KesifIkon boyut={70} />
-              <span style={{ fontSize: 16, textAlign: 'center', fontWeight: 700 }}>Keşif Masası</span>
+              <span style={kartEtiketiStili(180)}>Keşif Masası</span>
             </BigButton>
           )}
           {mod === 'tahta' && (
@@ -364,7 +384,7 @@ function TemaKart({
         }}
       >
           <TemaIkon no={tema.no} size={kartSize * 0.3} color={acik ? '#fff' : COLOR.ink} />
-          <span style={{ fontSize: boardMode ? 16 : 11, textAlign: 'center', fontWeight: 700 }}>
+          <span style={kartEtiketiStili(kartSize)}>
             {tema.ad}
           </span>
           {!acik && (

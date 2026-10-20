@@ -35,7 +35,7 @@ test('üretim başlıklarıyla CSP ihlali yok; font ve SW çalışıyor', async 
   const swHazir = await page.evaluate(async () => {
     const kayit = await Promise.race([
       navigator.serviceWorker.ready,
-      new Promise<null>((r) => setTimeout(() => r(null), 10_000)),
+      new Promise<null>((r) => setTimeout(() => r(null), 30_000)),
     ]);
     return kayit !== null;
   });

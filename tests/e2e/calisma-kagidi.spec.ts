@@ -52,7 +52,7 @@ test('kâğıt: 8 madde → 2 soru sayfası + cevap anahtarı; geometri temiz; k
   const kod = (await page.locator('[data-kagit-durum]').innerText()).match(/OK-[a-z0-9.]+-8-2x3-d/)?.[0];
   expect(kod).toBeTruthy();
   await expect(page.locator('[data-kagit-onizleme] .kg-alt').first()).toContainText(kod!);
-  await expect(page.locator('[data-kagit-onizleme] .kg-alt').first()).toContainText('okulumsun · MEB 2024 1. sınıf matematik');
+  await expect(page.locator('[data-kagit-onizleme] .kg-alt').first()).toContainText('okulumsun, MEB 2024 1. sınıf matematik');
   await expect(page.locator('[data-kagit-onizleme] .kg-alt').first()).toContainText('Sayfa 1 / 3');
   await expect(page.locator('[data-kagit-onizleme] .kg-ust').first()).toContainText('Adım:');
 

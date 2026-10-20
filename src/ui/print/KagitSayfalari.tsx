@@ -16,6 +16,7 @@ import { maddeKaplama } from '../../ogretmen/calismaKagidi/kagitYerlesimi';
 import { SematikBanknot } from '../svg/SematikBanknot';
 import { Visual } from '../svg/Visual';
 import './kagit.css';
+import { KAGIT_ALT_YAZI, KAGIT_AYRAC, kagitYazisi } from './kagitYazisi';
 
 const TERIM_METNI: Readonly<Record<string, string>> = {
   cok: 'çok',
@@ -26,7 +27,23 @@ const TERIM_METNI: Readonly<Record<string, string>> = {
 };
 const KATEGORI_METNI: Readonly<Record<string, string>> = { yuvarlak: 'yuvarlak', koseli: 'köşeli' };
 
-export const KAGIT_ALT_YAZI = 'okulumsun · MEB 2024 1. sınıf matematik';
+/**
+ * Kısa çizgili metin (KG-98): kâğıt kodu ve "Ç-kodu:" etiketi. Metin aynen kalır ("ETKI-1-A"; kopyala-yapıştır
+ * ve `?arsiv=` aynı), yalnız görüntüde '-' daraltılır: TemelYazi'nin '-' glifi MEB işlem çizgisidir (eksi ile
+ * aynı, 0,6 em), kodun içinde "ETKI–1–A" gibi uzun görünüyordu.
+ */
+export function KisaCizgili({ metin }: { readonly metin: string }) {
+  return (
+    <span className="kg-kod">
+      {metin.split('-').map((p, i) => (
+        <span key={i}>
+          {i > 0 && <span className="kg-kod-ayrac">-</span>}
+          {p}
+        </span>
+      ))}
+    </span>
+  );
+}
 
 /** Aynı plan → aynı çıktı; testler ve e2e "SVG özeti"ni buradan alır. */
 export interface KagitSayfalariProps {
@@ -77,7 +94,7 @@ function SecenekIcerigi({ deger }: { deger: OptionDeger }) {
     case 'sekilKategorisi':
       return <span className="kg-yazi">{KATEGORI_METNI[deger.kategori] ?? deger.kategori}</span>;
     case 'metin':
-      return <span className="kg-yazi">{deger.metin}</span>;
+      return <span className="kg-yazi">{kagitYazisi(deger.metin)}</span>;
   }
 }
 
@@ -140,8 +157,8 @@ function Madde({ m, duzen }: { m: KagitMaddesi; duzen: KagitDuzeni }) {
         <span className="kg-no">{m.no}</span>
         <Ikon ikon={m.yonergeIkonu} />
         <span className="kg-yonerge-metin">
-          {m.yonergeMetni}
-          <small>{EYLEM_METNI[m.yanitBicimi]}</small>
+          {kagitYazisi(m.yonergeMetni)}
+          <small>{kagitYazisi(EYLEM_METNI[m.yanitBicimi])}</small>
         </span>
       </div>
       {m.yanitBicimi === 'cizgiyleEsle' ? (
@@ -200,16 +217,16 @@ function Anahtar({ satirlar }: { satirlar: readonly CevapSatiri[] }) {
           <tr key={s.no} data-anahtar={s.no}>
             <td>{s.no}</td>
             <td>
-              <strong>{s.dogru}</strong>
+              <strong>{kagitYazisi(s.dogru)}</strong>
             </td>
             <td>
               {s.celdiriciNotlari.length === 0 ? (
-                <span>—</span>
+                <span>-</span>
               ) : (
                 <ul>
                   {s.celdiriciNotlari.map((n, i) => (
                     <li key={`${n.secenek}-${i}`}>
-                      {celdiriciCumlesi(n)} <em>{n.ipucu}</em>
+                      {kagitYazisi(celdiriciCumlesi(n))} <em>{kagitYazisi(n.ipucu)}</em>
                     </li>
                   ))}
                 </ul>
@@ -239,12 +256,12 @@ export function KagitSayfalari({
       aria-hidden={kopya === 'baski' ? true : undefined}
     >
       {plan.sayfalar.map((maddeler, i) => {
-        const kazanimlar = [...new Set(maddeler.flatMap((m) => m.kazanimKodlari))].sort().join(' · ');
+        const kazanimlar = [...new Set(maddeler.flatMap((m) => m.kazanimKodlari))].sort().join(KAGIT_AYRAC);
         return (
           <section key={i} className="kg-sayfa" data-sayfa={i + 1} aria-label={`Çalışma kâğıdı, sayfa ${i + 1}`}>
             <header className="kg-ust">
               <span className="kg-ad">
-                {adEtiketi} <span className="kg-cizgi" />
+                <KisaCizgili metin={adEtiketi} /> <span className="kg-cizgi" />
               </span>
             </header>
             <div className={`kg-izgara kg-izgara--${duzen}`}>
@@ -253,7 +270,7 @@ export function KagitSayfalari({
               ))}
             </div>
             <footer className="kg-alt">
-              <span>{plan.kod}</span>
+              <KisaCizgili metin={plan.kod} />
               <span>{kazanimlar}</span>
               <span>{KAGIT_ALT_YAZI}</span>
               <span>
@@ -274,8 +291,8 @@ export function KagitSayfalari({
           </header>
           <Anahtar satirlar={plan.cevapAnahtari} />
           <footer className="kg-alt">
-            <span>{plan.kod}</span>
-            <span>{plan.kazanimOzeti.join(' · ')}</span>
+            <KisaCizgili metin={plan.kod} />
+            <span>{plan.kazanimOzeti.join(KAGIT_AYRAC)}</span>
             <span>{KAGIT_ALT_YAZI}</span>
             <span>
               Sayfa {toplam} / {toplam}

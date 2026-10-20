@@ -22,7 +22,7 @@ const KAP: React.CSSProperties = {
 export function OturumYukleniyor() {
   return (
     <div data-ekran="oturum-yukleniyor" role="status" style={KAP}>
-      <div style={{ fontSize: 28, fontWeight: 'bold' }}>Hazırlanıyor…</div>
+      <div style={{ fontSize: 28, fontWeight: 'bold' }}>Hazırlanıyor...</div>
     </div>
   );
 }
