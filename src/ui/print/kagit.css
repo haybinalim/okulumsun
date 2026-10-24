@@ -87,7 +87,10 @@
   justify-content: space-between;
   gap: 4mm;
   align-items: flex-end;
-  font-size: 2.4mm;
+  /* KG-100: 2,4 mm okunmuyordu; ≈ 9 pt. Gövdenin 0,02 em harf aralığı küçük boyda aralığı açıyordu. */
+  font-size: 3.2mm;
+  line-height: 1.2;
+  letter-spacing: normal;
   white-space: nowrap;
   overflow: hidden;
   border-top: 0.3mm solid #000;

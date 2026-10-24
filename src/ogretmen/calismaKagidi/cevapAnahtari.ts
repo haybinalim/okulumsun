@@ -5,6 +5,7 @@
  */
 import { HATA_TANIMLARI, type HataEtiketi } from '../../exercises/distractors';
 import type { KagitMaddesi } from './kagitMaddesi';
+import { KAGIT_TELAFI_METINLERI } from './kagitYonergesi';
 
 export interface CeldiriciNotu {
   readonly secenek: string;
@@ -40,11 +41,14 @@ export const HATA_BASLIKLARI: Readonly<Record<HataEtiketi, string>> = {
   PARA_BOYUT_DEGER: 'Banknot boyutunu değerle karıştırma',
 };
 
-/** Etiketin öğretmene görünen tanısı ve kısa telafi yönü; tanınmayan etiket için `undefined`. */
+/**
+ * Etiketin öğretmene görünen tanısı ve kısa telafi yönü; tanınmayan etiket için `undefined`. Telafi kâğıda özgü
+ * metinden (KG-99: ekran fiili yok), yoksa `HATA_TANIMLARI.telafi`.
+ */
 export function hataNotu(etiket: HataEtiketi): { tani: string; ipucu: string } | undefined {
   const tani = HATA_BASLIKLARI[etiket];
   if (!tani) return undefined;
-  return { tani, ipucu: HATA_TANIMLARI[etiket]?.telafi ?? '' };
+  return { tani, ipucu: KAGIT_TELAFI_METINLERI[etiket] ?? HATA_TANIMLARI[etiket]?.telafi ?? '' };
 }
 
 export function cevapSatiriYap(m: KagitMaddesi): CevapSatiri {

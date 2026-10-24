@@ -25,6 +25,7 @@ import { kagitMaddesiYap, type KagitMaddesi } from './kagitMaddesi';
 import type { KagitDuzeni } from './kagitPlani';
 import { maddeKaplama, sayfalaraDagit } from './kagitYerlesimi';
 import { sesMetni } from './sesMetni';
+import { kagitSozlugu } from './kagitYonergesi';
 
 export const ETKI_FORM_SURUMU = 1 as const;
 export type EtkiFormuAdi = 'A' | 'B';
@@ -240,7 +241,9 @@ export function etkiFormuUret(
   dislanan: ReadonlySet<string> = new Set(),
   kayitli: (t: string) => boolean = (t) => REGISTRY.has(t),
 ): EtkiFormuPlani {
-  const metin = (s: SpeakSource): string => sesMetni(s, tr);
+  // Kâğıt yönergesi kâğıda özgü metin kaynağından (KG-99): ekran fiilleri ('dokun', 'dinle') yok.
+  const kagitTr = kagitSozlugu(tr);
+  const metin = (s: SpeakSource): string => sesMetni(s, kagitTr);
   const formTohumu = ETKI_FORM_TOHUMLARI[form];
   const kullanilan = new Set<string>(dislanan);
   const maddeler: EtkiMaddesi[] = [];
