@@ -13,6 +13,7 @@ import { cevapSatiriYap, type CevapSatiri } from './cevapAnahtari';
 import { kagitMaddesiYap, type KagitMaddesi } from './kagitMaddesi';
 import { maddeKaplama, sayfalaraDagit } from './kagitYerlesimi';
 import { sesMetni } from './sesMetni';
+import { kagitSozlugu } from './kagitYonergesi';
 import { yazdirmaSinifi } from './yazdirmaUygunlugu';
 
 export type KagitDuzeni = '2x3' | '1x4';
@@ -84,7 +85,9 @@ export function kagitPlaniUret(
   tr: Readonly<Record<string, string>>,
   kayitli: (t: string) => boolean = (t) => REGISTRY.has(t),
 ): KagitPlani {
-  const metin = (s: SpeakSource): string => sesMetni(s, tr);
+  // Kâğıt yönergesi kâğıda özgü metin kaynağından (KG-99): ekran fiilleri ('dokun', 'dinle') yok.
+  const kagitTr = kagitSozlugu(tr);
+  const metin = (s: SpeakSource): string => sesMetni(s, kagitTr);
   const maddeler: KagitMaddesi[] = [];
   const gorulen = new Set<string>();
   const sinir = istek.maddeSayisi * ILERLEME_SINIRI;

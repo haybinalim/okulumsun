@@ -3,9 +3,9 @@
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
-> Tarih: 20 Ekim 2026 (Adım 30 — MEB TemelYazi rakamları KG-95, harfleri KG-96, cila KG-98)
+> Tarih: 24 Ekim 2026 (Adım 35 — kâğıt yönergeleri ekran fiilsiz KG-99, altbilgi KG-100; Adım 30 — MEB TemelYazi KG-95/96/98)
 
-<!-- durum:birim_test=643 durum:birim_dosya=83 durum:e2e_dosya=30 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=15 -->
+<!-- durum:birim_test=651 durum:birim_dosya=84 durum:e2e_dosya=30 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=15 -->
 
 ## Yönetici özeti
 
@@ -58,7 +58,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 29 | Ürün hijyeni (hata/yükleme ekranı, açılış temizliği, bugünün bahçesi, kırmızı denetimi) | ✅ |
 | 30 | Rakam glifleri: MEB TYMM resmî fontu TemelYazi (KG-95) — ekran glifleri (dolgulu path), metin/kâğıt rakamları alt küme font, MEB yazım yönü, öğretmen formu; KG-96: çocuğa dönük metnin harfleri de TemelYazi, yetişkin yüzeyleri Andika; KG-98: okunur kart etiketleri (20/30 px), çocuk yüzeyi ve kâğıtlarda Andika yok | ✅ (öğretmen teyidi isteğe bağlı; yazılı kullanım izni kullanıcıda) |
 | 34 | Bugünün seti: öğretmen ≤4 etkinlik seçip tahtada başlatır (`src/ogretmen/`, `SetHazirla`, kararlı düğüm kodları); set yalnız bellekte | ✅ |
-| 35 | Yazdırılabilir çalışma kâğıdı + cevap anahtarı (`src/ogretmen/calismaKagidi/`, `CalismaKagidi`, `KagitSayfalari`; ADR-0006 Kabul); 23 uygun · 14 uyarlanır · 2 uygun değil şablon | ✅ (iki öğretmen incelemesi ve elle siyah-beyaz baskı bekliyor) |
+| 35 | Yazdırılabilir çalışma kâğıdı + cevap anahtarı (`src/ogretmen/calismaKagidi/`, `CalismaKagidi`, `KagitSayfalari`; ADR-0006 Kabul); 23 uygun · 14 uyarlanır · 2 uygun değil şablon; kâğıt yönergeleri ve cevap anahtarı ekran fiili taşımaz (KG-99), altbilgi okunur boyda (KG-100) | ✅ (iki öğretmen incelemesi ve elle siyah-beyaz baskı bekliyor) |
 | 36 | Sınıf Turu: tahtada 2–4 takımlı iş birlikçi oyun (kurulum, sıra duyurusu, gömülü soru, tur kutlaması, kavanoz kutlaması); puan/skor/kazanan yok, durum yalnız bellekte. 10 yeni ses klibi Adım 31'e ertelendi; ADR-0008 Kabul (KG-49) | ✅ (sesler hariç) |
 | 37 | Haftalık MEB planı: 2026–27 öğretim takvimi, ders saatlerinden haftalık kazanım/etkinlik planı; öğretmen ekranı (bu hafta vurgusu, haftadan tahtada set ve çalışma kâğıdı), CSV/HTML yerel indirme (ağ yok), "Bugünün seti"nde bu haftanın önerisi | ✅ (iki öğretmenin resmî planla karşılaştırması bekliyor) |
 | 38 | Öğretmen tanıtım sayfası `/ogretmen/`: statik, betiksiz, yalnız aynı kökenden; ölçülmüş içerik hacmi (en az 66.000 farklı soru), veri almıyoruz kutusu, SSS, pilot etiketi, paylaşım kartı; sayılar kodla birlikte denetleniyor | ✅ (video, danışmanlar, iletişim adresi, öğretmen testi ve yayın kullanıcıda) |

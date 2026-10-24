@@ -8,8 +8,8 @@
 
 | Form | Ne zaman | Kâğıt kodu | Tohum | Sayfa | Metin özeti |
 |---|---|---|---|---|---|
-| A | Ön test, 15–19 Mart 2027 | `ETKI-1-A` | 53101 | 5 | `ikpxzi` |
-| B | Son test, 12–16 Nisan 2027 | `ETKI-1-B` | 53201 | 5 | `1xza5eh` |
+| A | Ön test, 15–19 Mart 2027 | `ETKI-1-A` | 53101 | 5 | `4w8tun` |
+| B | Son test, 12–16 Nisan 2027 | `ETKI-1-B` | 53201 | 5 | `tjetsk` |
 
 - **Yazdırma:** uygulamada `?arsiv=ETKI-1-A` / `?arsiv=ETKI-1-B` adresi formu çizer (tarayıcıdan yazdır, A4, 2×3 düzen) veya
   `npx tsx scripts/etki-formu-uret.ts --pdf` iki PDF'yi bu dizine basar. Kâğıtta ad satırı yerine **Ç-kodu** satırı vardır;
