@@ -11,7 +11,8 @@
  */
 
 import { useVurgu } from '../../design/useVurgu';
-import { useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
+import { anaEkranOlc, anaEkranSigmiyor } from './anaEkranYerlesimi';
 import { useAppStore, TEMALAR, avatarBul } from '../../store/appStore';
 import { temaAcikMi } from '../../content/okulAyi';
 import { BigButton } from '../primitives/BigButton';
@@ -49,6 +50,19 @@ export function AnaEkran() {
   const avatar = avatarBul(useAppStore((s) => s.avatarId));
   const reducedMotion = useHareketAzalt();
   const [kilitliTema, setKilitliTema] = useState<string | null>(null);
+  // KG-101: kişisel modda alt şerit sığmıyorsa (elle seçilen tahta profili, kısa ekran) "Başla" maskot satırına çıkar.
+  const mainRef = useRef<HTMLElement>(null);
+  const [sikiDuzen, setSikiDuzen] = useState(false);
+  useLayoutEffect(() => {
+    const el = mainRef.current;
+    if (mod !== 'kisisel' || !el) return;
+    const olc = () => setSikiDuzen(anaEkranSigmiyor(anaEkranOlc(el, SIZE.edgeBottom)));
+    olc();
+    if (typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(olc);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [mod, kilitliTema]);
 
   // Konu seçimi, çocuk için sesli yönlendirmeyle başlar; şerit ses çalmazsa
   // ekranda sıradaki hareketi göstermeye devam eder.
@@ -79,8 +93,39 @@ export function AnaEkran() {
     ekranGit('veliKapisi');
   };
 
+  const altDugmeler = (
+    <>
+      <BigButton
+        label="Başla"
+        size="primary"
+        variant="accent"
+        onPress={handleBasla}
+        // Sıkı düzende kart ızgarasında iki hücre (yükseklik kart boyu 120 px ≥ tahta dokunma alt sınırı 102 px).
+        style={sikiDuzen ? { gridColumn: 'span 2', minWidth: 0, minHeight: 0, height: 120 } : undefined}
+      >
+        Başla
+      </BigButton>
+      <BigButton
+        label="Keşif Masası"
+        size="control"
+        variant="solid"
+        onPress={() => ekranGit('kesifMasasi')}
+        style={{
+          padding: '0 calc(16px * var(--scale))',
+          gap: 8,
+          border: `3px dashed ${COLOR.border}`,
+          ...(sikiDuzen ? { minWidth: 0, minHeight: 0, width: 120, height: 120, justifySelf: 'center' } : null),
+        }}
+      >
+        <KesifIkon boyut={40} />
+      </BigButton>
+    </>
+  );
+
   return (
     <main
+      ref={mainRef}
+      data-ana-duzen={mod === 'kisisel' ? (sikiDuzen ? 'siki' : 'normal') : undefined}
       style={{
         height: '100%',
         display: 'flex',
@@ -88,13 +133,17 @@ export function AnaEkran() {
         background: COLOR.bg,
         padding: 'var(--size-edge)',
         paddingBottom: 'var(--size-edge-bottom)',
-        gap: 'var(--size-gap)',
-        overflow: 'hidden',
+        // Sıkı düzende alt şerit yok; başlık ile orta arası dar boşluk (KG-101).
+        gap: sikiDuzen && mod === 'kisisel' ? 'var(--size-gap-tight)' : 'var(--size-gap)',
+        // Kişisel modda son çare: sıkı düzen de sığmazsa (ör. 1024×768'de elle tahta profili) dikey kaydırma; çakışma yok.
+        overflowX: 'hidden',
+        overflowY: mod === 'kisisel' ? 'auto' : 'hidden',
         ['--color-accent' as string]: accent.hex,
       }}
     >
       {/* Üst: dişli (sağ üstte, 32px — çocuk hedefi değil) + profil (sol üstte) */}
       <header
+        data-ana-ust=""
         style={{
           flex: '0 0 auto',
           display: 'flex',
@@ -178,6 +227,7 @@ export function AnaEkran() {
 
       {/* Tahta modunda etkileşimler, fiziksel erişim için alt %65'e yerleşir. */}
       <section
+        data-ana-orta=""
         style={{
           flex: 1,
           display: 'flex',
@@ -190,16 +240,19 @@ export function AnaEkran() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--size-gap-tight)', width: '100%' }}>
-          <div style={{ flex: '0 0 auto' }}>
+          <div data-ana-maskot="" style={{ flex: '0 0 auto' }}>
             <Maskot durum={kilitliTema ? 'cesaretlendiriyor' : 'sakin'} size={SIZE.mascot} />
           </div>
-          <YonlendirmeSeridi metin={kilitliTema ? `${kilitliTema} daha sonra açılacak.` : 'Dinle, sonra renkli açık konu kartına dokun.'} />
+          <div data-ana-serit="" style={{ minWidth: 0, display: 'flex' }}>
+            <YonlendirmeSeridi metin={kilitliTema ? `${kilitliTema} daha sonra açılacak.` : 'Dinle, sonra renkli açık konu kartına dokun.'} />
+          </div>
         </div>
 
         {kilitliTema && (
           <div
             role="status"
             aria-live="polite"
+            data-ana-kilit=""
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -218,16 +271,18 @@ export function AnaEkran() {
 
         {/* Tahtada 4+3 kart, küçük ekranda satıra taşar. */}
         <m.div
+          data-ana-izgara=""
           initial={reducedMotion ? {} : { opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: reducedMotion ? 0 : MOTION.screen / 1000 }}
           style={{
             display: 'grid',
             // Tahtada 5 sütun: 7 tema + Sınıf Turu + Keşif Masası iki sıraya sığar (üst %35'e taşmaz).
-            gridTemplateColumns: `repeat(${mod === 'tahta' ? 5 : 4}, minmax(${mod === 'tahta' ? 150 : 120}px, 1fr))`,
+            // Kişisel sıkı düzen (KG-101): 5 sütun; ikinci satırın boş hücrelerine Başla (2 hücre) + Keşif Masası.
+            gridTemplateColumns: `repeat(${mod === 'tahta' || sikiDuzen ? 5 : 4}, minmax(${mod === 'tahta' ? 150 : 120}px, 1fr))`,
             gap: 'var(--size-gap-tight)',
             width: mod === 'tahta' ? 'min(100%, 1120px)' : 'min(100%, 960px)',
-            maxWidth: mod === 'tahta' ? 1120 : 600,
+            maxWidth: mod === 'tahta' ? 1120 : sikiDuzen ? 780 : 600,
           }}
         >
           {TEMALAR.map((tema, i) => {
@@ -245,6 +300,11 @@ export function AnaEkran() {
               />
             );
           })}
+          {mod === 'kisisel' && sikiDuzen && (
+            <div data-ana-ekran-alt="" style={{ display: 'contents' }}>
+              {altDugmeler}
+            </div>
+          )}
           {/* Sınıf Turu (Adım 36): yalnız tahtada; öğretmen kurulumu açar. */}
           {mod === 'tahta' && (
             <BigButton
@@ -303,35 +363,20 @@ export function AnaEkran() {
       </section>
 
       {/* Alt (kişisel mod): Başla + Keşif Masası (tema kartlarından ayrı; Adım 44). Tahtada giriş kart ızgarasında. */}
-      {mod === 'kisisel' && (
-      <footer
-        style={{
-          flex: '0 0 auto',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: 'var(--size-gap)',
-          paddingBottom: SIZE.edgeBottom,
-        }}
-      >
-        <BigButton
-          label="Başla"
-          size="primary"
-          variant="accent"
-          onPress={handleBasla}
+      {mod === 'kisisel' && !sikiDuzen && (
+        <footer
+          data-ana-ekran-alt=""
+          style={{
+            flex: '0 0 auto',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 'var(--size-gap)',
+            paddingBottom: SIZE.edgeBottom,
+          }}
         >
-          Başla
-        </BigButton>
-        <BigButton
-          label="Keşif Masası"
-          size="control"
-          variant="solid"
-          onPress={() => ekranGit('kesifMasasi')}
-          style={{ padding: '0 calc(16px * var(--scale))', gap: 8, border: `3px dashed ${COLOR.border}` }}
-        >
-          <KesifIkon boyut={40} />
-        </BigButton>
-      </footer>
+          {altDugmeler}
+        </footer>
       )}
     </main>
   );
@@ -358,6 +403,7 @@ function TemaKart({
   const kartSize = boardMode ? 180 : 120;
   return (
     <m.div
+      data-tema-kart=""
       initial={reducedMotion ? {} : { scale: 0.8, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{

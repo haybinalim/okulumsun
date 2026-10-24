@@ -3,9 +3,9 @@
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
-> Tarih: 24 Ekim 2026 (Adım 35 — kâğıt yönergeleri ekran fiilsiz KG-99, altbilgi KG-100; Adım 30 — MEB TemelYazi KG-95/96/98)
+> Tarih: 24 Ekim 2026 (Adım 27 — ana ekran yerleşimi KG-101; Adım 35 — kâğıt yönergeleri ekran fiilsiz KG-99, altbilgi KG-100; Adım 30 — MEB TemelYazi KG-95/96/98)
 
-<!-- durum:birim_test=651 durum:birim_dosya=84 durum:e2e_dosya=30 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=15 -->
+<!-- durum:birim_test=654 durum:birim_dosya=85 durum:e2e_dosya=31 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=15 -->
 
 ## Yönetici özeti
 
@@ -53,7 +53,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 24 | Deterministik geri bildirim sesi + K9 gizlilik taraması | ✅ PR #24 (`ae7f0d9`) |
 | 25 | PWA kurulabilirlik: ikonlar, yatay/dikey, krem tema rengi | ✅ PR #25 (`511c93c`); Lighthouse canlı yayın bekliyor (KG-34) |
 | 26 | E2E genişletme + gizlilik kanıtı (çevrimdışı tam oturum, iki modda ağ/depolama, PWA manifest), K5 boyut bütçesi (14 Eki: Dexie → kendi IndexedDB sarmalayıcısı, ADR-0015) | ✅ PR #26 (`0001a86`) |
-| 27 | Cihaz profili ayar ekranı (yetişkin alanı → "Ekran boyutu"), elle geçersiz kılma kalıcı | ✅ |
+| 27 | Cihaz profili ayar ekranı (yetişkin alanı → "Ekran boyutu"), elle geçersiz kılma kalıcı; kısa ekranda kişisel ana ekranda "Başla" kartlara binmez (KG-101) | ✅ |
 | 28 | Tam ekran + Wake Lock (tahtada ses kilidi dokunuşunda tam ekran; ders ekranlarında ekran uyanık; veli paneli "Derste tam ekran") | ✅ |
 | 29 | Ürün hijyeni (hata/yükleme ekranı, açılış temizliği, bugünün bahçesi, kırmızı denetimi) | ✅ |
 | 30 | Rakam glifleri: MEB TYMM resmî fontu TemelYazi (KG-95) — ekran glifleri (dolgulu path), metin/kâğıt rakamları alt küme font, MEB yazım yönü, öğretmen formu; KG-96: çocuğa dönük metnin harfleri de TemelYazi, yetişkin yüzeyleri Andika; KG-98: okunur kart etiketleri (20/30 px), çocuk yüzeyi ve kâğıtlarda Andika yok | ✅ (öğretmen teyidi isteğe bağlı; yazılı kullanım izni kullanıcıda) |
