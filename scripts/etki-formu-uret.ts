@@ -14,6 +14,7 @@ import { spawn } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { BASKI_BEYANI_IFADESI, sayfaUyusmazligi, type BaskiBeyani } from './denetim/pdfSayfa.ts';
 import { skillsData } from '../src/content/skillsData.ts';
 import {
   ETKI_DESENI,
@@ -196,6 +197,9 @@ async function pdfBas(kok: string): Promise<void> {
       await sayfa.waitForSelector('[data-arsiv-hazir]', { timeout: 30_000 });
       await sayfa.evaluate(() => document.fonts.ready);
       const pdf = await sayfa.pdf({ format: 'A4', printBackground: true, preferCSSPageSize: true });
+      // KG-102: PDF sayfa sayısı = altbilgideki "Sayfa n / N" toplamı (taşan sayfa basılmaz).
+      const uyusmazlik = sayfaUyusmazligi(pdf, await sayfa.evaluate<BaskiBeyani>(BASKI_BEYANI_IFADESI));
+      if (uyusmazlik) throw new Error(`ETKI-1-${form}: ${uyusmazlik}`);
       writeFileSync(path.join(kok, FORM_PDF[form]), pdfTarihleriniSabitle(pdf));
     }
     await tarayici.close();

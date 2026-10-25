@@ -9,7 +9,7 @@ import type { CSSProperties } from 'react';
 import { paraGorselStratejisi } from '../../content/paraGorseli';
 import { TCMB_YAZILI_IZIN } from '../../content/paraGorseli';
 import type { OptionDeger, VisualSpec } from '../../exercises/types';
-import { celdiriciCumlesi, type CevapSatiri } from '../../ogretmen/calismaKagidi/cevapAnahtari';
+import { anahtarSayfalari, grupCumlesi, type AnahtarSayfasi } from '../../ogretmen/calismaKagidi/anahtarSayfalari';
 import { EYLEM_METNI, type KagitMaddesi, type KagitSecenegi, type YonergeIkonu } from '../../ogretmen/calismaKagidi/kagitMaddesi';
 import type { KagitDuzeni, KagitPlani } from '../../ogretmen/calismaKagidi/kagitPlani';
 import { maddeKaplama } from '../../ogretmen/calismaKagidi/kagitYerlesimi';
@@ -202,40 +202,59 @@ function Madde({ m, duzen }: { m: KagitMaddesi; duzen: KagitDuzeni }) {
   );
 }
 
-function Anahtar({ satirlar }: { satirlar: readonly CevapSatiri[] }) {
+function Anahtar({ sayfa }: { sayfa: AnahtarSayfasi }) {
   return (
-    <table className="kg-anahtar">
-      <thead>
-        <tr>
-          <th>Soru</th>
-          <th>Doğru cevap</th>
-          <th>Çeldirici notları</th>
-        </tr>
-      </thead>
-      <tbody>
-        {satirlar.map((s) => (
-          <tr key={s.no} data-anahtar={s.no}>
-            <td>{s.no}</td>
-            <td>
-              <strong>{kagitYazisi(s.dogru)}</strong>
-            </td>
-            <td>
-              {s.celdiriciNotlari.length === 0 ? (
-                <span>-</span>
-              ) : (
-                <ul>
-                  {s.celdiriciNotlari.map((n, i) => (
-                    <li key={`${n.secenek}-${i}`}>
-                      {kagitYazisi(celdiriciCumlesi(n))} <em>{kagitYazisi(n.ipucu)}</em>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div className="kg-anahtar-govde">
+      {sayfa.satirlar.length > 0 && (
+        <table className="kg-anahtar">
+          <colgroup>
+            <col className="kg-anahtar-no" />
+            <col className="kg-anahtar-dogru" />
+            <col />
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Soru</th>
+              <th>Doğru cevap</th>
+              <th>Çeldirici notları</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sayfa.satirlar.map((s) => (
+              <tr key={s.no} data-anahtar={s.no}>
+                <td>{s.no}</td>
+                <td>
+                  <strong>{kagitYazisi(s.dogru)}</strong>
+                </td>
+                <td>
+                  {s.gruplar.length === 0 ? (
+                    <span>-</span>
+                  ) : (
+                    s.gruplar.map((g) => (
+                      <span key={g.tani} className="kg-anahtar-not">
+                        {kagitYazisi(grupCumlesi(g))}
+                      </span>
+                    ))
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+      {sayfa.telafi.length > 0 && (
+        <section className="kg-telafi" aria-label="Telafi önerileri">
+          {sayfa.telafiBasligi && <h3>Telafi önerileri</h3>}
+          <ul>
+            {sayfa.telafi.map((t) => (
+              <li key={t.tani}>
+                <strong>{kagitYazisi(t.tani)}:</strong> {kagitYazisi(t.ipucu)}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </div>
   );
 }
 
@@ -247,7 +266,9 @@ export function KagitSayfalari({
   kopya,
   adEtiketi = 'Adım:',
 }: KagitSayfalariProps) {
-  const toplam = plan.sayfalar.length + (cevapAnahtariDahil ? 1 : 0);
+  // KG-102: anahtar sayfaları kodda planlanır; altbilgideki N = basılan gerçek sayfa sayısı.
+  const anahtar = cevapAnahtariDahil ? anahtarSayfalari(plan.cevapAnahtari) : [];
+  const toplam = plan.sayfalar.length + anahtar.length;
   return (
     <div
       className={`kg-kok kg-kok--${kopya}${siyahBeyaz ? ' kg-kok--gri' : ''}`}
@@ -280,26 +301,30 @@ export function KagitSayfalari({
           </section>
         );
       })}
-      {cevapAnahtariDahil && (
-        <section
-          className="kg-sayfa kg-sayfa--anahtar"
-          data-sayfa={toplam}
-          aria-label={`Cevap anahtarı, sayfa ${toplam}`}
-        >
-          <header className="kg-ust kg-ust--anahtar">
-            <h2>Cevap anahtarı (öğretmen için)</h2>
-          </header>
-          <Anahtar satirlar={plan.cevapAnahtari} />
-          <footer className="kg-alt">
-            <KisaCizgili metin={plan.kod} />
-            <span>{plan.kazanimOzeti.join(KAGIT_AYRAC)}</span>
-            <span>{KAGIT_ALT_YAZI}</span>
-            <span>
-              Sayfa {toplam} / {toplam}
-            </span>
-          </footer>
-        </section>
-      )}
+      {anahtar.map((sayfa, j) => {
+        const no = plan.sayfalar.length + j + 1;
+        return (
+          <section
+            key={`anahtar-${j}`}
+            className="kg-sayfa kg-sayfa--anahtar"
+            data-sayfa={no}
+            aria-label={`Cevap anahtarı, sayfa ${no}`}
+          >
+            <header className="kg-ust kg-ust--anahtar">
+              <h2>{j === 0 ? 'Cevap anahtarı (öğretmen için)' : 'Cevap anahtarı (devam)'}</h2>
+            </header>
+            <Anahtar sayfa={sayfa} />
+            <footer className="kg-alt">
+              <KisaCizgili metin={plan.kod} />
+              <span>{plan.kazanimOzeti.join(KAGIT_AYRAC)}</span>
+              <span>{KAGIT_ALT_YAZI}</span>
+              <span>
+                Sayfa {no} / {toplam}
+              </span>
+            </footer>
+          </section>
+        );
+      })}
     </div>
   );
 }

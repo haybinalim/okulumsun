@@ -37,11 +37,6 @@
   overflow: hidden;
   flex: none;
 }
-.kg-sayfa--anahtar {
-  height: auto;
-  min-height: 297mm;
-  overflow: visible;
-}
 .kg-ust {
   flex: none;
   height: 10mm;
@@ -171,6 +166,8 @@
   font-size: 2.8mm;
   font-weight: 400;
   line-height: 1.3;
+  /* KG-102: altbilgi gibi (KG-100) küçük eylem satırında gövdenin 0,02 em aralığı açık görünüyordu. */
+  letter-spacing: normal;
 }
 .kg-govde {
   flex: 1;
@@ -321,31 +318,58 @@
   justify-content: space-around;
 }
 
-/* Cevap anahtarı */
+/*
+ * Cevap anahtarı (KG-102): sabit A4 kutusu; sayfa planı `anahtarSayfalari.ts` (aynı mm ölçüleri). Aynı tanılı
+ * çeldiriciler tek cümle, telafi önerisi tanı başına bir kez (altta). Yazı 3,4 mm (≈ 9,6 pt), telafi 3,2 mm.
+ */
+.kg-anahtar-govde {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  letter-spacing: normal;
+}
 .kg-anahtar {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
-  font-size: 3.6mm;
-  margin-top: 3mm;
+  font-size: 3.4mm;
+  line-height: 1.3;
+  margin-top: 2mm;
+}
+.kg-anahtar-no {
+  width: 13mm;
+}
+.kg-anahtar-dogru {
+  width: 36mm;
 }
 .kg-anahtar th,
 .kg-anahtar td {
   border: 0.3mm solid #000;
-  padding: 1.5mm 2mm;
+  padding: 1mm 1.5mm;
   text-align: left;
   vertical-align: top;
+  overflow-wrap: anywhere;
 }
 .kg-anahtar tr {
   break-inside: avoid;
 }
-.kg-anahtar ul {
+.kg-anahtar-not {
+  display: block;
+}
+.kg-telafi {
+  font-size: 3.2mm;
+  line-height: 1.3;
+}
+.kg-telafi h3 {
+  margin: 2.5mm 0 1mm;
+  font-size: 3.8mm;
+}
+.kg-telafi ul {
   margin: 0;
   padding-left: 4mm;
 }
-.kg-anahtar em {
-  display: block;
-  font-style: normal;
-  font-size: 3mm;
+.kg-telafi li {
+  margin-bottom: 1mm;
 }
 
 /* Yazdırma: uygulama kabuğu gizlenir, yalnız kâğıt kopyası basılır. */
@@ -373,14 +397,6 @@
   .kg-kok--baski .kg-sayfa:last-child {
     break-after: auto;
     page-break-after: auto;
-  }
-  .kg-kok--baski .kg-sayfa--anahtar {
-    height: auto;
-    min-height: 0;
-    overflow: visible;
-  }
-  .kg-kok--baski .kg-sayfa--anahtar:not(:first-child) {
-    break-before: page;
   }
   * {
     -webkit-print-color-adjust: exact;
