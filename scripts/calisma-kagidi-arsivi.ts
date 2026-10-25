@@ -14,6 +14,7 @@ import { spawn } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { BASKI_BEYANI_IFADESI, sayfaUyusmazligi, type BaskiBeyani } from './denetim/pdfSayfa.ts';
 import { COLOR } from '../src/design/tokens.ts';
 import { skillsData } from '../src/content/skillsData.ts';
 import { KANONIK_YAYIN_ADRESI } from '../src/platform/kanonikKok.ts';
@@ -236,6 +237,9 @@ async function pdfleriBas(kok: string, kayitlar: readonly ArsivKaydi[]): Promise
       }
       await sayfa.evaluate(() => document.fonts.ready);
       const pdf = await sayfa.pdf({ format: 'A4', printBackground: true, preferCSSPageSize: true });
+      // KG-102: PDF sayfa sayısı = altbilgideki "Sayfa n / N" toplamı (taşan sayfa basılmaz).
+      const uyusmazlik = sayfaUyusmazligi(pdf, await sayfa.evaluate<BaskiBeyani>(BASKI_BEYANI_IFADESI));
+      if (uyusmazlik) throw new Error(`${x.kagitKodu}: ${uyusmazlik}`);
       const hedef = path.join(kok, 'public', x.yol);
       mkdirSync(path.dirname(hedef), { recursive: true });
       writeFileSync(hedef, pdfTarihleriniSabitle(pdf));

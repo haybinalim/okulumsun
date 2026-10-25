@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { BASKI_BEYANI_IFADESI, sayfaUyusmazligi, type BaskiBeyani } from '../../scripts/denetim/pdfSayfa';
 import { geometriTemiz, sesKilidiniAc } from './yardimci/akis';
 
 /**
@@ -108,6 +109,36 @@ test('kâğıt: aynı ayarlar → aynı SVG özeti; düzen ve madde sayısı say
   await page.getByRole('button', { name: 'Cevap anahtarı dahil' }).click();
   await expect(onizlemeSayfalari(page)).toHaveCount(1);
   await geometriTemiz(page, 'çalışma kâğıdı (1x4, anahtarsız)');
+});
+
+/** KG-102: ekranın her seçeneğinde basılan PDF sayfa sayısı = altbilgideki "Sayfa n / N" toplamı. */
+test('kâğıt: tüm seçeneklerde PDF sayfa sayısı = altbilgi toplamı', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'tablet', 'Seçenek taraması tek projede (yazdırma çıktısı profilden bağımsız).');
+  test.setTimeout(240_000);
+  await kagitEkraninaGit(page);
+  const basili = async (aciklama: string) => {
+    await page.emulateMedia({ media: 'print' });
+    const beyan = await page.evaluate<BaskiBeyani>(BASKI_BEYANI_IFADESI);
+    const pdf = await page.pdf({ preferCSSPageSize: true, printBackground: true });
+    expect(sayfaUyusmazligi(pdf, beyan), aciklama).toBeNull();
+    await page.emulateMedia({ media: 'screen' });
+  };
+  const anahtar = page.getByRole('button', { name: 'Cevap anahtarı dahil' });
+  for (const yanit of ['Daire içine al', 'Yazmalı da olur']) {
+    await page.getByRole('button', { name: `Yanıt biçimi: ${yanit}` }).click();
+    for (const duzen of ['2 sütun × 3 sıra', 'Tek sütun × 4 sıra']) {
+      await page.getByRole('button', { name: `Düzen: ${duzen}` }).click();
+      for (const madde of [4, 6, 8, 12]) {
+        await page.getByRole('button', { name: `Madde sayısı: ${madde}` }).click();
+        for (const dahil of ['true', 'false']) {
+          if ((await anahtar.getAttribute('aria-pressed')) !== dahil) await anahtar.click();
+          await basili(`${yanit}, ${duzen}, ${madde} madde, anahtar ${dahil}`);
+        }
+      }
+    }
+  }
+  await page.getByRole('button', { name: 'Siyah-beyaz' }).click();
+  await basili('siyah-beyaz');
 });
 
 test('kâğıt: depolamaya yazılmaz; yazdırma kopyası ekranda görünmez', async ({ page }) => {
