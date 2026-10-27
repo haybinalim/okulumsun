@@ -91,7 +91,10 @@ export function ArsivKagidi({ kod }: { kod: string }) {
   );
 }
 
-/** Arşiv görünümünde uygulama kabuğu yok: profil değişkenleri yalnız bu kutuya uygulanır (KG-103). */
+/**
+ * Arşiv görünümünde uygulama kabuğu yok: profil değişkenleri yalnız bu kutuya uygulanır (KG-103). Yazı sayfanın
+ * kendi yazısı (TemelYazi): bu görünüm Andika indirmez (KG-98, yazi-tipi e2e).
+ */
 function ArsivGezinme() {
   const kutu = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -99,7 +102,7 @@ function ArsivGezinme() {
   }, []);
   const kok = (): void => window.location.assign(import.meta.env.BASE_URL ?? '/');
   return (
-    <div ref={kutu} data-yazi="yetiskin" style={{ marginBottom: 16, marginLeft: 'calc(-1 * var(--size-edge, 24px))' }}>
+    <div ref={kutu} style={{ marginBottom: 16, marginLeft: 'calc(-1 * var(--size-edge, 24px))' }}>
       <GezinmeCubugu
         yon="yatay"
         hizala="bas"
