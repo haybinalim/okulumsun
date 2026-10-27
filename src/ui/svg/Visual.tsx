@@ -502,6 +502,7 @@ function KonumSahnesi({
 
   // Kutu/sepet önden ve hafif yukarıdan: arka duvar + alçak ön duvar. `katman` = 'arka' yalnız arka
   // duvarı, 'on' yalnız ön duvarı çizer — "içinde"de hedef ikisinin arasına girer (altı ön duvarla örtülür).
+  // Ön duvarın üst kenarı referans yüksekliğinin yarısında (kutu 0,50, sepet ağzı 0,46): hedefin üst yarısı görünür.
   const referans = (cx: number, cy: number, katman: 'tam' | 'arka' | 'on' = 'tam', ek = '', olcek = 1) => (
     <KonumReferansi
       tur={spec.referans}
@@ -619,17 +620,17 @@ function KonumReferansi({
   );
 
   if (tur === 'sepet') {
-    const agiz = `M${X(0.1)} ${Y(0.36)}L${X(0.9)} ${Y(0.36)}`;
-    const onYuz = `M${X(0.1)} ${Y(0.4)}L${X(0.9)} ${Y(0.4)}L${X(0.77)} ${Y(0.9)}L${X(0.23)} ${Y(0.9)}Z`;
+    const agiz = `M${X(0.1)} ${Y(0.46)}L${X(0.9)} ${Y(0.46)}`;
+    const onYuz = `M${X(0.1)} ${Y(0.48)}L${X(0.9)} ${Y(0.48)}L${X(0.78)} ${Y(0.9)}L${X(0.22)} ${Y(0.9)}Z`;
     const orgu: string[] = [];
     for (let i = 1; i < 4; i++) {
-      const yy = 0.4 + i * 0.125;
+      const yy = 0.48 + i * 0.105;
       orgu.push(`M${X(0.05)} ${Y(yy)}L${X(0.95)} ${Y(yy)}`);
     }
     for (let i = 1; i < 7; i++) {
       const ust = 0.1 + i * (0.8 / 7);
-      const alt = 0.23 + i * (0.54 / 7);
-      orgu.push(`M${X(ust)} ${Y(0.4)}L${X(alt)} ${Y(0.9)}`);
+      const alt = 0.22 + i * (0.56 / 7);
+      orgu.push(`M${X(ust)} ${Y(0.48)}L${X(alt)} ${Y(0.9)}`);
     }
     return (
       <g data-referans="sepet">
@@ -637,21 +638,21 @@ function KonumReferansi({
           <g>
             {zemin}
             <path
-              d={`M${X(0.24)} ${Y(0.38)}Q${cx} ${Y(-0.2)} ${X(0.76)} ${Y(0.38)}`}
+              d={`M${X(0.24)} ${Y(0.47)}Q${cx} ${Y(-0.12)} ${X(0.76)} ${Y(0.47)}`}
               fill="none"
               stroke={t.kontur}
               strokeWidth={sw * 3}
               strokeLinecap="round"
             />
             <path
-              d={`M${X(0.24)} ${Y(0.38)}Q${cx} ${Y(-0.2)} ${X(0.76)} ${Y(0.38)}`}
+              d={`M${X(0.24)} ${Y(0.47)}Q${cx} ${Y(-0.12)} ${X(0.76)} ${Y(0.47)}`}
               fill="none"
               stroke={t.temel}
               strokeWidth={sw * 1.6}
               strokeLinecap="round"
             />
             <path
-              d={`M${X(0.1)} ${Y(0.36)}Q${cx} ${Y(0.2)} ${X(0.9)} ${Y(0.36)}Z`}
+              d={`M${X(0.1)} ${Y(0.46)}Q${cx} ${Y(0.3)} ${X(0.9)} ${Y(0.46)}Z`}
               fill={t.golge}
               stroke={t.kontur}
               strokeWidth={sw}
@@ -678,7 +679,7 @@ function KonumReferansi({
   }
 
   const arkaDuvar = `M${X(0.16)} ${Y(0.2)}L${X(0.84)} ${Y(0.2)}L${X(0.84)} ${Y(0.88)}L${X(0.16)} ${Y(0.88)}Z`;
-  const onDuvar = `M${X(0.12)} ${Y(0.44)}L${X(0.88)} ${Y(0.44)}L${X(0.88)} ${Y(0.9)}L${X(0.12)} ${Y(0.9)}Z`;
+  const onDuvar = `M${X(0.12)} ${Y(0.5)}L${X(0.88)} ${Y(0.5)}L${X(0.88)} ${Y(0.9)}L${X(0.12)} ${Y(0.9)}Z`;
   const kapakSol = `M${X(0.16)} ${Y(0.2)}L${X(0.03)} ${Y(0.06)}L${X(0.08)} ${Y(0.02)}L${X(0.3)} ${Y(0.2)}Z`;
   const kapakSag = `M${X(0.84)} ${Y(0.2)}L${X(0.97)} ${Y(0.06)}L${X(0.92)} ${Y(0.02)}L${X(0.7)} ${Y(0.2)}Z`;
   return (
@@ -714,7 +715,7 @@ function KonumReferansi({
                 fill={t.isik}
                 opacity="0.7"
               />
-              <path d={`M${X(0.12)} ${Y(0.5)}L${X(0.88)} ${Y(0.5)}`} stroke={t.isik} strokeWidth={sw} />
+              <path d={`M${X(0.12)} ${Y(0.56)}L${X(0.88)} ${Y(0.56)}`} stroke={t.isik} strokeWidth={sw} />
             </g>
           }
         />

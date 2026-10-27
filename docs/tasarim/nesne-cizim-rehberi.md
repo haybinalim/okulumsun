@@ -55,5 +55,8 @@ PDF'i ve etki Form A/B renkli basılır (yeni çizimle yeniden basıldı: nesnel
   `url(#…)` başvurusunun aynı belgede çözüldüğünü denetler).
 - Yalnız `transform`/`opacity` hareketi olan üst bileşenler değişmedi; çizimlerde animasyon yok (hareket azalt kuralları etkilenmez).
 - Boyut: geometri dizeleri modül düzeyinde sabit; yıldız yüzeyleri modül yüklenince bir kez hesaplanır. JS bütçesi `npm run boyut`.
+- Konum sahneleri (`KonumSahnesi`): "içinde"de hedef arka duvar ile ön duvar arasına çizilir. Ön duvarın üst kenarı
+  referans yüksekliğinin **yarısında** (kutu %50, sepet ağzı %46; ilk sürümde %44/%36 idi, hedefin çoğu örtülüyordu) —
+  hedefin üst yarısı görünür, "arkasında"dan (arka duvar/sap hedefin önünde, hedef yukarıda) ayrışır.
 - Yeni nesne eklerken: `NESNE_SPRITELARI` + ses kliği (`nesne.*`) + `DOGAL_RENK` + `CIZIMLER` dalı; `Govde` ile temel/gölge/ışık/kontur,
   ışık sol üst, kontur 3,5; katalogda 64 ve 102 px, gri görünümde bak.
