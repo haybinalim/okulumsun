@@ -6,14 +6,14 @@ import type { ReactNode } from 'react';
 import type { NesneTonlari } from './renkTonlari';
 import { golgeKaydirmasi, INCE, KONTUR } from './cizimYardimcilari';
 
-/** Maske alanı: hem 100 birimlik sprite kutusunu hem piksel koordinatlı materyalleri kapsar. */
-const MASKE = { x: -4000, y: -4000, g: 8000 } as const;
+/** Gölge hilali için "her yer" dikdörtgeni: hem 100 birimlik sprite kutusunu hem piksel koordinatlı materyalleri kapsar. */
+const HER_YER = 'M-4000 -4000H4000V4000H-4000Z';
 
 /**
  * Gölgeli gövde: temel dolgu → (ayrıntılar) → sağ alt gölge hilali → ışık → kontur.
- * Gölge hilali, gövdenin sol üste kaydırılmış kopyasının maskeyle çıkarılmasıyla elde edilir; böylece
- * her biçimde kendiliğinden gövdenin hatlarını izler. `ic` ve `isik` gövdeye kırpılır. `k` örnek
- * başına tek olmalı (`useId` + parça eki).
+ * Gölge hilali = gövde ∩ (her yer − gövdenin sol üste kaydırılmış kopyası): `evenodd` dolgulu tek yol, gövdeye kırpılır.
+ * Böylece her biçimde kendiliğinden gövdenin hatlarını izler. Maske kullanılmaz (baskıda/PDF'te vektör kalır, raster
+ * maske yükü yok). `ic` ve `isik` de gövdeye kırpılır. `k` örnek başına tek olmalı (`useId` + parça eki).
  */
 export function Govde({
   d,
@@ -37,23 +37,26 @@ export function Govde({
   sw?: number;
 }) {
   const [dx, dy] = golgeKaydirmasi(ofset, donus);
+  const kirp = `url(#${k}k)`;
   return (
     <g>
       <defs>
-        <mask id={`${k}m`} maskUnits="userSpaceOnUse" x={MASKE.x} y={MASKE.y} width={MASKE.g} height={MASKE.g}>
-          <rect x={MASKE.x} y={MASKE.y} width={MASKE.g} height={MASKE.g} fill="#fff" />
-          <path d={d} fill="#000" transform={`translate(${dx} ${dy})`} />
-        </mask>
-        {(ic || isik) && (
-          <clipPath id={`${k}k`}>
-            <path d={d} />
-          </clipPath>
-        )}
+        <clipPath id={`${k}k`}>
+          <path d={d} />
+        </clipPath>
       </defs>
       <path d={d} fill={t.temel} />
-      {ic && <g clipPath={`url(#${k}k)`}>{ic}</g>}
-      <path d={d} fill={t.golge} mask={`url(#${k}m)`} opacity={golgeOpak} />
-      {isik && <g clipPath={`url(#${k}k)`}>{isik}</g>}
+      <g clipPath={kirp}>
+        {ic}
+        <path
+          d={HER_YER + d}
+          fillRule="evenodd"
+          transform={`translate(${dx} ${dy})`}
+          fill={t.golge}
+          opacity={golgeOpak === 1 ? undefined : golgeOpak}
+        />
+        {isik}
+      </g>
       {sw > 0 && <path d={d} fill="none" stroke={t.kontur} strokeWidth={sw} strokeLinejoin="round" />}
     </g>
   );

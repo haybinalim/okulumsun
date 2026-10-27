@@ -178,14 +178,16 @@ describe('Visual materyalleri', () => {
     expect(new Set(tanimli).size).toBe(tanimli.length);
     for (const b of basvuru) expect(tanimli).toContain(b);
     expect(html).not.toMatch(/<image|https?:/);
+    // Baskı/PDF: raster maske yok (Chromium printToPDF'i büyük maske alanları düşürüyordu).
+    expect(html).not.toContain('<mask');
   });
 
   test('onluk çerçeve dolu göz sayısı kadar pul çizer (yapı korunur)', () => {
     const html = renderToStaticMarkup(
       createElement(Visual, { spec: { type: 'onlukCerceve', gruplar: [10, 3] }, width: 360, height: 200 }),
     );
-    // Her pul bir gölge maskesi taşır.
-    expect(html.match(/<mask /g)?.length).toBe(13);
+    // Her pul kendi kırpma yolunu taşır (çerçeve gövdesi Govde kullanmaz).
+    expect(html.match(/<clipPath /g)?.length).toBe(13);
   });
 
   test('içinde: hedef arka duvar ile ön duvarın arasında çizilir', () => {
