@@ -21,7 +21,7 @@ Sıcak, çocuk kitabı kalitesinde **düz illüstrasyon**. Gradyan yerine düz t
 | Öğe | Kural |
 |---|---|
 | Tonlar | Nesne başına 3–5 ton: **temel** + **gölge** (sağ alt hilal) + **ışık** (sol üst parıltı) + **koyu kontur**; isteğe bağlı sabit parça rengi (yaprak, gaga, cam, lastik). |
-| Işık yönü | Her zaman **sol üst**. Gölge hilali, gövdenin sol üste kaydırılmış kopyasının maskeyle çıkarılmasıyla çizilir (`Govde`), böylece her biçimde hattı izler. Şekil döndürülürse kaydırma ters döndürülür (`golgeKaydirmasi`) — ekranda gölge yine sağ altta. |
+| Işık yönü | Her zaman **sol üst**. Gölge hilali = gövde ∩ (her yer − gövdenin sol üste kaydırılmış kopyası): `evenodd` dolgulu tek yol, gövdeye kırpılır (`Govde`); böylece her biçimde hattı izler. **SVG `<mask>` kullanılmaz** — Chromium `printToPDF` büyük maske alanlarında yazdırmayı düşürüyordu; kırpma yolları PDF'te vektör kalır. Şekil döndürülürse kaydırma ters döndürülür (`golgeKaydirmasi`) — ekranda gölge yine sağ altta. |
 | Kontur | 100 birimlik sprite kutusunda **3,5** (64 px'te ≈ 2,2 px, tahtada 102 px'te ≈ 3,6 px), ayrıntı çizgisi 2,4. Materyallerde kısa kenarın %2,2'si, en az 2 px (`materyalKonturu`). Kontur saf siyah değil, temel rengin çok koyusu. `stroke-linejoin: round`. |
 | Hatlar | Yuvarlatılmış; sivri köşe yalnız biçimin kendisi gerektiriyorsa (yıldız ucu, üçgen — o da yuvarlak birleşimle). |
 | Zemin gölgesi | Nesnenin altında yumuşak elips (`#2B2B2B`, %14); uçan nesnelerde (balon, kuş, balık, kelebek) daha küçük ve %8. Sayma sahnesinde nesneleri birbirinden ayırır. |
@@ -47,13 +47,16 @@ Sıcak, çocuk kitabı kalitesinde **düz illüstrasyon**. Gradyan yerine düz t
 
 Çalışma kâğıtları aynı bileşenleri kullanır; "Siyah-beyaz" seçeneği `filter: grayscale(1)`. Ayrı baskı varyantı gerekmedi:
 koyu kontur her renkte koyu kalır, tonlar parlaklıkça sıralıdır (test), krem/cam/metal parçalar açık gri olur. 165 arşiv
-PDF'i ve etki Form A/B renkli basılır; `?gelistirme=nesneler&gri=1` ile gri görünüm denetlenir.
+PDF'i ve etki Form A/B renkli basılır (yeni çizimle yeniden basıldı: nesneli 96 arşiv kâğıdı + etki A/B; metin özetleri ve kâğıt kodları aynı); kâğıtta nesneler sahnenin kısa kenarının %22'si (≈ 6 mm) — büyütmek sayfa planını etkiler, ayrı iş; `?gelistirme=nesneler&gri=1` ile gri görünüm denetlenir.
 
 ## 5. Teknik
 
-- Maske ve kırpma kimlikleri `useId` → `guvenliKimlik` ile **örnek başına tektir** (aynı sahnede 20 elma çakışmaz; test her
+- Kırpma kimlikleri `useId` → `guvenliKimlik` ile **örnek başına tektir** (aynı sahnede 20 elma çakışmaz; test her
   `url(#…)` başvurusunun aynı belgede çözüldüğünü denetler).
 - Yalnız `transform`/`opacity` hareketi olan üst bileşenler değişmedi; çizimlerde animasyon yok (hareket azalt kuralları etkilenmez).
 - Boyut: geometri dizeleri modül düzeyinde sabit; yıldız yüzeyleri modül yüklenince bir kez hesaplanır. JS bütçesi `npm run boyut`.
+- Konum sahneleri (`KonumSahnesi`): "içinde"de hedef arka duvar ile ön duvar arasına çizilir. Ön duvarın üst kenarı
+  referans yüksekliğinin **yarısında** (kutu %50, sepet ağzı %46; ilk sürümde %44/%36 idi, hedefin çoğu örtülüyordu) —
+  hedefin üst yarısı görünür, "arkasında"dan (arka duvar/sap hedefin önünde, hedef yukarıda) ayrışır.
 - Yeni nesne eklerken: `NESNE_SPRITELARI` + ses kliği (`nesne.*`) + `DOGAL_RENK` + `CIZIMLER` dalı; `Govde` ile temel/gölge/ışık/kontur,
   ışık sol üst, kontur 3,5; katalogda 64 ve 102 px, gri görünümde bak.
