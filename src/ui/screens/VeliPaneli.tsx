@@ -53,9 +53,6 @@ export function VeliPaneli() {
       }}
     >
       <header style={{ flex: '0 0 auto', display: 'flex', gap: 12, alignItems: 'center' }}>
-        <BigButton label="Çocuk ekranına dön" size="control" variant="ghost" onPress={() => ekranGit('anaEkran')}>
-          ←
-        </BigButton>
         <div>
           <h1 id="veli-paneli-baslik" style={{ fontSize: 'var(--text-adult)', color: COLOR.ink, margin: 0 }}>
             {tahta ? 'Öğretmen alanı' : 'Yetişkin alanı'}

@@ -83,7 +83,7 @@ test('tahta: Keşif Masası beş araç, geometri ve sınırlar', async ({ page, 
   await page.getByRole('button', { name: 'Birleştir', exact: true }).click();
   await expect(page.locator('output')).toHaveText('5');
 
-  await page.getByRole('button', { name: 'Ev', exact: true }).click();
+  await page.getByRole('button', { name: 'Ana menü', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Keşif Masası' })).toBeVisible();
 
   expect(agIhlalleri(ag.istekler, new URL(baseURL!).origin)).toEqual([]);

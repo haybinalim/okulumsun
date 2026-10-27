@@ -5,7 +5,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAppStore } from '../../store/appStore';
-import { BigButton } from '../primitives/BigButton';
 import { COLOR } from '../../design/tokens';
 
 /** Veli kapısı sayıları — her seferinde farklı, ama deterministik. */
@@ -80,9 +79,6 @@ export function VeliKapisi() {
       }}
     >
       <header style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
-        <BigButton label="Çocuk ekranına dön" size="control" variant="ghost" onPress={() => ekranGit('anaEkran')}>
-          ←
-        </BigButton>
         <div>
           <h1 id="veli-kapisi-baslik" style={{ fontSize: 'var(--text-adult)', color: COLOR.ink, margin: 0 }}>
             Yetişkin alanı

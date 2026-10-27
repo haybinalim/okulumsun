@@ -20,6 +20,6 @@ test('tablet: kişisel modda Keşif Masası', async ({ page }, testInfo) => {
     await page.getByRole('button', { name: arac, exact: true }).click();
     await geometriTemiz(page, `Keşif Masası — ${arac} (tablet)`);
   }
-  await page.getByRole('button', { name: 'Ev', exact: true }).click();
+  await page.getByRole('button', { name: 'Ana menü', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Başla', exact: true })).toBeVisible();
 });

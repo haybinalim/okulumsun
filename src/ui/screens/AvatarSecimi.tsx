@@ -34,17 +34,22 @@ export function AvatarSecimi() {
         paddingBottom: 'var(--size-edge-bottom)',
       }}
     >
+      {/* KG-103: dört sütun kabın içine sığar (kart en çok `--size-choice`, gerekirse küçülür; tablet boyutundaki
+          tahtada 4 × 320 px kartlar ekrandan taşıyor, gezinme rayının altına giriyordu — main'de de iki yandan kesikti). */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
+          gridTemplateColumns: 'repeat(4, minmax(0, var(--size-choice)))',
           gap: 'var(--size-gap)',
           justifyItems: 'center',
+          width: '100%',
+          justifyContent: 'center',
         }}
       >
         {AVATARLAR.map((avatar, i) => (
           <m.div
             key={avatar.id}
+            style={{ width: '100%' }}
             initial={reducedMotion ? {} : { scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{
@@ -62,6 +67,10 @@ export function AvatarSecimi() {
                 color: '#fff',
                 flexDirection: 'column',
                 gap: 8,
+                width: '100%',
+                minWidth: 0,
+                minHeight: 0,
+                aspectRatio: '1 / 1',
               }}
             >
               <AvatarIkon id={avatar.id} size={SIZE.choice * 0.4} />

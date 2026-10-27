@@ -8,8 +8,13 @@
  * Adım 53b (KG-93): `?arsiv=ETKI-1-A` / `ETKI-1-B` etki çalışmasının ön/son test formunu çizer (`etkiFormlariUret`).
  * Ad yerine Ç-kodu satırı; cevap anahtarı forma basılmaz (çocuğa dağıtılan kâğıtta durmasın; anahtar
  * `docs/research/olcme-araci/` belgesinde).
+ *
+ * KG-103: ekranda (yalnız ekranda — baskıda `#root` gizli, PDF değişmez) ortak gezinme çubuğu: Geri =
+ * tarayıcı geçmişinde bir önceki sayfa (yoksa uygulama), Ana menü = uygulamanın kökü.
  */
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { applyProfile, resolveProfile } from '../../design/deviceProfile';
+import { GezinmeCubugu } from '../gezinme/GezinmeCubugu';
 import { createPortal } from 'react-dom';
 import { skillsData } from '../../content/skillsData';
 import { kagitKoduCoz, kagitPlaniUret } from '../../ogretmen/calismaKagidi/kagitPlani';
@@ -53,6 +58,7 @@ export function ArsivKagidi({ kod }: { kod: string }) {
   if (!duzen) {
     return (
       <main style={{ padding: 24, fontFamily: 'inherit' }}>
+        <ArsivGezinme />
         <p role="status">Bu kâğıt kodu geçersiz.</p>
       </main>
     );
@@ -64,6 +70,7 @@ export function ArsivKagidi({ kod }: { kod: string }) {
       className="kg-arsiv"
       style={{ padding: 24, fontFamily: 'inherit' }}
     >
+      <ArsivGezinme />
       <p role="status">
         {plan ? (
           <>
@@ -81,6 +88,28 @@ export function ArsivKagidi({ kod }: { kod: string }) {
           kap,
         )}
     </main>
+  );
+}
+
+/**
+ * Arşiv görünümünde uygulama kabuğu yok: profil değişkenleri yalnız bu kutuya uygulanır (KG-103). Yazı sayfanın
+ * kendi yazısı (TemelYazi): bu görünüm Andika indirmez (KG-98, yazi-tipi e2e).
+ */
+function ArsivGezinme() {
+  const kutu = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (kutu.current) applyProfile(resolveProfile(), kutu.current);
+  }, []);
+  const kok = (): void => window.location.assign(import.meta.env.BASE_URL ?? '/');
+  return (
+    <div ref={kutu} style={{ marginBottom: 16, marginLeft: 'calc(-1 * var(--size-edge, 24px))' }}>
+      <GezinmeCubugu
+        yon="yatay"
+        hizala="bas"
+        onGeri={() => (window.history.length > 1 ? window.history.back() : kok())}
+        onAnaMenu={kok}
+      />
+    </div>
   );
 }
 

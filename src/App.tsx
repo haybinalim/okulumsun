@@ -1,4 +1,6 @@
-import { lazy, Suspense, useState, useMemo, useRef } from 'react';
+import { lazy, Suspense, useState, useMemo, useRef, type ReactNode } from 'react';
+import { EkranCercevesi } from './ui/gezinme/EkranCercevesi';
+import { useGeriTusu } from './ui/gezinme/useGeriTusu';
 import { gomuluDurum } from './platform/gomuluAcilis';
 import { useKapsayicilikEtkileri } from './ui/useKapsayicilikEtkileri';
 import { useVurgu } from './design/useVurgu';
@@ -79,7 +81,10 @@ export default function App() {
   const evSeti = useAppStore((s) => s.evSeti);
   const setBitir = useAppStore((s) => s.setBitir);
   const temaTuru = useAppStore((s) => s.temaTuru);
-  const [setSirasi, setSetSirasi] = useState(0);
+  // Setin kaçıncı sorusunda olunduğu, sete bağlı: set biter ya da Geri/Ana menü ile bırakılırsa (KG-103)
+  // yeni set her zaman ilk sorudan başlar (eskiden yalnız "Seti bitir" sıfırlıyordu).
+  const [setIlerleme, setSetIlerleme] = useState<{ set: typeof aktifSet; sira: number }>({ set: null, sira: 0 });
+  const setSirasi = setIlerleme.set === aktifSet ? setIlerleme.sira : 0;
   const yanlisVar = useRef(false);
   const tahtaExercise = useMemo<Exercise>(() => {
     if (aktifSet) return setSorusuUret(setSorusu(aktifSet, setSirasi, (t) => REGISTRY.has(t)));
@@ -89,277 +94,175 @@ export default function App() {
   const kisiselOturum = useKisiselOturum(ekran, mod);
   useKapsayicilikEtkileri();
   useUyanikTut(ekran);
+  // KG-103: tarayıcı/Android geri tuşu = ekrandaki Geri; gömülü modda geçmişe dokunulmaz (üst portal).
+  useGeriTusu(gomuluDurum().baglam === 'yok');
   const tamEkranAyari = useSyncExternalStore(dersAyariniDinle, () => dersteTamEkranMi(profile));
   // Adım 56: gömülü modda iframe tam ekrana izin vermiyorsa ses kilidi tam ekran denemez.
   const tamEkran = tamEkranAyari && gomuluDurum().kisitlar.tamEkran;
 
+  /**
+   * Her ekranın kabuğu: tahta aracı + yazı yüzeyi/vurgu + KG-103 gezinme çerçevesi (Geri / Ana menü).
+   * Yeni ekran da buradan çizilir; `gezinmeSozlesmesi.spec.ts` başka yoldan çizilen ekran bırakmaz.
+   */
+  const kabuk = (icerik: ReactNode, isinmada = false) => (
+    <BoardHarness profile={profile}>
+      <div
+        data-yazi={yazi}
+        style={{ height: '100%', ['--color-accent' as string]: accent.hex }}
+        data-isinma={isinmada ? '' : undefined}
+      >
+        <EkranCercevesi profil={profile}>{icerik}</EkranCercevesi>
+      </div>
+    </BoardHarness>
+  );
+
   // Ses kilidi ekranı — her zaman en başta
   if (ekran === 'audioUnlock') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <AudioUnlock
-            tamEkran={tamEkran}
-            // Adım 42: geçerli eve link okunduysa ses kilidinden sonra doğrudan ev çalışması.
-            onUnlocked={() => useAppStore.getState().ekranGit(useAppStore.getState().evSeti ? 'evdeCalis' : 'modSecimi')}
-          />
-        </div>
-      </BoardHarness>
+    return kabuk(
+      <AudioUnlock
+        tamEkran={tamEkran}
+        // Adım 42: geçerli eve link okunduysa ses kilidinden sonra doğrudan ev çalışması.
+        onUnlocked={() => useAppStore.getState().ekranGit(useAppStore.getState().evSeti ? 'evdeCalis' : 'modSecimi')}
+      />,
     );
   }
 
   // Eve link ile açılan ev çalışması (Adım 42)
   if (ekran === 'evdeCalis' && evSeti) {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <EvdeCalis set={evSeti} />
-        </div>
-      </BoardHarness>
-    );
+    return kabuk(<EvdeCalis set={evSeti} />);
   }
 
   // Evde 10 dakika sonu: veliye ipucu kartı (Adım 43)
   if (ekran === 'veliIpucuKarti') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <Suspense fallback={<OturumYukleniyor />}>
-            <VeliIpucuKarti />
-          </Suspense>
-        </div>
-      </BoardHarness>
+    return kabuk(
+      <Suspense fallback={<OturumYukleniyor />}>
+        <VeliIpucuKarti />
+      </Suspense>,
     );
   }
 
   // Keşif Masası: serbest manipülatif alanı, iki modda (Adım 44)
   if (ekran === 'kesifMasasi') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <Suspense fallback={<OturumYukleniyor />}>
-            <KesifMasasi />
-          </Suspense>
-        </div>
-      </BoardHarness>
+    return kabuk(
+      <Suspense fallback={<OturumYukleniyor />}>
+        <KesifMasasi />
+      </Suspense>,
     );
   }
 
   // Tema sonu turu: 8–10 soru → kutlama → yetişkine nitel özet (Adım 46)
   if (ekran === 'temaTuru' && temaTuru) {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <Suspense fallback={<OturumYukleniyor />}>
-            <TemaTuru tema={temaTuru.tema} plan={temaTuru.plan} />
-          </Suspense>
-        </div>
-      </BoardHarness>
+    return kabuk(
+      <Suspense fallback={<OturumYukleniyor />}>
+        <TemaTuru tema={temaTuru.tema} plan={temaTuru.plan} />
+      </Suspense>,
     );
   }
 
   // Mod seçimi
   if (ekran === 'modSecimi') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <ModSecimi />
-        </div>
-      </BoardHarness>
-    );
+    return kabuk(<ModSecimi />);
   }
 
   // Avatar seçimi (kişisel mod)
   if (ekran === 'avatarSecimi') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <AvatarSecimi />
-        </div>
-      </BoardHarness>
-    );
+    return kabuk(<AvatarSecimi />);
   }
 
   // Renk seçimi (kişisel mod)
   if (ekran === 'renkSecimi') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <RenkSecimi />
-        </div>
-      </BoardHarness>
-    );
+    return kabuk(<RenkSecimi />);
   }
 
   // Veli kapısı
   if (ekran === 'veliKapisi') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <VeliKapisi />
-        </div>
-      </BoardHarness>
-    );
+    return kabuk(<VeliKapisi />);
   }
 
   // Veli paneli
   if (ekran === 'veliPaneli') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <CihazProfiliBaglami.Provider value={cihazProfili}>
-            <VeliPaneli />
-          </CihazProfiliBaglami.Provider>
-        </div>
-      </BoardHarness>
+    return kabuk(
+      <CihazProfiliBaglami.Provider value={cihazProfili}>
+        <VeliPaneli />
+      </CihazProfiliBaglami.Provider>,
     );
   }
 
   // Bugünün seti hazırlama (Adım 34)
   if (ekran === 'setHazirla') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <SetHazirla />
-        </div>
-      </BoardHarness>
-    );
+    return kabuk(<SetHazirla />);
   }
 
   // Sınıf Turu (Adım 36): kurulum → oyun → kavanoz kutlaması; durum yalnız bellekte.
   if (ekran === 'sinifTuruKurulum' || ekran === 'sinifTuru' || ekran === 'sinifTuruSonu') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          {ekran === 'sinifTuruKurulum' ? <SinifTuruKurulum /> : ekran === 'sinifTuru' ? <SinifTuruEkrani /> : <SinifTuruSonu />}
-        </div>
-      </BoardHarness>
-    );
+    return kabuk(ekran === 'sinifTuruKurulum' ? <SinifTuruKurulum /> : ekran === 'sinifTuru' ? <SinifTuruEkrani /> : <SinifTuruSonu />);
   }
 
   if (ekran === 'dersSonuOzeti') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <DersSonuOzeti />
-        </div>
-      </BoardHarness>
-    );
+    return kabuk(<DersSonuOzeti />);
   }
 
   // Çalışma kâğıdı (Adım 35)
   if (ekran === 'calismaKagidi') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <Suspense fallback={<OturumYukleniyor />}>
-            <CalismaKagidi />
-          </Suspense>
-        </div>
-      </BoardHarness>
+    return kabuk(
+      <Suspense fallback={<OturumYukleniyor />}>
+        <CalismaKagidi />
+      </Suspense>,
     );
   }
 
   // Eve gönder: eve link + QR (Adım 42)
   if (ekran === 'eveGonder') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <Suspense fallback={<OturumYukleniyor />}>
-            <EveGonder />
-          </Suspense>
-        </div>
-      </BoardHarness>
+    return kabuk(
+      <Suspense fallback={<OturumYukleniyor />}>
+        <EveGonder />
+      </Suspense>,
     );
   }
 
   // Haftalık MEB planı (Adım 37)
   if (ekran === 'haftalikPlan') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <Suspense fallback={<OturumYukleniyor />}>
-            <HaftalikPlan />
-          </Suspense>
-        </div>
-      </BoardHarness>
+    return kabuk(
+      <Suspense fallback={<OturumYukleniyor />}>
+        <HaftalikPlan />
+      </Suspense>,
     );
   }
 
   // Sorun bildir (Adım 23)
   if (ekran === 'sorunBildir') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <SorunBildir cihaz={profile} />
-        </div>
-      </BoardHarness>
-    );
+    return kabuk(<SorunBildir cihaz={profile} />);
   }
 
   // Kaynaklar
   if (ekran === 'kaynaklar') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <Kaynaklar />
-        </div>
-      </BoardHarness>
-    );
+    return kabuk(<Kaynaklar />);
   }
 
   // Ana ekran
   if (ekran === 'anaEkran') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <AnaEkran />
-        </div>
-      </BoardHarness>
-    );
+    return kabuk(<AnaEkran />);
   }
 
   // Tema girişi
   if (ekran === 'temaGirisi') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <TemaGirisi />
-        </div>
-      </BoardHarness>
-    );
+    return kabuk(<TemaGirisi />);
   }
 
   // Konu seçimi (tahta modu)
   if (ekran === 'konuSecimi') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <KonuSecimi />
-        </div>
-      </BoardHarness>
-    );
+    return kabuk(<KonuSecimi />);
   }
 
   // Oturum sonu
   if (ekran === 'oturumSonu') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <OturumSonu oturumTamamlandi={true} onBahcem={() => ekranGit('bahcem')} />
-        </div>
-      </BoardHarness>
-    );
+    return kabuk(<OturumSonu oturumTamamlandi={true} onBahcem={() => ekranGit('bahcem')} />);
   }
 
   // Bahçem
   if (ekran === 'bahcem') {
-    return (
-      <BoardHarness profile={profile}>
-        <div data-yazi={yazi} style={{ height: '100%', ['--color-accent' as string]: accent.hex }}>
-          <Bahcem koleksiyon={{ toplam: bugunTamamlanan, sahneIndeksi: 0, sonKazancMs: null }} onEv={() => ekranGit('anaEkran')} />
-        </div>
-      </BoardHarness>
+    return kabuk(
+      <Bahcem koleksiyon={{ toplam: bugunTamamlanan, sahneIndeksi: 0, sonKazancMs: null }} onEv={() => ekranGit('anaEkran')} />,
     );
   }
 
@@ -389,7 +292,7 @@ export default function App() {
             // Adım 40 aşama 3: tanı ve yardım kademesi MaddeSonuc'tan taşınır (yalnız bellekte).
             useDersOturumu.getState().kaydet(dersOlayiUret(tahtaExercise.skillIds[0], sonuc, yanlisVar.current));
             yanlisVar.current = false;
-            if (aktifSet) setSetSirasi((sira) => sira + 1);
+            if (aktifSet) setSetIlerleme({ set: aktifSet, sira: setSirasi + 1 });
             else setTahtaTohumu((tohum) => tohum + 1);
           }}
         />
@@ -399,10 +302,7 @@ export default function App() {
             type="button"
             data-yetiskin=""
             aria-label="Seti bitir"
-            onClick={() => {
-              setSetSirasi(0);
-              setBitir();
-            }}
+            onClick={setBitir}
             style={{
               position: 'fixed',
               top: 8,
@@ -426,36 +326,31 @@ export default function App() {
       </>
     );
 
-  return (
-    <BoardHarness profile={profile}>
-      <div
-        data-yazi={yazi}
-        style={{ height: '100%', ['--color-accent' as string]: accent.hex }}
-        data-isinma={mod === 'kisisel' && kisiselOturum.isinmada ? '' : undefined}
-      >
-        {import.meta.env.DEV && (
-          <div
-            data-harness
-            style={{
-              position: 'fixed',
-              bottom: 8,
-              left: 8,
-              display: 'flex',
-              gap: 6,
-              zIndex: 9999,
-              background: 'rgba(255,255,255,0.9)',
-              padding: 4,
-              borderRadius: 8,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-              fontSize: 12,
-            }}
-          >
-            <span>Ekran: {ekran}</span>
-            <span>| Mod: {mod ?? '-'}</span>
-          </div>
-        )}
-        {alistirmaIcerigi}
-      </div>
-    </BoardHarness>
+  return kabuk(
+    <>
+      {import.meta.env.DEV && (
+        <div
+          data-harness
+          style={{
+            position: 'fixed',
+            bottom: 8,
+            left: 8,
+            display: 'flex',
+            gap: 6,
+            zIndex: 9999,
+            background: 'rgba(255,255,255,0.9)',
+            padding: 4,
+            borderRadius: 8,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            fontSize: 12,
+          }}
+        >
+          <span>Ekran: {ekran}</span>
+          <span>| Mod: {mod ?? '-'}</span>
+        </div>
+      )}
+      {alistirmaIcerigi}
+    </>,
+    mod === 'kisisel' && kisiselOturum.isinmada,
   );
 }
