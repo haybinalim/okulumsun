@@ -98,8 +98,9 @@ export function nesneTonlari(temel: string): NesneTonlari {
     const golge = hslHex({ h: c.h, s: sinirla(c.s * 1.05, 0, 1), l: sinirla(c.l * 0.72, 0.08, 0.6) });
     // Işık: açık ve hafif doygunluğu düşük (kâğıt üstüne düşen ışık gibi).
     const isik = hslHex({ h: c.h, s: sinirla(c.s * 0.9, 0, 1), l: sinirla(c.l + (1 - c.l) * 0.45, 0.35, 0.92) });
-    // Kontur: aynı tonun çok koyusu; gri tonda da koyu kalmalı.
-    const kontur = hslHex({ h: c.h, s: sinirla(c.s * 0.7, 0, 0.75), l: 0.16 });
+    // Kontur: aynı tonun çok koyusu; gri tonda da koyu kalmalı. Zaten koyu renklerde (renk körlüğü
+    // paleti) gövdeden ayrışsın diye daha da koyulaşır.
+    const kontur = hslHex({ h: c.h, s: sinirla(c.s * 0.7, 0, 0.75), l: Math.min(0.16, c.l * 0.5) });
     sonuc = { temel: temel.toUpperCase(), golge, isik, kontur };
   }
   onbellek.set(temel, sonuc);

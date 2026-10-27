@@ -43,7 +43,10 @@ export function golgeKaydirmasi(ofset: number, donus = 0): [number, number] {
   const a = (-donus * Math.PI) / 180;
   const x = -ofset * 0.8;
   const y = -ofset;
-  return [Math.round((x * Math.cos(a) - y * Math.sin(a)) * 100) / 100, Math.round((x * Math.sin(a) + y * Math.cos(a)) * 100) / 100];
+  return [
+    Math.round((x * Math.cos(a) - y * Math.sin(a)) * 100) / 100,
+    Math.round((x * Math.sin(a) + y * Math.cos(a)) * 100) / 100,
+  ];
 }
 
 /** React `useId` çıktısını SVG/CSS `url(#…)` için güvenli kimliğe çevirir. */

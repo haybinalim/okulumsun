@@ -90,7 +90,10 @@ const YILDIZ = (() => {
     // Yıldız kolunun iki yüzü: kolun ışığa bakan yarısı açık, öbürü koyu.
     const kol = i % 2 === 0 ? 1 : -1;
     const deger = Math.cos(ortaAci - isikYonu) * 0.6 + kol * 0.5;
-    return { d: `M${cx} ${cy}L${p.join(' ')}L${q.join(' ')}Z`, ton: deger > 0.45 ? 'isik' : deger < -0.35 ? 'golge' : 'temel' } as const;
+    return {
+      d: `M${cx} ${cy}L${p.join(' ')}L${q.join(' ')}Z`,
+      ton: deger > 0.45 ? 'isik' : deger < -0.35 ? 'golge' : 'temel',
+    } as const;
   });
   return { d, yuzeyler };
 })();
@@ -199,10 +202,18 @@ const CIZIMLER: Record<NesneSprite, Cizim> = {
           ic={
             <g>
               <path d="M8 60L94 60L94 74L8 74Z" fill={t.golge} opacity="0.55" />
-              <path d="M57 50L57 68M62 55L67 55" fill="none" stroke={t.kontur} strokeWidth={INCE} strokeLinecap="round" />
+              <path
+                d="M57 50L57 68M62 55L67 55"
+                fill="none"
+                stroke={t.kontur}
+                strokeWidth={INCE}
+                strokeLinecap="round"
+              />
             </g>
           }
-          isik={<path d="M18 53C24 51 70 50 82 51" fill="none" stroke={t.isik} strokeWidth="3.5" strokeLinecap="round" />}
+          isik={
+            <path d="M18 53C24 51 70 50 82 51" fill="none" stroke={t.isik} strokeWidth="3.5" strokeLinecap="round" />
+          }
         />
         <Parca d="M42 47L48 35C49 33 50 32 52 32L56 32L56 47Z" fill={cam.temel} kontur={t.kontur} />
         <Parca d="M60 32L66 32C68 32 70 33 71 35L77 47L60 47Z" fill={cam.temel} kontur={t.kontur} />
@@ -227,15 +238,33 @@ const CIZIMLER: Record<NesneSprite, Cizim> = {
       <g>
         <Zemin rx={34} cy={90} />
         <g transform="rotate(-38 50 50)">
-          <Govde d="M12 37L21 37L21 63L12 63C8 63 5 60 5 56L5 44C5 40 8 37 12 37Z" t={silgi} k={`${id}s`} ofset={3} sw={INCE} />
+          <Govde
+            d="M12 37L21 37L21 63L12 63C8 63 5 60 5 56L5 44C5 40 8 37 12 37Z"
+            t={silgi}
+            k={`${id}s`}
+            ofset={3}
+            sw={INCE}
+          />
           <path d="M27 37L70 37L70 63L27 63Z" fill={t.temel} />
           <path d="M27 37L70 37L70 45L27 45Z" fill={t.isik} />
           <path d="M27 55L70 55L70 63L27 63Z" fill={t.golge} />
           <path d="M27 45L70 45M27 55L70 55" stroke={t.kontur} strokeWidth="1.4" opacity="0.5" />
-          <path d="M27 37L70 37L70 63L27 63Z" fill="none" stroke={t.kontur} strokeWidth={KONTUR} strokeLinejoin="round" />
+          <path
+            d="M27 37L70 37L70 63L27 63Z"
+            fill="none"
+            stroke={t.kontur}
+            strokeWidth={KONTUR}
+            strokeLinejoin="round"
+          />
           <Govde d="M20 36L28 36L28 64L20 64Z" t={metal} k={`${id}f`} ofset={2} sw={INCE} />
           <path d="M23 36.5L23 63.5M25.5 36.5L25.5 63.5" stroke={metal.golge} strokeWidth="1.3" />
-          <Govde d="M70 37L93 50L70 63C73 59 73 54 70 50C73 46 73 41 70 37Z" t={ahsap} k={`${id}w`} ofset={3} sw={INCE} />
+          <Govde
+            d="M70 37L93 50L70 63C73 59 73 54 70 50C73 46 73 41 70 37Z"
+            t={ahsap}
+            k={`${id}w`}
+            ofset={3}
+            sw={INCE}
+          />
           <Parca d="M86 46L96 50L86 54C87 52.5 87 47.5 86 46Z" fill={PARCA.grafit} kontur={PARCA.murekkep} sw={1.6} />
         </g>
       </g>
@@ -247,7 +276,12 @@ const CIZIMLER: Record<NesneSprite, Cizim> = {
     return (
       <g>
         <Zemin rx={22} silik />
-        <path d="M44 85L42 94M57 85L59 94M38 94L46 94M55 94L63 94" stroke={gaga.golge} strokeWidth="3" strokeLinecap="round" />
+        <path
+          d="M44 85L42 94M57 85L59 94M38 94L46 94M55 94L63 94"
+          stroke={gaga.golge}
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
         <Parca d="M26 56L8 46C9 54 10 62 13 68Z" fill={t.golge} kontur={t.kontur} sw={KONTUR * 0.8} />
         <Govde
           d={KUS_D}
@@ -281,7 +315,9 @@ const CIZIMLER: Record<NesneSprite, Cizim> = {
               t={t}
               k={`${id}p${i}`}
               ofset={4}
-              isik={<path d="M47 30C45 24 45 17 50 12" fill="none" stroke={t.isik} strokeWidth="3" strokeLinecap="round" />}
+              isik={
+                <path d="M47 30C45 24 45 17 50 12" fill="none" stroke={t.isik} strokeWidth="3" strokeLinecap="round" />
+              }
             />
           </g>
         ))}
