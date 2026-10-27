@@ -47,6 +47,9 @@ if (arsivKodu) {
 } else if (import.meta.env.DEV && new URLSearchParams(location.search).get('gelistirme') === 'hikaye') {
   // KG-91: maskot hikâyesi sahne önizlemesi (tema arka planı + poz + görsel); yalnız geliştirme, uygulamaya bağlı değil.
   void import('./dev/HikayeOnizleme.tsx').then(({ HikayeOnizleme }) => kok.render(<HikayeOnizleme />))
+} else if (import.meta.env.DEV && new URLSearchParams(location.search).get('gelistirme') === 'nesneler') {
+  // KG-104: nesne sprite + materyal kataloğu (64/102 px, renkler, `&gri=1` baskı görünümü); yalnız geliştirme.
+  void import('./dev/NesneKatalogu.tsx').then(({ NesneKatalogu }) => kok.render(<NesneKatalogu />))
 } else {
   kok.render(
     <StrictMode>
