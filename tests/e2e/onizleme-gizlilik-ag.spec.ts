@@ -46,7 +46,7 @@ test.describe('gizlilik: ağ ve depolama', () => {
     await temayiBaslat(page);
     const konu = page.locator('button:not([disabled])');
     const etiketler = await konu.evaluateAll((b) => b.map((x) => x.getAttribute('aria-label') ?? x.textContent ?? ''));
-    const ilk = etiketler.find((e) => e && !/Geri|Yardım|Yönergeyi|Ayarlar/i.test(e));
+    const ilk = etiketler.find((e) => e && !/Geri|Ana menü|Yardım|Yönergeyi|Ayarlar/i.test(e));
     await page.getByRole('button', { name: ilk!, exact: true }).first().click();
     await alistirmalariCoz(page, 5);
 

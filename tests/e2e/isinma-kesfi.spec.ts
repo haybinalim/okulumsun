@@ -41,7 +41,7 @@ test('kişisel: anahtar varsayılan kapalı; açınca ısınma, 2 yanlışta bit
   await anahtar.click();
   await expect(anahtar).toHaveAccessibleName('Oturuma kısa ısınmayla başla: açık');
 
-  await page.getByRole('button', { name: 'Çocuk ekranına dön' }).click();
+  await page.getByRole('button', { name: 'Ana menü', exact: true }).click();
   await temayiBaslat(page);
 
   // Isınma: her madde önce yanlış denenir, sonra doğru bitirilir → ilk deneme yanlış sayılır.

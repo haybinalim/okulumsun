@@ -110,9 +110,11 @@ export function KonuSecimi() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+            // KG-103 düzeltmesi: hücre en az kartın kendisi kadar (ölçekli); eskiden 180 px hücreye 320 px'lik
+            // tahta kartı sığmıyor, kartlar birbirinin üstüne biniyordu (main'de de).
+            gridTemplateColumns: 'repeat(auto-fit, minmax(calc(180px * var(--scale)), 1fr))',
             gap: 'var(--size-gap)',
-            width: 'min(100%, 960px)',
+            width: 'min(100%, calc(960px * var(--scale)))',
           }}
         >
           {temaDugumleri.map((dugum, i) => (
@@ -134,6 +136,7 @@ export function KonuSecimi() {
                 onPress={() => handleKonuSec(dugum)}
                 style={{
                   width: '100%',
+                  minWidth: 0,
                   minHeight: 160,
                   flexDirection: 'column',
                   gap: 8,
@@ -159,7 +162,7 @@ export function KonuSecimi() {
               size="choice"
               variant="accent"
               onPress={handleTemaTuru}
-              style={{ width: '100%', minHeight: 160, flexDirection: 'column', gap: 8 }}
+              style={{ width: '100%', minWidth: 0, minHeight: 160, flexDirection: 'column', gap: 8 }}
             >
               <span aria-hidden="true" style={{ fontSize: 32 }}>🧭</span>
               <span style={{ fontSize: 'var(--text-ui)', textAlign: 'center', fontWeight: 700 }}>Tema turu</span>

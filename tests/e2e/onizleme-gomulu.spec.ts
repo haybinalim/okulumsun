@@ -71,16 +71,20 @@ test('gömülü (EBA): iframe içinde tahta akışı, Eve gönder yok, aynı kö
   await frame.getByRole('button', { name: 'Bugünün setini hazırla' }).click();
   await expect(frame.getByRole('button', { name: /Çalışma kâğıdı yazdır/ })).toBeVisible();
   await expect(frame.getByRole('button', { name: 'Eve gönder' })).toHaveCount(0);
-  await frame.getByRole('button', { name: 'Geri', exact: true }).first().click();
+  // KG-103: gömülü modda da ortak Geri / Ana menü (geçmişe kayıt konmaz; üst portalın geri tuşu bozulmaz).
+  const gecmis = await frame.evaluate(() => history.length);
+  await frame.getByRole('button', { name: 'Geri', exact: true }).click();
+  await expect(frame.getByRole('button', { name: 'Bugünün setini hazırla' })).toBeVisible();
+  expect(await frame.evaluate(() => history.length)).toBe(gecmis);
 
   // Çocuk akışı: tema → konu → 3 soru (e2e kancası çerçevenin içinde).
-  await frame.getByRole('button', { name: 'Çocuk ekranına dön' }).click();
+  await frame.getByRole('button', { name: 'Ana menü', exact: true }).click();
   await frame.getByRole('button', { name: 'Yön ve Yerler', exact: true }).click();
   await expect(frame.getByRole('button', { name: 'Geri', exact: true })).toBeVisible();
   const etiketler = await frame
     .locator('button:not([disabled])')
     .evaluateAll((b) => b.map((x) => x.getAttribute('aria-label') ?? x.textContent ?? ''));
-  const ilk = etiketler.find((e) => e && !/Geri|Yardım|Yönergeyi|tekrar dinle|Tema turu/i.test(e));
+  const ilk = etiketler.find((e) => e && !/Geri|Ana menü|Yardım|Yönergeyi|tekrar dinle|Tema turu/i.test(e));
   await frame.getByRole('button', { name: ilk!, exact: true }).first().click();
   const turler = await alistirmalariCoz(frame as unknown as Page, 3);
   expect(turler).toHaveLength(3);
