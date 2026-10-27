@@ -25,37 +25,45 @@ import {
   type SinifTuruDurumu,
   type SinifTuruOlayi,
 } from '../sinif/sinifTuru';
+import { gezinmeHedefi, type GezinmeDurumu, type GezinmeYonu } from '../ui/gezinme/gezinme';
 
 // ---------------------------------------------------------------- tipler
 
-/** Uygulama ekranları — plan §11 akış. */
-export type Ekran =
-  | 'audioUnlock'
-  | 'modSecimi'
-  | 'avatarSecimi'
-  | 'renkSecimi'
-  | 'anaEkran'
-  | 'temaGirisi'
-  | 'alistirma'
-  | 'oturumSonu'
-  | 'bahcem'
-  | 'konuSecimi'
-  | 'veliKapisi'
-  | 'veliPaneli'
-  | 'kaynaklar'
-  | 'sorunBildir'
-  | 'setHazirla'
-  | 'haftalikPlan'
-  | 'calismaKagidi'
-  | 'sinifTuruKurulum'
-  | 'sinifTuru'
-  | 'sinifTuruSonu'
-  | 'dersSonuOzeti'
-  | 'evdeCalis'
-  | 'veliIpucuKarti'
-  | 'kesifMasasi'
-  | 'temaTuru'
-  | 'eveGonder';
+/**
+ * Uygulama ekranları — plan §11 akış. Liste çalışma anında da var (KG-103): "her ekranda gezinme"
+ * sözleşme testi bu listeyi dolaşır; yeni ekran eklenince `GERI_KURALLARI` (src/ui/gezinme/gezinme.ts)
+ * derlenmez hâle gelir ve test onu da kapsar.
+ */
+export const EKRANLAR = [
+  'audioUnlock',
+  'modSecimi',
+  'avatarSecimi',
+  'renkSecimi',
+  'anaEkran',
+  'temaGirisi',
+  'alistirma',
+  'oturumSonu',
+  'bahcem',
+  'konuSecimi',
+  'veliKapisi',
+  'veliPaneli',
+  'kaynaklar',
+  'sorunBildir',
+  'setHazirla',
+  'haftalikPlan',
+  'calismaKagidi',
+  'sinifTuruKurulum',
+  'sinifTuru',
+  'sinifTuruSonu',
+  'dersSonuOzeti',
+  'evdeCalis',
+  'veliIpucuKarti',
+  'kesifMasasi',
+  'temaTuru',
+  'eveGonder',
+] as const;
+
+export type Ekran = (typeof EKRANLAR)[number];
 
 /** Sınıf Turu durumunun yaşadığı ekranlar; başka ekrana geçişte durum `null` olur. */
 export const SINIF_TURU_EKRANLARI: ReadonlySet<Ekran> = new Set<Ekran>(['sinifTuruKurulum', 'sinifTuru', 'sinifTuruSonu']);
@@ -119,6 +127,11 @@ interface AppStore {
   // --- Navigasyon
   ekran: Ekran;
   oncekiEkran: Ekran | null;
+  /**
+   * KG-103: her ekrana en son hangi ekrandan İLERİ gidildiği (Geri düğmesi birden çok yerden açılan
+   * ekranda buna bakar; `src/ui/gezinme/gezinme.ts`). Geri/Ana menü geçişleri buraya yazılmaz.
+   */
+  girisler: Partial<Record<Ekran, Ekran>>;
 
   // --- Profil (plan §3.3)
   mod: Mod | null;
@@ -160,6 +173,12 @@ interface AppStore {
 
   // --- Actions
   ekranGit: (ekran: Ekran) => void;
+  /**
+   * KG-103: Geri ya da Ana menü. Hedef `gezinme.ts` kurallarından; ayrılınan ekranın bellekteki durumu
+   * (set, tema turu, ev çalışması, Sınıf Turu) o ekranın kendi "bitir" düğmesi gibi silinir. Onay
+   * (ilerleme kaybı) arayüzde sorulur; bu eylem doğrudan geçer. Gezinmesiz ekranda hiçbir şey yapmaz.
+   */
+  gezin: (yon: GezinmeYonu) => void;
   modSec: (mod: Mod) => void;
   avatarSec: (id: string) => void;
   renkSec: (id: Accent['id']) => void;
@@ -205,6 +224,7 @@ interface AppStore {
 const baslangicDurumu = {
   ekran: 'audioUnlock' as Ekran,
   oncekiEkran: null as Ekran | null,
+  girisler: {} as Partial<Record<Ekran, Ekran>>,
   mod: null as Mod | null,
   avatarId: null as string | null,
   accentId: null as Accent['id'] | null,
@@ -227,132 +247,185 @@ const baslangicDurumu = {
   temaTuru: null as { readonly tema: number; readonly plan: TemaTuruPlani } | null,
 };
 
-export const useAppStore = create<AppStore>((set) => ({
-  ...baslangicDurumu,
+type Parca = Partial<AppStore> | ((s: AppStore) => Partial<AppStore>);
 
-  ekranGit: (ekran) =>
-    set((s) => ({
-      oncekiEkran: s.ekran,
-      ekran,
-      // Sınıf Turu ekranlarından çıkınca tur durumu silinir (Adım 36, gizlilik).
-      sinifTuru: SINIF_TURU_EKRANLARI.has(ekran) ? s.sinifTuru : null,
-    })),
+/** Durumdan Geri kurallarının girdisi (KG-103). */
+export function gezinmeDurumu(s: AppStore): GezinmeDurumu {
+  return {
+    ekran: s.ekran,
+    mod: s.mod,
+    aktifSetVar: s.aktifSet !== null,
+    evdeOnDakika: s.evdeOnDakikaTema !== null,
+    girisler: s.girisler,
+  };
+}
 
-  modSec: (mod) =>
-    set({
-      mod,
-      // Tahta modunda avatar/renk atlanır → ana ekrana git.
-      // Kişisel modda avatar seçimine git.
-      ekran: mod === 'tahta' ? 'anaEkran' : 'avatarSecimi',
-      oncekiEkran: 'modSecimi',
-      // Isınma Keşfi tahtada yok (ADR-0007); mod değişince kapanır.
-      isinmaAcik: false,
-    }),
+/** Ayrılınan ekranın yalnız-bellek durumu: ekranın kendi "bitir/kapat" eylemiyle aynı alanlar silinir. */
+function ayrilisTemizligi(kaynak: Ekran, hedef: Ekran): Partial<AppStore> {
+  const t: Partial<AppStore> = {};
+  if (kaynak === 'alistirma') t.aktifSet = null; // setBitir
+  if (kaynak === 'temaTuru') t.temaTuru = null; // temaTuruKapat
+  if (kaynak === 'evdeCalis' || kaynak === 'veliIpucuKarti') {
+    t.evSeti = null; // evCalismasiniBitir / evdeOnDakikaBitir
+    t.evdeOnDakikaTema = null;
+  }
+  if (hedef === 'sinifTuruKurulum') t.sinifTuru = null; // sinifTuruKur
+  return t;
+}
 
-  avatarSec: (id) =>
-    set({ avatarId: id, ekran: 'renkSecimi', oncekiEkran: 'avatarSecimi' }),
+export const useAppStore = create<AppStore>((hamSet, get) => {
+  /**
+   * KG-103: ekranı değiştiren her geçiş `girisler`e "hedefe nereden gelindi" yazar (Geri/Ana menü hariç:
+   * `geri = true`). `girisler`i kendisi veren parça (ör. `sifirla`) olduğu gibi uygulanır.
+   */
+  const set = (parca: Parca, geri = false): void =>
+    hamSet((s) => {
+      const p = typeof parca === 'function' ? parca(s) : parca;
+      if (geri || 'girisler' in p || p.ekran === undefined || p.ekran === s.ekran) return p;
+      return { ...p, girisler: { ...s.girisler, [p.ekran]: s.ekran } };
+    });
+  return {
+    ...baslangicDurumu,
 
-  renkSec: (id) =>
-    set({ accentId: id, ekran: 'anaEkran', oncekiEkran: 'renkSecimi' }),
+    gezin: (yon) => {
+      const s = get();
+      const hedef = gezinmeHedefi(gezinmeDurumu(s), yon);
+      if (hedef === null) return;
+      set(
+        {
+          ...ayrilisTemizligi(s.ekran, hedef),
+          oncekiEkran: s.ekran,
+          ekran: hedef,
+          sinifTuru: SINIF_TURU_EKRANLARI.has(hedef) && hedef !== 'sinifTuruKurulum' ? s.sinifTuru : null,
+        },
+        true,
+      );
+    },
 
-  readingLevelAyarla: (level) => set({ readingLevel: level }),
-  okulAyiAyarla: (index) => set({ okulAyiIndex: Math.max(0, Math.min(index, 9)) }),
-  sesHiziAyarla: (hiz) => set({ sesHizi: Math.max(0.5, Math.min(hiz, 1.5)) }),
-  kapsayicilikAyarla: (degisiklik) => set((s) => ({ kapsayicilik: { ...s.kapsayicilik, ...degisiklik } })),
-  isinmaAyarla: (acik) => set({ isinmaAcik: acik }),
+    ekranGit: (ekran) =>
+      set((s) => ({
+        oncekiEkran: s.ekran,
+        ekran,
+        // Sınıf Turu ekranlarından çıkınca tur durumu silinir (Adım 36, gizlilik).
+        sinifTuru: SINIF_TURU_EKRANLARI.has(ekran) ? s.sinifTuru : null,
+      })),
 
-  veliGec: (gecildi) => set({ veliGecildi: gecildi }),
+    modSec: (mod) =>
+      set({
+        mod,
+        // Tahta modunda avatar/renk atlanır → ana ekrana git.
+        // Kişisel modda avatar seçimine git.
+        ekran: mod === 'tahta' ? 'anaEkran' : 'avatarSecimi',
+        oncekiEkran: 'modSecimi',
+        // Isınma Keşfi tahtada yok (ADR-0007); mod değişince kapanır.
+        isinmaAcik: false,
+      }),
 
-  temaSec: (temaNo) =>
-    set((s) => ({
-      secilenTemaNo: temaNo,
-      secilenDugumId: null,
-      // Kişisel mod → tema girişi → gerçek oturum, tahta → konu seçimi.
-      ekran: s.mod === 'kisisel' ? 'temaGirisi' : 'konuSecimi',
-      oncekiEkran: 'anaEkran',
-      oturumTamamlandi: false,
-    })),
+    avatarSec: (id) =>
+      set({ avatarId: id, ekran: 'renkSecimi', oncekiEkran: 'avatarSecimi' }),
 
-  dugumSec: (dugumId: string) =>
-    set({
-      secilenDugumId: dugumId,
-      aktifSet: null,
-      ekran: 'alistirma',
-      oncekiEkran: 'konuSecimi',
-      oturumTamamlandi: false,
-    }),
+    renkSec: (id) =>
+      set({ accentId: id, ekran: 'anaEkran', oncekiEkran: 'renkSecimi' }),
 
-  oturumuTamamla: () =>
-    set((s) => ({
-      oturumTamamlandi: true,
-      bugunTamamlanan: s.bugunTamamlanan + 1,
-      ekran: 'oturumSonu',
-      oncekiEkran: 'alistirma',
-    })),
+    readingLevelAyarla: (level) => set({ readingLevel: level }),
+    okulAyiAyarla: (index) => set({ okulAyiIndex: Math.max(0, Math.min(index, 9)) }),
+    sesHiziAyarla: (hiz) => set({ sesHizi: Math.max(0.5, Math.min(hiz, 1.5)) }),
+    kapsayicilikAyarla: (degisiklik) => set((s) => ({ kapsayicilik: { ...s.kapsayicilik, ...degisiklik } })),
+    isinmaAyarla: (acik) => set({ isinmaAcik: acik }),
 
-  setBaslat: (aktifSet) =>
-    set({
-      aktifSet,
-      secilenDugumId: null,
-      ekran: 'alistirma',
-      oncekiEkran: 'setHazirla',
-      oturumTamamlandi: false,
-    }),
+    veliGec: (gecildi) => set({ veliGecildi: gecildi }),
 
-  setBitir: () => set((s) => ({ aktifSet: null, ekran: 'anaEkran', oncekiEkran: s.ekran })),
+    temaSec: (temaNo) =>
+      set((s) => ({
+        secilenTemaNo: temaNo,
+        secilenDugumId: null,
+        // Kişisel mod → tema girişi → gerçek oturum, tahta → konu seçimi.
+        ekran: s.mod === 'kisisel' ? 'temaGirisi' : 'konuSecimi',
+        oncekiEkran: 'anaEkran',
+        oturumTamamlandi: false,
+      })),
 
-  kagitIcinSet: (kagitSeti) =>
-    set((s) => ({ kagitSeti, ekran: 'calismaKagidi', oncekiEkran: s.ekran })),
+    dugumSec: (dugumId: string) =>
+      set({
+        secilenDugumId: dugumId,
+        aktifSet: null,
+        ekran: 'alistirma',
+        oncekiEkran: 'konuSecimi',
+        oturumTamamlandi: false,
+      }),
 
-  sinifTuruKur: () => set((s) => ({ sinifTuru: null, ekran: 'sinifTuruKurulum', oncekiEkran: s.ekran })),
+    oturumuTamamla: () =>
+      set((s) => ({
+        oturumTamamlandi: true,
+        bugunTamamlanan: s.bugunTamamlanan + 1,
+        ekran: 'oturumSonu',
+        oncekiEkran: 'alistirma',
+      })),
 
-  sinifTuruBaslat: (renkler, kaynak, turPerTakim) =>
-    set((s) => ({
-      sinifTuru: sinifTuruDurumuBaslat(renkler, kaynak, turPerTakim),
-      ekran: 'sinifTuru',
-      oncekiEkran: s.ekran,
-    })),
+    setBaslat: (aktifSet) =>
+      set({
+        aktifSet,
+        secilenDugumId: null,
+        ekran: 'alistirma',
+        oncekiEkran: 'setHazirla',
+        oturumTamamlandi: false,
+      }),
 
-  sinifTuruOlay: (olay) =>
-    set((s) => {
-      if (!s.sinifTuru) return {};
-      let sonraki: SinifTuruDurumu;
-      try {
-        sonraki = sinifTuruIlerlet(s.sinifTuru, olay);
-      } catch {
-        return {};
-      }
-      return sonraki.asama === 'bitti'
-        ? { sinifTuru: sonraki, ekran: 'sinifTuruSonu', oncekiEkran: s.ekran }
-        : { sinifTuru: sonraki };
-    }),
+    setBitir: () => set((s) => ({ aktifSet: null, ekran: 'anaEkran', oncekiEkran: s.ekran })),
 
-  sinifTuruKapat: () => set((s) => ({ sinifTuru: null, ekran: 'anaEkran', oncekiEkran: s.ekran })),
+    kagitIcinSet: (kagitSeti) =>
+      set((s) => ({ kagitSeti, ekran: 'calismaKagidi', oncekiEkran: s.ekran })),
 
-  evSetiAyarla: (evSeti) => set({ evSeti }),
+    sinifTuruKur: () => set((s) => ({ sinifTuru: null, ekran: 'sinifTuruKurulum', oncekiEkran: s.ekran })),
 
-  evCalismasiniBitir: () =>
-    set((s) => ({ evSeti: null, evdeOnDakikaTema: null, ekran: 'modSecimi', oncekiEkran: s.ekran })),
+    sinifTuruBaslat: (renkler, kaynak, turPerTakim) =>
+      set((s) => ({
+        sinifTuru: sinifTuruDurumuBaslat(renkler, kaynak, turPerTakim),
+        ekran: 'sinifTuru',
+        oncekiEkran: s.ekran,
+      })),
 
-  evdeOnDakikaBaslat: (evSeti, evdeOnDakikaTema) =>
-    set((s) => ({ evSeti, evdeOnDakikaTema, ekran: 'evdeCalis', oncekiEkran: s.ekran })),
+    sinifTuruOlay: (olay) =>
+      set((s) => {
+        if (!s.sinifTuru) return {};
+        let sonraki: SinifTuruDurumu;
+        try {
+          sonraki = sinifTuruIlerlet(s.sinifTuru, olay);
+        } catch {
+          return {};
+        }
+        return sonraki.asama === 'bitti'
+          ? { sinifTuru: sonraki, ekran: 'sinifTuruSonu', oncekiEkran: s.ekran }
+          : { sinifTuru: sonraki };
+      }),
 
-  evIpucunaGec: () => set((s) => ({ evSeti: null, ekran: 'veliIpucuKarti', oncekiEkran: s.ekran })),
+    sinifTuruKapat: () => set((s) => ({ sinifTuru: null, ekran: 'anaEkran', oncekiEkran: s.ekran })),
 
-  evdeOnDakikaBitir: () =>
-    set((s) => ({ evSeti: null, evdeOnDakikaTema: null, ekran: 'anaEkran', oncekiEkran: s.ekran })),
+    evSetiAyarla: (evSeti) => set({ evSeti }),
 
-  eveGonder: (eveGonderSeti) => set((s) => ({ eveGonderSeti, ekran: 'eveGonder', oncekiEkran: s.ekran })),
+    evCalismasiniBitir: () =>
+      set((s) => ({ evSeti: null, evdeOnDakikaTema: null, ekran: 'modSecimi', oncekiEkran: s.ekran })),
 
-  temaTuruBaslat: (tema, plan) =>
-    set((s) => ({ temaTuru: { tema, plan }, aktifSet: null, ekran: 'temaTuru', oncekiEkran: s.ekran })),
+    evdeOnDakikaBaslat: (evSeti, evdeOnDakikaTema) =>
+      set((s) => ({ evSeti, evdeOnDakikaTema, ekran: 'evdeCalis', oncekiEkran: s.ekran })),
 
-  temaTuruKapat: () => set((s) => ({ temaTuru: null, ekran: 'anaEkran', oncekiEkran: s.ekran })),
+    evIpucunaGec: () => set((s) => ({ evSeti: null, ekran: 'veliIpucuKarti', oncekiEkran: s.ekran })),
 
-  sifirla: () => set({ ...baslangicDurumu }),
+    evdeOnDakikaBitir: () =>
+      set((s) => ({ evSeti: null, evdeOnDakikaTema: null, ekran: 'anaEkran', oncekiEkran: s.ekran })),
 
-  profildenYukle: (profil) => set(profil),
-}));
+    eveGonder: (eveGonderSeti) => set((s) => ({ eveGonderSeti, ekran: 'eveGonder', oncekiEkran: s.ekran })),
+
+    temaTuruBaslat: (tema, plan) =>
+      set((s) => ({ temaTuru: { tema, plan }, aktifSet: null, ekran: 'temaTuru', oncekiEkran: s.ekran })),
+
+    temaTuruKapat: () => set((s) => ({ temaTuru: null, ekran: 'anaEkran', oncekiEkran: s.ekran })),
+
+    sifirla: () => set({ ...baslangicDurumu }),
+
+    profildenYukle: (profil) => set(profil),
+  };
+});
 
 export function accentBul(id: Accent['id'] | null): Accent {
   return ACCENTS.find((a) => a.id === id) ?? ACCENTS[0];

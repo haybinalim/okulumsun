@@ -23,7 +23,7 @@ import { hash32 } from '../../exercises/rng';
 const DUGUMLER: readonly SkillNode[] = skillsData;
 
 export function KonuSecimi() {
-  const { secilenTemaNo, ekranGit } = useAppStore();
+  const { secilenTemaNo } = useAppStore();
   const reducedMotion = useHareketAzalt();
   const [kilitliEtiket, setKilitliEtiket] = useState<string | null>(null);
 
@@ -56,10 +56,6 @@ export function KonuSecimi() {
     dugumSec(dugum.id);
   };
 
-  const handleGeri = () => {
-    ekranGit('anaEkran');
-  };
-
   return (
     <main
       style={{
@@ -73,12 +69,7 @@ export function KonuSecimi() {
         overflow: 'hidden',
       }}
     >
-      {/* Üst: geri butonu */}
-      <header style={{ flex: '0 0 auto', display: 'flex' }}>
-        <BigButton label="Geri" size="control" variant="ghost" onPress={handleGeri}>
-          ←
-        </BigButton>
-      </header>
+      {/* Geri / Ana menü: ortak gezinme rayı (KG-103; eski üst köşedeki ← düğmesinin yerine). */}
 
       {/* Etkileşimler tahta erişimi için alt %65'e yerleşir. */}
       <section

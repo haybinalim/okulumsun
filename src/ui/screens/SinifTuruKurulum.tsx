@@ -35,7 +35,6 @@ const satir: CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 'var(--si
 const satirEtiketi: CSSProperties = { fontSize: 'var(--text-adult)', color: COLOR.inkSoft, minWidth: 140, margin: 0 };
 
 export function SinifTuruKurulum() {
-  const ekranGit = useAppStore((s) => s.ekranGit);
   const baslat = useAppStore((s) => s.sinifTuruBaslat);
   const hazirSet = useAppStore((s) => s.aktifSet ?? s.kagitSeti);
 
@@ -229,15 +228,7 @@ export function SinifTuruKurulum() {
         </div>
 
         <footer style={{ display: 'flex', gap: 'var(--size-gap-tight)', alignItems: 'center' }}>
-          <BigButton
-            label="Geri"
-            size="tapMin"
-            variant="ghost"
-            onPress={() => ekranGit('anaEkran')}
-            style={{ padding: '0 20px' }}
-          >
-            ← Geri
-          </BigButton>
+          {/* Geri / Ana menü: ortak gezinme rayı (KG-103). */}
           <BigButton
             label="Sınıf Turunu başlat"
             size="tapMin"

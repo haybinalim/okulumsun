@@ -12,14 +12,11 @@
 
 import { SURUM_METNI } from '../../hata/surum';
 import { UCUNCU_TARAF_VARLIKLAR } from '../../content/ucuncuTarafVarliklar';
-import { useAppStore } from '../../store/appStore';
 
 /** Kullanıcıya dağıtılan varlıklar; geliştirme araçları LICENSES.md'de listelenir. */
 const DAGITILAN = UCUNCU_TARAF_VARLIKLAR.filter((v) => v.dagitimdaVar);
 
 export function Kaynaklar() {
-  const ekranGit = useAppStore((s) => s.ekranGit);
-
   return (
     <div
       style={{
@@ -91,21 +88,7 @@ export function Kaynaklar() {
         </p>
       </section>
 
-      {/* Geri butonu */}
-      <button
-        onClick={() => ekranGit('veliPaneli')}
-        style={{
-          padding: '0.75rem 1.5rem',
-          fontSize: '1rem',
-          background: '#4a90d9',
-          color: 'white',
-          border: 'none',
-          borderRadius: '0.5rem',
-          cursor: 'pointer',
-        }}
-      >
-        ← Geri
-      </button>
+      {/* Geri (veli paneline) / Ana menü: ortak gezinme rayı (KG-103). */}
       <p style={{ marginTop: '1.5rem', fontSize: '0.85rem', color: '#6b6b6b', textAlign: 'center' }}>{SURUM_METNI}</p>
     </div>
   );

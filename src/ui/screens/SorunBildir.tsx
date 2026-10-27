@@ -4,7 +4,6 @@
  * yetişkin metni panoya kopyalayıp isterse kendisi iletir. Hiçbir şey kaydedilmez.
  */
 import { useRef, useState, useSyncExternalStore } from 'react';
-import { useAppStore } from '../../store/appStore';
 import { BigButton } from '../primitives/BigButton';
 import { COLOR } from '../../design/tokens';
 import { abone, kayitlariAl, kayitlariTemizle, raporMetni } from '../../hata/hataKaydi';
@@ -18,7 +17,6 @@ function kuruluMu(): boolean {
 }
 
 export function SorunBildir({ cihaz }: { cihaz: string }) {
-  const ekranGit = useAppStore((s) => s.ekranGit);
   const kayitlar = useSyncExternalStore(abone, kayitlariAl);
   const [durum, setDurum] = useState<string>('');
   const metinAlani = useRef<HTMLTextAreaElement>(null);
@@ -57,9 +55,6 @@ export function SorunBildir({ cihaz }: { cihaz: string }) {
       }}
     >
       <header style={{ flex: '0 0 auto', display: 'flex', gap: 12, alignItems: 'center' }}>
-        <BigButton label="Yetişkin alanına dön" size="control" variant="ghost" onPress={() => ekranGit('veliPaneli')}>
-          ←
-        </BigButton>
         <div>
           <h1 id="sorun-bildir-baslik" style={{ fontSize: 'var(--text-adult)', color: COLOR.ink, margin: 0 }}>
             Sorun bildir

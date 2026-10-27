@@ -35,7 +35,6 @@ function trTarih(iso: string): string {
 const metin = { fontSize: 'var(--text-adult)', color: COLOR.ink, margin: 0 } as const;
 
 export default function HaftalikPlan() {
-  const ekranGit = useAppStore((s) => s.ekranGit);
   const setBaslat = useAppStore((s) => s.setBaslat);
   const kagitIcinSet = useAppStore((s) => s.kagitIcinSet);
   const tahta = useAppStore((s) => s.mod) === 'tahta';
@@ -264,15 +263,7 @@ export default function HaftalikPlan() {
           alignItems: 'center',
         }}
       >
-        <BigButton
-          label="Geri"
-          size="tapMin"
-          variant="ghost"
-          onPress={() => ekranGit('veliPaneli')}
-          style={{ padding: '0 20px' }}
-        >
-          ← Geri
-        </BigButton>
+        {/* Geri (veli paneline) / Ana menü: ortak gezinme rayı (KG-103). */}
         <BigButton
           label="Bu haftanın kâğıdı"
           size="tapMin"

@@ -9,7 +9,6 @@
 import { useEffect, useReducer, useRef } from 'react';
 import { m } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
-import { useAppStore } from '../../store/appStore';
 import { BigButton } from '../primitives/BigButton';
 import { speak } from '../../audio/useSpeak';
 import { COLOR } from '../../design/tokens';
@@ -22,7 +21,6 @@ import { TeraziAraci } from '../kesif/TeraziAraci';
 import { AyirBirlestirAraci } from '../kesif/AyirBirlestirAraci';
 
 export default function KesifMasasi() {
-  const ekranGit = useAppStore((s) => s.ekranGit);
   const [durum, gonder] = useReducer(kesifIndirge, kesifBaslangic('onlukCerceve'));
   const az = useHareketAzalt();
   const ilk = useRef(true);
@@ -103,9 +101,7 @@ export default function KesifMasasi() {
           gap: 'var(--size-gap-tight)',
         }}
       >
-        <BigButton label="Ev" size="tapMin" variant="ghost" onPress={() => ekranGit('anaEkran')}>
-          🏠
-        </BigButton>
+        {/* Ana ekrana dönüş: ortak gezinme rayındaki Geri / Ana menü (KG-103; eski "Ev" düğmesinin yerine). */}
         {EKRAN_ARACLARI.map((a) => (
           <BigButton
             key={a.arac}

@@ -25,7 +25,6 @@ import { yerelGun } from '../../platform/dosyaIndir';
 const KAYITLI = (t: string): boolean => REGISTRY.has(t);
 
 export function SetHazirla() {
-  const ekranGit = useAppStore((s) => s.ekranGit);
   const setBaslat = useAppStore((s) => s.setBaslat);
   const kagitIcinSet = useAppStore((s) => s.kagitIcinSet);
   const eveGonder = useAppStore((s) => s.eveGonder);
@@ -223,9 +222,7 @@ export function SetHazirla() {
       </section>
 
       <footer style={{ flex: '0 0 auto', display: 'flex', gap: 'var(--size-gap-tight)', alignItems: 'center' }}>
-        <BigButton label="Geri" size="tapMin" variant="ghost" onPress={() => ekranGit('veliPaneli')} style={{ padding: '0 20px', fontSize: 'var(--text-adult)', whiteSpace: 'nowrap' }}>
-          ← Geri
-        </BigButton>
+        {/* Geri (veli paneline) / Ana menü: ortak gezinme rayı (KG-103). */}
         <BigButton
           label="Çalışma kâğıdı yazdır"
           size="tapMin"

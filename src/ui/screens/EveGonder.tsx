@@ -18,8 +18,6 @@ type KopyaDurumu = 'bos' | 'kopyalandi' | 'elle';
 
 export default function EveGonder() {
   const set = useAppStore((s) => s.eveGonderSeti);
-  const oncekiEkran = useAppStore((s) => s.oncekiEkran);
-  const ekranGit = useAppStore((s) => s.ekranGit);
   const [kopya, setKopya] = useState<KopyaDurumu>('bos');
   const linkRef = useRef<HTMLParagraphElement>(null);
 
@@ -32,7 +30,6 @@ export default function EveGonder() {
     () => (set ? set.dugumler.map((id) => skillsData.find((d) => d.id === id)?.childLabel ?? id) : []),
     [set],
   );
-  const geri = (): void => ekranGit(oncekiEkran && oncekiEkran !== 'eveGonder' ? oncekiEkran : 'anaEkran');
 
   const kopyala = async (): Promise<void> => {
     if (!link) return;
@@ -111,15 +108,7 @@ export default function EveGonder() {
         </div>
       </section>
       <footer style={{ flex: '0 0 auto', display: 'flex', gap: 16, alignItems: 'center' }}>
-        <BigButton
-          label="Geri"
-          size="tapMin"
-          variant="ghost"
-          onPress={geri}
-          style={{ padding: '0 32px', minHeight: 102 }}
-        >
-          ← Geri
-        </BigButton>
+        {/* Geri (gelinen ekrana) / Ana menü: ortak gezinme rayı (KG-103). */}
         <BigButton
           label="Kopyala"
           size="tapMin"
