@@ -62,7 +62,7 @@ export function Sprite({ name, fill, size }: { name: NesneSprite; fill?: string;
       aria-hidden="true"
       width={size}
       height={size}
-      style={{ display: 'block', overflow: 'visible' }}
+      style={{ display: 'block' }}
       data-sprite={name}
     >
       {CIZIMLER[name](t, id)}
