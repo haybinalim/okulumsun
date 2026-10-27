@@ -170,7 +170,16 @@ export function CalismaKagidi() {
       <div style={{ flex: 1, minHeight: 0, display: 'flex', gap: 'var(--size-gap-tight)' }}>
         <section
           aria-label="Kâğıt ayarları"
-          style={{ flex: '0 0 48%', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 'var(--size-gap-tight)', overflow: 'auto' }}
+          // KG-103: gezinme rayı ana kabı daralttı; ayar sütunu tahtada eski genişliğinin (≈885 px) altına inmez ki
+          // satırlar kaydırmasız sığsın (tablette en çok %58).
+          style={{
+            flex: '0 0 max(48%, min(calc(553px * var(--scale)), 58%))',
+            minWidth: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--size-gap-tight)',
+            overflow: 'auto',
+          }}
         >
           <Secim etiket="Madde sayısı" secenekler={MADDE_SAYILARI} deger={maddeSayisi} yaz={String} sec={setMaddeSayisi} />
           <Secim etiket="Düzen" secenekler={KAGIT_DUZENLERI} deger={duzen} yaz={(d) => DUZEN_ETIKETI[d]} ad={(d) => DUZEN_AD[d]} sec={setDuzen} />

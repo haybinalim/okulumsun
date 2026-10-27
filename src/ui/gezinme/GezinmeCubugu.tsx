@@ -73,12 +73,15 @@ function GezinmeDugmesi({ etiket, onPress, children }: { etiket: string; onPress
       variant="solid"
       onPress={onPress}
       style={{
+        // Genişlik sabit `--size-control` (ray dar kalsın: tahtada 141 px); "Ana menü" gerekirse iki satır.
+        width: 'var(--size-control)',
         flexDirection: 'column',
         gap: 'calc(4px * var(--scale))',
-        padding: 'calc(8px * var(--scale)) calc(10px * var(--scale))',
+        padding: 'calc(8px * var(--scale)) calc(6px * var(--scale))',
         fontSize: KART_ETIKETI_YAZI,
         lineHeight: 1.1,
-        whiteSpace: 'nowrap',
+        textAlign: 'center',
+        overflowWrap: 'normal',
       }}
     >
       {children}
