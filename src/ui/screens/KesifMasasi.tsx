@@ -6,14 +6,22 @@
  * hedefleri alt bölgede ve ≥ `--size-tap-min`. Sürükle-bırak yok. Durum yalnız bu bileşende (bellek),
  * ekrandan çıkınca silinir. Bu ekran tembel yüklenir.
  */
-import { useEffect, useReducer, useRef } from 'react';
+import { useEffect, useLayoutEffect, useReducer, useRef, useState } from 'react';
 import { m } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { BigButton } from '../primitives/BigButton';
 import { speak, useScreenSpeech } from '../../audio/useSpeak';
 import { COLOR } from '../../design/tokens';
 import { KESIF_HOSGELDIN, kesifBaslangic, kesifIndirge, kesifSeslendirme } from '../../kesif/kesifMasasi';
-import { EKRAN_ARACLARI, genelArtiEksiVarMi, gosterilenMetin, gosterilenSayi } from '../kesif/kesifEkrani';
+import {
+  EKRAN_ARACLARI,
+  genelArtiEksiVarMi,
+  gosterilenMetin,
+  gosterilenSayi,
+  nesneTekOnlukMu,
+  onlukTekMi,
+  type KesifOlcu,
+} from '../kesif/kesifEkrani';
 import { OnlukCerceveAraci } from '../kesif/OnlukCerceveAraci';
 import { NesneKumesiAraci } from '../kesif/NesneKumesiAraci';
 import { SayiDogrusuAraci } from '../kesif/SayiDogrusuAraci';
@@ -36,6 +44,42 @@ export default function KesifMasasi() {
     if (kaynak) void speak(kaynak);
   }, [durum]);
 
+  // KG-120: araç alanının ve üst gösterim bölgesinin ölçüsü (küçük tahtada tek onluk; rakam bölgeye sığar).
+  const aracAlani = useRef<HTMLElement>(null);
+  const ustBolge = useRef<HTMLElement>(null);
+  const [olcu, setOlcu] = useState<KesifOlcu | null>(null);
+  const [ustYukseklik, setUstYukseklik] = useState<number | null>(null);
+  useLayoutEffect(() => {
+    const alan = aracAlani.current;
+    const ust = ustBolge.current;
+    if (!alan || !ust) return;
+    const olc = () => {
+      const kok = getComputedStyle(document.documentElement);
+      const px = (ad: string) => parseFloat(kok.getPropertyValue(ad)) || 0;
+      const yeni: KesifOlcu = {
+        genislik: alan.clientWidth,
+        tapMin: px('--size-tap-min'),
+        olcek: px('--scale') || 1,
+        aralik: px('--size-gap'),
+      };
+      setOlcu((o) =>
+        o && o.genislik === yeni.genislik && o.tapMin === yeni.tapMin && o.olcek === yeni.olcek && o.aralik === yeni.aralik
+          ? o
+          : yeni,
+      );
+      setUstYukseklik(ust.clientHeight);
+    };
+    olc();
+    if (typeof ResizeObserver === 'undefined') return;
+    const g = new ResizeObserver(olc);
+    g.observe(alan);
+    g.observe(ust);
+    return () => g.disconnect();
+  }, []);
+  const onlukTek = olcu !== null && onlukTekMi(olcu);
+  const nesneTek = olcu !== null && nesneTekOnlukMu(olcu);
+  const sikisik = (durum.arac === 'onlukCerceve' && onlukTek) || (durum.arac === 'nesneKumesi' && nesneTek);
+
   const sayi = gosterilenSayi(durum);
   const metin = gosterilenMetin(durum);
 
@@ -52,14 +96,16 @@ export default function KesifMasasi() {
         background: COLOR.bg,
         padding: 'var(--size-edge)',
         paddingBottom: 'var(--size-edge-bottom)',
-        gap: 'var(--size-gap-tight)',
+        // Tek onluk görünümünde (küçük ekran) bölümler arası boşluk ızgara boşluğuna iner: ilk göz satırı üst %35'in altında kalır.
+        gap: sikisik ? 'calc(12px * var(--scale))' : 'var(--size-gap-tight)',
         overflow: 'hidden',
       }}
     >
       {/* Üst: yalnız gösterim — büyük rakam. */}
       <section
+        ref={ustBolge}
         aria-live="polite"
-        style={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        style={{ flex: 1, minHeight: 0, alignSelf: 'stretch', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       >
         <m.output
           key={`${durum.arac}-${metin}`}
@@ -68,7 +114,11 @@ export default function KesifMasasi() {
           transition={{ duration: az ? 0 : 0.25 }}
           aria-label={metin}
           style={{
-            fontSize: metin.length > 3 ? 'calc(var(--text-stimulus) * 0.7)' : 'var(--text-stimulus)',
+            // Rakam üst bölgeye sığar (KG-120): bölge rakamdan kısaysa boyut bölge yüksekliğine iner.
+            fontSize: ustSinirli(
+              metin.length > 3 ? 'calc(var(--text-stimulus) * 0.7)' : 'var(--text-stimulus)',
+              ustYukseklik,
+            ),
             fontWeight: 700,
             color: COLOR.ink,
             lineHeight: 1,
@@ -80,9 +130,9 @@ export default function KesifMasasi() {
       </section>
 
       {/* Orta-alt: araç. */}
-      <section style={{ flex: '0 0 auto', display: 'flex', justifyContent: 'center', width: '100%' }}>
-        {durum.arac === 'onlukCerceve' && <OnlukCerceveAraci dolu={durum.dolu} gonder={gonder} />}
-        {durum.arac === 'nesneKumesi' && <NesneKumesiAraci sayi={durum.sayi} gonder={gonder} />}
+      <section ref={aracAlani} style={{ flex: '0 0 auto', display: 'flex', justifyContent: 'center', width: '100%' }}>
+        {durum.arac === 'onlukCerceve' && <OnlukCerceveAraci dolu={durum.dolu} gonder={gonder} tek={onlukTek} />}
+        {durum.arac === 'nesneKumesi' && <NesneKumesiAraci sayi={durum.sayi} gonder={gonder} tekOnluk={nesneTek} />}
         {durum.arac === 'sayiDogrusu' && <SayiDogrusuAraci konum={durum.konum} gonder={gonder} />}
         {durum.arac === 'terazi' && <TeraziAraci sol={durum.sol} sag={durum.sag} gonder={gonder} />}
         {durum.arac === 'ayirBirlestir' && (
@@ -132,4 +182,12 @@ export default function KesifMasasi() {
       </nav>
     </main>
   );
+}
+
+/**
+ * Yazı boyutunu ölçülen bölge yüksekliğiyle sınırlar. Satır yüksekliği 1 olsa da rakam glifleri satır kutusundan
+ * taşar (TemelYazi size-adjust); %80 pay bölgede kesilmeden görünmesini sağlar. Ölçü yoksa olduğu gibi.
+ */
+function ustSinirli(boyut: string, yukseklik: number | null): string {
+  return yukseklik === null || yukseklik <= 0 ? boyut : `min(${boyut}, ${Math.floor(yukseklik * 0.8)}px)`;
 }

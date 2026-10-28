@@ -50,3 +50,39 @@ export function gosterilenSayi(d: KesifDurumu): number {
 export function pencereBaslangici(konum: number): number {
   return konum <= 10 ? 0 : 10;
 }
+
+/**
+ * Küçük ekran yerleşimi (KG-120): araç alanının ölçülen genişliğine göre iki onluk yan yana sığar mı?
+ * Sığmazsa ekran tek onluk gösterir + "İkinci onluk" düğmesi (102 px hedef ve üst %35 kuralı korunur;
+ * iki onluğu alt alta dizmek 1080×810 tahtada ilk satırı üst %35'e iter, alt düğmeleri ekran dışına atar).
+ * Ölçüler px: `tapMin` = `--size-tap-min`, `olcek` = `--scale`, `aralik` = `--size-gap`.
+ */
+export interface KesifOlcu {
+  readonly genislik: number;
+  readonly tapMin: number;
+  readonly olcek: number;
+  readonly aralik: number;
+}
+
+/** Izgara boşluğu px (`ortak.tsx` `izgaraBoslugu` = 12px × ölçek). */
+export const izgaraBoslukPx = (olcek: number): number => 12 * olcek;
+
+/** Bir 2×5 onluk çerçevenin genişliği: 5 göz + 4 iç boşluk + 2 kenar dolgusu + 3 px'lik iki çizgi. */
+export function onlukCerceveGenisligi(o: Pick<KesifOlcu, 'tapMin' | 'olcek'>): number {
+  return 5 * o.tapMin + 6 * izgaraBoslukPx(o.olcek) + 6;
+}
+
+/** Onluk çerçeve: iki çerçeve yan yana sığmıyorsa tek onluk + geçiş düğmesi. */
+export function onlukTekMi(o: KesifOlcu): boolean {
+  return o.genislik + 0.5 < 2 * onlukCerceveGenisligi(o) + o.aralik;
+}
+
+/** Nesneler: 10'arlı sıra sığmıyorsa 5'li iki sıra (bir onluk) + geçiş düğmesi. */
+export function nesneTekOnlukMu(o: KesifOlcu): boolean {
+  return o.genislik + 0.5 < 10 * o.tapMin + 9 * izgaraBoslukPx(o.olcek);
+}
+
+/** Tek onluk görünümünde son değişikliğin onluğu (0 | 1): ekran değişen gözü/nesneyi gösterir. */
+export function onlukSirasi(indeks: number): 0 | 1 {
+  return indeks >= 10 ? 1 : 0;
+}
