@@ -10,11 +10,17 @@ import { paraGorselStratejisi } from '../../content/paraGorseli';
 import { TCMB_YAZILI_IZIN } from '../../content/paraGorseli';
 import type { OptionDeger, VisualSpec } from '../../exercises/types';
 import { anahtarSayfalari, grupCumlesi, type AnahtarSayfasi } from '../../ogretmen/calismaKagidi/anahtarSayfalari';
-import { EYLEM_METNI, type KagitMaddesi, type KagitSecenegi, type YonergeIkonu } from '../../ogretmen/calismaKagidi/kagitMaddesi';
+import {
+  EYLEM_METNI,
+  type KagitMaddesi,
+  type KagitSecenegi,
+  type YonergeIkonu,
+} from '../../ogretmen/calismaKagidi/kagitMaddesi';
 import type { KagitDuzeni, KagitPlani } from '../../ogretmen/calismaKagidi/kagitPlani';
-import { maddeKaplama } from '../../ogretmen/calismaKagidi/kagitYerlesimi';
+import { maddeKaplama, sahneKutusu } from '../../ogretmen/calismaKagidi/kagitYerlesimi';
 import { SematikBanknot } from '../svg/SematikBanknot';
-import { Visual } from '../svg/Visual';
+import { ortakKumeBoyutu, type KumeTarifi } from '../svg/kumeYerlesimi';
+import { KAGIT_NESNE_EN_AZ_MM, KAGIT_NESNE_EN_BUYUK_MM, Visual, type BaskiOlcegi } from '../svg/Visual';
 import './kagit.css';
 import { KAGIT_ALT_YAZI, KAGIT_AYRAC, kagitYazisi } from './kagitYazisi';
 
@@ -57,7 +63,13 @@ export interface KagitSayfalariProps {
 }
 
 function Ikon({ ikon }: { ikon: YonergeIkonu }) {
-  const ortak = { fill: 'none', stroke: '#000', strokeWidth: 3, strokeLinecap: 'round', strokeLinejoin: 'round' } as const;
+  const ortak = {
+    fill: 'none',
+    stroke: '#000',
+    strokeWidth: 3,
+    strokeLinecap: 'round',
+    strokeLinejoin: 'round',
+  } as const;
   return (
     <svg className="kg-ikon" viewBox="0 0 32 32" aria-hidden="true">
       {ikon === 'kalem' && <path {...ortak} d="M6 26l2-7L22 5l5 5L13 24z M19 8l5 5" />}
@@ -75,7 +87,14 @@ function BanknotGorseli({ deger, genislik }: { deger: 5 | 10 | 20 | 50 | 100 | 2
   return <Visual spec={{ type: 'banknot', deger }} width={genislik} height={Math.round(genislik / 2)} />;
 }
 
-function SecenekIcerigi({ deger }: { deger: OptionDeger }) {
+/**
+ * Seçenek kutusundaki görselin çizim genişliği (birim) ve basılı mm karşılığı: kutu 26 mm − 2 × 1,2 mm kontur
+ * − 2 × 1 mm dolgu = 21,6 mm (KG-105; kümeler bu ölçekle büyür).
+ */
+const SECENEK_GORSEL_BIRIM = 140;
+const SECENEK_BASKISI: BaskiOlcegi = { mmBirim: 21.6 / SECENEK_GORSEL_BIRIM };
+
+function SecenekIcerigi({ deger, kumeBoyutu }: { deger: OptionDeger; kumeBoyutu?: number }) {
   switch (deger.tur) {
     case 'sayi':
       return <Visual spec={{ type: 'rakam', sayi: deger.sayi }} width={120} height={120} />;
@@ -87,7 +106,12 @@ function SecenekIcerigi({ deger }: { deger: OptionDeger }) {
       return deger.gorsel.type === 'banknot' ? (
         <BanknotGorseli deger={deger.gorsel.deger} genislik={150} />
       ) : (
-        <Visual spec={deger.gorsel} width={deger.gorsel.type === 'islemKarti' ? 220 : 140} height={140} />
+        <Visual
+          spec={deger.gorsel}
+          width={deger.gorsel.type === 'islemKarti' ? 220 : SECENEK_GORSEL_BIRIM}
+          height={SECENEK_GORSEL_BIRIM}
+          baski={{ ...SECENEK_BASKISI, kumeBoyutu }}
+        />
       );
     case 'terim':
       return <span className="kg-yazi">{TERIM_METNI[deger.terim] ?? deger.terim}</span>;
@@ -98,7 +122,17 @@ function SecenekIcerigi({ deger }: { deger: OptionDeger }) {
   }
 }
 
-function Secenek({ s, harfRozeti, kutu }: { s: KagitSecenegi; harfRozeti: boolean; kutu: boolean }) {
+function Secenek({
+  s,
+  harfRozeti,
+  kutu,
+  kumeBoyutu,
+}: {
+  s: KagitSecenegi;
+  harfRozeti: boolean;
+  kutu: boolean;
+  kumeBoyutu?: number;
+}) {
   const genis =
     s.deger.tur === 'banknot' ||
     (s.deger.tur === 'gorsel' && (s.deger.gorsel.type === 'banknot' || s.deger.gorsel.type === 'islemKarti'));
@@ -106,37 +140,78 @@ function Secenek({ s, harfRozeti, kutu }: { s: KagitSecenegi; harfRozeti: boolea
     <div className="kg-secenek-sarma">
       <div className={`kg-secenek${genis ? ' kg-secenek--genis' : ''}`} data-secenek={s.etiket}>
         {harfRozeti && <span className="kg-rozet">{s.etiket}</span>}
-        <SecenekIcerigi deger={s.deger} />
+        <SecenekIcerigi deger={s.deger} kumeBoyutu={kumeBoyutu} />
       </div>
       {kutu && <span className="kg-yaz-kutusu kg-yaz-kutusu--kucuk" aria-hidden="true" />}
     </div>
   );
 }
 
-/** Sahne çizimi ekrandakiyle aynı oranda; nesneler kenara taştığı için çevresine pay bırakılır. */
+/**
+ * Sahne (KG-105). Kutu (`.kg-sahne`) maddede kalan gerçek yeri doldurur; çizim (`.kg-sahne-ic`) kendi en-boy
+ * oranıyla bu kutuya sığar, işaretler çizime göre yüzdeyle konur.
+ *  · Geniş çerçeve (nesne kümesi, işlem sahnesi, bileşik sahne, onluk çerçeve, örüntü, sayı doğrusu, ölçme…):
+ *    çizim kutunun tahmini mm ölçüsüyle (`sahneKutusu`, 1 birim = 0,1 mm) yapılır; kümeler ızgarayla ve
+ *    ≤ 14 mm nesneyle dizilir. Eskiden 500 × 350'lik çizim 28 mm yüksekliğe ölçekleniyor, nesneler ~5 mm kalıyordu.
+ *    İşaretler (hotspot, boş yuva) normalize konumludur; bu çizimlerde normalize geometri en-boy oranından
+ *    bağımsız olduğundan geniş çerçevede de yerini bulur.
+ *  · Sabit oran (konum sahnesi, yön kartı, banknot, işlem kartı, şekilli GEO sahneleri): ekrandaki 500 × 350 oranı ve kenar payı; yalnız
+ *    kutu büyüdükçe ölçeklenir.
+ */
 const SAHNE_W = 500;
 const SAHNE_H = 350;
 const SAHNE_PAY = 34;
+const MM_BIRIM = 10;
+const SABIT_ORANLI = new Set<VisualSpec['type']>(['konumSahnesi', 'yonKarti', 'banknot', 'islemKarti']);
+/** Nesneleri kutunun içinde kalan çizimler: kenar payı gerekmez. */
+const PAYSIZ = new Set<VisualSpec['type']>(['nesneKumesi', 'islemSahnesi']);
 
-function Sahne({ spec, m }: { spec: VisualSpec; m: KagitMaddesi }) {
-  const toplamW = SAHNE_W + 2 * SAHNE_PAY;
-  const toplamH = SAHNE_H + 2 * SAHNE_PAY;
-  const yuzde = (v: number, boyut: number, toplam: number): string => `${((SAHNE_PAY + v * boyut) / toplam) * 100}%`;
+function Sahne({ spec, m, duzen }: { spec: VisualSpec; m: KagitMaddesi; duzen: KagitDuzeni }) {
+  // GEO sahneleri (örtüşen şekiller + işaretler) ekrandaki oranında kalır: geniş çerçevede şekiller hücreden taşıyordu.
+  const genis =
+    !SABIT_ORANLI.has(spec.type) && !(spec.type === 'sahne' && spec.parcalar.some((p) => p.gorsel.type === 'sekil'));
+  const kutu = sahneKutusu(m, duzen);
+  const w = genis ? Math.round(kutu.w * MM_BIRIM) : SAHNE_W;
+  const h = genis ? Math.round(kutu.h * MM_BIRIM) : SAHNE_H;
+  const pay = !genis ? SAHNE_PAY : PAYSIZ.has(spec.type) ? 0 : Math.round(h * 0.04);
+  const toplamW = w + 2 * pay;
+  const toplamH = h + 2 * pay;
+  const yuzde = (v: number, boyut: number, toplam: number): string => `${((pay + v * boyut) / toplam) * 100}%`;
   return (
-    <div className="kg-sahne" style={{ aspectRatio: `${toplamW} / ${toplamH}` } as CSSProperties}>
-      <svg viewBox={`${-SAHNE_PAY} ${-SAHNE_PAY} ${toplamW} ${toplamH}`} aria-hidden="true">
-        <Visual spec={spec} width={SAHNE_W} height={SAHNE_H} />
-      </svg>
-      {m.isaretler.map((i) => {
-        const x = Math.min(0.97, Math.max(0.03, i.x));
-        const y = Math.min(0.97, Math.max(0.03, m.yanitBicimi === 'daireIcineAl' ? i.y + i.yaricap : i.y));
-        return (
-          <span key={i.etiket} className="kg-isaret" style={{ left: yuzde(x, SAHNE_W, toplamW), top: yuzde(y, SAHNE_H, toplamH) }}>
-            {i.etiket}
-          </span>
-        );
-      })}
+    <div className="kg-sahne" data-sahne-turu={genis ? 'genis' : 'sabit'}>
+      <div className="kg-sahne-ic" style={{ '--sahne-oran': toplamW / toplamH } as CSSProperties}>
+        <svg viewBox={`${-pay} ${-pay} ${toplamW} ${toplamH}`} aria-hidden="true">
+          <Visual spec={spec} width={w} height={h} baski={genis ? { mmBirim: 1 / MM_BIRIM } : undefined} />
+        </svg>
+        {m.isaretler.map((i) => {
+          const x = Math.min(0.97, Math.max(0.03, i.x));
+          const y = Math.min(0.97, Math.max(0.03, m.yanitBicimi === 'daireIcineAl' ? i.y + i.yaricap : i.y));
+          return (
+            <span
+              key={i.etiket}
+              className="kg-isaret"
+              style={{ left: yuzde(x, w, toplamW), top: yuzde(y, h, toplamH) }}
+            >
+              {i.etiket}
+            </span>
+          );
+        })}
+      </div>
     </div>
+  );
+}
+
+/** Aynı maddedeki küme seçeneklerinin ortak nesne boyu (KG-105; karşılaştırmada boy miktarla değişmez). */
+function secenekKumeBoyutu(m: KagitMaddesi): number | undefined {
+  const kumeler = m.secenekler.flatMap((s) =>
+    s.deger.tur === 'gorsel' && s.deger.gorsel.type === 'nesneKumesi'
+      ? [{ spec: s.deger.gorsel as KumeTarifi, w: SECENEK_GORSEL_BIRIM, h: SECENEK_GORSEL_BIRIM }]
+      : [],
+  );
+  return ortakKumeBoyutu(
+    kumeler,
+    KAGIT_NESNE_EN_BUYUK_MM / SECENEK_BASKISI.mmBirim,
+    KAGIT_NESNE_EN_AZ_MM / SECENEK_BASKISI.mmBirim,
   );
 }
 
@@ -146,6 +221,7 @@ function Madde({ m, duzen }: { m: KagitMaddesi; duzen: KagitDuzeni }) {
   const sirali = m.yanitBicimi === 'siraNumarasiYaz';
   const sol = m.secenekler.filter((s) => s.taraf === 'sol');
   const sag = m.secenekler.filter((s) => s.taraf === 'sag');
+  const kumeBoyutu = secenekKumeBoyutu(m);
   return (
     <article
       className={`kg-madde kg-madde--k${kaplama}${yatay ? ' kg-madde--yatay' : ''}`}
@@ -165,23 +241,23 @@ function Madde({ m, duzen }: { m: KagitMaddesi; duzen: KagitDuzeni }) {
         <div className="kg-esle">
           <div className="kg-esle-satir">
             {sol.map((s) => (
-              <Secenek key={s.id} s={s} harfRozeti kutu={false} />
+              <Secenek key={s.id} s={s} harfRozeti kutu={false} kumeBoyutu={kumeBoyutu} />
             ))}
           </div>
           <div className="kg-esle-satir">
             {sag.map((s) => (
-              <Secenek key={s.id} s={s} harfRozeti kutu={false} />
+              <Secenek key={s.id} s={s} harfRozeti kutu={false} kumeBoyutu={kumeBoyutu} />
             ))}
           </div>
         </div>
       ) : (
         <>
           <div className="kg-govde">
-            {m.sahne && <Sahne spec={m.sahne} m={m} />}
+            {m.sahne && <Sahne spec={m.sahne} m={m} duzen={duzen} />}
             {m.secenekler.length > 0 && (
               <div className="kg-secenekler">
                 {m.secenekler.map((s) => (
-                  <Secenek key={s.id} s={s} harfRozeti={m.harfRozeti} kutu={sirali} />
+                  <Secenek key={s.id} s={s} harfRozeti={m.harfRozeti} kutu={sirali} kumeBoyutu={kumeBoyutu} />
                 ))}
               </div>
             )}

@@ -182,20 +182,33 @@
   gap: 3mm;
 }
 
-/* Sahne */
+/*
+ * Sahne (KG-105): kutu maddede kalan yeri doldurur (dar hücrede en az eski 28 mm, yatayda 75 mm sütun × kalan
+ * yükseklik); çizim kendi oranıyla (`--sahne-oran`) kutuya sığar — kap sorgusu birimleri (cqw/cqh) yazdırmada da çalışır.
+ */
 .kg-sahne {
   position: relative;
-  flex: none;
-  height: 28mm;
-  max-width: 100%;
-  margin: 0 auto;
+  flex: 1 1 0;
+  min-height: 28mm;
+  min-width: 0;
+  container-type: size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .kg-madde--yatay .kg-sahne {
-  height: 34mm;
-  width: auto;
-  margin: 0;
+  flex: none;
+  width: 75mm;
+  min-height: 34mm;
+  align-self: stretch;
 }
-.kg-sahne > svg {
+.kg-sahne-ic {
+  position: relative;
+  flex: none;
+  aspect-ratio: var(--sahne-oran);
+  height: min(100cqh, 100cqw / var(--sahne-oran));
+}
+.kg-sahne-ic > svg {
   width: 100%;
   height: 100%;
   display: block;

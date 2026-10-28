@@ -43,7 +43,7 @@ const BLOK_ARASI = 0.3;
 /** Nesne boyu / hücre. */
 const DOLULUK = 0.8;
 /** Nesne üst sınırı = bu × tapMin (az nesnede dev hedef olmasın). */
-const UST_CARPAN = 1.6;
+export const UST_CARPAN = 1.6;
 /** Dağınıkta hücre bolluğu ve en büyük sarsıntı (üreticiyle aynı: say.ts). */
 const HUCRE_BOLLUGU = 1.45;
 const EN_BUYUK_SARSINTI = 0.15;
