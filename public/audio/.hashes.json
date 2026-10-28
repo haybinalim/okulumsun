@@ -7,6 +7,17 @@
     "cocukUrunundeKullanim": "kosullu",
     "atifSarti": "Sesler Google Cloud Text-to-Speech ile üretilmiştir."
   },
+  "$anahtarSesleri": [
+    {
+      "onekler": [
+        "maskot.",
+        "hikaye."
+      ],
+      "modelKimligi": "google:tr-TR-Chirp3-HD-Achernar@2026-10",
+      "hiz": 0.9,
+      "karar": "KG-114"
+    }
+  ],
   "sayi.0": "f7d7370b35548d4f",
   "sayi.1": "74eb97eccf9dbf25",
   "sayi.2": "28136c0276a2692f",
@@ -348,5 +359,27 @@
   "giris.t7-1": "9dd8e4cf789d6063",
   "giris.t7-2": "b960240338fb1d79",
   "giris.t7-3": "dde593455ad25f60",
-  "giris.t7-4": "9e9952394cee8e8c"
+  "giris.t7-4": "9e9952394cee8e8c",
+  "maskot.selam": "e52a74a03216c217",
+  "hikaye.t1-1": "f6a0424c71894499",
+  "hikaye.t1-2": "ea2bcf1c87ecb478",
+  "hikaye.t1-3": "4c909f1508e18e08",
+  "hikaye.t2-1": "d2d855fcd751655d",
+  "hikaye.t2-2": "f0d13b0006b55297",
+  "hikaye.t2-3": "eebd525ac44041ba",
+  "hikaye.t3-1": "e6718cd636a543d0",
+  "hikaye.t3-2": "07d90c05695920d5",
+  "hikaye.t3-3": "ca81df18e687c12c",
+  "hikaye.t4-1": "f9a0ed94f7acade5",
+  "hikaye.t4-2": "d810b3428ef06975",
+  "hikaye.t4-3": "8e43a568b398f141",
+  "hikaye.t5-1": "4089f4f4e213d51e",
+  "hikaye.t5-2": "21e2e6ef2ca043de",
+  "hikaye.t5-3": "31a408ae53b244c7",
+  "hikaye.t6-1": "4ddd773f5232a315",
+  "hikaye.t6-2": "a8c71a55559bc651",
+  "hikaye.t6-3": "21f586bb023be608",
+  "hikaye.t7-1": "8a66b659c4013475",
+  "hikaye.t7-2": "9ddab7590efbe736",
+  "hikaye.t7-3": "529618728db39e7f"
 }

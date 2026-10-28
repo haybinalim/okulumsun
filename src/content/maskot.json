@@ -1,0 +1,4 @@
+{
+  "$not": "Maskotun adı — TEK KAYNAK (KG-115, kullanıcı kararı 28 Eki 2026 18:33 +03; pilot sınıf oylaması yerine kullanıcı seçti, sonradan değiştirilebilir). Değiştirmek için yalnız bu alanı değiştirip 'npm run audio' çalıştırın: ses metinlerindeki {maskotAdi} yer tutucusu buradan doldurulur (yalnız ad geçen klipler yeniden üretilir), ekranlar src/content/maskot.ts MASKOT_ADI'yı kullanır. Adın başka bir dosyada düz yazılması testle engellenir.",
+  "ad": "Lokum"
+}

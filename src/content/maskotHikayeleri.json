@@ -1,5 +1,5 @@
 {
-  "$aciklama": "Plan v2 Adım 54: maskotun tema hikâyeleri (7 tema × 3 sahne). Ses anahtarları tr.json'da YOK, klip yok (Adım 31 + maskot sesi kararı); uygulamaya bağlı değil (KG-91). Maskotun adı pilot sınıf oylamasını bekliyor, metinlerde ad geçmez. Öğretmen okuması ve 3 çocuk + 1 öğretmen izlemesi bekliyor.",
+  "$aciklama": "Plan v2 Adım 54: maskotun tema hikâyeleri (7 tema × 3 sahne). Konuşulan metnin kaynağı tr.json 'hikaye' ad alanıdır; buradaki 'metin' onunla birebir aynı olmalı (test). Klipler maskot sesiyle (Achernar 0,9, KG-114). Bağlama (KG-116): derin tema girişinin başında 1. sahne (maskot.selam ile), kişisel oturum sonunda sıradaki sahne. Maskotun adı tek yerden: src/content/maskot.json (KG-115); hikâye metinlerinde ad geçmez. 3 çocuk + 1 öğretmen izlemesi bekliyor.",
   "hikayeler": [
     {
       "tema": 1,
@@ -9,7 +9,7 @@
         {
           "no": 1,
           "sesAnahtari": "hikaye.t1-1",
-          "metin": "Parka geldik! Topum bir yere kaçtı, birlikte arayalım mı?",
+          "metin": "Topum parkta bir yere kaçtı. Birlikte arayalım mı?",
           "poz": "konusuyor",
           "gorsel": {
             "type": "nesneKumesi",
@@ -197,7 +197,7 @@
         {
           "no": 1,
           "sesAnahtari": "hikaye.t5-1",
-          "metin": "Pazara geldik! Kesemde biraz param var.",
+          "metin": "Kesemde biraz param var. Pazardan elma alacağım.",
           "poz": "konusuyor",
           "gorsel": {
             "type": "banknot",
@@ -273,7 +273,7 @@
         {
           "no": 1,
           "sesAnahtari": "hikaye.t7-1",
-          "metin": "Çiftliğe hoş geldin! Burada hayvanları sayıp panoya işliyoruz.",
+          "metin": "Çiftlikte hayvanları sayıp panoya işliyoruz. Bana yardım eder misin?",
           "poz": "konusuyor",
           "gorsel": {
             "type": "nesneKumesi",

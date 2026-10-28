@@ -392,5 +392,33 @@
     "t7-2": "Çitte dört kuş var. Kuşlara dokun.",
     "t7-3": "Havuzda balıklar yüzüyor. Balıklara dokun.",
     "t7-4": "Saydıklarımızı tabloda gösteririz. Haydi başlayalım!"
+  },
+  "maskot": {
+    "$not": "Maskotun kendi klipleri (Adım 54, KG-114/115/116): maskot sesi Achernar 0,9 (sesKaynagi.json anahtarSesleri). {maskotAdi} yer tutucusu src/content/maskot.json 'ad' alanından doldurulur (scripts/ses/klipler.ts); ad değişirse yalnız bu klip yeniden üretilir.",
+    "selam": "Merhaba! Ben {maskotAdi}."
+  },
+  "hikaye": {
+    "$not": "Maskot tema hikâyeleri (Adım 54, KG-116): 7 tema × 3 sahne, sahne verisi src/content/maskotHikayeleri.json (metin burada ile aynı). Maskot sesi Achernar 0,9; en çok iki kısa cümle, 'yanlış'/yarış/acele dili yok.",
+    "t1-1": "Topum parkta bir yere kaçtı. Birlikte arayalım mı?",
+    "t1-2": "Bankın altına mı baksak, ağacın arkasına mı? Yerleri birlikte söyleyelim.",
+    "t1-3": "Top kaydırağın yanındaymış! Yarın parkta yine oynarız.",
+    "t2-1": "Bahçemde çiçekler açıyor. Hadi birlikte sayalım!",
+    "t2-2": "Kelebekler de geldi. Her birine bir sayı söyleyelim.",
+    "t2-3": "Ağacımda tam on elma var. Saydığın her şey bahçede büyüyor.",
+    "t3-1": "Mutfakta kurabiye yapacağız. Önce kaplarımızı seçelim.",
+    "t3-2": "Hangi kalem uzun, hangisi kısa? Rafa birlikte bakalım.",
+    "t3-3": "Teraziyle tarttık, kurabiyeler hazır! Ölçmek ne güzel.",
+    "t4-1": "Gölde ördekler yüzüyor. Bazıları geliyor, bazıları gidiyor.",
+    "t4-2": "İki ördek daha geldi. Hepsini birlikte sayalım.",
+    "t4-3": "Akşam oldu, ördekler yuvasına dönüyor. Gölde bugün çok şey öğrendik.",
+    "t5-1": "Kesemde biraz param var. Pazardan elma alacağım.",
+    "t5-2": "Tezgâhta mis kokulu elmalar var. Hangi parayla alabiliriz?",
+    "t5-3": "Elmalarımızı aldık. Paraları tanımak alışverişi kolaylaştırıyor.",
+    "t6-1": "Atölyemde bloklarla bir ev yapacağım. Duvar için kare lazım.",
+    "t6-2": "Çatı için de üçgen seçelim. Şekilleri birlikte bulalım.",
+    "t6-3": "Ev bitti! Penceresi de çember oldu.",
+    "t7-1": "Çiftlikte hayvanları sayıp panoya işliyoruz. Bana yardım eder misin?",
+    "t7-2": "Her hayvan için panoya bir çizgi çekelim.",
+    "t7-3": "Pano doldu! Çizgilere bakınca kaç hayvan olduğunu hemen görüyoruz."
   }
 }

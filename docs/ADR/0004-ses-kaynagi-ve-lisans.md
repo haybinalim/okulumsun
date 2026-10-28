@@ -2,7 +2,7 @@
 
 - **Durum:** Kabul
 - **Tarih:** 2026-10-28
-- **Karar sahibi:** Kullanıcı · **Kullanıcı onayı:** Sağlayıcı seçildi 11 Eki 2026 (KG-01, sohbet kaydı); Adım 18'e başlama onayı 12 Eki 2026; ses adı seçildi 28 Eki 2026 10:35 (+03): "puck daha iyi" (KG-107, sohbet kaydı)
+- **Karar sahibi:** Kullanıcı · **Kullanıcı onayı:** Sağlayıcı seçildi 11 Eki 2026 (KG-01, sohbet kaydı); Adım 18'e başlama onayı 12 Eki 2026; ses adı seçildi 28 Eki 2026 10:35 (+03): "puck daha iyi" (KG-107, sohbet kaydı); maskot sesi seçildi 28 Eki 2026 18:29 (+03): Achernar, hız 0,9 (KG-114, K-12, sohbet kaydı)
 - **İlgili:** PLAN §4, Adım 15, 18, 31, 32, 54, 58, `docs/ses/SES_KAYNAKLARI.md`, eksik G01
 
 ## Bağlam
@@ -67,6 +67,7 @@ Sağlayıcı (KG-01) ayrıntıları: Google yalnız derleme anında, geliştiric
 - Değişen dosyalar / PLAN bölümleri: `src/content/sesKaynagi.json` (aktif kaynak ve model kimliği), `scripts/generate-audio.ts` (`google` sağlayıcısı, Adım 31), `public/audio/` (287 klip sıfırdan), Kaynaklar ekranı ve LICENSES ses satırı, PLAN §4.
 - Test / kanıt: `audio:audit` köken ve lisans kapısı `SES_GECIS_MODU` olmadan yeşil; dinleme testi (Adım 32) eşiği.
 - **Uygulandı (Adım 31, 28 Eki 2026):** aktif kaynak `google:tr-TR-Chirp3-HD-Puck@2026-10`; 287 klip sıfırdan üretildi (287 istek, 3.365 karakter); `SES_GECIS_MODU` CI'dan ve denetim betiğinden kaldırıldı, `audio:audit` istisnasız yeşil; ifşa cümlesi Kaynaklar ekranında ve LICENSES'ta. `public/audio/` 1,97 → 2,70 MB. Kalan: kulakla örneklem, Adım 32 dinleme testi, avukat incelemesi (§20(d)).
+- **Maskot sesi ek kararı (KG-114, K-12, 28 Eki 2026):** Adım 54 alt görev 5'in (b) şıkkının sağlayıcı içi biçimi — aynı sağlayıcının (Google Cloud TTS Chirp 3 HD) **ayrı hazır sesi `tr-TR-Chirp3-HD-Achernar`, hız 0,9**; yalnız `maskot.*` ve `hikaye.*` anahtarları. Kullanıcı 22 aday arasından dinleyerek seçti; yönerge sesi Puck 0,9 değişmedi. Şartlar, ifşa cümlesi, ücretsiz katman koruması ve gizlilik etkisi aynı (yalnız içerik metni gider). Uygulama: `sesKaynagi.json` `anahtarSesleri`, özet klibin ses adını içerir (`docs/ses/SES_KAYNAKLARI.md` §13).
 
 ## Gizlilik etkisi
 

@@ -2,6 +2,8 @@
 
 > Adım 15 (F0.2) · 12 Ekim 2026 · Karar kaynakları: KG-01, KG-08, KG-15 (plan v2 §2.7). Kesin karar ADR-0004'te (Kabul, 28 Ekim 2026, KG-107).
 >
+> **Maskot sesi (KG-114, 28 Ekim 2026):** `maskot.*` ve `hikaye.*` klipleri `tr-TR-Chirp3-HD-Achernar` hız 0,9; diğer tüm klipler yönerge sesi Puck (§13).
+>
 > **Güncel durum (Adım 31, 28 Ekim 2026):** aktif kaynak **Google Cloud TTS Chirp 3 HD `tr-TR-Chirp3-HD-Puck`, hız 0,9** (`google:tr-TR-Chirp3-HD-Puck@2026-10`). 287 klibin tamamı bu kaynakla sıfırdan üretildi; `audio:audit` geçiş istisnası olmadan yeşil (K4). §1–§7 eski kliplerin geçmişidir; yeni durum §9.
 
 ## 1. Özet
@@ -96,3 +98,12 @@ Kullanıcı kuralı (28 Eki 2026): "yaptığımız çalışmaların API'de ücre
 ## 12. Derin tema girişi klipleri (Adım 45 aşama 1, KG-111, 28 Ekim 2026)
 
 28 klip `giris.t1-1` … `giris.t7-4` (`public/audio/giris/`) aynı kaynakla artımlı üretildi: 28 istek · 1.231 karakter (defter 2026-10: 6.905 / 900.000). Yönerge sesi Puck; maskota özgü ses değil (maskot sesi kararı K-12 ayrı, Adım 54). Toplam 342 klip; giriş anlatımı tema başına ≈ 13–19 sn (28 klip toplam 113 sn).
+
+## 13. Maskot sesi — anahtar bazlı ses (KG-114, K-12, 28 Ekim 2026)
+
+- **Karar (kullanıcı, 28 Eki 2026 18:29 +03):** maskot sesi **`tr-TR-Chirp3-HD-Achernar`, hız 0,9** (`google:tr-TR-Chirp3-HD-Achernar@2026-10`). 22 Chirp 3 HD aday örneği (Leda, Zephyr, Laomedeia, Aoede, Fenrir, Achird, Kore, Despina, Callirrhoe, Autonoe, Erinome, Sulafat, Gacrux, Vindemiatrix, Pulcherrima, Achernar…; hız 1,0 ve 0,9) arasından kulakla seçildi. Kullanıcı başka bir ürünün demo sesine *benzer* bir ses istedi, o sesin kendisini değil; o ürünün sesi ve modeli kullanılmaz. Yönerge sesi **Puck 0,9** olarak kalır.
+- **Kaynak ve şartlar değişmez:** aynı sağlayıcı ve aynı model ailesi (Google Cloud TTS Chirp 3 HD, hazır ses); şartlar ve yaş kısıtı notu ADR-0004 ile aynı. Ücretsiz katman koruması (§10) maskot kliplerine de uygulanır.
+- **Teknik:** `src/content/sesKaynagi.json` `anahtarSesleri: [{ onekler: ["maskot.", "hikaye."], modelKimligi, hiz: 0.9, karar: "KG-114" }]`. Önekle eşleşen anahtarlar bu sesle, diğerleri aktif kaynakla (Puck) üretilir (`scripts/ses/sesKaynagi.ts` `anahtarinSesi`). Doğrulama: aynı sağlayıcı öneki, aktif kaynaktan farklı ses, `ad-alani.` biçiminde çakışmayan önekler, hız 0,25–2.
+- **Özet:** anahtar sesi olmayan klipte `anahtarliKlipOzeti` = `klipOzeti` (birebir aynı) → mevcut 342 Puck klibi yeniden üretilmez (kuru çalışma: `Puck 0 klip`). Maskot klibinde özet `sha256('google:<maskot modelKimligi>[:hiz=<h>]:<metin>')` — ses adı her zaman, hız yalnız 0,9'dan farklıysa girer; ses ya da hız değişince yalnız o klipler yeniden üretilir. `.hashes.json` `$anahtarSesleri` alanıyla hangi önekin hangi sesle üretildiğini kaydeder; `audio:audit` köken denetimini klip başına kendi sesine göre yapar ve anahtar sesi satırını yazdırır.
+- **Kuru çalışma:** `npm run audio -- --kuru` artık ses başına döküm yazar: `ses dökümü: Puck N klip · K karakter | Achernar M klip · L karakter`.
+- **Lisans envanteri (K10):** ses satırı aktif kaynaktan türetilir; maskot klipleri aynı sağlayıcı ve şartlarla üretildiği için ayrı satır gerekmez (sağlayıcı/şart aynı).
