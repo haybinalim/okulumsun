@@ -47,8 +47,15 @@ describe('ses kaynağı sözleşmesi', () => {
     expect(ESKI_KAYNAK.cocukUrunundeKullanim).toBe('bilinmiyor');
   });
 
-  it('depodaki aktif kaynak geçerli ve şimdilik eski kaynaktır (KG-15)', () => {
-    expect(sesKaynagiDosyasiniAyir(aktifKaynakJson as Record<string, unknown>).aktif).toEqual(ESKI_KAYNAK);
+  it('depodaki aktif kaynak Google Chirp 3 HD Puck, ticari izinli; bekleyen yok (Adım 31, KG-107)', () => {
+    const { aktif, bekleyen } = sesKaynagiDosyasiniAyir(aktifKaynakJson as Record<string, unknown>);
+    expect(aktif.saglayici).toBe('google');
+    expect(aktif.modelKimligi).toBe('google:tr-TR-Chirp3-HD-Puck@2026-10');
+    expect(aktif.ticariDagitimIzni).toBe(true);
+    expect(['izinli', 'kosullu']).toContain(aktif.cocukUrunundeKullanim);
+    expect(aktif.atifSarti).toBe('Sesler Google Cloud Text-to-Speech ile üretilmiştir.');
+    expect(aktif).not.toEqual(ESKI_KAYNAK);
+    expect(bekleyen).toBeNull();
   });
 
   it('.hashes.json eski düz biçimi ve yeni $kaynak biçimi okunur', () => {
@@ -58,23 +65,26 @@ describe('ses kaynağı sözleşmesi', () => {
     expect(yeni.ozetler).toEqual({ 'ui.a': 'abc' });
   });
 
-  // Adım 18 (ADR-0004): kararı verilmiş kaynak `bekleyen` alanında; Adım 31'de aktif olur.
-  it("bekleyen kaynak ticari izinli ve çocuk ürününde 'izinli' veya 'kosullu'", () => {
-    const { bekleyen } = sesKaynagiDosyasiniAyir(aktifKaynakJson as Record<string, unknown>);
-    expect(bekleyen).not.toBeNull();
-    expect(bekleyen!.saglayici).toBe('google');
-    expect(bekleyen!.ticariDagitimIzni).toBe(true);
-    expect(['izinli', 'kosullu']).toContain(bekleyen!.cocukUrunundeKullanim);
-    expect(bekleyen!.sartlarUrl.length).toBeGreaterThan(0);
-  });
+  // Adım 18'in `bekleyen` biçimi Adım 31'de aktif kaynağa taşındı; ileride ses değişikliği aynı yolla yapılır.
+  const BEKLEYEN_ORNEK = {
+    saglayici: 'google',
+    model: 'chirp3-hd',
+    ses: 'tr-TR-Chirp3-HD-Puck',
+    ticariDagitimIzni: true,
+    cocukUrunundeKullanim: 'kosullu',
+    sartlarUrl: ['https://cloud.google.com/terms/service-terms'],
+    sartlarOkunduTarih: '2026-10-28',
+    atifSarti: 'Sesler Google Cloud Text-to-Speech ile üretilmiştir.',
+  };
 
-  it('kullanıcının seçtiği ses bekleyen kaynağa yazıldı (KG-04, KG-107: Puck)', () => {
-    const { bekleyen } = sesKaynagiDosyasiniAyir(aktifKaynakJson as Record<string, unknown>);
+  it("bekleyen kaynak biçimi okunur (ses değişikliği yolu)", () => {
+    const { bekleyen } = sesKaynagiDosyasiniAyir({ ...(aktifKaynakJson as Record<string, unknown>), bekleyen: BEKLEYEN_ORNEK });
     expect(bekleyen!.ses).toBe('tr-TR-Chirp3-HD-Puck');
+    expect(bekleyen!.ticariDagitimIzni).toBe(true);
   });
 
   it('bekleyen kaynak doğrulaması hatalı değerleri reddeder', () => {
-    const { bekleyen } = sesKaynagiDosyasiniAyir(aktifKaynakJson as Record<string, unknown>);
+    const bekleyen = BEKLEYEN_ORNEK;
     expect(() => bekleyenKaynagiDogrula({ ...bekleyen, sartlarUrl: [] })).toThrow(/https/);
     expect(() => bekleyenKaynagiDogrula({ ...bekleyen, sartlarUrl: ['http://x'] })).toThrow(/https/);
     expect(() => bekleyenKaynagiDogrula({ ...bekleyen, sartlarOkunduTarih: '12.10.2026' })).toThrow(/YYYY/);
@@ -83,7 +93,8 @@ describe('ses kaynağı sözleşmesi', () => {
 
   it('aktif kaynağın atıf şartı varsa Kaynaklar metninde geçer', () => {
     const { aktif } = sesKaynagiDosyasiniAyir(aktifKaynakJson as Record<string, unknown>);
-    // Adım 31'de aktif kaynak google olunca atıf cümlesi Kaynaklar ekranında aranır.
+    // Adım 31: aktif kaynak google → gönüllü ifşa cümlesi Kaynaklar ekranında aynen geçer.
+    expect(aktif.atifSarti).not.toBeNull();
     if (aktif.atifSarti === null) return;
     const kaynaklar = readFileSync(resolve(__dirname, '../../src/ui/screens/Kaynaklar.tsx'), 'utf8');
     expect(kaynaklar).toContain(aktif.atifSarti);

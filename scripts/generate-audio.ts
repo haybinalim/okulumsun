@@ -20,9 +20,11 @@
  *   say   — macOS Yelda; YALNIZ `--prototip` bayrağıyla, çıktı public/audio-prototip/
  *           (gitignore). Apple lisansı ticari dağıtıma izin vermez.
  *   eleven— KG-01 gereği kullanılmaz; çağrılırsa hata fırlatır.
- *   google— Google Cloud TTS Chirp 3 HD tr-TR (KG-01, ADR-0004). Adım 18'de bağlandı
- *           (scripts/ses/googleTts.ts); aktif kaynak Adım 31'de google olur. Anahtar:
+ *   google— Google Cloud TTS Chirp 3 HD tr-TR (KG-01, ADR-0004 Kabul). Aktif kaynak (Adım 31):
+ *           tr-TR-Chirp3-HD-Puck, hız 0,9 (KG-107). İstemci scripts/ses/googleTts.ts. Anahtar:
  *           GOOGLE_TTS_API_KEY (ortam veya gitignore'daki .env.local), asla depoya girmez.
+ *           Vekil modu: GOOGLE_TTS_API_KEY=proxy GOOGLE_TTS_UC_NOKTA=<Google uç noktası>
+ *           NODE_USE_ENV_PROXY=1 (anahtarı vekil ekler).
  *
  * ARTIMLI ÜRETİM: yalnız metni değişen anahtarlar yeniden sentezlenir (hash
  * karşılaştırması). Ücretli sağlayıcılarda bu, maliyeti sıfıra yakın tutar.
@@ -31,6 +33,8 @@
  *   npm run audio                       (aktif kaynak: src/content/sesKaynagi.json)
  *   npm run audio -- --prototip         (macOS say; çıktı public/audio-prototip/, dağıtılmaz)
  *   npm run audio -- --force            (hash'i yoksay, hepsini yeniden üret)
+ *   npm run audio -- --en-cok 60        (en çok 60 klip üret ve dur; özetler her klipten sonra
+ *                                        yazıldığı için kesilen çalışma kaldığı yerden sürer)
  *   npm run audio -- --ornek [--ses Kore,Aoede,Puck]
  *                                       (KG-04: ses seçimi için ses başına 10 örnek +
  *                                        "on yedi elma" birleştirme örneği; çıktı
@@ -39,7 +43,7 @@
 
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
+import { mkdir, readFile, writeFile, rm, rename } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -66,6 +70,8 @@ const SES_KAYNAGI = path.join(ROOT, 'src/content/sesKaynagi.json');
 const OUT_MANIFEST = path.join(ROOT, 'src/audio/audioManifest.generated.ts');
 
 const FORCE = process.argv.includes('--force');
+/** Bu çalışmada en çok kaç klip sentezlensin (kota/süre sınırlı ortamlar için). */
+const EN_COK = Number.parseInt(process.argv[process.argv.indexOf('--en-cok') + 1] ?? '', 10);
 /** macOS `say` yalnız prototip içindir; çıktısı dağıtılan klasöre asla yazılmaz. */
 const PROTOTIP = process.argv.includes('--prototip');
 /** KG-04: ses seçimi örnekleri. Manifest ve .hashes.json'a dokunmaz. */
@@ -209,7 +215,12 @@ async function wavdanM4a(wav: Buffer, out: string): Promise<void> {
 /** Chirp 3 HD kotası 200 istek/dk/proje → istekler arası ≥350 ms. */
 const bekle = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+/** Gizlilik kanıtı (Adım 31 alt görev 10): yalnız sayılar yazdırılır, içerik değil. */
+const sayac = { istek: 0, karakter: 0 };
+
 async function synthGoogle(text: string, out: string, sesAdi: string): Promise<void> {
+  sayac.istek++;
+  sayac.karakter += [...text].length;
   const wav = await googleSentezle(googleIstegi(text, sesAdi), await googleAnahtari());
   await wavdanM4a(wav, out);
   await bekle(350);
@@ -294,7 +305,22 @@ async function ornekUret(): Promise<void> {
   }
 }
 
+/** Vekil modunda Node'un ortam vekilini kullanması gerekir; yoksa istek vekile uğramaz. */
+function vekilUyarisi(): void {
+  if (process.env.GOOGLE_TTS_API_KEY === 'proxy' && process.env.NODE_USE_ENV_PROXY !== '1') {
+    console.warn('UYARI: GOOGLE_TTS_API_KEY=proxy ama NODE_USE_ENV_PROXY=1 değil — istekler vekile gitmeyebilir.');
+  }
+}
+
+/** Özet dosyasını atomik yazar (kesilen çalışma yarım JSON bırakmaz). */
+async function ozetleriYaz(kaynak: SesKaynagi, hashes: Record<string, string>): Promise<void> {
+  const gecici = `${CACHE}.tmp`;
+  await writeFile(gecici, JSON.stringify({ $kaynak: kaynak, ...hashes }, null, 2));
+  await rename(gecici, CACHE);
+}
+
 async function main(): Promise<void> {
+  vekilUyarisi();
   if (ORNEK) return ornekUret();
   const { kaynak, provider } = await aktifKaynagiOku();
   if (provider === 'google') aktifGoogleSesi = modelKimligindenSes(kaynak.modelKimligi);
@@ -314,7 +340,12 @@ async function main(): Promise<void> {
 
   let made = 0;
   let skipped = 0;
+  let kalan = 0;
+  let ardisikHata = 0;
   const failures: string[] = [];
+  // Manifestte olmayan (tr.json'dan silinmiş) anahtarların özetleri atılır.
+  const gecerli = new Set(clips.map((c) => c.key));
+  for (const k of Object.keys(hashes)) if (!gecerli.has(k)) delete hashes[k];
 
   for (const clip of clips) {
     const out = path.join(OUT_AUDIO, clip.file);
@@ -326,26 +357,39 @@ async function main(): Promise<void> {
       continue;
     }
 
+    if (Number.isFinite(EN_COK) && made >= EN_COK) {
+      kalan++;
+      continue;
+    }
     await mkdir(path.dirname(out), { recursive: true });
     try {
       await synth(provider, clip.text, out);
       hashes[clip.key] = hash;
       made++;
+      // Her klipten sonra: kesilen çalışma kaldığı yerden sürer.
+      if (!PROTOTIP) await ozetleriYaz(kaynak, hashes);
       if (made % 25 === 0) console.log(`  ${made} üretildi...`);
+      ardisikHata = 0;
     } catch (err) {
       failures.push(`${clip.key}: ${(err as Error).message.split('\n')[0]}`);
+      // Kota/faturalandırma gibi kalıcı hatada 287 kez denemek yerine dur.
+      if (++ardisikHata >= 3) {
+        console.error('Art arda 3 klip üretilemedi; durduruldu (kota, faturalandırma veya anahtar).');
+        break;
+      }
     }
   }
 
   await mkdir(OUT_AUDIO, { recursive: true });
-  await writeFile(CACHE, JSON.stringify({ $kaynak: kaynak, ...hashes }, null, 2));
+  await ozetleriYaz(kaynak, hashes);
   // Prototip çıktısı dağıtılmadığı için manifesto yalnız gerçek üretimde yazılır.
   if (!PROTOTIP) {
     await mkdir(path.dirname(OUT_MANIFEST), { recursive: true });
     await writeFile(OUT_MANIFEST, buildManifest(clips));
   }
 
-  console.log(`\nüretilen: ${made} · atlanan: ${skipped} · toplam: ${clips.length}`);
+  console.log(`\nüretilen: ${made} · atlanan: ${skipped}${kalan ? ` · sonraki çalışmaya kalan: ${kalan}` : ''} · toplam: ${clips.length}`);
+  if (provider === 'google') console.log(`sağlayıcıya giden: ${sayac.istek} istek · ${sayac.karakter} karakter (içerik yazdırılmaz)`);
   console.log(`manifesto: ${path.relative(ROOT, OUT_MANIFEST)}`);
 
   if (failures.length) {

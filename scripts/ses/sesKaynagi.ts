@@ -35,7 +35,7 @@ export interface SesKaynagi {
   readonly modelKimligi: string;
   /** Model kartı, hizmet şartları veya sözleşme referansı. */
   readonly lisansUrl: string;
-  /** false → audio:audit kırmızı (Adım 31'e kadar SES_GECIS_MODU=1 istisnası). */
+  /** false → audio:audit kırmızı (K4; Adım 31'den beri istisnasız). */
   readonly ticariDagitimIzni: boolean;
   readonly cocukUrunundeKullanim: 'izinli' | 'kosullu' | 'bilinmiyor';
   /** Kaynaklar ekranına aynen yazılır. */
@@ -43,9 +43,9 @@ export interface SesKaynagi {
 }
 
 /**
- * Kararı verilmiş ama henüz aktif olmayan kaynak (Adım 18). `aktif` Adım 31'de bu
- * değerlerle değişir; o zamana kadar üretim ve denetim eski kaynağı kullanır.
- * `ses` kullanıcı sesi seçene kadar null (KG-04).
+ * Kararı verilmiş ama henüz aktif olmayan kaynak (Adım 18). Adım 31'de (28 Eki 2026) aktif
+ * kaynak Google Chirp 3 HD Puck oldu ve `bekleyen` alanı silindi; ileride ses/sağlayıcı
+ * değişikliği aynı yolla (önce `bekleyen`, sonra yeniden üretim) yapılır.
  */
 export interface BekleyenKaynak {
   readonly saglayici: Saglayici;

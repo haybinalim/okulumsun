@@ -33,7 +33,7 @@ ADR: · Durumu:
 - [ ] `npm run lint`
 - [ ] `npm test` (sayı: )
 - [ ] `npm run validate`
-- [ ] `SES_GECIS_MODU=1 npm run audio:audit`
+- [ ] `npm run audio:audit`
 - [ ] `npm run build`
 - [ ] `npm run e2e` (ekran veya şablon değiştiyse)
 

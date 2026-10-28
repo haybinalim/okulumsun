@@ -66,6 +66,7 @@ Sağlayıcı (KG-01) ayrıntıları: Google yalnız derleme anında, geliştiric
 
 - Değişen dosyalar / PLAN bölümleri: `src/content/sesKaynagi.json` (aktif kaynak ve model kimliği), `scripts/generate-audio.ts` (`google` sağlayıcısı, Adım 31), `public/audio/` (287 klip sıfırdan), Kaynaklar ekranı ve LICENSES ses satırı, PLAN §4.
 - Test / kanıt: `audio:audit` köken ve lisans kapısı `SES_GECIS_MODU` olmadan yeşil; dinleme testi (Adım 32) eşiği.
+- **Uygulandı (Adım 31, 28 Eki 2026):** aktif kaynak `google:tr-TR-Chirp3-HD-Puck@2026-10`; 287 klip sıfırdan üretildi (287 istek, 3.365 karakter); `SES_GECIS_MODU` CI'dan ve denetim betiğinden kaldırıldı, `audio:audit` istisnasız yeşil; ifşa cümlesi Kaynaklar ekranında ve LICENSES'ta. `public/audio/` 1,97 → 2,70 MB. Kalan: kulakla örneklem, Adım 32 dinleme testi, avukat incelemesi (§20(d)).
 
 ## Gizlilik etkisi
 

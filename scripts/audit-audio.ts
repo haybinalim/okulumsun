@@ -12,7 +12,7 @@
  *   - Diskte manifestoda olmayan yetim dosya var mı
  *   - KÖKEN (Adım 15): her klibin özeti aktif ses kaynağıyla (sağlayıcı + model
  *     kimliği) üretilmiş mi; aktif kaynağın ticari dağıtım izni var mı.
- *     İzin yoksa SES_GECIS_MODU=1 olmadıkça çıkış 1 (ADR-0004; Adım 31 kaldırır).
+ *     İzin yoksa çıkış 1 (ADR-0004; Adım 31'den beri geçiş istisnası yok — K4 tam).
  *
  * Kullanım: npm run audio:audit
  */
@@ -33,8 +33,6 @@ const MANIFEST = path.join(ROOT, 'src/audio/audioManifest.generated.ts');
 const CONTENT = path.join(ROOT, 'src/content/tr.json');
 const SES_KAYNAGI = path.join(ROOT, 'src/content/sesKaynagi.json');
 const HASHES = path.join(AUDIO, '.hashes.json');
-/** Açık, PR'da görünür geçiş istisnası: ticari izinsiz kaynakta denetimi kırmızıya çevirmez. */
-const SES_GECIS_MODU = process.env.SES_GECIS_MODU === '1';
 
 /** Bu boyutun altı neredeyse kesin sessizlik (AAC başlığı bile daha büyük). */
 const MIN_BYTES = 800;
@@ -164,7 +162,7 @@ async function main(): Promise<void> {
   for (const k of manifestAnahtarlari) if (!metinler.has(k)) problems.push(`İÇERİKSİZ  ${k}`);
 
   // Köken denetimi.
-  // `bekleyen` (Adım 18) yalnız doğrulanır; köken her zaman AKTİF kaynağa göre denetlenir.
+  // Köken her zaman AKTİF kaynağa göre denetlenir (`bekleyen` varsa yalnız doğrulanır).
   const { aktif } = sesKaynagiDosyasiniAyir(JSON.parse(await readFile(SES_KAYNAGI, 'utf8')) as Record<string, unknown>);
   const ozetDosyasi = existsSync(HASHES)
     ? ozetDosyasiniOku(JSON.parse(await readFile(HASHES, 'utf8')))
@@ -177,13 +175,8 @@ async function main(): Promise<void> {
   console.log(
     `köken: ${aktif.modelKimligi} · yeni özet ${koken.yeniEslesen} · eski 'piper:' özeti ${koken.eskiEslesen}`,
   );
-  if (koken.lisansUyarisi) {
-    if (SES_GECIS_MODU) {
-      console.warn(`\n${koken.lisansUyarisi}\n  SES_GECIS_MODU=1 → geçiş istisnası (Adım 31'de kaldırılacak).`);
-    } else {
-      problems.push(`${koken.lisansUyarisi} (geçiş için SES_GECIS_MODU=1)`);
-    }
-  }
+  // K4 (Adım 31): ticari izinsiz kaynak her zaman kırmızı; geçiş istisnası kaldırıldı.
+  if (koken.lisansUyarisi) problems.push(koken.lisansUyarisi);
   if (orphans.length) {
     console.log(`\n${orphans.length} yetim dosya (manifestoda yok):`);
     for (const o of orphans.slice(0, 10)) console.log(`  ${o}`);

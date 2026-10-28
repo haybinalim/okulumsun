@@ -7,33 +7,43 @@ import {
   klipOzeti,
   kokenDenetle,
   ozetDosyasiniOku,
+  sesKaynagiDosyasiniAyir,
   type SesKaynagi,
 } from '../../scripts/ses/sesKaynagi';
+import sesKaynagiJson from '../../src/content/sesKaynagi.json';
 import { UCUNCU_TARAF_VARLIKLAR } from '../../src/content/ucuncuTarafVarliklar';
 import tr from '../../src/content/tr.json';
 
 const klipler = klipleriTopla(tr as Record<string, unknown>);
-const { ozetler } = ozetDosyasiniOku(
+const ozetDosyasi = ozetDosyasiniOku(
   JSON.parse(readFileSync(new URL('../../public/audio/.hashes.json', import.meta.url), 'utf8')),
 );
+const { ozetler } = ozetDosyasi;
+const { aktif } = sesKaynagiDosyasiniAyir(sesKaynagiJson as Record<string, unknown>);
 
 describe('ses kökeni denetimi', () => {
-  it("gerçek .hashes.json'daki 287 özet eskiOzet('piper', metin) ile eşleşir", () => {
-    const eslesen = klipler.filter((k) => ozetler[k.key] === eskiOzet('piper', k.text));
-    expect(eslesen).toHaveLength(287);
-    const sonuc = kokenDenetle(ESKI_KAYNAK, klipler, ozetler);
+  it('her özet aktif kaynakla eşleşir; eski piper özeti yok (Adım 31, K4 tam)', () => {
+    const sonuc = kokenDenetle(aktif, klipler, ozetler);
     expect(sonuc.eslesmeyen).toEqual([]);
     expect(sonuc.ozetsiz).toEqual([]);
-    expect(sonuc.eskiEslesen).toBe(287);
+    expect(sonuc.eskiEslesen).toBe(0);
+    expect(sonuc.yeniEslesen).toBe(klipler.length);
+    expect(klipler.filter((k) => ozetler[k.key] === eskiOzet('piper', k.text))).toEqual([]);
+  });
+
+  it("aktif kaynak ticari izinli: lisans uyarısı yok; .hashes.json'daki $kaynak aktif kaynakla aynı", () => {
+    expect(aktif.ticariDagitimIzni).toBe(true);
+    expect(kokenDenetle(aktif, klipler, ozetler).lisansUyarisi).toBeNull();
+    expect(ozetDosyasi.kaynak).toEqual(aktif);
   });
 
   it('tuzak: say önekli sahte özet denetimi kırar', () => {
     const ilk = klipler[0];
     const sahte = { ...ozetler, [ilk.key]: eskiOzet('say', ilk.text) };
-    expect(kokenDenetle(ESKI_KAYNAK, klipler, sahte).eslesmeyen).toEqual([ilk.key]);
+    expect(kokenDenetle(aktif, klipler, sahte).eslesmeyen).toEqual([ilk.key]);
   });
 
-  it('ticari izinsiz aktif kaynak lisans uyarısı üretir (geçiş modu kapalıyken kırmızı)', () => {
+  it('ticari izinsiz kaynak lisans uyarısı üretir (geçiş istisnası yok)', () => {
     expect(kokenDenetle(ESKI_KAYNAK, klipler, ozetler).lisansUyarisi).toMatch(/UYARI LİSANS/);
   });
 
@@ -46,11 +56,12 @@ describe('ses kökeni denetimi', () => {
       cocukUrunundeKullanim: 'kosullu',
       atifSarti: null,
     };
-    expect(kokenDenetle(google, klipler, ozetler).eslesmeyen).toHaveLength(287);
+    const eski = Object.fromEntries(klipler.map((k) => [k.key, eskiOzet('piper', k.text)]));
+    expect(kokenDenetle(google, klipler, eski).eslesmeyen).toHaveLength(klipler.length);
     const yeni = Object.fromEntries(klipler.map((k) => [k.key, klipOzeti(google, k.text)]));
     const sonuc = kokenDenetle(google, klipler, yeni);
     expect(sonuc.eslesmeyen).toEqual([]);
-    expect(sonuc.yeniEslesen).toBe(287);
+    expect(sonuc.yeniEslesen).toBe(klipler.length);
     expect(sonuc.lisansUyarisi).toBeNull();
   });
 });
