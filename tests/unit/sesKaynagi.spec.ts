@@ -68,6 +68,11 @@ describe('ses kaynağı sözleşmesi', () => {
     expect(bekleyen!.sartlarUrl.length).toBeGreaterThan(0);
   });
 
+  it('kullanıcının seçtiği ses bekleyen kaynağa yazıldı (KG-04, KG-107: Puck)', () => {
+    const { bekleyen } = sesKaynagiDosyasiniAyir(aktifKaynakJson as Record<string, unknown>);
+    expect(bekleyen!.ses).toBe('tr-TR-Chirp3-HD-Puck');
+  });
+
   it('bekleyen kaynak doğrulaması hatalı değerleri reddeder', () => {
     const { bekleyen } = sesKaynagiDosyasiniAyir(aktifKaynakJson as Record<string, unknown>);
     expect(() => bekleyenKaynagiDogrula({ ...bekleyen, sartlarUrl: [] })).toThrow(/https/);

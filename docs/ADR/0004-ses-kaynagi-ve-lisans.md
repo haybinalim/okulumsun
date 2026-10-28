@@ -1,8 +1,8 @@
 # ADR-0004: Ses kaynağı ve lisans
 
-- **Durum:** Önerildi
-- **Tarih:** 2026-10-12
-- **Karar sahibi:** Kullanıcı · **Kullanıcı onayı:** Sağlayıcı seçildi 11 Eki 2026 (KG-01, sohbet kaydı); Adım 18'e başlama onayı 12 Eki 2026; ses adı seçimi bekliyor (KG-04, son tarih 6 Kas 2026)
+- **Durum:** Kabul
+- **Tarih:** 2026-10-28
+- **Karar sahibi:** Kullanıcı · **Kullanıcı onayı:** Sağlayıcı seçildi 11 Eki 2026 (KG-01, sohbet kaydı); Adım 18'e başlama onayı 12 Eki 2026; ses adı seçildi 28 Eki 2026 10:35 (+03): "puck daha iyi" (KG-107, sohbet kaydı)
 - **İlgili:** PLAN §4, Adım 15, 18, 31, 32, 54, 58, `docs/ses/SES_KAYNAKLARI.md`, eksik G01
 
 ## Bağlam
@@ -27,7 +27,21 @@ C elenir (ticari izin yok). D elenir (kullanıcı kararı: ElevenLabs kullanılm
 
 ## Karar
 
-Önerilen (kullanıcının seçtiği sağlayıcı, KG-01): **B — Google Cloud TTS, Chirp 3 HD `tr-TR`**. Google yalnız derleme anında, geliştirici makinesinde çağrılır; çalışma anında hiçbir ses servisine istek gitmez (KG-02). Maliyet koruması: ayrı GCP projesi, 1 USD bütçe uyarısı, yalnız Text-to-Speech API'ye kısıtlı anahtar; anahtar depoya, CI'ya ve sohbete girmez (KG-03). Yedek yol: Chatterbox Multilingual (MIT, yerel, rızalı referans ses), sonra insan sesi (KG-07).
+**Kabul (28 Eki 2026, KG-107): B — Google Cloud TTS, Chirp 3 HD `tr-TR`, ses `tr-TR-Chirp3-HD-Puck`, konuşma hızı 0,9.**
+
+| Alan | Değer |
+|---|---|
+| Sağlayıcı / model | Google Cloud Text-to-Speech · Chirp 3 HD (KG-01) |
+| Ses adı | `tr-TR-Chirp3-HD-Puck` (kullanıcı seçimi; adaylar Kore, Aoede, Puck — KG-04, KG-25) |
+| Konuşma hızı | `speakingRate` 0,9 (KG-25) · biçim LINEAR16 24 kHz → AAC m4a 24 kHz mono 40 kb/sn |
+| Model kimliği (özete girer) | `google:tr-TR-Chirp3-HD-Puck@2026-10` |
+| Üretim tarihi | 2026-10-28 (Adım 31; artımlı üretimde yeni klipler aynı model kimliğiyle) |
+| Şart sürümü (KG-05) | Service Specific Terms "Last modified October 27, 2026"; Services Summary "Last modified October 21, 2026" (Text-to-Speech: AI/ML Services → Pre-Trained APIs); Quotas sayfası "Last updated 2026-10-26" — üçü 28 Eki 2026'da yeniden okundu |
+| Çocuk ürünü | `kosullu` (aşağıdaki yaş kısıtı notu) |
+
+Seçim süreci: üç aday sesle 10'ar örnek (yönerge, geri bildirim, sayı, "on yedi elma" birleştirmesi; hız 0,9) üretildi ve kullanıcı dinledi. KG-04'teki "bir çocuğa dinletme" adımı **yapılmadı**; çocukla anlaşılırlık Adım 32 dinleme testinde ölçülür (eşik altıysa KG-07 yedek yolu).
+
+Sağlayıcı (KG-01) ayrıntıları: Google yalnız derleme anında, geliştirici makinesinde çağrılır; çalışma anında hiçbir ses servisine istek gitmez (KG-02). Maliyet koruması: ayrı GCP projesi, 1 USD bütçe uyarısı, yalnız Text-to-Speech API'ye kısıtlı anahtar; anahtar depoya, CI'ya ve sohbete girmez (KG-03). Yedek yol: Chatterbox Multilingual (MIT, yerel, rızalı referans ses), sonra insan sesi (KG-07).
 
 **Hukuki dayanak (KG-05), birincil kaynaklardan, 12 Eki 2026'da okundu:**
 
@@ -38,9 +52,11 @@ C elenir (ticari izin yok). D elenir (kullanıcı kararı: ElevenLabs kullanılm
 
 **Çocuk ürünü:** şartlarda 13 yaş altına yönelik uygulamada çıktı kullanımını yasaklayan bir madde bulunmadı, ama bunu açıkça izinli kılan bir cümle de okunmadı → `kosullu`. Ticari lansmandan önceki avukat incelemesinde (KG-06) teyit edilir; olumsuzsa yedek yol (KG-07).
 
+**Yaş kısıtı notu (28 Eki 2026'da okundu, avukat incelemesine sorulacak):** Service Specific Terms §20(d) — *"Customer will not, and will not allow End Users to, use a Generative AI Service as part of a website, Customer Application, or other online service that is directed towards or is likely to be accessed by individuals under the age of 18."* Services Summary'de Text-to-Speech "Generative AI Services" başlığında değil, "AI/ML Services → Pre-Trained APIs" altında listelenir; ancak aynı belge "Generative AI Services also includes any generative AI features or functionality of a Service" der ve Chirp 3 HD'nin bu kapsama girip girmediği açık değildir. Okulumsun hizmeti uygulamanın parçası olarak **kullanmaz**: Google yalnız derleme anında geliştirici makinesinde çağrılır, uygulama yalnız önceden üretilmiş dosyaları çalar (KG-02). Bu yüzden durum `kosullu` kalır; avukat incelemesinde §20(d)'nin önceden üretilmiş çıktıya uygulanıp uygulanmadığı sorulur. Olumsuz görüşte yedek yol KG-07 (Chatterbox, sonra insan sesi); klipler tek komutla yeniden üretilir.
+
 **İfşa:** Google atıf şartı koymuyor; proje gönüllü olarak Kaynaklar ekranına ve LICENSES'a aynı cümleyi yazar: "Sesler Google Cloud Text-to-Speech ile üretilmiştir." (Adım 31'de, aktif kaynak değişince).
 
-**Teknik kayıt (Adım 18):** `src/content/sesKaynagi.json` içindeki `bekleyen` alanı bu kararı taşır (`saglayici: google`, `model: chirp3-hd`, `ses: null`, `ticariDagitimIzni: true`, `cocukUrunundeKullanim: kosullu`, şart URL'leri ve okunma tarihi). İstemci `scripts/ses/googleTts.ts`; örnek üretimi `npm run audio -- --ornek [--ses Kore,Aoede,Puck]` (çıktı `public/audio-prototip/ornek/`, gitignore). Konuşma hızı 0,9 (6 yaş için ~%10 yavaş). Kabulde ses adı, üretim ayı (`google:tr-TR-Chirp3-HD-<ad>@YYYY-AA`) ve şart okuma tarihi buraya yazılır.
+**Teknik kayıt (Adım 18):** `src/content/sesKaynagi.json` içindeki `bekleyen` alanı bu kararı taşır (`saglayici: google`, `model: chirp3-hd`, `ses: tr-TR-Chirp3-HD-Puck` (KG-107), `ticariDagitimIzni: true`, `cocukUrunundeKullanim: kosullu`, şart URL'leri ve okunma tarihi). İstemci `scripts/ses/googleTts.ts`; örnek üretimi `npm run audio -- --ornek [--ses Kore,Aoede,Puck]` (çıktı `public/audio-prototip/ornek/`, gitignore). Konuşma hızı 0,9 (6 yaş için ~%10 yavaş). Ses adı, üretim ayı ve şart sürümü yukarıdaki tabloda (KG-107). Vekil modu: anahtarı aradaki vekil ekliyorsa `GOOGLE_TTS_API_KEY=proxy`, `GOOGLE_TTS_UC_NOKTA=<Google text:synthesize adresi>`, `NODE_USE_ENV_PROXY=1`; yer tutucu modunda anahtar başlığı gönderilmez. 429'da üstel geri çekilme (2–32 sn, `Retry-After`'a uyar; 5 denemeden sonra durur).
 
 **Diğer sağlayıcıların durumu:** `say` yalnız `--prototip` (dağıtılmaz); `eleven` çağrılırsa hata; `piper` yalnız eski kliplerin tanınması için, üretimde kullanılmaz.
 
@@ -66,8 +82,8 @@ Orta: klipler başka kaynakla yeniden üretilebilir (≈3 gün), ama dinleme tes
 ## Kabul koşulları
 
 - [x] Sağlayıcı seçildi (KG-01).
-- [ ] GCP projesi, bütçe uyarısı ve kısıtlı anahtar kullanıcı tarafından kuruldu (KG-20, 20 Eki 2026'ya kadar).
+- [x] GCP projesi ve anahtar kullanıcı tarafından kuruldu; anahtar Hark kasasında, depoya/CI'ya girmedi (28 Eki 2026). 1 USD bütçe uyarısı ve anahtarın yalnız Text-to-Speech API ile kısıtlandığı kullanıcı beyanıyla **doğrulanmadı** (KG-03; kullanıcıya hatırlatıldı).
 - [x] Şartlar birincil kaynaktan, tarih ve URL ile alıntılandı (12 Eki 2026).
 - [x] Örnek üretim hattı hazır (`npm run audio -- --ornek`).
-- [ ] 2–3 Chirp 3 HD sesiyle 10'ar örnek üretildi; ses adı kullanıcı tarafından seçildi (KG-04).
-- [ ] Ses adı, üretim tarihi ve şart sürümü bu ADR'ye yazıldı (Adım 18).
+- [x] 3 Chirp 3 HD sesiyle (Kore, Aoede, Puck) 10'ar örnek üretildi; ses adı kullanıcı tarafından seçildi: Puck (KG-04, KG-107). Çocuğa dinletme yapılmadı → Adım 32.
+- [x] Ses adı, üretim tarihi ve şart sürümü bu ADR'ye yazıldı (Adım 18, KG-107).
