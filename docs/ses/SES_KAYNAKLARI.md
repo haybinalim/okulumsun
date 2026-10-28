@@ -92,3 +92,7 @@ Kullanıcı kuralı (28 Eki 2026): "yaptığımız çalışmaların API'de ücre
 
 - Giriş cümleleri ayrı ekran değildir: `src/audio/girisSesi.ts` onları ilk sorunun talimatının önüne ekler (`ilkAraMs` 450 ms); "Tekrar dinle" girişi yinelemez (`Prompt.tekrarSes`).
 - Sıra duyurusu tam cümle klip ("Sıra mor takımda."); renk klibinden birleştirilmez (PLAN §4.3). Bahçem'de yalnız sayı + "çiçek ekledin." birleştirilir.
+
+## 12. Derin tema girişi klipleri (Adım 45 aşama 1, KG-111, 28 Ekim 2026)
+
+28 klip `giris.t1-1` … `giris.t7-4` (`public/audio/giris/`) aynı kaynakla artımlı üretildi: 28 istek · 1.231 karakter (defter 2026-10: 6.905 / 900.000). Yönerge sesi Puck; maskota özgü ses değil (maskot sesi kararı K-12 ayrı, Adım 54). Toplam 342 klip; giriş anlatımı tema başına ≈ 13–19 sn (28 klip toplam 113 sn).
