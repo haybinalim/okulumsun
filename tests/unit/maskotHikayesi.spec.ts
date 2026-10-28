@@ -1,4 +1,4 @@
-/** Plan v2 Adım 54 aşama 1: maskot tema hikâyeleri (şema, 7×3, pozlar) ve tema sahneleri (KG-91). */
+/** Plan v2 Adım 54: maskot tema hikâyeleri (şema, 7×3, pozlar), tema sahneleri (KG-91) ve bağlama (KG-116). */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { createElement } from 'react';
@@ -36,9 +36,17 @@ describe('maskotHikayeleri.json — şema ve 7 × 3', () => {
     expect(d.hikayeler.flatMap((h) => h.sahneler.map((s) => s.sesAnahtari)).sort()).toEqual(beklenen.sort());
   });
 
-  it('ses anahtarları henüz tr.json ve ses manifestinde YOK (KG-01; Adım 31 eklenince bu test manifest denetimine döner)', () => {
-    expect(tr.hikaye).toBeUndefined();
-    expect(Object.keys(AUDIO_MANIFEST).filter((k) => k.startsWith('hikaye.'))).toEqual([]);
+  it('ses anahtarları tr.json ve ses manifestinde; metin tr.json ile birebir aynı (KG-116)', () => {
+    const sahneler = d.hikayeler.flatMap((h) => h.sahneler);
+    for (const s of sahneler) {
+      expect(AUDIO_MANIFEST, s.sesAnahtari).toHaveProperty(s.sesAnahtari);
+      expect(tr.hikaye[s.sesAnahtari.slice('hikaye.'.length)], s.sesAnahtari).toBe(s.metin);
+    }
+    // tr.json'da fazladan hikâye anahtarı yok; manifestte 21 hikâye + maskot.selam.
+    expect(Object.keys(tr.hikaye).filter((k) => !k.startsWith('$'))).toHaveLength(21);
+    expect(Object.keys(AUDIO_MANIFEST).filter((k) => k.startsWith('hikaye.') || k.startsWith('maskot.')).sort()).toEqual(
+      [...sahneler.map((s) => s.sesAnahtari), 'maskot.selam'].sort(),
+    );
   });
 
   it('her tema kendi dünyasında; dünya adları tam ve tekil', () => {
@@ -184,28 +192,51 @@ describe('tema sahneleri (PLAN §8, dokunulmaz arka plan)', () => {
   }
 });
 
-describe('uygulamaya bağlı değil (KG-91)', () => {
-  it('hiçbir ekran/uygulama dosyası maskotHikayeleri veya temaSahneleri modülünü içe aktarmaz', () => {
-    const dosyalar: string[] = [];
-    const gez = (d: string) => {
-      for (const ad of readdirSync(d)) {
-        const p = path.join(d, ad);
-        if (statSync(p).isDirectory()) gez(p);
-        else if (/\.(ts|tsx)$/.test(ad)) dosyalar.push(p);
-      }
-    };
-    gez(path.join(KOK, 'src'));
+describe('bağlama yalnız tembel parçalardan (KG-116)', () => {
+  const dosyalar: string[] = [];
+  const gez = (d: string) => {
+    for (const ad of readdirSync(d)) {
+      const p = path.join(d, ad);
+      if (statSync(p).isDirectory()) gez(p);
+      else if (/\.(ts|tsx)$/.test(ad)) dosyalar.push(path.relative(KOK, p).split(path.sep).join('/'));
+    }
+  };
+  gez(path.join(KOK, 'src'));
+  const oku = (p: string) => readFileSync(path.join(KOK, p), 'utf8');
+
+  it('hikâye verisi ve tema sahneleri yalnız HikayeSahnesi (ve geliştirme önizlemesi) tarafından içe aktarılır', () => {
     const izinli = new Set([
       'src/content/maskotHikayeleri.ts',
       'src/ui/svg/temaSahneleri.tsx',
       'src/content/schema/maskotHikayesi.ts',
+      'src/ui/screens/HikayeSahnesi.tsx',
     ]);
     const ihlal = dosyalar
-      .map((p) => path.relative(KOK, p).split(path.sep).join('/'))
       .filter((p) => !izinli.has(p) && !p.startsWith('src/dev/'))
-      .filter((p) =>
-        /from '[^']*(maskotHikayeleri|temaSahneleri)(\.tsx?)?'/.test(readFileSync(path.join(KOK, p), 'utf8')),
-      );
+      .filter((p) => /from '[^']*(maskotHikayeleri|temaSahneleri)(\.tsx?)?'/.test(oku(p)));
     expect(ihlal).toEqual([]);
+  });
+
+  it('HikayeSahnesi yalnız tembel DerinTemaGirisi içinden statik, OturumSonu içinden dinamik içe aktarılır', () => {
+    const statik = dosyalar.filter((p) => /from '\.\/HikayeSahnesi'/.test(oku(p)));
+    expect(statik).toEqual(['src/ui/screens/DerinTemaGirisi.tsx']);
+    expect(oku('src/ui/screens/OturumSonu.tsx')).toMatch(/lazy\(\(\) => import\('\.\/HikayeSahnesi'\)\)/);
+    expect(oku('src/ui/screens/TemaGirisi.tsx')).toMatch(/lazy\(\(\) => import\('\.\/DerinTemaGirisi'\)\)/);
+  });
+
+  it('HikayeSahnesi dokunulmaz: aria-hidden, olay almaz, metin/düğme yok; maskot sahnenin pozunda', async () => {
+    const { default: HikayeSahnesi } = await import('../../src/ui/screens/HikayeSahnesi');
+    for (const h of MaskotHikayeleriSchema.parse(ham).hikayeler) {
+      for (const s of h.sahneler) {
+        const html = renderToStaticMarkup(createElement(HikayeSahnesi, { tema: h.tema, sahneNo: s.no }));
+        expect(html).toMatch(/^<div aria-hidden="true"/);
+        expect(html).toContain(`data-hikaye-sahnesi="${s.sesAnahtari}"`);
+        expect(html).toContain(`data-hikaye-poz="${s.poz}"`);
+        expect(html).toContain('pointer-events:none');
+        expect(html).not.toMatch(/<button|<a |role="button"|tabindex="0"/);
+        expect(html).not.toContain(s.metin);
+      }
+    }
+    expect(renderToStaticMarkup(createElement(HikayeSahnesi, { tema: 9, sahneNo: 1 }))).toBe('');
   });
 });

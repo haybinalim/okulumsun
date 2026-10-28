@@ -28,6 +28,7 @@ import {
 } from '../sinif/sinifTuru';
 import { gezinmeHedefi, type GezinmeDurumu, type GezinmeYonu } from '../ui/gezinme/gezinme';
 import { kisiselGirisBicimi } from '../ui/temaGirisiAkisi';
+import { temaOturumuEkle } from '../ui/hikayeAkisi';
 
 // ---------------------------------------------------------------- tipler
 
@@ -182,6 +183,11 @@ interface AppStore {
   temaGirisiBicimi: 'kisa' | 'derin';
   /** Kişisel modda bu oturumda derin giriş gösterildi mi (en çok bir kez; yalnız bellekte). */
   derinGirisGosterildi: boolean;
+  /**
+   * Kişisel modda tema başına tamamlanan oturum sayısı (Adım 54, KG-116): oturum sonundaki hikâye sahnesini
+   * seçer. Yalnız bellekte (Seçenek A), uygulama kapanınca sıfırlanır; içerik kimliği, kişisel veri değil.
+   */
+  temaOturumlari: Readonly<Record<number, number>>;
 
   // --- Actions
   ekranGit: (ekran: Ekran) => void;
@@ -263,6 +269,7 @@ const baslangicDurumu = {
   duyuru: null as SpeechKey | null,
   temaGirisiBicimi: 'kisa' as 'kisa' | 'derin',
   derinGirisGosterildi: false,
+  temaOturumlari: {} as Readonly<Record<number, number>>,
 };
 
 type Parca = Partial<AppStore> | ((s: AppStore) => Partial<AppStore>);
@@ -377,6 +384,11 @@ export const useAppStore = create<AppStore>((hamSet, get) => {
 
     oturumuTamamla: () =>
       set((s) => ({
+        // Adım 54 (KG-116): kişisel tema oturumu hikâye sayacını ilerletir (set/tahta oturumu değil).
+        temaOturumlari:
+          s.mod === 'kisisel' && s.secilenTemaNo !== null && s.aktifSet === null
+            ? temaOturumuEkle(s.temaOturumlari, s.secilenTemaNo)
+            : s.temaOturumlari,
         oturumTamamlandi: true,
         bugunTamamlanan: s.bugunTamamlanan + 1,
         ekran: 'oturumSonu',

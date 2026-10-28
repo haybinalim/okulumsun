@@ -3,7 +3,7 @@ import { geometriTemiz, kisiselModaGir, klipIstendi, sesKilidiniAc } from './yar
 
 /**
  * Plan v2 Adım 45 aşama 2 (KG-112): derin tema girişi.
- *  · Tahta: konu seçiminin ilk kartı "Temaya giriş" → 4 adımlı sesli giriş (izle → dokun → dokun → izle);
+ *  · Tahta: konu seçiminin ilk kartı "Temaya giriş" → hikâye açılışı (Adım 54, KG-116) + 4 adımlı sesli giriş (izle → dokun → dokun → izle);
  *    dokun hedefi alt bölgede, ≥ 102 px, merkezi üst %35'in altında; bitince konu seçimine döner.
  *  · "Girişi geç" (yetişkin) her an çıkar.
  *  · Kişisel: oturumdaki ilk tema seçimi derin, sonraki kısa (yalnız bellek).
@@ -38,6 +38,9 @@ test('tahta: "Temaya giriş" kartı → 4 adımlı derin giriş, dokunma hedefi 
 
   await expect(ekran(page)).toBeVisible();
   await expect(ekran(page)).toHaveAttribute('data-giris-tema', '1');
+  // Adım 54 (KG-116): önce hikâye açılışı — maskot selamı + 1. sahne (dokunulmaz), sonra adımlar.
+  await klipIstendi(page, 'maskot.selam');
+  await klipIstendi(page, 'hikaye.t1-1');
   await expect(ekran(page)).toHaveAttribute('data-giris-eylem', 'izle');
   await klipIstendi(page, 'giris.t1-1');
   await geometriTemiz(page, 'derin giriş — izle');
