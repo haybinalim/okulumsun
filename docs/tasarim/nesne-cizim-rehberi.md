@@ -85,9 +85,53 @@ olduğu için ≈ 5–6 mm kalıyordu.
 
 **Ölçülen** (165 arşiv + etki A/B, nesne kutusu kenarı; çizimin kendisi kutunun biraz içindedir): M-SAY 11,5–14,1 mm (eskiden ≈ 5 mm),
 M-SIRA-SAYI 14,1, M-ÇIKAR-GÖRSEL 11,4–13,9, tek nesneli seçenekler 14,2; toplama sahnesi 7,2–13,2 (medyan 12,0).
-**10 mm'nin altında kalanlar** (yer yetmiyor, sayfa planı değişmeden): karşılaştırma seçenekleri 3,9–9,6 (26 mm kutuda
-14'e kadar nesne, eşit boy kuralı) ve bileşik sahnesi 6,6–13,2, çetele satırı 6,3 (10 nesne tek satırda, 7,7 mm aralık), veri grafiği 7,2–10,7, işlem hikâyesi
-5,5–11,1 (sonuç 20'ye kadar). Bunlar daha büyük seçenek kutusu ya da 1x4 düzen gerektirir (sayfa sayısı değişir → kullanıcı kararı).
+KG-105'te 10 mm'nin altında kalanlar (karşılaştırma seçenekleri, bileşik sahneler, çetele, veri grafiği, işlem hikâyesi)
+için → §4.2.
+
+### 4.2 Sayfa sayısı artmadan büyütme (KG-106)
+
+**Kullanıcı kararı** (28 Eki 2026): "sayfa sayısını artırmayacak şekilde büyümeleri ayarla". Sığma kararı
+(`maddeKaplama`), sayfa dağıtımı (`sayfalaraDagit`, `anahtarSayfalari`), altbilgi N, kâğıt kodları, madde içerikleri ve
+metin özetleri **değişmedi**; büyüme yalnız maddede zaten boş kalan yerden.
+
+- *Nesneler arası boşluk:* komşu iki nesne kutusu arasında en az **1,5 mm** (`KAGIT_NESNE_BOSLUK_MM`; sprite çizimi kutunun
+  biraz içinde olduğundan görünen boşluk ≈ 2 mm). Parmakla sayarken iki nesne aynı dokunuşa düşmez. Yalnız aşağıdaki yeni
+  yerleşimlerde uygulanır (M-SAY vb. KG-105'teki gibi).
+- *Karşılaştırma seçenekleri* (`src/ui/print/secenekYerlesimi.ts`): iki küme kutusu 26 mm'lik satır yerine maddenin boş
+  alt yarısını kullanır. Üç aday düzen ölçülür, ortak nesne boyu en büyük olan seçilir: yan yana tam yükseklik (K K [eşit]),
+  alt alta tam genişlik (K / K, "eşit" sağda) ya da kümeler üstte, "eşit" altta. **İki küme kutusu her zaman aynı ölçüde,
+  nesneler aynı boyda** (karsilastir.ts: miktarla ilişkili boy/alan ipucu yok); serbest kenar aynı nesne boyunu koruyan en
+  küçük ölçüye (≥ 26 mm) iner. "Eşit" kutusu 26 × 26 mm kalır. Harf rozeti iç alana 0–5,5 mm girer; nesneler rozet şeridinin
+  dışında (ölçümle denetlendi).
+- *"Eşit mi?" bileşik sahnesi* (iki küme + iki metin seçeneği): seçenekler sahnenin sağında alt alta, sahne hücrenin tüm
+  kalan yüksekliğini alır (`sahneYanSecenekli`); kümeler alt alta da dizilebilir (birebir eşlemeye uygun).
+- *Bileşik sahnede küme parçaları* (`kumeYerlesimi.ts`): sahnenin tüm yüksekliği kullanılır (eskiden parça kutusu %80
+  yükseklik, genişliği komşuya uzaklık kadardı) ve yalnız kümelerden oluşan sahnede kenar payı yok. İki küme (toplama,
+  "eşit mi") iki **eşit** kutuda, yan yana ya da (en az %10 büyük nesne verirse) alt alta; üç küme (veri grafiği) genişliği
+  ihtiyaca göre paylaşır (ortak boy en büyük; kümeler arası 5 mm, sıra korunur).
+- *Çetele:* aynı nesneden tek tek parçalar tek küme gibi **beşli sıralar** hâlinde (5'ten çoksa 5 sütun; sayma sırası satır
+  satır, soldan sağa) — eskiden 10 nesne tek satırdaydı.
+- *İşlem hikâyesi:* üç küme sabit %29/%24/%29 dilimler yerine genişliği ihtiyaca göre paylaşır; işaretler (+ − =) dar sabit
+  yerlerde, tüm yükseklik.
+
+**Ölçülen** (165 arşiv + etki A/B, nesne kutusu kenarı; önce → sonra, parantezde ≥ 10 mm madde oranı):
+
+| Tür | KG-105 | KG-106 |
+|---|---|---|
+| Karşılaştırma seçenekleri | 3,9–9,6 (0/48) | 7,8–14,2, medyan 10,2 (40/48) |
+| Karşılaştırma bileşik sahnesi ("Eşit mi?") | 6,6–13,2 (2/6) | 9,1–14,1 (4/6) |
+| Çetele | 6,3 (0/18) | 14,1 (18/18) |
+| Veri grafiği | 7,2–10,7 (1/18) | 8,5–12,3, medyan 11,3 (12/18) |
+| İşlem hikâyesi | 5,5–11,1, medyan 8,1 (8/18) | 6,4–14,1, medyan 10,3 (11/18) |
+| Toplama sahnesi | 7,2–13,2 (27/32) | 8,9–14,1 (31/32) |
+
+**Hâlâ 10 mm'nin altında (geometri sınırı, sayfa sayısı artmadan yer yok):** karşılaştırmada 11–14 nesneli küme + "eşit"
+kutusu (7,8–8,3 mm: 86,5 × 66 mm alanda iki eşit kutu + 26 mm "eşit" kutusu; 14 nesne 10 mm + 1,5 mm boşlukla en az
+≈ 58 × 35 mm iç alan ister, ikisi sığmaz); "Eşit mi?"de onluk çerçeve + 13–14 nesne (9,1); veri grafiğinde
+toplam 16–22 nesneli, en az iki sütunu ≥ 7 olan maddeler (8,5–9,5; sahne 86,5 × 40 mm, altında 26 mm'lik üç seçenek);
+işlem hikâyesinde üç kümede toplam ≥ 20 nesne (6,4–8,5; ör. 9 + 1 = 10, 13 + 7 = 20 → 40 nesne aynı 86,5 × 40 mm
+sahnede). Daha büyüğü 1x4 düzen ya da madde başına daha çok hücre ister
+(sayfa sayısı artar).
 
 Kaynak: Johnson PW, Blackstone JM. *Children and gender — differences in exposure and how anthropometric differences can be
 incorporated into the design of computer input devices.* SJWEH Suppl 2007;(3):26–32, Tablo 1

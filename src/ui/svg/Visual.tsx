@@ -17,7 +17,20 @@ import { ACCENTS, FONT_YIGINI } from '../../design/tokens';
 import { RAKAM_ARALIGI, RAKAM_GLIF_HARITASI } from './rakamGlifleri';
 import { Sprite } from './Sprite';
 import { RESMI_BANKNOT_GORSELLERI } from './banknotAssets';
-import { ekranKumeYerlesimi, kagitKumeYerlesimi, ortakKumeBoyutu, type KumeTarifi } from './kumeYerlesimi';
+import {
+  besliKumeYerlesimi,
+  ekranKumeYerlesimi,
+  KAGIT_NESNE_BOSLUK_MM,
+  KAGIT_NESNE_EN_AZ_MM,
+  KAGIT_NESNE_EN_BUYUK_MM,
+  ikiliKumeKutulari,
+  kagitOlcutu,
+  kagitKumeYerlesimi,
+  ortakKumeBoyutu,
+  satirKumeKutulari,
+  type Dikdortgen,
+  type KumeTarifi,
+} from './kumeYerlesimi';
 import { Govde } from './Govde';
 import { nesneTonlari } from './renkTonlari';
 import { daire, guvenliKimlik, materyalKonturu, yuvarlakDikdortgen } from './cizimYardimcilari';
@@ -33,11 +46,11 @@ const RENK_HEX: Record<Renk, string> = Object.fromEntries(ACCENTS.map((a) => [a.
 export interface BaskiOlcegi {
   readonly mmBirim: number;
   readonly kumeBoyutu?: number;
+  /** Komşu nesne kutuları arası en az boşluk (görsel birimi; KG-106). Verilmezse 0 (KG-105 davranışı). */
+  readonly bosluk?: number;
 }
-/** Kâğıtta sayılacak nesnenin en büyük kenarı (mm); yer varsa nesne buna kadar büyür. */
-export const KAGIT_NESNE_EN_BUYUK_MM = 14;
-/** Kâğıtta hedef en küçük nesne kenarı (mm; KG-105 gerekçesi `docs/tasarim/nesne-cizim-rehberi.md`). */
-export const KAGIT_NESNE_EN_AZ_MM = 10;
+// Kâğıt nesne ölçüleri saf modülde (KG-106); buradan da dışa verilir.
+export { KAGIT_NESNE_BOSLUK_MM, KAGIT_NESNE_EN_AZ_MM, KAGIT_NESNE_EN_BUYUK_MM };
 
 export function Visual({
   spec,
@@ -323,6 +336,7 @@ function NesneKumesi({
         KAGIT_NESNE_EN_BUYUK_MM / baski.mmBirim,
         baski.kumeBoyutu,
         KAGIT_NESNE_EN_AZ_MM / baski.mmBirim,
+        baski.bosluk,
       )
     : ekranKumeYerlesimi(spec, width, height);
 
@@ -824,6 +838,10 @@ function Sahne({
   height: number;
   baski?: BaskiOlcegi;
 }) {
+  if (baski) {
+    const kagit = KagitKumeSahnesi({ spec, width, height, baski });
+    if (kagit) return kagit;
+  }
   const pw = width * 0.46;
   const ph = height * 0.8;
   // Kâğıtta (KG-105) küme parçalarının kutusu komşu küme parçasına taşmaz: örtüşen iki kutu, ayrımı oransal olarak
@@ -867,6 +885,91 @@ function Sahne({
         return (
           <g key={i} transform={`translate(${px} ${py})`}>
             <Visual spec={p.gorsel} width={kw} height={kh} baski={parcaBaskisi} />
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+type KumeSpec = Extract<VisualSpec, { type: 'nesneKumesi' }>;
+
+/**
+ * Kâğıtta yalnız nesne kümelerinden oluşan, tek satıra dizilmiş bileşik sahne (KG-106). Sahnenin tüm yüksekliği
+ * kullanılır (eskiden parça kutusu yüksekliğin %80'i, genişliği komşuya uzaklık kadardı):
+ *  · çetele (aynı nesneden ≥ 3 tekli parça): tek küme gibi beşli sıralar (sayma sırası satır satır);
+ *  · iki küme (toplama, "eşit mi"): iki eşit kutu, yan yana ya da alt alta (`ikiliKumeKutulari`);
+ *  · üç ve daha çok küme (veri grafiği): genişlik ihtiyaca göre bölüştürülür (`satirKumeKutulari`).
+ * Nesneler hep aynı boyda (miktarla ilişkili boy ipucu yok). Başka sahneler için null (KG-105 yolu).
+ */
+function KagitKumeSahnesi({
+  spec,
+  width,
+  height,
+  baski,
+}: {
+  spec: Extract<VisualSpec, { type: 'sahne' }>;
+  width: number;
+  height: number;
+  baski: BaskiOlcegi;
+}) {
+  const p = spec.parcalar;
+  if (p.length < 2 || !p.every((q) => q.gorsel.type === 'nesneKumesi')) return null;
+  const ys = p.map((q) => q.konum.y);
+  if (Math.max(...ys) - Math.min(...ys) > 0.05) return null;
+  const kumeler = p.map((q) => q.gorsel as KumeSpec);
+  const o = kagitOlcutu(baski.mmBirim);
+  const ilk = kumeler[0];
+  if (p.length >= 3 && kumeler.every((k) => k.adet === 1 && k.sprite === ilk.sprite && k.renk === ilk.renk)) {
+    const { noktalar, boyut: b } = besliKumeYerlesimi(p.length, width, height, o);
+    const boyut = Math.min(b, baski.kumeBoyutu ?? Infinity);
+    // Nesneler soldan sağa parça sırasıyla (konum x'e göre).
+    const sira = p.map((q, i) => ({ x: q.konum.x, i })).sort((a, c) => a.x - c.x);
+    const renk = ilk.renk ? RENK_HEX[ilk.renk] : undefined;
+    return (
+      <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
+        <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} data-nesne-boyutu={boyut}>
+          {sira.map(({ i }, k) => (
+            <g key={i} transform={`translate(${noktalar[k].x - boyut / 2} ${noktalar[k].y - boyut / 2})`}>
+              <Sprite name={kumeler[i].sprite} fill={renk} size={boyut} />
+            </g>
+          ))}
+        </svg>
+      </svg>
+    );
+  }
+  const sira = p.map((q, i) => ({ x: q.konum.x, i })).sort((a, c) => a.x - c.x);
+  // Kümeler arası, küme içindeki boşluktan belirgin büyük (gruplar ayrı görünsün).
+  const ara = Math.max(o.bosluk * 2, (p.length >= 3 ? 5 : 3.5) / baski.mmBirim);
+  let kutular: readonly Dikdortgen[];
+  let boyut: number;
+  if (p.length === 2) {
+    const r = ikiliKumeKutulari(kumeler[sira[0].i], kumeler[sira[1].i], width, height, ara, o);
+    kutular = r.kutular;
+    boyut = r.boyut;
+  } else {
+    const r = satirKumeKutulari(
+      sira.map(({ i }) => ({ tur: 'kume' as const, spec: kumeler[i] })),
+      width,
+      height,
+      ara,
+      o,
+    );
+    kutular = r.kutular;
+    boyut = r.boyut;
+  }
+  const parcaBaskisi: BaskiOlcegi = {
+    ...baski,
+    kumeBoyutu: Math.min(boyut, baski.kumeBoyutu ?? Infinity),
+    bosluk: o.bosluk,
+  };
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
+      {sira.map(({ i }, k) => {
+        const r = kutular[k];
+        return (
+          <g key={i} transform={`translate(${r.x} ${r.y})`}>
+            <Visual spec={kumeler[i]} width={r.w} height={r.h} baski={parcaBaskisi} />
           </g>
         );
       })}
@@ -964,28 +1067,54 @@ function IslemSahnesiKagit({
   sonuc: number;
   renk: string;
 }) {
-  const enBuyuk = KAGIT_NESNE_EN_BUYUK_MM / baski.mmBirim;
-  const enAz = KAGIT_NESNE_EN_AZ_MM / baski.mmBirim;
-  const y0 = height * 0.04;
-  const kh = height * 0.92;
+  // KG-106: genişlik kümelere ihtiyaçlarına göre bölüştürülür (eskiden sabit %29/%24/%29 dilimler), tüm yükseklik.
+  const o = kagitOlcutu(baski.mmBirim);
+  const yazi = Math.min(height * 0.3, 70 / (baski.mmBirim * 10));
+  const isaretW = yazi * 0.7;
+  const ara = o.bosluk;
+  const y0 = 0;
+  const kh = height;
+  const adetler = [spec.ilkAdet, spec.degisimAdedi, Math.max(0, sonuc)];
+  const satir = satirKumeKutulari(
+    [
+      { tur: 'kume', spec: { adet: adetler[0], layout: 'sira' } },
+      { tur: 'sabit', w: isaretW },
+      { tur: 'kume', spec: { adet: adetler[1], layout: 'sira' } },
+      { tur: 'sabit', w: isaretW },
+      { tur: 'kume', spec: { adet: adetler[2], layout: 'sira' } },
+    ],
+    width,
+    kh,
+    ara,
+    o,
+  );
+  const k = satir.kutular;
   const kutular = [
-    { x0: 0.01, x1: 0.3, adet: spec.ilkAdet, soluk: false },
-    { x0: 0.38, x1: 0.62, adet: spec.degisimAdedi, soluk: spec.islem === '-' },
-    { x0: 0.7, x1: 0.99, adet: Math.max(0, sonuc), soluk: false },
+    { x0: k[0].x / width, x1: (k[0].x + k[0].w) / width, adet: adetler[0], soluk: false },
+    { x0: k[2].x / width, x1: (k[2].x + k[2].w) / width, adet: adetler[1], soluk: spec.islem === '-' },
+    { x0: k[4].x / width, x1: (k[4].x + k[4].w) / width, adet: adetler[2], soluk: false },
   ];
-  const yerler = kutular.map((k) =>
-    kagitKumeYerlesimi({ adet: k.adet, layout: 'sira' }, (k.x1 - k.x0) * width, kh, enBuyuk, undefined, enAz),
+  const yerler = kutular.map((q) =>
+    kagitKumeYerlesimi(
+      { adet: q.adet, layout: 'sira' },
+      (q.x1 - q.x0) * width,
+      kh,
+      o.enBuyuk,
+      undefined,
+      o.enAz,
+      o.bosluk,
+    ),
   );
   const dolu = yerler.filter((y) => y.noktalar.length > 0);
-  const boyut = Math.min(...dolu.map((y) => y.boyut), baski.kumeBoyutu ?? Infinity);
+  const boyut = Math.min(...dolu.map((y) => y.boyut), satir.boyut || Infinity, baski.kumeBoyutu ?? Infinity);
   const isaret = (x: number, metin: string) => (
     <text
-      x={x * width}
+      x={x}
       y={height * 0.5}
       dominantBaseline="central"
       textAnchor="middle"
       fontFamily={FONT_YIGINI}
-      fontSize={Math.min(height * 0.3, width * 0.09)}
+      fontSize={yazi}
       fontWeight="700"
       fill="#334155"
     >
@@ -1012,8 +1141,8 @@ function IslemSahnesiKagit({
           </g>
         )),
       )}
-      {isaret(0.34, spec.islem)}
-      {isaret(0.66, '=')}
+      {isaret(k[1].x + k[1].w / 2, spec.islem)}
+      {isaret(k[3].x + k[3].w / 2, '=')}
     </svg>
   );
 }

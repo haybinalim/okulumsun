@@ -147,11 +147,26 @@ export function yonergeYuksekligi(metin: string, icGenislik: number): number {
  * oranı ve mm ölçeği için tahmindir; CSS kutuyu gerçek kalan yerle doldurur, çizim oranıyla içine sığar.
  * Sığma kararı (`maddeKaplama`) DEĞİŞMEZ: sayfa planı ve metin özeti aynı kalır.
  */
+/**
+ * KG-106: dar hücrede iki kümeli bileşik sahne + en çok iki metin seçeneği ("Eşit mi?" → eşit / daha çok):
+ * seçenekler sahnenin SAĞINDA alt alta durur, sahne hücrenin tüm kalan yüksekliğini alır (kümeler alt alta,
+ * birebir eşlemeye uygun). Sığma kararı aynı (tahmin eski dikey düzenle yapılır; yeni düzen onun içinde kalır).
+ */
+export function sahneYanSecenekli(m: KagitMaddesi, duzen: KagitDuzeni): boolean {
+  if (duzen !== '2x3' || maddeKaplama(m, duzen) !== 1 || m.kutular.length > 0) return false;
+  const v = m.sahne;
+  if (!v || v.type !== 'sahne' || v.parcalar.length !== 2) return false;
+  if (!v.parcalar.every((p) => p.gorsel.type === 'nesneKumesi')) return false;
+  return m.secenekler.length >= 1 && m.secenekler.length <= 2 && m.secenekler.every((s) => s.deger.tur === 'terim');
+}
+
 export function sahneKutusu(m: KagitMaddesi, duzen: KagitDuzeni): { readonly w: number; readonly h: number } {
   const kaplama = maddeKaplama(m, duzen) ?? 1;
   const ic = maddeIcOlcusu(duzen, kaplama);
   const yatay = duzen === '1x4' || kaplama === 2;
   const yonerge = yonergeYuksekligi(m.yonergeMetni, ic.w);
+  if (sahneYanSecenekli(m, duzen))
+    return { w: ic.w - SECENEK_KUTUSU_MM - BOSLUK_MM, h: Math.max(SAHNE_EN_AZ_MM, ic.h - yonerge - 1) };
   const sirali = m.yanitBicimi === 'siraNumarasiYaz';
   const kutuSatiri = m.kutular.length > 0 && !sirali ? 1 + 9 : 0;
   if (yatay) {
