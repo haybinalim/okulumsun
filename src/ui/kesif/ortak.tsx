@@ -3,6 +3,7 @@
  * Animasyon yalnız `transform`/`opacity`, ≤1,5 sn; azaltılmış harekette süre 0.
  */
 import { m } from 'framer-motion';
+import { BigButton } from '../primitives/BigButton';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import type { KesifOlayi } from '../../kesif/kesifMasasi';
 
@@ -36,3 +37,52 @@ export function Sayac({ boyut = '70%', renk = 'var(--color-accent)' }: { boyut?:
 }
 
 export const izgaraBoslugu = 'calc(12px * var(--scale))';
+
+/**
+ * Tek onluk görünümünde (küçük ekran, KG-120) diğer onluğa geçiş düğmesi. Görünen onluk 0 ise "İkinci onluk",
+ * 1 ise "Birinci onluk". İçinde diğer onluğun küçük önizlemesi (2×5, dolu gözler) — öğretmen gizli onlukta ne
+ * olduğunu görür. Sessiz: yeni ses klibi yok (değişen sayı zaten seslendirilir).
+ */
+export function OnlukGecisi({
+  gorunen,
+  digerDolu,
+  onDegistir,
+}: {
+  gorunen: 0 | 1;
+  digerDolu: readonly boolean[];
+  onDegistir: () => void;
+}) {
+  const ad = gorunen === 0 ? 'İkinci onluk' : 'Birinci onluk';
+  return (
+    <BigButton
+      label={ad}
+      size="tapMin"
+      onPress={onDegistir}
+      style={{
+        width: 'calc(var(--size-tap-min) * 1.4)',
+        minHeight: 'calc(var(--size-tap-min) * 1.4)',
+        flexDirection: 'column',
+        gap: 'calc(6px * var(--scale))',
+        padding: 'calc(6px * var(--scale))',
+        fontSize: 'calc(18px * var(--scale))',
+        fontWeight: 700,
+        lineHeight: 1.1,
+      }}
+    >
+      <span aria-hidden="true">{gorunen === 0 ? 'İkinci onluk' : 'Birinci onluk'}</span>
+      <svg viewBox="0 0 54 22" width="80%" aria-hidden="true" data-onluk-onizleme={gorunen === 0 ? 1 : 0}>
+        <rect x="0.5" y="0.5" width="53" height="21" rx="2" fill="none" stroke="var(--color-ink)" />
+        {Array.from({ length: 10 }, (_, k) => (
+          <circle
+            key={k}
+            cx={6 + (k % 5) * 10.5}
+            cy={k < 5 ? 6 : 16}
+            r={3.6}
+            fill={digerDolu[k] ? 'var(--color-accent)' : 'none'}
+            stroke="var(--color-border)"
+          />
+        ))}
+      </svg>
+    </BigButton>
+  );
+}

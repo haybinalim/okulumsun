@@ -23,6 +23,8 @@ test('tahta: Keşif Masası beş araç, geometri ve sınırlar', async ({ page, 
   await expect(page.getByRole('main', { name: 'Keşif Masası' })).toHaveAttribute('data-kesif-arac', 'onlukCerceve');
   await klipIstendi(page, 'kesif.hosgeldin');
   await expect(page.getByRole('button', { name: /^Göz \d+/ })).toHaveCount(20);
+  // KG-120: 1920×1080 tahtada iki onluk yan yana sığar → geçiş düğmesi yok.
+  await expect(page.getByRole('button', { name: 'İkinci onluk', exact: true })).toHaveCount(0);
   await geometriTemiz(page, 'Keşif Masası — onluk çerçeve');
   await page.getByRole('button', { name: 'Göz 3, boş' }).click();
   await page.getByRole('button', { name: 'Göz 12, boş' }).click();
@@ -89,4 +91,78 @@ test('tahta: Keşif Masası beş araç, geometri ve sınırlar', async ({ page, 
 
   expect(agIhlalleri(ag.istekler, new URL(baseURL!).origin)).toEqual([]);
   expect(await page.evaluate(() => localStorage.length + sessionStorage.length)).toBe(0);
+});
+
+/** Ekrandaki tüm düğmeler görünüm alanının içinde mi (yatay/dikey kırpılan yok)? Taşanların listesi. */
+async function ekranDisi(page: Page): Promise<string[]> {
+  return page.evaluate(() =>
+    [...document.querySelectorAll('button')]
+      .filter((b) => {
+        const r = b.getBoundingClientRect();
+        return r.width > 0 && (r.left < -1 || r.top < -1 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1);
+      })
+      .map((b) => b.getAttribute('aria-label') ?? b.textContent ?? ''),
+  );
+}
+
+test('küçük tahta 1080×810 (KG-120): tek onluk + "İkinci onluk", nesneler kırpılmaz, alt düğmeler ekranda', async ({
+  page,
+}) => {
+  test.setTimeout(90_000);
+  // Elle seçilen tahta profili küçük ekranda (KG-118 ölçümü). Ses kilidi tam ekran ister → boyut önce.
+  await page.setViewportSize({ width: 1080, height: 810 });
+  await sesKilidiniAc(page, '/?device=board');
+  await page.getByRole('button', { name: 'Tahtada birlikte çalışalım.' }).click();
+  await page.getByRole('button', { name: 'Keşif Masası' }).click();
+  const masa = page.getByRole('main', { name: 'Keşif Masası' });
+  await expect(masa).toHaveAttribute('data-kesif-arac', 'onlukCerceve');
+
+  // Onluk çerçeve: bir onluk (10 göz) + geçiş düğmesi; ilk satır üst %35'in altında, hepsi ≥102 px.
+  const arac = page.locator('[data-arac="onlukCerceve"]');
+  await expect(page.getByRole('button', { name: /^Göz \d+/ }).first()).toBeVisible();
+  // Eski yerleşimde: ilk 10 göz üst %35'te, alt düğme satırı ekran dışında (KG-118 ölçümü).
+  await geometriTemiz(page, 'Keşif Masası 1080×810 — onluk çerçeve');
+  expect(await ekranDisi(page), 'onluk çerçeve: ekran dışı düğme').toEqual([]);
+  await expect(arac).toHaveAttribute('data-tek-onluk', 'true');
+  await expect(page.getByRole('button', { name: /^Göz \d+/ })).toHaveCount(10);
+  // Büyük rakam üstte kesilmez.
+  expect(await page.locator('output').evaluate((o) => o.getBoundingClientRect().top)).toBeGreaterThanOrEqual(0);
+
+  await page.getByRole('button', { name: 'Göz 3, boş' }).click();
+  await expect.poll(() => sayi(page)).toBe('1');
+  await page.getByRole('button', { name: 'İkinci onluk', exact: true }).click();
+  await expect(arac).toHaveAttribute('data-onluk-gorunen', '1');
+  await expect(page.getByRole('button', { name: 'Göz 11, boş' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Göz 3, dolu' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Göz 12, boş' }).click();
+  await expect.poll(() => sayi(page)).toBe('2');
+  await geometriTemiz(page, 'Keşif Masası 1080×810 — ikinci onluk');
+  await page.waitForTimeout(260); // geçiş düğmesi aynı düğme: ardışık dokunuş soğuması (250 ms)
+  await page.getByRole('button', { name: 'Birinci onluk', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Göz 3, dolu' })).toBeVisible();
+  // +1 boş ilk göze (Göz 1) sayaç koyar; görünüm o onlukta kalır.
+  await page.getByRole('button', { name: 'Bir ekle' }).click();
+  await expect.poll(() => sayi(page)).toBe('3');
+  await expect(arac).toHaveAttribute('data-onluk-gorunen', '0');
+
+  // Nesneler: 20 nesneye kadar; 5'li iki sıra (bir onluk), 11. nesnede ikinci onluk açılır; yatay kırpılma yok.
+  await page.getByRole('button', { name: 'Nesneler' }).click();
+  await page.waitForTimeout(260); // "Bir ekle" az önce kullanıldı (soğuma)
+  for (let i = 1; i <= 11; i++) {
+    await page.getByRole('button', { name: 'Bir ekle' }).click();
+    await expect.poll(() => sayi(page)).toBe(String(i));
+    await page.waitForTimeout(260);
+  }
+  const nesneler = page.locator('[data-tek-onluk="true"]');
+  await expect(nesneler).toHaveAttribute('data-onluk-gorunen', '1');
+  await expect(page.getByRole('button', { name: /^Nesne \d+$/ })).toHaveCount(1);
+  await geometriTemiz(page, 'Keşif Masası 1080×810 — nesneler (ikinci onluk)');
+  expect(await ekranDisi(page), 'nesneler: ekran dışı düğme').toEqual([]);
+  await page.waitForTimeout(260);
+  await page.getByRole('button', { name: 'Birinci onluk', exact: true }).click();
+  await expect(page.getByRole('button', { name: /^Nesne \d+$/ })).toHaveCount(10);
+  await geometriTemiz(page, 'Keşif Masası 1080×810 — nesneler (birinci onluk)');
+  expect(await ekranDisi(page), 'nesneler: ekran dışı düğme').toEqual([]);
+  await page.getByRole('button', { name: 'Nesne 4', exact: true }).click();
+  await expect.poll(() => sayi(page)).toBe('10');
 });

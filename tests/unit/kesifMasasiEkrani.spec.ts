@@ -5,6 +5,10 @@ import {
   genelArtiEksiVarMi,
   gosterilenMetin,
   gosterilenSayi,
+  nesneTekOnlukMu,
+  onlukCerceveGenisligi,
+  onlukSirasi,
+  onlukTekMi,
   pencereBaslangici,
   teraziEgimi,
 } from '../../src/ui/kesif/kesifEkrani';
@@ -38,5 +42,28 @@ describe('Keşif Masası ekranı', () => {
   it('sayı doğrusu penceresi 11 nokta: 0–10, 10u geçince 10–20', () => {
     expect([0, 5, 10].map(pencereBaslangici)).toEqual([0, 0, 0]);
     expect([11, 20].map(pencereBaslangici)).toEqual([10, 10]);
+  });
+
+  // KG-120: ölçülen araç alanı genişliği (Playwright, 2026-10-29): 1080×810 tahta 825, 1920×1080 tahta 1665, 1080×810 tablet 920.
+  const tahta = { tapMin: 102, olcek: 1.6, aralik: 51 };
+  const tablet = { tapMin: 64, olcek: 1, aralik: 32 };
+  it('onluk çerçeve genişliği: 1080×810 tahtada ölçülen 631 px ile tutarlı', () => {
+    expect(Math.round(onlukCerceveGenisligi(tahta))).toBe(631);
+    expect(onlukCerceveGenisligi(tablet)).toBe(398);
+  });
+  it('küçük tahtada (825 px) tek onluk; 1920 tahtada ve tablette iki onluk yan yana', () => {
+    expect(onlukTekMi({ ...tahta, genislik: 825 })).toBe(true);
+    expect(onlukTekMi({ ...tahta, genislik: 1665 })).toBe(false);
+    expect(onlukTekMi({ ...tablet, genislik: 920 })).toBe(false);
+    expect(onlukTekMi({ ...tablet, genislik: 828 })).toBe(false);
+    expect(onlukTekMi({ ...tablet, genislik: 827 })).toBe(true);
+  });
+  it('nesneler: 10’arlı sıra 825 px tahtada sığmaz, 1665 px tahtada ve 920 px tablette sığar', () => {
+    expect(nesneTekOnlukMu({ ...tahta, genislik: 825 })).toBe(true);
+    expect(nesneTekOnlukMu({ ...tahta, genislik: 1665 })).toBe(false);
+    expect(nesneTekOnlukMu({ ...tablet, genislik: 920 })).toBe(false);
+  });
+  it('onluk sırası: 0–9 birinci, 10–19 ikinci onluk', () => {
+    expect([0, 9, 10, 19].map(onlukSirasi)).toEqual([0, 0, 1, 1]);
   });
 });
