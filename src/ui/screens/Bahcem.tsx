@@ -22,6 +22,8 @@ import {
 } from '../../progress/cikartma';
 import { COLOR, SIZE, MOTION } from '../../design/tokens';
 import { BigButton } from '../primitives/BigButton';
+import { useScreenSpeech } from '../../audio/useSpeak';
+import { bahceSesi } from '../../audio/girisSesi';
 
 export interface BahcemProps {
   koleksiyon: CikartmaKoleksiyonu;
@@ -78,6 +80,7 @@ export function Bahcem({ koleksiyon, onEv }: BahcemProps) {
   const sahne = mevcutSahneAdi(koleksiyon);
   const arkaPlan = sahneArkaPlan(sahne);
   const kalan = kalanCikartma(koleksiyon);
+  useScreenSpeech(bahceSesi(koleksiyon.toplam), [koleksiyon.toplam]);
 
   // Mevcut sahnede dolu çıkartmalar + boş yuvalar
   const doluCikartmalar = YENI_SAHNE_ESIGI - kalan;

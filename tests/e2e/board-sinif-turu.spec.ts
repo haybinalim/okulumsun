@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { geometriTemiz, sesKilidiniAc } from './yardimci/akis';
+import { geometriTemiz, klipIstendi, sesKilidiniAc } from './yardimci/akis';
 
 /**
  * Plan v2 Adım 36 aşama 2b (KG-47): Sınıf Turu — 3 takım × 3 tur → kavanoz kutlaması.
@@ -44,6 +44,10 @@ test('tahta: Sınıf Turu — 3 takım × 3 tur → kavanoz kutlaması', async (
     await expect(main).toHaveAttribute('data-asama', 'siraDuyurusu');
     await expect(page.locator(`[data-sira="${sira[tur % 3]}"]`)).toBeVisible();
     if (tur < 3) await geometriTemiz(page, `sıra duyurusu ${tur + 1}`);
+    // KG-110: tam cümle sıra duyurusu; ilk turda "Sınıf turu başlıyor!", son turda "Bu son tur.".
+    await klipIstendi(page, `sinifturu.sira-${sira[tur % 3]}`);
+    if (tur === 0) await klipIstendi(page, 'sinifturu.basliyor');
+    if (tur === 6) await klipIstendi(page, 'sinifturu.son-tur');
     await page.getByRole('button', { name: 'Hazırız' }).click();
 
     await expect(main).toHaveAttribute('data-asama', 'soru');
@@ -52,10 +56,11 @@ test('tahta: Sınıf Turu — 3 takım × 3 tur → kavanoz kutlaması', async (
     if (tur === 1) {
       // İlk yanlış: aynı takım tekrar dener (sıra geçmez); ikinci yanlış: "hep birlikte".
       expect(await page.evaluate(() => window.__okulumsunE2E!.yanlisCevapla())).toBe(true);
-      await expect(page.getByText('Hep birlikte sayalım.')).toHaveCount(0);
+      await expect(page.getByText('Hep birlikte çözelim.')).toHaveCount(0);
       await expect(main).toHaveAttribute('data-asama', 'soru');
       expect(await page.evaluate(() => window.__okulumsunE2E!.yanlisCevapla())).toBe(true);
-      await expect(page.getByText('Hep birlikte sayalım.')).toBeVisible();
+      await expect(page.getByText('Hep birlikte çözelim.')).toBeVisible();
+      await klipIstendi(page, 'sinifturu.hep-birlikte');
       await geometriTemiz(page, 'hep birlikte');
     }
     expect(await page.evaluate(() => window.__okulumsunE2E!.dogruCevapla())).toBe(true);
@@ -75,6 +80,7 @@ test('tahta: Sınıf Turu — 3 takım × 3 tur → kavanoz kutlaması', async (
 
   await expect(page.getByRole('heading', { name: 'Kavanozu birlikte doldurduk!' })).toBeVisible();
   await expect(page.locator('[data-kavanoz="dolu"]')).toBeVisible();
+  await klipIstendi(page, 'sinifturu.kavanoz-doldu');
   await geometriTemiz(page, 'sınıf turu sonu');
   await puanSkorYok(page, 'sınıf turu sonu');
 

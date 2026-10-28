@@ -97,7 +97,7 @@ function AudioToImageFlow({
   onDone: (dogruMu: boolean) => void;
   onYanlis?: (bilgi: YanlisBilgisi) => void;
 }) {
-  useScreenSpeech(exercise.prompt.ses, [exercise.itemId]);
+  useScreenSpeech(exercise.prompt.ses, [exercise.itemId], exercise.prompt.tekrarSes);
   const geriBildirim = useGeriBildirim(exercise.itemId);
 
   const [seciliId, setSeciliId] = useState<string | null>(null);

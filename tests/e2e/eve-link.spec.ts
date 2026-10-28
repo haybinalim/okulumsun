@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { geometriTemiz } from './yardimci/akis';
+import { geometriTemiz, klipIstendi } from './yardimci/akis';
 import { agIhlalleri, agKaydet } from './yardimci/gizlilik';
 import { EVE_LINK_ORNEGI } from './yardimci/eveLinkOrnegi';
 
@@ -33,6 +33,7 @@ test('eve link: 8 soru → kutlama; hash silinir, ağda yok, depolama boş', asy
     onceki = await aktif(page);
     sablonlar.push((await page.evaluate(() => window.__okulumsunE2E!.alistirma!.itemId)).split('#')[0]!);
     if (i === 0) await geometriTemiz(page, 'ev çalışması 1. soru');
+    if (i === 0) await klipIstendi(page, 'ev.okuldaki-konu');
     expect(await page.evaluate(() => window.__okulumsunE2E!.dogruCevapla())).toBe(true);
   }
   // Set tabanlı: yalnız iki düğümün şablonları (M-KONUM ve sayma).
@@ -40,6 +41,7 @@ test('eve link: 8 soru → kutlama; hash silinir, ağda yok, depolama boş', asy
   expect(sablonlar).toContain('M-KONUM');
 
   await expect(page.getByRole('main', { name: 'Ev çalışması bitti' })).toBeVisible();
+  await klipIstendi(page, 'ev.bitti');
   // Azaltılmış harekette kutlama kendiliğinden bitmez; çocuk dokunur.
   await page.getByRole('button', { name: 'Devam etmek için dokun' }).click();
   await geometriTemiz(page, 'ev çalışması sonu');

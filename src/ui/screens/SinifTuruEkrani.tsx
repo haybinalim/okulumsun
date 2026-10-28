@@ -21,7 +21,7 @@ import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { REGISTRY } from '../../exercises/registry';
 import { setSorusuUret } from '../../ogretmen/tahtaSorusu';
 import { sinifTuruSorusu, type SinifTuruDurumu } from '../../sinif/sinifTuru';
-import { BIRLIKTE_COZME_ESIGI, renkAdi, takimKimligi, turSonucu } from '../../sinif/takim';
+import { BIRLIKTE_COZME_ESIGI, HEP_BIRLIKTE_METNI, renkAdi, siraDuyurusuSesi, takimKimligi, turSonucu } from '../../sinif/takim';
 import { basitMaddeSonucu, yanlisBilgisiBirlestir, type YanlisBilgisi } from '../../progress/basitMaddeSonucu';
 import type { MaddeSonuc } from '../../progress/itemLifecycle';
 import { useDersOturumu } from '../useDersOturumu';
@@ -144,8 +144,8 @@ function SinifTuruIcerik({ d }: { d: SinifTuruDurumu }) {
 function SiraDuyurusu({ d, onHazir }: { d: SinifTuruDurumu; onHazir: () => void }) {
   const renk = d.takimlar[d.siradaki].renk;
   const k = takimKimligi(renk);
-  // Ses kanalı: mevcut renk klibi ("Mor."); tam cümle klibi (sinifturu.sira-*) Adım 31'de.
-  useScreenSpeech({ kind: 'key', key: k.ses }, [d.turNo]);
+  // Ses kanalı: tam cümle "Sıra mor takımda." (ilk turda "Sınıf turu başlıyor!", son turda "Bu son tur." önce).
+  useScreenSpeech(siraDuyurusuSesi(d), [d.turNo], { kind: 'key', key: k.ses });
   const metin = `Sıra ${renkAdi(renk)} takımda.`;
   return (
     <div
@@ -221,8 +221,8 @@ function TurSorusu({
   const yanlisOldu = (bilgi: YanlisBilgisi) => {
     yanlisBilgisi.current = yanlisBilgisiBirlestir(yanlisBilgisi.current, bilgi);
     yanlisRef.current += 1;
-    // İkinci yanlış: maskot "hep birlikte" der (mevcut klip; sinifturu.hep-birlikte Adım 31'de).
-    if (yanlisRef.current === BIRLIKTE_COZME_ESIGI) void speak({ kind: 'key', key: 'yardim.k2-birlikte-sayalim' });
+    // İkinci yanlış: maskot "Hep birlikte çözelim." der (şeritteki cümleyle aynı, KG-110).
+    if (yanlisRef.current === BIRLIKTE_COZME_ESIGI) void speak({ kind: 'key', key: 'sinifturu.hep-birlikte' });
     setYanlis(yanlisRef.current);
   };
 
@@ -259,7 +259,7 @@ function TurSorusu({
             <span aria-hidden="true" style={{ fontSize: 44 }}>
               🤝
             </span>
-            <span style={{ fontSize: 28, fontWeight: 800, color: COLOR.ink }}>Hep birlikte sayalım.</span>
+            <span style={{ fontSize: 28, fontWeight: 800, color: COLOR.ink }}>{HEP_BIRLIKTE_METNI}</span>
           </div>
           <div data-yetiskin="" style={{ position: 'absolute', top: 8, right: 8, zIndex: 5 }}>
             <BigButton

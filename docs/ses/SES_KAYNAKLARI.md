@@ -85,3 +85,10 @@ Kullanıcı kuralı (28 Eki 2026): "yaptığımız çalışmaların API'de ücre
 - **Artımlı üretim:** yalnız özeti değişen veya dosyası eksik klipler (`scripts/ses/uretimPlani.ts`); tam yeniden üretim yalnız açık `--zorla` (eşanlamlı `--force`) ile.
 - **Kuru çalışma:** `npm run audio -- --kuru` (veya `--dry-run`): hiç istek atmadan, hiçbir dosya yazmadan üretilecek klip sayısı, karakter toplamı ve defter durumunu yazdırır. `--ornek` için de geçerli.
 - **Başlangıç değeri:** 2026-10 için 5.000 karakter (temkinli tahmin: KG-04 örnekleri ≈1.000 + Adım 31 üretimi 3.365 + test istekleri).
+
+## 11. Ertelenen klipler (Adım 31 aşama 2, KG-110, 28 Ekim 2026)
+
+27 klip aynı kaynakla (`google:tr-TR-Chirp3-HD-Puck@2026-10`, hız 0,9) artımlı üretildi: 27 istek · 674 karakter (defter 2026-10: 5.674 / 900.000; `--zorla` kullanılmadı). Anahtarlar: `ui.bir-sorun-oldu`, `ui.hazirlaniyor`, `ui.set-basliyor`, `ui.set-bitti`, `ui.cikis-onayi`, `bahce.bugun`, `sinifturu.{basliyor, sira-mor|turuncu|yesil|mavi|pembe|sari, hep-birlikte, son-tur, kavanoz-doldu, birlikte-calistik}`, `ev.{okuldaki-konu, bitti, yetiskine-ver}`, `kesif.{hosgeldin, dengede, ayir}`, `tematuru.{basliyor, bitti}`, `isinma.{basliyor, bitti}`. Toplam 314 klip.
+
+- Giriş cümleleri ayrı ekran değildir: `src/audio/girisSesi.ts` onları ilk sorunun talimatının önüne ekler (`ilkAraMs` 450 ms); "Tekrar dinle" girişi yinelemez (`Prompt.tekrarSes`).
+- Sıra duyurusu tam cümle klip ("Sıra mor takımda."); renk klibinden birleştirilmez (PLAN §4.3). Bahçem'de yalnız sayı + "çiçek ekledin." birleştirilir.

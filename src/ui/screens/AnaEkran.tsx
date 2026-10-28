@@ -11,7 +11,7 @@
  */
 
 import { useVurgu } from '../../design/useVurgu';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { anaEkranOlc, anaEkranSigmiyor } from './anaEkranYerlesimi';
 import { useAppStore, TEMALAR, avatarBul } from '../../store/appStore';
 import { temaAcikMi } from '../../content/okulAyi';
@@ -19,6 +19,7 @@ import { BigButton } from '../primitives/BigButton';
 import { Maskot } from '../feedback/Maskot';
 import { YonlendirmeSeridi } from '../feedback/YonlendirmeSeridi';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
+import { duyuruluKaynak } from '../../audio/girisSesi';
 import { m } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { COLOR, FONT_YIGINI, MOTION, SIZE, TEXT } from '../../design/tokens';
@@ -66,7 +67,13 @@ export function AnaEkran() {
 
   // Konu seçimi, çocuk için sesli yönlendirmeyle başlar; şerit ses çalmazsa
   // ekranda sıradaki hareketi göstermeye devam eder.
-  useScreenSpeech({ kind: 'key', key: 'ui.tema-sec' }, [mod]);
+  // KG-110: önceki eylemin tek seferlik duyurusu (ör. "Bugünkü etkinlikleri bitirdik.") talimattan önce.
+  const duyuru = useAppStore((s) => s.duyuru);
+  const duyuruTemizle = useAppStore((s) => s.duyuruTemizle);
+  useScreenSpeech(duyuruluKaynak(duyuru, { kind: 'key', key: 'ui.tema-sec' }), [mod], { kind: 'key', key: 'ui.tema-sec' });
+  useEffect(() => {
+    if (duyuru !== null) duyuruTemizle();
+  }, [duyuru, duyuruTemizle]);
 
   const handleTema = (temaNo: number) => {
     const tema = TEMALAR.find((t) => t.no === temaNo);

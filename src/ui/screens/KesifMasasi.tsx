@@ -10,9 +10,9 @@ import { useEffect, useReducer, useRef } from 'react';
 import { m } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { BigButton } from '../primitives/BigButton';
-import { speak } from '../../audio/useSpeak';
+import { speak, useScreenSpeech } from '../../audio/useSpeak';
 import { COLOR } from '../../design/tokens';
-import { kesifBaslangic, kesifIndirge, kesifSeslendirme } from '../../kesif/kesifMasasi';
+import { KESIF_HOSGELDIN, kesifBaslangic, kesifIndirge, kesifSeslendirme } from '../../kesif/kesifMasasi';
 import { EKRAN_ARACLARI, genelArtiEksiVarMi, gosterilenMetin, gosterilenSayi } from '../kesif/kesifEkrani';
 import { OnlukCerceveAraci } from '../kesif/OnlukCerceveAraci';
 import { NesneKumesiAraci } from '../kesif/NesneKumesiAraci';
@@ -24,6 +24,7 @@ export default function KesifMasasi() {
   const [durum, gonder] = useReducer(kesifIndirge, kesifBaslangic('onlukCerceve'));
   const az = useHareketAzalt();
   const ilk = useRef(true);
+  useScreenSpeech(KESIF_HOSGELDIN, []);
 
   // Her değişiklikte mevcut sayı/işlem klipleriyle seslendir (açılışta değil).
   useEffect(() => {

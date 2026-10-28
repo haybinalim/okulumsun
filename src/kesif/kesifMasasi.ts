@@ -128,9 +128,16 @@ export function kesifIndirge(d: KesifDurumu, o: KesifOlayi): KesifDurumu {
 
 const sayi = (n: number): SpeechKey => `sayi.${n}` as SpeechKey;
 
+/** Keşif Masası açılış sesi: "Keşif masasına hoş geldin, dokun ve keşfet." (KG-110). */
+export const KESIF_HOSGELDIN: SpeakSource = { kind: 'key', key: 'kesif.hosgeldin' };
+
+/** "İkiye ayırdık." ile ayırma dizisi arasındaki ara (ms; KG-110 `ilkAraMs`). */
+export const KESIF_AYIR_ARASI_MS = 450;
+
 /**
- * Durumu seslendiren kaynak — yalnız mevcut sayı/işlem klipleri (cümle parçadan birleştirilmez).
- * Ayır-birleştirde "5 artı 3 eşit 8" dizisi; terazide dengede/dengede değil.
+ * Durumu seslendiren kaynak — sayı/işlem klipleri; tam cümleler tek klip (parçadan birleştirilmez).
+ * Ayır-birleştirde "İkiye ayırdık." + "5 artı 3 eşittir 8" dizisi; terazide "İki taraf eşit." / "Dengede değil."
+ * (KG-110). Açılış sesi `KESIF_HOSGELDIN`.
  */
 export function kesifSeslendirme(d: KesifDurumu): SpeakSource | null {
   switch (d.arac) {
@@ -141,12 +148,13 @@ export function kesifSeslendirme(d: KesifDurumu): SpeakSource | null {
     case 'sayiDogrusu':
       return { kind: 'key', key: sayi(d.konum) };
     case 'terazi':
-      return { kind: 'key', key: d.sol === d.sag ? 'esit.dengede' : 'esit.dengede-degil' };
+      return { kind: 'key', key: d.sol === d.sag ? 'kesif.dengede' : 'esit.dengede-degil' };
     case 'ayirBirlestir':
       if (d.ayirma === null) return { kind: 'key', key: sayi(d.toplam) };
       return {
         kind: 'sequence',
-        keys: [sayi(d.ayirma), 'op.arti', sayi(d.toplam - d.ayirma), 'op.esit', sayi(d.toplam)],
+        keys: ['kesif.ayir', sayi(d.ayirma), 'op.arti', sayi(d.toplam - d.ayirma), 'op.esit', sayi(d.toplam)],
+        ilkAraMs: KESIF_AYIR_ARASI_MS,
       };
   }
 }

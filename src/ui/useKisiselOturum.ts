@@ -28,6 +28,7 @@ import {
   kaliciOgrenciVerileriniSil,
 } from '../persistence/repository';
 import { useAppStore, type Mod } from '../store/appStore';
+import { girisliSoru, isinmaGirisi } from '../audio/girisSesi';
 
 export interface KisiselOturumDurumu {
   readonly exercise: Exercise | null;
@@ -63,6 +64,8 @@ export function useKisiselOturum(ekran: string, mod: Mod | null): KisiselOturumD
   const isinmaTohumu = useRef(0);
   const isinmaYapildi = useRef(false);
   const isinmaTahmini = useRef<SeviyeTahmini | null>(null);
+  // Isınma az önce bitti: oturumun ilk sorusu "Isındık, şimdi oynayalım!" ile açılır (KG-110).
+  const [isinmadanYeniCikti, setIsinmadanYeniCikti] = useState(false);
   const maddedeYanlisVar = useRef(false);
 
   const readingLevel = useAppStore((s) => s.readingLevel);
@@ -190,11 +193,17 @@ export function useKisiselOturum(ekran: string, mod: Mod | null): KisiselOturumD
 
   const exercise = useMemo(() => {
     if (mod !== 'kisisel') return null;
-    if (isinma && !isinma.bitti) return secilenSoruyuUret(isinmaMaddesi(isinma, duzen, isinmaTohumu.current), duzen, mod);
+    if (isinma && !isinma.bitti)
+      return girisliSoru(
+        secilenSoruyuUret(isinmaMaddesi(isinma, duzen, isinmaTohumu.current), duzen, mod),
+        isinmaGirisi(isinma, false, false),
+      );
     if (!oturum) return null;
     const secilen = guncelSecilenSoru(oturum);
-    return secilen ? secilenSoruyuUret(secilen, duzen, mod) : null;
-  }, [duzen, isinma, mod, oturum]);
+    return secilen
+      ? girisliSoru(secilenSoruyuUret(secilen, duzen, mod), isinmaGirisi(null, oturum.guncelSoruIndeksi === 0, isinmadanYeniCikti))
+      : null;
+  }, [duzen, isinma, isinmadanYeniCikti, mod, oturum]);
 
   const exerciseItemId = exercise?.itemId;
   useEffect(() => {
@@ -223,6 +232,7 @@ export function useKisiselOturum(ekran: string, mod: Mod | null): KisiselOturumD
       maddedeYanlisVar.current = false;
       if (sonraki.bitti) {
         isinmaTahmini.current = seviyeTahmini(sonraki, duzen);
+        setIsinmadanYeniCikti(true);
         setIsinma(null);
       } else {
         setIsinma(sonraki);
@@ -267,6 +277,8 @@ export function useKisiselOturum(ekran: string, mod: Mod | null): KisiselOturumD
           oturumKapanisindaBuda(),
         ]);
         setOturum(null);
+        // Isınma girişi yalnız ısınmadan hemen sonraki oturumun ilk sorusunda (KG-110).
+        setIsinmadanYeniCikti(false);
         oturumuTamamla();
       } else {
         await aktifOturumYaz(sonuc.oturum, mod);

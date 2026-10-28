@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { geometriTemiz, sesKilidiniAc, temayiBaslat } from './yardimci/akis';
+import { geometriTemiz, sesKilidiniAc, temayiBaslat, klipIstendi } from './yardimci/akis';
 import { agIhlalleri, agKaydet } from './yardimci/gizlilik';
 
 /**
@@ -25,6 +25,7 @@ async function turuCoz(page: Page): Promise<number> {
     if (await bitti.isVisible()) return adet;
     onceki = await aktif(page);
     if (adet === 0) await geometriTemiz(page, 'tema turu 1. soru');
+    if (adet === 0) await klipIstendi(page, 'tematuru.basliyor');
     expect(await page.evaluate(() => window.__okulumsunE2E!.dogruCevapla())).toBe(true);
     adet++;
     expect(adet).toBeLessThanOrEqual(10);
@@ -32,6 +33,7 @@ async function turuCoz(page: Page): Promise<number> {
 }
 
 async function sonuDogrula(page: Page): Promise<void> {
+  await klipIstendi(page, 'tematuru.bitti');
   await page.getByRole('button', { name: 'Devam etmek için dokun' }).click();
   await page.getByRole('button', { name: 'Yetişkin: tur özetini aç' }).click();
   await expect(page.getByRole('heading', { name: /^Tema turu: / })).toBeVisible();

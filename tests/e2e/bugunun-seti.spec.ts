@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { geometriTemiz, sesKilidiniAc } from './yardimci/akis';
+import { geometriTemiz, klipIstendi, sesKilidiniAc } from './yardimci/akis';
 
 /**
  * Plan v2 Adım 34: tahtada öğretmen "Bugünün seti"ni hazırlar (2 düğüm), tahtada başlatır;
@@ -53,6 +53,8 @@ test('tahta: bugünün seti — 2 düğüm seç, başlat, ilk 4 soru iki düğü
   for (let i = 0; i < 4; i++) {
     const soru = await sonrakiSoru(page, onceki);
     itemIdler.push(soru.itemId);
+    // KG-110: setin ilk sorusu "Bugünün etkinlikleri başlıyor." ile açılır.
+    if (i === 0) await klipIstendi(page, 'ui.set-basliyor');
     await geometriTemiz(page, `set sorusu ${i + 1}`);
     expect(await page.evaluate(() => window.__okulumsunE2E!.dogruCevapla())).toBe(true);
     onceki = soru.sira;
@@ -68,6 +70,8 @@ test('tahta: bugünün seti — 2 düğüm seç, başlat, ilk 4 soru iki düğü
   // Öğretmen çıkışı ana ekrana döner.
   await page.getByRole('button', { name: 'Seti bitir' }).click();
   await expect(page.getByRole('button', { name: 'Öğretmen', exact: true })).toBeVisible();
+  // KG-110: tek seferlik duyuru "Bugünkü etkinlikleri bitirdik." ana ekran talimatından önce.
+  await klipIstendi(page, 'ui.set-bitti');
 });
 
 test('tahta: dörtten fazla etkinlik seçilemez', async ({ page }) => {
