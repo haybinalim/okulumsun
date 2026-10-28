@@ -1,0 +1,373 @@
+{
+  "$aciklama": "Plan v2 Adım 45 (KG-111): derin tema girişi — 7 tema × 4 adım. Ses metinleri tr.json 'giris' ad alanında (giris.t<tema>-<adım>); yönerge sesi (Puck), maskota özgü ses değil (K-12 ayrı). 'izle': anlatım biter, enUzunBeklemeMs sonra kendiliğinden ilerler. 'dokun': hedef kart alt %65'te; dokunulmazsa enUzunBeklemeMs sonra bir kez tekrar, sonra kendiliğinden ilerler. Kişisel veri yok.",
+  "girisler": [
+    {
+      "tema": 1,
+      "adimlar": [
+        {
+          "ses": "giris.t1-1",
+          "gorsel": {
+            "type": "konumSahnesi",
+            "iliski": "yaninda",
+            "hedef": "top",
+            "referans": "sepet"
+          },
+          "eylem": "izle",
+          "enUzunBeklemeMs": 2500
+        },
+        {
+          "ses": "giris.t1-2",
+          "gorsel": {
+            "type": "konumSahnesi",
+            "iliski": "ustunde",
+            "hedef": "top",
+            "referans": "kutu"
+          },
+          "eylem": "dokun",
+          "enUzunBeklemeMs": 8000,
+          "hedefAssetId": "top-ustunde"
+        },
+        {
+          "ses": "giris.t1-3",
+          "gorsel": {
+            "type": "konumSahnesi",
+            "iliski": "icinde",
+            "hedef": "top",
+            "referans": "sepet"
+          },
+          "eylem": "dokun",
+          "enUzunBeklemeMs": 8000,
+          "hedefAssetId": "top-icinde"
+        },
+        {
+          "ses": "giris.t1-4",
+          "gorsel": {
+            "type": "yonKarti",
+            "yon": "saga",
+            "adim": 2
+          },
+          "eylem": "izle",
+          "enUzunBeklemeMs": 2500
+        }
+      ]
+    },
+    {
+      "tema": 2,
+      "adimlar": [
+        {
+          "ses": "giris.t2-1",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "cicek",
+            "adet": 3,
+            "layout": "gruplu"
+          },
+          "eylem": "izle",
+          "enUzunBeklemeMs": 2500
+        },
+        {
+          "ses": "giris.t2-2",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "kelebek",
+            "adet": 5,
+            "layout": "gruplu"
+          },
+          "eylem": "dokun",
+          "enUzunBeklemeMs": 8000,
+          "hedefAssetId": "kelebekler"
+        },
+        {
+          "ses": "giris.t2-3",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "elma",
+            "adet": 10,
+            "layout": "onlukCerceve"
+          },
+          "eylem": "dokun",
+          "enUzunBeklemeMs": 8000,
+          "hedefAssetId": "elmalar"
+        },
+        {
+          "ses": "giris.t2-4",
+          "gorsel": {
+            "type": "sayiDogrusu",
+            "bas": 0,
+            "son": 10,
+            "adim": 1,
+            "isaretli": [],
+            "eksik": []
+          },
+          "eylem": "izle",
+          "enUzunBeklemeMs": 2500
+        }
+      ]
+    },
+    {
+      "tema": 3,
+      "adimlar": [
+        {
+          "ses": "giris.t3-1",
+          "gorsel": {
+            "type": "olcumKarsilastirma",
+            "boyut": "uzunluk",
+            "sol": {
+              "nesne": "kalem",
+              "renk": "mavi",
+              "deger": 5
+            },
+            "sag": {
+              "nesne": "kalem",
+              "renk": "turuncu",
+              "deger": 3
+            }
+          },
+          "eylem": "izle",
+          "enUzunBeklemeMs": 2500
+        },
+        {
+          "ses": "giris.t3-2",
+          "gorsel": {
+            "type": "olcumSahnesi",
+            "nesne": "kalem",
+            "birim": "yildiz",
+            "birimAdedi": 5,
+            "boyut": "uzunluk",
+            "gorunum": "birimlerleOlcum"
+          },
+          "eylem": "dokun",
+          "enUzunBeklemeMs": 8000,
+          "hedefAssetId": "kalem"
+        },
+        {
+          "ses": "giris.t3-3",
+          "gorsel": {
+            "type": "olcumKarsilastirma",
+            "boyut": "kutle",
+            "sol": {
+              "nesne": "elma",
+              "renk": "yesil",
+              "deger": 3
+            },
+            "sag": {
+              "nesne": "top",
+              "renk": "mor",
+              "deger": 1
+            }
+          },
+          "eylem": "dokun",
+          "enUzunBeklemeMs": 8000,
+          "hedefAssetId": "terazi"
+        },
+        {
+          "ses": "giris.t3-4",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "elma",
+            "adet": 3,
+            "layout": "sira"
+          },
+          "eylem": "izle",
+          "enUzunBeklemeMs": 2500
+        }
+      ]
+    },
+    {
+      "tema": 4,
+      "adimlar": [
+        {
+          "ses": "giris.t4-1",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "kus",
+            "adet": 3,
+            "layout": "sira"
+          },
+          "eylem": "izle",
+          "enUzunBeklemeMs": 2500
+        },
+        {
+          "ses": "giris.t4-2",
+          "gorsel": {
+            "type": "islemSahnesi",
+            "nesne": "kus",
+            "ilkAdet": 3,
+            "degisimAdedi": 2,
+            "islem": "+"
+          },
+          "eylem": "dokun",
+          "enUzunBeklemeMs": 8000,
+          "hedefAssetId": "kuslar"
+        },
+        {
+          "ses": "giris.t4-3",
+          "gorsel": {
+            "type": "islemSahnesi",
+            "nesne": "balik",
+            "ilkAdet": 5,
+            "degisimAdedi": 3,
+            "islem": "-"
+          },
+          "eylem": "dokun",
+          "enUzunBeklemeMs": 8000,
+          "hedefAssetId": "baliklar"
+        },
+        {
+          "ses": "giris.t4-4",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "kus",
+            "adet": 5,
+            "layout": "sira"
+          },
+          "eylem": "izle",
+          "enUzunBeklemeMs": 2500
+        }
+      ]
+    },
+    {
+      "tema": 5,
+      "adimlar": [
+        {
+          "ses": "giris.t5-1",
+          "gorsel": {
+            "type": "banknot",
+            "deger": 5
+          },
+          "eylem": "izle",
+          "enUzunBeklemeMs": 2500
+        },
+        {
+          "ses": "giris.t5-2",
+          "gorsel": {
+            "type": "banknot",
+            "deger": 10
+          },
+          "eylem": "dokun",
+          "enUzunBeklemeMs": 8000,
+          "hedefAssetId": "on-lira"
+        },
+        {
+          "ses": "giris.t5-3",
+          "gorsel": {
+            "type": "banknot",
+            "deger": 20
+          },
+          "eylem": "dokun",
+          "enUzunBeklemeMs": 8000,
+          "hedefAssetId": "yirmi-lira"
+        },
+        {
+          "ses": "giris.t5-4",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "elma",
+            "adet": 3,
+            "layout": "sira"
+          },
+          "eylem": "izle",
+          "enUzunBeklemeMs": 2500
+        }
+      ]
+    },
+    {
+      "tema": 6,
+      "adimlar": [
+        {
+          "ses": "giris.t6-1",
+          "gorsel": {
+            "type": "sekil",
+            "sekil": "kare",
+            "renk": "mavi"
+          },
+          "eylem": "izle",
+          "enUzunBeklemeMs": 2500
+        },
+        {
+          "ses": "giris.t6-2",
+          "gorsel": {
+            "type": "sekil",
+            "sekil": "ucgen",
+            "renk": "turuncu"
+          },
+          "eylem": "dokun",
+          "enUzunBeklemeMs": 8000,
+          "hedefAssetId": "ucgen"
+        },
+        {
+          "ses": "giris.t6-3",
+          "gorsel": {
+            "type": "sekil",
+            "sekil": "cember",
+            "renk": "yesil"
+          },
+          "eylem": "dokun",
+          "enUzunBeklemeMs": 8000,
+          "hedefAssetId": "cember"
+        },
+        {
+          "ses": "giris.t6-4",
+          "gorsel": {
+            "type": "sekil",
+            "sekil": "dikdortgen",
+            "renk": "mor"
+          },
+          "eylem": "izle",
+          "enUzunBeklemeMs": 2500
+        }
+      ]
+    },
+    {
+      "tema": 7,
+      "adimlar": [
+        {
+          "ses": "giris.t7-1",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "kus",
+            "adet": 4,
+            "layout": "gruplu"
+          },
+          "eylem": "izle",
+          "enUzunBeklemeMs": 2500
+        },
+        {
+          "ses": "giris.t7-2",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "kus",
+            "adet": 4,
+            "layout": "sira"
+          },
+          "eylem": "dokun",
+          "enUzunBeklemeMs": 8000,
+          "hedefAssetId": "kuslar"
+        },
+        {
+          "ses": "giris.t7-3",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "balik",
+            "adet": 3,
+            "layout": "gruplu"
+          },
+          "eylem": "dokun",
+          "enUzunBeklemeMs": 8000,
+          "hedefAssetId": "baliklar"
+        },
+        {
+          "ses": "giris.t7-4",
+          "gorsel": {
+            "type": "nesneKumesi",
+            "sprite": "yildiz",
+            "adet": 5,
+            "layout": "gruplu"
+          },
+          "eylem": "izle",
+          "enUzunBeklemeMs": 2500
+        }
+      ]
+    }
+  ]
+}

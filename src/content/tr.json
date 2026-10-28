@@ -360,5 +360,37 @@
     "$not": "Isınma Keşfi (Adım 47, ADR-0007): sınav algısı yok.",
     "basliyor": "Haydi biraz ısınalım!",
     "bitti": "Isındık, şimdi oynayalım!"
+  },
+
+  "giris": {
+    "$not": "Derin tema girişi (Adım 45, KG-111): 7 tema × 4 adım, src/content/temaGirisleri.json. Yönerge sesi; 'yanlış' yok, en çok iki kısa cümle.",
+    "t1-1": "Parka geldik! Bu temada yerleri ve yönleri öğreneceğiz.",
+    "t1-2": "Top kutunun üstünde. Topa dokun.",
+    "t1-3": "Şimdi top sepetin içinde. Topa dokun.",
+    "t1-4": "İleri, geri, sağa, sola. Haydi, birlikte oynayalım!",
+    "t2-1": "Bahçeye hoş geldin! Bu temada sayıları sayacağız.",
+    "t2-2": "Kelebekler uçuyor. Kelebeklere dokun.",
+    "t2-3": "Ağaçta on elma var. Elmalara dokun.",
+    "t2-4": "Saymak çok eğlenceli. Haydi, birlikte sayalım!",
+    "t3-1": "Mutfağa geldik! Bu temada uzunu, kısayı, ağırı ve hafifi bulacağız.",
+    "t3-2": "Kalemi yıldızlarla ölçelim. Kaleme dokun.",
+    "t3-3": "Terazide elma ile top var. Teraziye dokun.",
+    "t3-4": "Ölçmek mutfakta da işe yarar. Haydi başlayalım!",
+    "t4-1": "Göle geldik! Bu temada toplama ve çıkarma yapacağız.",
+    "t4-2": "İki kuş daha geldi. Kuşlara dokun.",
+    "t4-3": "Üç balık yüzüp gitti. Balıklara dokun.",
+    "t4-4": "Gelenleri ekleriz, gidenleri çıkarırız. Haydi başlayalım!",
+    "t5-1": "Pazara geldik! Bu temada paralarımızı tanıyacağız.",
+    "t5-2": "Bu on lira. Paraya dokun.",
+    "t5-3": "Bu da yirmi lira. Paraya dokun.",
+    "t5-4": "Paraları tanırsak alışveriş kolay olur. Haydi başlayalım!",
+    "t6-1": "Atölyeye geldik! Bu temada şekilleri tanıyacağız.",
+    "t6-2": "Bu bir üçgen. Üçgene dokun.",
+    "t6-3": "Bu da bir çember. Çembere dokun.",
+    "t6-4": "Etrafımız şekillerle dolu. Haydi, birlikte bulalım!",
+    "t7-1": "Çiftliğe hoş geldin! Bu temada hayvanları sayıp göstereceğiz.",
+    "t7-2": "Çitte dört kuş var. Kuşlara dokun.",
+    "t7-3": "Havuzda balıklar yüzüyor. Balıklara dokun.",
+    "t7-4": "Saydıklarımızı tabloda gösteririz. Haydi başlayalım!"
   }
 }
