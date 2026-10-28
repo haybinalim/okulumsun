@@ -90,3 +90,25 @@ test('tahta: dörtten fazla etkinlik seçilemez', async ({ page }) => {
   for (let i = 0; i < 5; i++) await kartlar.nth(i).click();
   await expect(page.getByText('4/4 seçildi — önce birini kaldır.')).toBeVisible();
 });
+
+test('ekranda banknot şematik "oyun parası" (KG-121): TCMB raster isteği yok', async ({ page }) => {
+  test.setTimeout(60_000);
+  const istekler: string[] = [];
+  page.on('request', (r) => istekler.push(r.url()));
+  await sesKilidiniAc(page, '/?device=board');
+  await page.getByRole('button', { name: 'Tahtada birlikte çalışalım.' }).click();
+  await page.getByRole('button', { name: 'Öğretmen', exact: true }).click();
+  const sirali = await page.locator('button[aria-label$="sıradaki sayı olarak seç"]').evaluateAll((b) =>
+    b.map((x) => Number(x.getAttribute('aria-label')?.split(',')[0])).sort((a, c) => c - a),
+  );
+  for (const sayi of sirali) await page.getByRole('button', { name: `${sayi}, sıradaki sayı olarak seç` }).click();
+  await page.getByRole('button', { name: 'Bugünün setini hazırla' }).click();
+  await page.getByRole('button', { name: 'Paralarımız', exact: true }).click();
+  await page.getByRole('button', { name: 'Bu kaç lira?', exact: true }).click();
+  await page.getByRole('button', { name: 'Tahtada başlat' }).click();
+  await expect(page.locator('[data-sematik-banknot]').first()).toBeVisible({ timeout: 15_000 });
+  await expect(page.locator('[data-sematik-banknot]').first()).toContainText('OYUN PARASI');
+  await geometriTemiz(page, 'para sorusu (şematik banknot)');
+  expect(await page.locator('image').count(), 'raster <image> yok').toBe(0);
+  expect(istekler.filter((u) => /images\/banknotlar|\.webp(\?|$)/.test(u))).toEqual([]);
+});
