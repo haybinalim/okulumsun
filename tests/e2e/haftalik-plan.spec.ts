@@ -10,10 +10,10 @@ import { agKaydet } from './yardimci/gizlilik';
  */
 const BUGUN = new Date('2026-10-13T10:00:00');
 
-async function ogretmenAlani(page: Page): Promise<void> {
+async function ogretmenAlani(page: Page, boyut = { width: 1920, height: 1080 }): Promise<void> {
   await page.clock.setFixedTime(BUGUN);
-  // Gerçek tahta çözünürlüğü: eylem satırları kaydırmasız sığmalı.
-  await page.setViewportSize({ width: 1920, height: 1080 });
+  // Gerçek tahta çözünürlüğü: eylem satırları kaydırmasız sığmalı. (Ses kilidi tam ekran ister → boyut sonradan değişmez.)
+  await page.setViewportSize(boyut);
   await sesKilidiniAc(page, '/?device=board');
   await page.getByRole('button', { name: 'Tahtada birlikte çalışalım.' }).click();
   await page.getByRole('button', { name: 'Öğretmen', exact: true }).click();
@@ -24,8 +24,8 @@ async function ogretmenAlani(page: Page): Promise<void> {
   await expect(page.getByRole('heading', { name: 'Öğretmen alanı' })).toBeVisible();
 }
 
-async function planiAc(page: Page): Promise<void> {
-  await ogretmenAlani(page);
+async function planiAc(page: Page, boyut?: { width: number; height: number }): Promise<void> {
+  await ogretmenAlani(page, boyut);
   await page.getByRole('button', { name: 'Haftalık planı aç' }).click();
   await expect(page.getByRole('heading', { name: 'Haftalık plan 2026–2027' })).toBeVisible();
 }
@@ -39,6 +39,8 @@ test('haftalık plan: bu hafta vurgulu, gezinme, geometri, yerel CSV/HTML indirm
   await expect(page.locator('tbody tr')).toHaveCount(37);
   await expect(page.locator('tbody tr[aria-current="true"]')).toContainText('12.10.2026');
   await geometriTemiz(page, 'haftalık plan');
+  // KG-118: sığan ekranda son çare kaydırma devreye girmez.
+  expect(await page.locator('main').evaluate((m) => m.scrollHeight > m.clientHeight + 1), '1920×1080: kaydırma yok').toBe(false);
 
   await page.getByRole('button', { name: 'Sonraki hafta' }).click();
   await expect(seciliHafta(page)).toContainText('6. hafta · 19.10.2026 haftası');
@@ -109,4 +111,36 @@ test('set hazırla: bu haftanın önerisi tek dokunuşla seçilir', async ({ pag
   await geometriTemiz(page, 'set hazırla (öneri seçili)');
   const baslat = page.getByRole('button', { name: 'Tahtada başlat' });
   await expect(baslat).not.toHaveAttribute('aria-disabled', 'true');
+});
+
+/**
+ * KG-118: tablet boyutunda elle seçilen tahta (1080×810 + tahta profili) — eskiden başlık %30'da kırpılıyor
+ * ("Etkinlikler" satırı kesik), tablo 4 px'e iniyor, "Bu haftanın kâğıdı" / "Tahtada başlat" ekranın altında
+ * kırpılıp erişilemiyordu (main `overflow: hidden`). Şimdi: başlık tam, tablo görünür, sığmayınca main kayar ve
+ * alt eylemler kaydırınca ekrana girer. 1920×1080'de kaydırma yok (yerleşim aynı).
+ */
+test('haftalık plan: küçük tahtada (1080×810) başlık kırpılmaz, alt eylemler kaydırınca erişilir', async ({ page }) => {
+  test.setTimeout(90_000);
+  await planiAc(page, { width: 1080, height: 810 });
+  const kaydirilabilir = () =>
+    page.locator('main').evaluate((m) => m.scrollHeight > m.clientHeight + 1);
+  await expect(seciliHafta(page)).toContainText('Etkinlikler:');
+  const olc = await page.evaluate(() => {
+    const baslik = document.querySelector('main > header')!.getBoundingClientRect();
+    const satirlar = [...document.querySelectorAll('main > header p')].map((p) => p.getBoundingClientRect());
+    const tablo = document.querySelector('main table')!.parentElement!.getBoundingClientRect();
+    return { kirpik: satirlar.filter((r) => r.bottom > baslik.bottom + 1).length, tabloYuksekligi: tablo.height };
+  });
+  expect(olc.kirpik, 'başlıkta kırpılan satır').toBe(0);
+  expect(olc.tabloYuksekligi, 'tablo görünür kalır').toBeGreaterThan(100);
+  expect(await kaydirilabilir(), '1080×810 tahta: sığmıyor → main kayar').toBe(true);
+
+  // Kullanıcı gibi kaydır (scrollIntoView değil): main'in sonuna in, iki eylem de ekranda.
+  await page.locator('main').evaluate((m) => m.scrollTo(0, m.scrollHeight));
+  for (const ad of ['Bu haftanın kâğıdı', 'Bu haftanın setini tahtada başlat']) {
+    const r = await page.getByRole('button', { name: ad }).boundingBox();
+    expect(r, ad).not.toBeNull();
+    expect(r!.y + r!.height, `${ad}: ekranın içinde`).toBeLessThanOrEqual(810 + 1);
+    expect(r!.y, `${ad}: ekranın içinde`).toBeGreaterThanOrEqual(0);
+  }
 });

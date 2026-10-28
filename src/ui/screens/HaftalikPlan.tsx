@@ -88,18 +88,19 @@ export default function HaftalikPlan() {
         padding: 'var(--size-edge)',
         paddingBottom: 'var(--size-edge-bottom)',
         gap: 'var(--size-gap-tight)',
-        overflow: 'hidden',
+        // Sığmayan ekranda (ör. 1080×810'da elle seçilen tahta) son çare dikey kaydırma: alttaki
+        // "Bu haftanın kâğıdı" / "Tahtada başlat" kırpılıp erişilemez olmasın (KG-118). Sığan ekranda değişiklik yok.
+        overflowX: 'hidden',
+        overflowY: 'auto',
       }}
     >
-      {/* Üst bölge: yalnız bilgi, dokunulabilir öğe yok. */}
+      {/* Üst bölge: yalnız bilgi, dokunulabilir öğe yok. Kırpılmaz (KG-118: küçük tahtada "Etkinlikler" satırı kesiliyordu). */}
       <header
         style={{
           flex: '0 0 auto',
-          maxHeight: '30%',
           display: 'flex',
           flexDirection: 'column',
           gap: 6,
-          overflow: 'hidden',
         }}
       >
         <h1 id="haftalik-plan-baslik" style={{ ...metin, fontWeight: 700 }}>
@@ -140,7 +141,8 @@ export default function HaftalikPlan() {
         ref={tabloRef}
         style={{
           flex: 1,
-          minHeight: 0,
+          // Sıkışınca sıfıra inmesin (KG-118): başlık + ~1 satır görünür kalır, gerisi kendi içinde kayar.
+          minHeight: 'calc(var(--size-tap-min) * 1.2)',
           overflow: 'auto',
           border: `2px solid ${COLOR.border}`,
           borderRadius: 12,
