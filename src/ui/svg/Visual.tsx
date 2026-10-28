@@ -16,7 +16,8 @@ import type { BanknotDegeri, Renk, SekilAdi, VisualSpec } from '../../exercises/
 import { ACCENTS, FONT_YIGINI } from '../../design/tokens';
 import { RAKAM_ARALIGI, RAKAM_GLIF_HARITASI } from './rakamGlifleri';
 import { Sprite } from './Sprite';
-import { RESMI_BANKNOT_GORSELLERI } from './banknotAssets';
+import { SematikBanknot } from './SematikBanknot';
+import { SEMATIK_BANKNOT_STILI } from '../../content/paraGorseli';
 import {
   besliKumeYerlesimi,
   ekranKumeYerlesimi,
@@ -261,53 +262,31 @@ function sekilYolu(sekil: SekilAdi, cx: number, cy: number, r: number): string {
 }
 
 /**
- * Banknot — yalnız TCMB'nin yayımladığı, üzerinde `ORNEKTIR GECMEZ`
- * ibaresi bulunan resmî E9 5. tertip ön yüz örneğini gösterir. Banknot türü
- * yalnızca eşlemesi bulunan gerçek kupürleri kabul eder; stilize geri dönüş yoktur.
+ * Banknot — ekranda da şematik "oyun parası" (`SematikBanknot`; KG-19, KG-121). Kâğıt ve arşivle aynı çizim:
+ * değer rakamı + kupüre özgü renk + desen + oran; TCMB görseli, adı veya portresi yok. Kutuya ortalanır,
+ * kupür oranı korunur (büyük kupür daha uzun). Erişilebilir ad seçenek düğmesinde; burada `aria-hidden`.
  */
 function Banknot({ deger, width, height }: { deger: BanknotDegeri; width: number; height: number }) {
-  const resmiGorsel = RESMI_BANKNOT_GORSELLERI[deger];
-  const kartGenislik = width * 0.93;
-  const kartYukseklik = Math.min(height * 0.7, kartGenislik * 0.5);
+  const oran = SEMATIK_BANKNOT_STILI[deger].oran;
+  const kartGenislik = Math.min(width * 0.93, height * 0.7 * oran);
+  const kartYukseklik = kartGenislik / oran;
   const x = (width - kartGenislik) / 2;
   const y = (height - kartYukseklik) / 2;
-  const clipId = `banknot-${deger}-${width}-${height}`;
 
   return (
-    <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
-      <defs>
-        <clipPath id={clipId}>
-          <rect x={x} y={y} width={kartGenislik} height={kartYukseklik} rx={kartYukseklik * 0.045} />
-        </clipPath>
-      </defs>
+    <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true" data-banknot={deger}>
       <rect
         x={x + 3}
         y={y + 4}
         width={kartGenislik}
         height={kartYukseklik}
-        rx={kartYukseklik * 0.045}
+        rx={kartYukseklik * 0.06}
         fill="#0f172a"
         opacity="0.16"
       />
-      <image
-        href={resmiGorsel}
-        x={x}
-        y={y}
-        width={kartGenislik}
-        height={kartYukseklik}
-        preserveAspectRatio="xMidYMid meet"
-        clipPath={`url(#${clipId})`}
-      />
-      <rect
-        x={x}
-        y={y}
-        width={kartGenislik}
-        height={kartYukseklik}
-        rx={kartYukseklik * 0.045}
-        fill="none"
-        stroke="#334155"
-        strokeWidth={Math.max(1.5, kartYukseklik * 0.018)}
-      />
+      <g transform={`translate(${x} ${y})`}>
+        <SematikBanknot deger={deger} genislik={kartGenislik} />
+      </g>
     </svg>
   );
 }
