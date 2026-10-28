@@ -20,10 +20,8 @@ jobs:
       # K10 lisans envanteri (plan v2 Adım 21): bağımlılık/font/ses ↔ envanter ↔ LICENSES.md.
       - run: npm run lisans:denetle
       - run: npm run gizlilik:tara
+      # K4 tam (Adım 31): geçiş istisnası yok — her özet aktif kaynakla (Google Chirp 3 HD Puck) eşleşir.
       - run: npm run audio:audit
-        env:
-          # ADR-0004 / Adım 31'de kaldırılacak: mevcut kliplerin ticari dağıtım izni yok (geçiş istisnası).
-          SES_GECIS_MODU: '1'
       - run: npm run build
       # K5 boyut bütçesi (plan v2 Adım 26): v0.3.0'a kadar uyarı, sonra +%10 aşım hata.
       - run: npm run boyut

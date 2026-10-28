@@ -68,6 +68,15 @@ export function Kaynaklar() {
         </ul>
       </section>
 
+      {/* Ses kaynağı (ADR-0004 Kabul, Adım 31): gönüllü ifşa cümlesi aynen (sesKaynagi.json atifSarti). */}
+      <section style={{ marginBottom: '2rem' }}>
+        <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Sesler</h2>
+        <p style={{ fontSize: '0.9rem', lineHeight: 1.6, color: '#333' }}>
+          Sesler Google Cloud Text-to-Speech ile üretilmiştir. Ses dosyaları uygulamanın içindedir;
+          uygulama çalışırken hiçbir ses servisine bağlanmaz.
+        </p>
+      </section>
+
       {/* Müfredat kaynağı */}
       <section style={{ marginBottom: '2rem' }}>
         <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Müfredat Kaynağı</h2>

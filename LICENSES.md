@@ -47,7 +47,7 @@ Uygulamadaki Kaynaklar ekranı aynı listeyi çizer.
 
 | Ad | Lisans | Sahip | Koşul |
 |---|---|---|---|
-| Ses klipleri (public/audio/, piper:bilinmiyor) | Köken doğrulanamadı (ADR-0004) | Okulumsun (üretim), ses modeli sağlayıcısı | Ticari dağıtım izni yok; Adım 31'de Google Cloud TTS ile yeniden üretilecek |
+| Ses klipleri (public/audio/, google:tr-TR-Chirp3-HD-Puck@2026-10) | ADR-0004 kaynağının şartları | Okulumsun (üretim), ses modeli sağlayıcısı | Sesler Google Cloud Text-to-Speech ile üretilmiştir (gönüllü ifşa, ADR-0004) |
 
 ### Geliştirme araçları (dağıtılmaz)
 
@@ -67,12 +67,12 @@ Uygulamadaki Kaynaklar ekranı aynı listeyi çizer.
 (CC BY-SA 4.0, ShareAlike bulaşıcı) kullanılmaz. macOS `say` yalnız `--prototip` ile geliştirme makinesinde
 çalışır, çıktısı `public/audio-prototip/` (gitignore) dağıtılmaz.
 
-> **Bilinen sapma — ses kaynağı değişikliği yapılıyor (Adım 15, 12 Ekim 2026).** Mevcut 287 klibin
-> özetleri `piper:` önekiyle üretildiğini gösteriyor, ancak hangi Piper modeliyle üretildiği bilinmiyor.
-> Türkçe Piper modellerinden `tr_TR-dfki` ticari olmayan (CC BY-NC-SA 4.0) veriyle eğitildi;
-> `fahrettin`/`fettah` katkı verenlerin isteğiyle kaldırıldı. Bu yüzden klipler ticari dağıtım ve
-> okullara resmî sunum için uygun kabul edilmez ve Google Cloud TTS (Chirp 3 HD, `tr-TR`) ile sıfırdan
-> üretilecek (Adım 31). O zamana kadar `audio:audit` CI'da `SES_GECIS_MODU=1` istisnasıyla çalışır.
+> **Ses kaynağı (Adım 31, 28 Ekim 2026).** Tüm klipler Google Cloud Text-to-Speech (Chirp 3 HD,
+> `tr-TR-Chirp3-HD-Puck`, hız 0,9) ile sıfırdan üretildi; kökeni bilinmeyen eski `piper:` klipleri
+> (KG-15) dağıtımdan çıktı. Google atıf şartı koymuyor; gönüllü ifşa: "Sesler Google Cloud
+> Text-to-Speech ile üretilmiştir." Şartlar, şart sürümü ve 18 yaş altı kısıtı notu ADR-0004'te
+> (`cocukUrunundeKullanim: kosullu`, ticari lansman öncesi avukat incelemesi). `audio:audit` CI'da
+> geçiş istisnası olmadan çalışır (K4).
 
 ## Müfredat kaynağı
 

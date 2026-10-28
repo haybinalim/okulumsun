@@ -36,8 +36,8 @@ export function sesVarligi(k: { modelKimligi: string; ticariDagitimIzni: boolean
     kaynakUrl: 'docs/ses/SES_KAYNAKLARI.md',
     dagitimdaVar: true,
     kosul: k.ticariDagitimIzni
-      ? undefined
-      : 'Ticari dağıtım izni yok; Adım 31\'de Google Cloud TTS ile yeniden üretilecek',
+      ? 'Sesler Google Cloud Text-to-Speech ile üretilmiştir (gönüllü ifşa, ADR-0004)'
+      : 'Ticari dağıtım izni yok; Google Cloud TTS ile yeniden üretilmeli (ADR-0004)',
   };
 }
 

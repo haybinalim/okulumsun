@@ -1,6 +1,8 @@
 # Ses kaynakları ve köken envanteri
 
-> Adım 15 (F0.2) · 12 Ekim 2026 · Karar kaynakları: KG-01, KG-08, KG-15 (plan v2 §2.7). Kesin karar ADR-0004'te (Adım 18) verilecek.
+> Adım 15 (F0.2) · 12 Ekim 2026 · Karar kaynakları: KG-01, KG-08, KG-15 (plan v2 §2.7). Kesin karar ADR-0004'te (Kabul, 28 Ekim 2026, KG-107).
+>
+> **Güncel durum (Adım 31, 28 Ekim 2026):** aktif kaynak **Google Cloud TTS Chirp 3 HD `tr-TR-Chirp3-HD-Puck`, hız 0,9** (`google:tr-TR-Chirp3-HD-Puck@2026-10`). 287 klibin tamamı bu kaynakla sıfırdan üretildi; `audio:audit` geçiş istisnası olmadan yeşil (K4). §1–§7 eski kliplerin geçmişidir; yeni durum §9.
 
 ## 1. Özet
 
@@ -60,3 +62,15 @@ Piper `tr_TR-dfki` (CC BY-NC-SA) · Piper `fahrettin`/`fettah` (kaldırıldı) �
 - Anahtar: `GOOGLE_TTS_API_KEY`, yalnız ortam değişkeni veya `.env.local` (`*.local` gitignore'da). Depoya, CI'ya, günlüğe girmez (KG-03). Vekil modu (anahtarı aradaki vekil ekler): `GOOGLE_TTS_API_KEY=proxy GOOGLE_TTS_UC_NOKTA=https://texttospeech.clients6.google.com/v1/text:synthesize NODE_USE_ENV_PROXY=1 npm run audio` — yer tutucu modunda anahtar başlığı gönderilmez.
 - Ses seçimi (KG-04): `npm run audio -- --ornek` → Kore, Aoede, Puck (veya `--ses A,B,C`) için 10'ar örnek + `birlesim-on-yedi-elma.m4a` (PLAN §4.3 tını kontrolü). Çıktı `public/audio-prototip/ornek/<ses>/`, dağıtılmaz.
 - Şartlar ve alıntılar: ADR-0004 "Karar" bölümü.
+
+## 9. Adım 31 — yeniden üretim (28 Ekim 2026)
+
+- Komut (vekil modu; anahtar kasada, depoya girmez): `GOOGLE_TTS_API_KEY=proxy GOOGLE_TTS_UC_NOKTA=https://texttospeech.clients6.google.com/v1/text:synthesize NODE_USE_ENV_PROXY=1 npm run audio -- --en-cok 80` (sandbox süre sınırı yüzünden parça parça; özetler her klipten sonra atomik yazılır, kesilen çalışma kaldığı yerden sürer).
+- Sonuç: **287 / 287 klip**, sağlayıcıya **287 istek · 3.365 karakter** (yalnız `tr.json` metinleri ve üretilen sayı adları; içerik günlüğe yazılmadı). Aylık 1 milyon ücretsiz kotanın ~%0,3'ü. 429 alınmadı.
+- Biçim değişmedi: LINEAR16 24 kHz → `ffmpeg` AAC m4a 24 kHz mono 40 kb/sn (eski kliplerle aynı ayar; sessizlik kırpma/normalleştirme eklenmedi — Puck çıktısında baş sessizliği ≈0, son ≈0,14 sn; ortalama ses düzeyi eskiyle aynı bantta, −19…−21 dB).
+- Boyut: `public/audio/` 1.969.306 B → **2.696.181 B** (+726.875 B, %37); tümü PWA precache'te (`globPatterns` m4a, dosya başı sınır 5 MB). JS bütçesi (K5) etkilenmez — ses dosyaları JS değil.
+- `.hashes.json`: `{ "$kaynak": <aktif kaynak>, "<anahtar>": sha256('google:google:tr-TR-Chirp3-HD-Puck@2026-10:<metin>').slice(0,16) }`; eski `piper:` özeti 0.
+- CI: `SES_GECIS_MODU` `ci.yml`, `vercel-kontrol.yml` ve `scripts/audit-audio.ts`'ten kaldırıldı; ticari izinsiz kaynak artık her zaman kırmızı.
+- Tarayıcı uyumu: m4a (AAC) Safari/iOS, Chrome, Edge, Firefox'ta çalar; Playwright'ın Chromium derlemesinde AAC çözücü yok — e2e testleri çözme adımını sınamaz (`onizleme-csp`, `sorun-bildir` notları), yalnız dosyanın sunulduğunu sınar.
+- Kulakla örneklem (alt görev 9) ve birleştirme dinlemesi (alt görev 2) **kullanıcıda**: her ad alanından 2 klip (56 klip) ve "on yedi elma", "yedi artı beş kaç eder", "kırk iki lira" birleştirmeleri ayrı dinleme dosyasında verildi. Çocukla dinleme Adım 32.
+
