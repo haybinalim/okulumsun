@@ -10,6 +10,7 @@ import {
   kesifBaslangic,
   kesifIndirge,
   kesifSeslendirme,
+  KESIF_AYIR_ARASI_MS,
   type KesifDurumu,
   type KesifOlayi,
 } from '../../src/kesif/kesifMasasi';
@@ -153,7 +154,7 @@ describe('kesifSeslendirme', () => {
     });
     expect(kesifSeslendirme(uygula(kesifBaslangic('terazi'), 'sol+', 'sag+'))).toEqual({
       kind: 'key',
-      key: 'esit.dengede',
+      key: 'kesif.dengede',
     });
     expect(kesifSeslendirme(uygula(kesifBaslangic('terazi'), 'sol+'))).toEqual({
       kind: 'key',
@@ -161,7 +162,8 @@ describe('kesifSeslendirme', () => {
     });
     expect(kesifSeslendirme(uygula(kesifBaslangic('ayirBirlestir'), ...tekrar('arti', 3), 'ayir:5'))).toEqual({
       kind: 'sequence',
-      keys: ['sayi.5', 'op.arti', 'sayi.3', 'op.esit', 'sayi.8'],
+      keys: ['kesif.ayir', 'sayi.5', 'op.arti', 'sayi.3', 'op.esit', 'sayi.8'],
+      ilkAraMs: KESIF_AYIR_ARASI_MS,
     });
   });
 });

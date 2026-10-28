@@ -19,6 +19,7 @@ import { OGRENCI_VERISI_SAKLANIR_MI } from '../persistence/veriSaklamaPolitikasi
 import type { GunlukSet } from '../ogretmen/gunlukSet';
 import type { TemaTuruPlani } from '../ogretmen/temaTuru';
 import type { Renk } from '../exercises/types';
+import type { SpeechKey } from '../audio/audioManifest.generated';
 import {
   sinifTuruBaslat as sinifTuruDurumuBaslat,
   sinifTuruIlerlet,
@@ -170,6 +171,12 @@ interface AppStore {
   evdeOnDakikaTema: number | null;
   /** Tema sonu turu (Adım 46): plan yalnız bellekte; tur kapanınca `null`. Sonuçlar ekranda yerel. */
   temaTuru: { readonly tema: number; readonly plan: TemaTuruPlani } | null;
+  /**
+   * Tek seferlik sesli duyuru (KG-110): bir eylemin sonucunu bir sonraki ekranın talimatından önce söyler
+   * (ör. "Seti bitir" → ana ekranda "Bugünkü etkinlikleri bitirdik."). Ekran okuyunca `duyuruTemizle`.
+   * Yalnız bellekte; içerik kimliğidir, kişisel değil.
+   */
+  duyuru: SpeechKey | null;
 
   // --- Actions
   ekranGit: (ekran: Ekran) => void;
@@ -194,6 +201,7 @@ interface AppStore {
   oturumuTamamla: () => void;
   setBaslat: (set: GunlukSet) => void;
   setBitir: () => void;
+  duyuruTemizle: () => void;
   kagitIcinSet: (set: GunlukSet) => void;
   sinifTuruKur: () => void;
   sinifTuruBaslat: (renkler: readonly Renk[], kaynak: GunlukSet, turPerTakim: number) => void;
@@ -245,6 +253,7 @@ const baslangicDurumu = {
   eveGonderSeti: null as GunlukSet | null,
   evdeOnDakikaTema: null as number | null,
   temaTuru: null as { readonly tema: number; readonly plan: TemaTuruPlani } | null,
+  duyuru: null as SpeechKey | null,
 };
 
 type Parca = Partial<AppStore> | ((s: AppStore) => Partial<AppStore>);
@@ -371,7 +380,9 @@ export const useAppStore = create<AppStore>((hamSet, get) => {
         oturumTamamlandi: false,
       }),
 
-    setBitir: () => set((s) => ({ aktifSet: null, ekran: 'anaEkran', oncekiEkran: s.ekran })),
+    setBitir: () => set((s) => ({ aktifSet: null, ekran: 'anaEkran', oncekiEkran: s.ekran, duyuru: 'ui.set-bitti' })),
+
+    duyuruTemizle: () => set({ duyuru: null }),
 
     kagitIcinSet: (kagitSeti) =>
       set((s) => ({ kagitSeti, ekran: 'calismaKagidi', oncekiEkran: s.ekran })),

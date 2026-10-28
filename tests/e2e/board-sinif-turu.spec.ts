@@ -52,10 +52,10 @@ test('tahta: Sınıf Turu — 3 takım × 3 tur → kavanoz kutlaması', async (
     if (tur === 1) {
       // İlk yanlış: aynı takım tekrar dener (sıra geçmez); ikinci yanlış: "hep birlikte".
       expect(await page.evaluate(() => window.__okulumsunE2E!.yanlisCevapla())).toBe(true);
-      await expect(page.getByText('Hep birlikte sayalım.')).toHaveCount(0);
+      await expect(page.getByText('Hep birlikte çözelim.')).toHaveCount(0);
       await expect(main).toHaveAttribute('data-asama', 'soru');
       expect(await page.evaluate(() => window.__okulumsunE2E!.yanlisCevapla())).toBe(true);
-      await expect(page.getByText('Hep birlikte sayalım.')).toBeVisible();
+      await expect(page.getByText('Hep birlikte çözelim.')).toBeVisible();
       await geometriTemiz(page, 'hep birlikte');
     }
     expect(await page.evaluate(() => window.__okulumsunE2E!.dogruCevapla())).toBe(true);

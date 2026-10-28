@@ -63,6 +63,7 @@ export const SpeakSourceSchema: z.ZodType<SpeakSource> = z.discriminatedUnion('k
     kind: z.literal('sequence'),
     keys: z.array(SpeechKeySchema).min(1),
     gapMs: z.number().nonnegative().optional(),
+    ilkAraMs: z.number().nonnegative().optional(),
   }),
 ]);
 

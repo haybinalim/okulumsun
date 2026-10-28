@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { BigButton } from '../primitives/BigButton';
-import { CIKIS_ONAYI_METNI } from './gezinme';
+import { CIKIS_ONAYI_METNI, CIKIS_ONAYI_SESI } from './gezinme';
+import { speak } from '../../audio/useSpeak';
 
 /**
  * ÇIKIŞ ONAYI (KG-103) — "Etkinlikten çıkmak istiyor musun?" Evet / Hayır.
@@ -9,10 +10,14 @@ import { CIKIS_ONAYI_METNI } from './gezinme';
  * yanlışlıkla dokunursa etkinlik kaybolmasın diye; düğmeler büyük (`--size-primary`: tablet 140, tahta
  * 224 px) ve pencere ekranın alt bölümünde (tahtada üst %35'e girmez). Varsayılan güvenli seçim
  * "Hayır" (odak onda, Esc ve geri tuşu = Hayır). Kırmızı yok; Evet nötr, Hayır vurgu rengi.
- * Metin yalnız görsel: ses anahtarı Adım 31'e kadar eklenmez (KG-01, yeni `ui.*` yok).
+ * Soru sesli de sorulur (`ui.cikis-onayi`, KG-110): düz `speak` — ekran talimatı değildir, kapanınca
+ * sorunun talimatı (talimat tekrarı) değişmeden kalır.
  */
 export function CikisOnayi({ onYanit }: { onYanit: (evet: boolean) => void }) {
   const hayir = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    void speak({ kind: 'key', key: CIKIS_ONAYI_SESI }, { priority: 'high' });
+  }, []);
   useEffect(() => {
     hayir.current?.querySelector('button')?.focus();
     const tus = (e: KeyboardEvent): void => {

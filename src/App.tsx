@@ -52,6 +52,7 @@ const KesifMasasi = lazy(() => import('./ui/screens/KesifMasasi'));
 const TemaTuru = lazy(() => import('./ui/screens/TemaTuru'));
 import { setSorusu } from './ogretmen/gunlukSet';
 import { setSorusuUret, tahtaSorusuUret } from './ogretmen/tahtaSorusu';
+import { girisliSoru } from './audio/girisSesi';
 
 /**
  * Uygulama kabuğu — plan §11 ekran akışını yönetir.
@@ -87,7 +88,12 @@ export default function App() {
   const setSirasi = setIlerleme.set === aktifSet ? setIlerleme.sira : 0;
   const yanlisVar = useRef(false);
   const tahtaExercise = useMemo<Exercise>(() => {
-    if (aktifSet) return setSorusuUret(setSorusu(aktifSet, setSirasi, (t) => REGISTRY.has(t)));
+    // KG-110: setin ilk sorusu "Bugünün etkinlikleri başlıyor." ile açılır (tekrar dinlemede yinelenmez).
+    if (aktifSet)
+      return girisliSoru(
+        setSorusuUret(setSorusu(aktifSet, setSirasi, (t) => REGISTRY.has(t))),
+        setSirasi === 0 ? 'ui.set-basliyor' : null,
+      );
     return tahtaSorusuUret(secilenDugumId, tahtaTohumu);
   }, [aktifSet, setSirasi, secilenDugumId, tahtaTohumu]);
 

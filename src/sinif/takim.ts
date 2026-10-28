@@ -2,13 +2,15 @@
  * SINIF TURU — takım kimliği ve tur sonucu yardımcıları (SAF; plan v2 Adım 36 aşama 2b, KG-47).
  *
  * Takım kimliği en az üç kanaldan taşınır: renk (görsel), hayvan ikonu (renk körlüğü için
- * biçim) ve mevcut `renk.*` ses klibi (ses). Takım ADI yoktur; öğrenci adı girişi YASAKTIR.
+ * biçim) ve tam cümle sıra duyurusu `sinifturu.sira-*` ("Sıra mor takımda.", KG-110). Takım ADI yoktur; öğrenci adı girişi YASAKTIR.
  * Saat, rastgelelik, depolama ve ağ yok.
  */
-import { renkSesAnahtari, RENKLER, type Renk } from '../exercises/types';
+import { RENKLER, type Renk } from '../exercises/types';
 import type { SpeechKey } from '../audio/audioManifest.generated';
+import type { SpeakSource } from '../audio/speech';
+import { girisliKaynak } from '../audio/girisSesi';
 import type { MaddeSonuc } from '../progress/itemLifecycle';
-import { TAKIM_SAYISI_ARALIGI } from './sinifTuru';
+import { TAKIM_SAYISI_ARALIGI, type SinifTuruDurumu } from './sinifTuru';
 
 export interface TakimKimligi {
   readonly renk: Renk;
@@ -17,7 +19,7 @@ export interface TakimKimligi {
   readonly hayvan: string;
   /** Erişilebilir ad: "mor takım (kedi)". Sayı içermez. */
   readonly etiket: string;
-  /** Sıra duyurusu sesi: mevcut renk klibi (yeni klip Adım 31'e ertelendi). */
+  /** Sıra duyurusu sesi: tam cümle "Sıra mor takımda." (PLAN §4.3; renk klibinden birleştirilmez). */
   readonly ses: SpeechKey;
 }
 
@@ -50,7 +52,24 @@ const AD: Record<Renk, string> = {
 
 export function takimKimligi(renk: Renk): TakimKimligi {
   const [hayvan, hayvanAdi] = HAYVAN[renk];
-  return { renk, hex: HEX[renk], hayvan, etiket: `${AD[renk]} takım (${hayvanAdi})`, ses: renkSesAnahtari(renk) };
+  return { renk, hex: HEX[renk], hayvan, etiket: `${AD[renk]} takım (${hayvanAdi})`, ses: `sinifturu.sira-${renk}` as SpeechKey };
+}
+
+/**
+ * Sıra duyurusunun sesi (KG-110, SAF): ilk turda önce "Sınıf turu başlıyor!", son tura (her takımın son
+ * sırası) girerken "Bu son tur."; sonra "Sıra mor takımda.". Takım başına tek tur varsa ilk tur aynı
+ * zamanda son turdur → yalnız "başlıyor" (iki giriş üst üste binmez).
+ */
+export function siraDuyurusuSesi(d: SinifTuruDurumu): SpeakSource {
+  const sira: SpeakSource = { kind: 'key', key: takimKimligi(d.takimlar[d.siradaki].renk).ses };
+  if (d.turNo === 0) return girisliKaynak('sinifturu.basliyor', sira);
+  if (d.turNo === d.kavanozHedefi - d.takimlar.length) return girisliKaynak('sinifturu.son-tur', sira);
+  return sira;
+}
+
+/** Tur sonu kutlamasının sesi: kavanoz dolduysa "Kavanozu birlikte doldurduk!", erken bittiyse "Bugün birlikte çalıştık!". */
+export function turSonuSesi(d: Pick<SinifTuruDurumu, 'kavanoz' | 'kavanozHedefi'>): SpeechKey {
+  return d.kavanoz >= d.kavanozHedefi ? 'sinifturu.kavanoz-doldu' : 'sinifturu.birlikte-calistik';
 }
 
 /** Renk adı (Türkçe karakterli), ekranda "Sıra mor takımda." için. */
@@ -74,6 +93,11 @@ export const KAVANOZ_BOYUTLARI = [
 
 /** İkinci yanlışta tur birlikte çözülür (plan v2 Adım 36 kural 4). */
 export const BIRLIKTE_COZME_ESIGI = 2;
+/**
+ * Birlikte çözme şeridinin cümlesi = `sinifturu.hep-birlikte` klibi (KG-110). Eskiden "Hep birlikte
+ * sayalım." idi; turdaki soru her zaman sayma değil (şekil, konum, ölçme) → "çözelim".
+ */
+export const HEP_BIRLIKTE_METNI = 'Hep birlikte çözelim.';
 
 /**
  * Turun kapanış sonucu. İlk denemede doğru → olduğu gibi; yanlıştan sonra doğru → `dogru:false`,

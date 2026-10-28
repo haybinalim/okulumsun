@@ -18,11 +18,12 @@ export function useSpeechState() {
  *
  * `deps` değişince talimat yeniden söylenir (ör. yeni soru geldi).
  */
-export function useScreenSpeech(source: SpeakSource | null, deps: unknown[] = []): void {
+export function useScreenSpeech(source: SpeakSource | null, deps: unknown[] = [], tekrar?: SpeakSource): void {
   useEffect(() => {
     if (!source) return;
     const controller = new AbortController();
-    void speech.speak(source, { priority: 'high', signal: controller.signal, talimat: true });
+    // `tekrar` (KG-110): "Tekrar dinle"/talimat tekrarı giriş cümlesini yinelemesin (Prompt.tekrarSes).
+    void speech.speak(source, { priority: 'high', signal: controller.signal, talimat: true, tekrar });
 
     return () => {
       controller.abort();

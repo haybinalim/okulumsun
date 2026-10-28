@@ -128,5 +128,6 @@ export function cikisOnayiGerekir(d: GezinmeDurumu): boolean {
   return GERI_KURALLARI[d.ekran]?.onay?.(d) ?? false;
 }
 
-/** Onay penceresinin metni (yalnız görsel; ses anahtarı Adım 31'e kadar yok — KG-01). */
+/** Onay penceresinin metni; sesi `ui.cikis-onayi` aynı cümle (KG-110, `cikisOnayiSesi.spec`). */
 export const CIKIS_ONAYI_METNI = 'Etkinlikten çıkmak istiyor musun?';
+export const CIKIS_ONAYI_SESI = 'ui.cikis-onayi' as const;

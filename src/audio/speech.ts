@@ -31,7 +31,16 @@ export type SpeakSource =
    * SADECE sayı ve işlem sözcükleri için. Cümleleri parçadan birleştirmeyin:
    * prozodi bozulur ve okuma öğrenen çocuğa yanlış dil modeli verir.
    */
-  | { kind: 'sequence'; keys: SpeechKey[]; gapMs?: number };
+  | {
+      kind: 'sequence';
+      keys: SpeechKey[];
+      gapMs?: number;
+      /**
+       * Yalnız ilk klipten sonraki ara (KG-110): bir giriş/duyuru cümlesi (ör. `isinma.basliyor`) ilk
+       * sorunun talimatının önüne eklenince iki cümle arasında doğal bir nefes payı. Verilmezse `gapMs`.
+       */
+      ilkAraMs?: number;
+    };
 
 export interface SpeakOptions {
   /** 'high' kuyruğu temizler ve mevcut konuşmayı keser (yeni ekran talimatı). */
@@ -41,6 +50,12 @@ export interface SpeakOptions {
   signal?: AbortSignal;
   /** Ekran talimatı mı? (Adım 55: talimat tekrarı yalnız bunu yeniden söyler, övgü/tekrar-dene klibini değil.) */
   talimat?: boolean;
+  /**
+   * "Tekrar dinle" ve talimat tekrarının çalacağı kaynak (KG-110). Verilirse `repeatLast` ve
+   * `talimatiTekrarla` bunu çalar (ör. ilk sorunun önündeki giriş cümlesi tekrarda yinelenmez;
+   * `Prompt.tekrarSes`). Verilmezse söylenen kaynağın kendisi.
+   */
+  tekrar?: SpeakSource;
 }
 
 export type SpeechEngineState = 'kilitli' | 'hazir' | 'calisiyor';
@@ -157,8 +172,9 @@ class SpeechService {
   }
 
   async speak(source: SpeakSource, options: SpeakOptions = {}): Promise<void> {
-    this.#last = { source, options };
-    if (options.talimat) this.#sonTalimat = source;
+    const tekrarKaynagi = options.tekrar ?? source;
+    this.#last = { source: tekrarKaynagi, options };
+    if (options.talimat) this.#sonTalimat = tekrarKaynagi;
 
     if (options.priority === 'high') this.stop();
 
@@ -236,13 +252,12 @@ class SpeechService {
     if (!this._primed()) return;
 
     const keys = source.kind === 'key' ? [source.key] : source.keys;
-    const gap = source.kind === 'sequence' ? (source.gapMs ?? DEFAULT_GAP_MS) : 0;
-
     for (let i = 0; i < keys.length; i++) {
       if (options.signal?.aborted) return;
       const buffer = await this.#load(keys[i]);
       if (!buffer) continue;
       await this.#playBuffer(buffer, Math.max(EN_DUSUK_CALMA_HIZI, (options.rate ?? 1) * this.#temelHiz));
+      const gap = klipArasi(source, i);
       if (gap > 0 && i < keys.length - 1) await sleep(gap);
     }
   }
@@ -308,6 +323,13 @@ class SpeechService {
     this.#inflight.set(key, task);
     return task;
   }
+}
+
+/** `i`. klipten sonraki ara (ms): tek klipte 0; dizide ilk aradan sonra `gapMs` (KG-110 `ilkAraMs`). SAF. */
+export function klipArasi(source: SpeakSource, i: number): number {
+  if (source.kind !== 'sequence') return 0;
+  if (i === 0 && source.ilkAraMs !== undefined) return source.ilkAraMs;
+  return source.gapMs ?? DEFAULT_GAP_MS;
 }
 
 function sleep(ms: number): Promise<void> {

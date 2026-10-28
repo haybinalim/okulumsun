@@ -32,7 +32,7 @@ export function SequenceOrderScreen({
   /** Adım 36: her yanlış denemede (Sınıf Turu ikinci yanlışı sayar). */
   onYanlis?: (bilgi: YanlisBilgisi) => void;
 }) {
-  useScreenSpeech(exercise.prompt.ses, [exercise.itemId]);
+  useScreenSpeech(exercise.prompt.ses, [exercise.itemId], exercise.prompt.tekrarSes);
   const geriBildirim = useGeriBildirim(exercise.itemId);
 
   const [dokunmaSirasi, setDokunmaSirasi] = useState<string[]>([]);

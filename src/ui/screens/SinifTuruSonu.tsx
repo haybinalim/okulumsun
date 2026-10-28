@@ -11,14 +11,14 @@ import { YonlendirmeSeridi } from '../feedback/YonlendirmeSeridi';
 import { SinifKavanozu } from '../svg/SinifKavanozu';
 import { COLOR, SIZE } from '../../design/tokens';
 import { useScreenSpeech } from '../../audio/useSpeak';
-import { takimKimligi } from '../../sinif/takim';
+import { takimKimligi, turSonuSesi } from '../../sinif/takim';
 
 export function SinifTuruSonu() {
   const d = useAppStore((s) => s.sinifTuru);
   const kapat = useAppStore((s) => s.sinifTuruKapat);
   const yeniden = useAppStore((s) => s.sinifTuruKur);
-  // Mevcut klip; "Kavanoz doldu" tam cümle klibi (sinifturu.kavanoz-doldu) Adım 31'de.
-  useScreenSpeech({ kind: 'key', key: 'ui.oturum-bitti' }, []);
+  // Başlıktaki cümlenin aynısı (KG-110): "Kavanozu birlikte doldurduk!" / "Bugün birlikte çalıştık!".
+  useScreenSpeech(d ? { kind: 'key', key: turSonuSesi(d) } : null, []);
   if (!d) return null;
   const dolu = d.kavanoz >= d.kavanozHedefi;
 

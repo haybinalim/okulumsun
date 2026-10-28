@@ -3,8 +3,8 @@
  * çocuğa kutlama → yetişkine düğüm başına nitel düzey (ders özeti eşikleri). Tahta ve kişisel modda aynı.
  *
  * Olaylar YALNIZ bu bileşenin durumunda yaşar; tur kapanınca silinir (saklama yok, puan/skor yok,
- * sayı/yüzde gösterilmez). `tematuru.basliyor` / `tematuru.bitti` klipleri Adım 31'de üretilecek;
- * o zamana kadar mevcut `ui.oturum-bitti` klibi kullanılır.
+ * sayı/yüzde gösterilmez). Sesler (KG-110): ilk soru "Bu temada neler öğrendik, birlikte bakalım!" ile
+ * açılır; kutlamada "Turu bitirdik. Çok güzeldi!".
  */
 import { useVurgu } from '../../design/useVurgu';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -20,6 +20,7 @@ import { Maskot } from '../feedback/Maskot';
 import { OturumSonuKutlama } from '../feedback/Celebration';
 import { BigButton } from '../primitives/BigButton';
 import { useScreenSpeech } from '../../audio/useSpeak';
+import { girisliSoru } from '../../audio/girisSesi';
 import { COLOR, SIZE } from '../../design/tokens';
 
 const KAYITLI = (t: string): boolean => REGISTRY.has(t);
@@ -37,7 +38,10 @@ function TemaTuru({ tema, plan }: { tema: number; plan: TemaTuruPlani }) {
   const [olaylar, setOlaylar] = useState<readonly DersOlayi[]>([]);
   const yanlisVar = useRef(false);
   const exercise = useMemo(
-    () => (sira < plan.maddeSayisi ? setSorusuUret(setSorusu(plan, sira, KAYITLI)) : null),
+    () =>
+      sira < plan.maddeSayisi
+        ? girisliSoru(setSorusuUret(setSorusu(plan, sira, KAYITLI)), sira === 0 ? 'tematuru.basliyor' : null)
+        : null,
     [plan, sira],
   );
 
@@ -101,7 +105,7 @@ export function TemaTuruSonu({
   const [kutlama, setKutlama] = useState(true);
   const [yetiskin, setYetiskin] = useState(false);
   const atla = useCallback(() => setKutlama(false), []);
-  useScreenSpeech({ kind: 'key', key: 'ui.oturum-bitti' }, []);
+  useScreenSpeech({ kind: 'key', key: 'tematuru.bitti' }, []);
   const ozet = useMemo(() => temaTuruOzeti(plan, olaylar, skillsData), [plan, olaylar]);
   const temaAdi = TEMALAR.find((t) => t.no === tema)?.ad ?? `Tema ${tema}`;
 
