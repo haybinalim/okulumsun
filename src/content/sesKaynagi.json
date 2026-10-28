@@ -1,9 +1,20 @@
 {
-  "$not": "Aktif ses kaynağı (Adım 31, ADR-0004 Kabul). Google Cloud TTS Chirp 3 HD, ses tr-TR-Chirp3-HD-Puck, hız 0,9 (KG-01, KG-107); tüm klipler 2026-10-28'de bu kaynakla sıfırdan üretildi (eski 287 klibin kökeni bilinmiyordu, KG-15). Model kimliği özete girer: ses veya model değişirse 'npm run audio' tüm klipleri yeniden üretir. Şartlar ve yaş kısıtı notu: docs/ADR/0004-ses-kaynagi-ve-lisans.md; geçmiş: docs/ses/SES_KAYNAKLARI.md",
+  "$not": "Aktif ses kaynağı (Adım 31, ADR-0004 Kabul). Google Cloud TTS Chirp 3 HD, ses tr-TR-Chirp3-HD-Puck, hız 0,9 (KG-01, KG-107); tüm klipler 2026-10-28'de bu kaynakla sıfırdan üretildi (eski 287 klibin kökeni bilinmiyordu, KG-15). Maskot sesi (KG-114, K-12): 'anahtarSesleri' — maskot.* ve hikaye.* klipleri tr-TR-Chirp3-HD-Achernar, hız 0,9; diğer tüm klipler yönerge sesi Puck. Model kimliği özete girer: ses veya model değişirse 'npm run audio' tüm klipleri yeniden üretir. Şartlar ve yaş kısıtı notu: docs/ADR/0004-ses-kaynagi-ve-lisans.md; geçmiş: docs/ses/SES_KAYNAKLARI.md",
   "saglayici": "google",
   "modelKimligi": "google:tr-TR-Chirp3-HD-Puck@2026-10",
   "lisansUrl": "https://docs.cloud.google.com/text-to-speech/quotas",
   "ticariDagitimIzni": true,
   "cocukUrunundeKullanim": "kosullu",
-  "atifSarti": "Sesler Google Cloud Text-to-Speech ile üretilmiştir."
+  "atifSarti": "Sesler Google Cloud Text-to-Speech ile üretilmiştir.",
+  "anahtarSesleri": [
+    {
+      "onekler": [
+        "maskot.",
+        "hikaye."
+      ],
+      "modelKimligi": "google:tr-TR-Chirp3-HD-Achernar@2026-10",
+      "hiz": 0.9,
+      "karar": "KG-114"
+    }
+  ]
 }

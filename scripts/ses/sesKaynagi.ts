@@ -83,16 +83,97 @@ export function bekleyenKaynagiDogrula(deger: unknown): BekleyenKaynak {
   return k as unknown as BekleyenKaynak;
 }
 
-/** `sesKaynagi.json`'u aktif ve bekleyen kaynağa ayırır (`$not` insan içindir). */
+/** Yönerge sesinin (aktif kaynak) varsayılan konuşma hızı (KG-107). Özete yalnız bundan farklıysa girer. */
+export const VARSAYILAN_KONUSMA_HIZI = 0.9;
+
+/**
+ * Anahtar bazlı ses (KG-114): belirli ad alanlarının klipleri aktif kaynakla AYNI sağlayıcının
+ * başka bir sesiyle üretilir (ör. maskot sesi `maskot.*`, `hikaye.*` → Achernar). Eşleşmeyen
+ * anahtarlar aktif kaynakla (yönerge sesi) üretilir ve özetleri değişmez.
+ */
+export interface AnahtarSesi {
+  /** Anahtar önekleri, nokta ile biter: `maskot.`, `hikaye.`. */
+  readonly onekler: readonly string[];
+  /** Aktif kaynakla aynı biçim: `google:tr-TR-Chirp3-HD-<ses>@<YYYY-AA>`. */
+  readonly modelKimligi: string;
+  /** Konuşma hızı (0,25–2). */
+  readonly hiz: number;
+  /** Kararın kaydı (ör. `KG-114`). */
+  readonly karar: string;
+}
+
+export function anahtarSesleriniDogrula(deger: unknown, aktif: SesKaynagi): readonly AnahtarSesi[] {
+  if (deger === undefined || deger === null) return [];
+  if (!Array.isArray(deger)) throw new Error('anahtarSesleri bir dizi olmalı.');
+  const gorulen = new Set<string>();
+  return deger.map((ham: unknown, i) => {
+    if (typeof ham !== 'object' || ham === null) throw new Error(`anahtarSesleri[${i}] bir nesne olmalı.`);
+    const a = ham as Record<string, unknown>;
+    if (!Array.isArray(a.onekler) || a.onekler.length === 0) throw new Error(`anahtarSesleri[${i}].onekler boş olamaz.`);
+    for (const o of a.onekler) {
+      if (typeof o !== 'string' || !/^[a-z0-9-]+\.$/.test(o)) {
+        throw new Error(`anahtarSesleri[${i}] öneki "ad-alani." biçiminde olmalı: ${String(o)}`);
+      }
+      for (const g of gorulen) {
+        if (g.startsWith(o) || o.startsWith(g)) throw new Error(`anahtarSesleri önekleri çakışıyor: ${g} / ${o}`);
+      }
+      gorulen.add(o);
+    }
+    if (typeof a.modelKimligi !== 'string' || !a.modelKimligi.startsWith(`${aktif.saglayici}:`)) {
+      throw new Error(`anahtarSesleri[${i}].modelKimligi aktif sağlayıcıyla (${aktif.saglayici}) başlamalı.`);
+    }
+    if (a.modelKimligi === aktif.modelKimligi) {
+      throw new Error(`anahtarSesleri[${i}] aktif kaynakla aynı sesi tanımlıyor; gereksiz.`);
+    }
+    if (typeof a.hiz !== 'number' || !(a.hiz >= 0.25 && a.hiz <= 2)) {
+      throw new Error(`anahtarSesleri[${i}].hiz 0.25–2 arasında olmalı.`);
+    }
+    if (typeof a.karar !== 'string' || a.karar.trim() === '') throw new Error(`anahtarSesleri[${i}].karar boş olamaz.`);
+    return a as unknown as AnahtarSesi;
+  });
+}
+
+/** `sesKaynagi.json`'u aktif kaynak, anahtar bazlı sesler ve bekleyen kaynağa ayırır (`$not` insan içindir). */
 export function sesKaynagiDosyasiniAyir(ham: Readonly<Record<string, unknown>>): {
   readonly aktif: SesKaynagi;
+  readonly anahtarSesleri: readonly AnahtarSesi[];
   readonly bekleyen: BekleyenKaynak | null;
 } {
-  const { $not: _not, bekleyen, ...aktif } = ham;
+  const { $not: _not, bekleyen, anahtarSesleri, ...aktifHam } = ham;
+  const aktif = sesKaynaginiDogrula(aktifHam);
   return {
-    aktif: sesKaynaginiDogrula(aktif),
+    aktif,
+    anahtarSesleri: anahtarSesleriniDogrula(anahtarSesleri, aktif),
     bekleyen: bekleyen === undefined || bekleyen === null ? null : bekleyenKaynagiDogrula(bekleyen),
   };
+}
+
+/** Bir anahtarın sesi: önekle eşleşen anahtar sesi varsa o, yoksa aktif kaynak (varsayılan hız). */
+export function anahtarinSesi(
+  aktif: SesKaynagi,
+  anahtarSesleri: readonly AnahtarSesi[],
+  anahtar: string,
+): { readonly kaynak: SesKaynagi; readonly hiz: number; readonly anahtarSesi: AnahtarSesi | null } {
+  const eslesen = anahtarSesleri.find((a) => a.onekler.some((o) => anahtar.startsWith(o))) ?? null;
+  if (!eslesen) return { kaynak: aktif, hiz: VARSAYILAN_KONUSMA_HIZI, anahtarSesi: null };
+  return { kaynak: { ...aktif, modelKimligi: eslesen.modelKimligi }, hiz: eslesen.hiz, anahtarSesi: eslesen };
+}
+
+/**
+ * Anahtar bazlı özet (KG-114). Anahtar sesi yoksa `klipOzeti(aktif, metin)` ile BİREBİR aynı →
+ * mevcut yönerge klipleri yeniden üretilmez. Anahtar sesi varsa özete o sesin model kimliği
+ * (ses adı dahil) ve varsayılandan farklıysa hızı girer: ses ya da hız değişince klip yeniden üretilir.
+ */
+export function anahtarliKlipOzeti(
+  aktif: SesKaynagi,
+  anahtarSesleri: readonly AnahtarSesi[],
+  anahtar: string,
+  metin: string,
+): string {
+  const { kaynak, hiz, anahtarSesi } = anahtarinSesi(aktif, anahtarSesleri, anahtar);
+  if (!anahtarSesi) return klipOzeti(aktif, metin);
+  const hizEki = hiz === VARSAYILAN_KONUSMA_HIZI ? '' : `:hiz=${hiz}`;
+  return sha16(`${kaynak.saglayici}:${kaynak.modelKimligi}${hizEki}:${metin}`);
 }
 
 /** Mevcut 287 klibin kaynağı: önek `piper:` olarak kanıtlı, model kimliği bilinmiyor (KG-15). */
@@ -181,6 +262,7 @@ export function kokenDenetle(
   aktif: SesKaynagi,
   klipler: readonly { readonly key: string; readonly text: string }[],
   ozetler: Readonly<Record<string, string>>,
+  anahtarSesleri: readonly AnahtarSesi[] = [],
 ): KokenSonucu {
   const eslesmeyen: string[] = [];
   const ozetsiz: string[] = [];
@@ -192,7 +274,7 @@ export function kokenDenetle(
     const ozet = ozetler[key];
     if (ozet === undefined) {
       ozetsiz.push(key);
-    } else if (ozet === klipOzeti(aktif, text)) {
+    } else if (ozet === anahtarliKlipOzeti(aktif, anahtarSesleri, key, text)) {
       yeniEslesen++;
     } else if (eskiyiKabulEt && ozet === eskiOzet('piper', text)) {
       eskiEslesen++;
