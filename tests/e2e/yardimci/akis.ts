@@ -54,8 +54,30 @@ export async function kisiselModaGir(page: Page): Promise<void> {
  */
 export async function temayiBaslat(page: Page): Promise<void> {
   const basla = page.getByRole('button', { name: 'Başla', exact: true });
-  if (await basla.isVisible()) await basla.click();
-  else await page.getByRole('button', { name: 'Yön ve Yerler', exact: true }).click();
+  if (await basla.isVisible()) {
+    await basla.click();
+    await derinGirisiGec(page);
+  } else await page.getByRole('button', { name: 'Yön ve Yerler', exact: true }).click();
+}
+
+/**
+ * Kişisel modda oturumdaki ilk tema seçimi derin tema girişini açar (Adım 45, KG-112; ≈25–60 sn). Girişi
+ * sınamayan testler yetişkinin "Girişi geç" düğmesiyle atlar. Giriş açılmazsa (kısa giriş, tahta) bir şey yapmaz.
+ */
+export async function derinGirisiGec(page: Page, bekleMs = 3_000): Promise<void> {
+  const gec = page.getByRole('button', { name: 'Girişi geç', exact: true });
+  try {
+    await gec.waitFor({ state: 'visible', timeout: bekleMs });
+  } catch {
+    return;
+  }
+  await gec.click();
+}
+
+/** Yoklama döngülerinde: derin giriş ekranı görünüyorsa geçer (ara ödül ekranı gibi). */
+async function derinGirisGorunuyorsaGec(page: Page): Promise<void> {
+  const gec = page.getByRole('button', { name: 'Girişi geç', exact: true });
+  if (await gec.isVisible()) await gec.click();
 }
 
 async function aktifAlistirma(page: Page): Promise<number | null> {
@@ -72,6 +94,7 @@ export async function alistirmalariCoz(page: Page, adet: number): Promise<string
         async () => {
           const a = await aktifAlistirma(page);
           if (a !== null && a !== onceki) return true;
+          await derinGirisGorunuyorsaGec(page);
           // Oturum içi ara ödül ekranı (çıkartma) — dokununca sıradaki soruya geçer.
           const ara = page.getByRole('button', { name: 'Devam etmek için dokun' });
           if (await ara.isVisible()) {
@@ -111,6 +134,7 @@ export async function oturumuBitir(page: Page): Promise<number> {
           const a = await aktifAlistirma(page);
           if (a !== null && a !== onceki) return (durum = 'soru');
           if (await son.first().isVisible()) return (durum = 'son');
+          await derinGirisGorunuyorsaGec(page);
           const ara = page.getByRole('button', { name: 'Devam etmek için dokun' });
           if (await ara.isVisible()) {
             await geometriTemiz(page, 'ara ödül');

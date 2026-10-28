@@ -37,6 +37,8 @@ export function KonuSecimi() {
 
   const dugumSec = useAppStore((s) => s.dugumSec);
   const temaTuruBaslat = useAppStore((s) => s.temaTuruBaslat);
+  // Adım 45: ilk kart "Temaya giriş" — öğretmen temanın 4 adımlı sesli girişini başlatır (KG-112).
+  const temaGirisiBaslat = useAppStore((s) => s.temaGirisiBaslat);
   // Adım 46: son kart "Tema turu"; temada oynatılabilir düğüm yoksa kart çıkmaz.
   const turVar = useMemo(() => secilenTemaNo != null && temaTuruHazirla(secilenTemaNo, 0) !== null, [secilenTemaNo]);
   const handleTemaTuru = () => {
@@ -117,6 +119,18 @@ export function KonuSecimi() {
             width: 'min(100%, calc(960px * var(--scale)))',
           }}
         >
+          {secilenTemaNo != null && (
+            <BigButton
+              label="Temaya giriş"
+              size="choice"
+              variant="accent"
+              onPress={temaGirisiBaslat}
+              style={{ width: '100%', minWidth: 0, minHeight: 160, flexDirection: 'column', gap: 8 }}
+            >
+              <span aria-hidden="true" style={{ fontSize: 32 }}>🎈</span>
+              <span style={{ fontSize: 'var(--text-ui)', textAlign: 'center', fontWeight: 700 }}>Temaya giriş</span>
+            </BigButton>
+          )}
           {temaDugumleri.map((dugum, i) => (
             <m.div
               key={dugum.id}

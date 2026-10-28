@@ -37,7 +37,7 @@ async function konuSec(page: Page): Promise<void> {
   await expect(page.getByRole('button', { name: 'Geri', exact: true })).toBeVisible();
   const konu = page.locator('button:not([disabled])').filter({ hasNotText: /^(Geri|Yardım)$/ });
   const etiketler = await konu.evaluateAll((b) => b.map((x) => x.getAttribute('aria-label') ?? x.textContent ?? ''));
-  const ilk = etiketler.find((e) => e && !/Geri|Ana menü|Yardım|Yönergeyi|tekrar dinle|Tema turu/i.test(e));
+  const ilk = etiketler.find((e) => e && !/Geri|Ana menü|Yardım|Yönergeyi|tekrar dinle|Tema turu|Temaya giriş/i.test(e));
   expect(ilk, `açık konu yok: ${etiketler.join(' | ')}`).toBeTruthy();
   await page.getByRole('button', { name: ilk!, exact: true }).first().click();
 }

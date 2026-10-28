@@ -27,6 +27,7 @@ import {
   type SinifTuruOlayi,
 } from '../sinif/sinifTuru';
 import { gezinmeHedefi, type GezinmeDurumu, type GezinmeYonu } from '../ui/gezinme/gezinme';
+import { kisiselGirisBicimi } from '../ui/temaGirisiAkisi';
 
 // ---------------------------------------------------------------- tipler
 
@@ -177,6 +178,10 @@ interface AppStore {
    * Yalnız bellekte; içerik kimliğidir, kişisel değil.
    */
   duyuru: SpeechKey | null;
+  /** Tema girişinin biçimi (Adım 45, KG-112): `kisa` 2 sn tema adı, `derin` 4 adımlı sesli giriş. */
+  temaGirisiBicimi: 'kisa' | 'derin';
+  /** Kişisel modda bu oturumda derin giriş gösterildi mi (en çok bir kez; yalnız bellekte). */
+  derinGirisGosterildi: boolean;
 
   // --- Actions
   ekranGit: (ekran: Ekran) => void;
@@ -202,6 +207,8 @@ interface AppStore {
   setBaslat: (set: GunlukSet) => void;
   setBitir: () => void;
   duyuruTemizle: () => void;
+  /** Tahta: öğretmen "Temaya giriş" kartı → seçili temanın derin girişi; bitince konu seçimine döner. */
+  temaGirisiBaslat: () => void;
   kagitIcinSet: (set: GunlukSet) => void;
   sinifTuruKur: () => void;
   sinifTuruBaslat: (renkler: readonly Renk[], kaynak: GunlukSet, turPerTakim: number) => void;
@@ -254,6 +261,8 @@ const baslangicDurumu = {
   evdeOnDakikaTema: null as number | null,
   temaTuru: null as { readonly tema: number; readonly plan: TemaTuruPlani } | null,
   duyuru: null as SpeechKey | null,
+  temaGirisiBicimi: 'kisa' as 'kisa' | 'derin',
+  derinGirisGosterildi: false,
 };
 
 type Parca = Partial<AppStore> | ((s: AppStore) => Partial<AppStore>);
@@ -350,6 +359,9 @@ export const useAppStore = create<AppStore>((hamSet, get) => {
         secilenDugumId: null,
         // Kişisel mod → tema girişi → gerçek oturum, tahta → konu seçimi.
         ekran: s.mod === 'kisisel' ? 'temaGirisi' : 'konuSecimi',
+        // Adım 45: kişiselde oturum başına bir derin giriş, sonrakiler kısa (KG-112).
+        temaGirisiBicimi: s.mod === 'kisisel' ? kisiselGirisBicimi(s.derinGirisGosterildi) : 'kisa',
+        derinGirisGosterildi: s.derinGirisGosterildi || s.mod === 'kisisel',
         oncekiEkran: 'anaEkran',
         oturumTamamlandi: false,
       })),
@@ -383,6 +395,9 @@ export const useAppStore = create<AppStore>((hamSet, get) => {
     setBitir: () => set((s) => ({ aktifSet: null, ekran: 'anaEkran', oncekiEkran: s.ekran, duyuru: 'ui.set-bitti' })),
 
     duyuruTemizle: () => set({ duyuru: null }),
+
+    temaGirisiBaslat: () =>
+      set((s) => (s.secilenTemaNo === null ? {} : { ekran: 'temaGirisi', oncekiEkran: s.ekran, temaGirisiBicimi: 'derin' })),
 
     kagitIcinSet: (kagitSeti) =>
       set((s) => ({ kagitSeti, ekran: 'calismaKagidi', oncekiEkran: s.ekran })),

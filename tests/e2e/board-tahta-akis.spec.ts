@@ -19,7 +19,7 @@ test('tahta: sınıfça modda konu seçip 5 soru', async ({ page }) => {
   // Konu seçimi öğretmen ekranıdır (yetişkin); çocuk erişim bölgesi kuralı uygulanmaz.
   const konu = page.locator('button:not([disabled])').filter({ hasNotText: /^(Geri|Yardım)$/ });
   const etiketler = await konu.evaluateAll((b) => b.map((x) => x.getAttribute('aria-label') ?? x.textContent ?? ''));
-  const ilk = etiketler.find((e) => e && !/Geri|Ana menü|Yardım|Yönergeyi|tekrar dinle/i.test(e));
+  const ilk = etiketler.find((e) => e && !/Geri|Ana menü|Yardım|Yönergeyi|tekrar dinle|Temaya giriş/i.test(e));
   expect(ilk, `açık konu yok: ${etiketler.join(' | ')}`).toBeTruthy();
   await page.getByRole('button', { name: ilk!, exact: true }).first().click();
 

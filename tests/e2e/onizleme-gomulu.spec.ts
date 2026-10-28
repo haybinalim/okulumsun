@@ -84,7 +84,7 @@ test('gömülü (EBA): iframe içinde tahta akışı, Eve gönder yok, aynı kö
   const etiketler = await frame
     .locator('button:not([disabled])')
     .evaluateAll((b) => b.map((x) => x.getAttribute('aria-label') ?? x.textContent ?? ''));
-  const ilk = etiketler.find((e) => e && !/Geri|Ana menü|Yardım|Yönergeyi|tekrar dinle|Tema turu/i.test(e));
+  const ilk = etiketler.find((e) => e && !/Geri|Ana menü|Yardım|Yönergeyi|tekrar dinle|Tema turu|Temaya giriş/i.test(e));
   await frame.getByRole('button', { name: ilk!, exact: true }).first().click();
   const turler = await alistirmalariCoz(frame as unknown as Page, 3);
   expect(turler).toHaveLength(3);
