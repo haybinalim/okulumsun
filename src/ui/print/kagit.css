@@ -182,6 +182,18 @@
   gap: 3mm;
 }
 
+/* KG-106: iki kümeli sahne + iki metin seçeneği — seçenekler sahnenin sağında alt alta (kagitYerlesimi.ts). */
+.kg-madde--yan-secenek .kg-govde {
+  flex-direction: row;
+  gap: 3mm;
+}
+.kg-madde--yan-secenek .kg-secenekler {
+  flex: none;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+}
+
 /*
  * Sahne (KG-105): kutu maddede kalan yeri doldurur (dar hücrede en az eski 28 mm, yatayda 75 mm sütun × kalan
  * yükseklik); çizim kendi oranıyla (`--sahne-oran`) kutuya sığar — kap sorgusu birimleri (cqw/cqh) yazdırmada da çalışır.
@@ -262,6 +274,27 @@
 }
 .kg-secenek--genis {
   width: 40mm;
+}
+/*
+ * KG-106: karşılaştırma maddesinde küme kutuları maddedeki boş yeri kullanır (`secenekYerlesimi.ts`, mm ölçüleri
+ * satır içi); çizim iç alanı tam doldurur (oran aynı), rozet şeridi dolguyla ayrılır.
+ */
+.kg-secenekler--yerlesik {
+  display: grid;
+  gap: 3mm;
+  justify-content: center;
+  align-content: start;
+}
+.kg-secenek-sarma--yerlesik {
+  align-self: center;
+  justify-self: center;
+}
+.kg-secenek--yerlesik {
+  min-width: 0;
+}
+.kg-secenek--yerlesik > svg {
+  width: 100%;
+  height: 100%;
 }
 .kg-secenek > svg {
   max-width: 100%;
