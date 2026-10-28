@@ -19,12 +19,23 @@ export async function geometriTemiz(page: Page, ekran: string): Promise<void> {
  * değil alım ölçülür (`e2eKanca.alinanKlipler`). Klip ekran talimatının parçasıysa ekranla birlikte istenir.
  */
 export async function klipIstendi(page: Page, anahtar: string): Promise<void> {
-  await expect
-    .poll(async () => (await page.evaluate(() => window.__okulumsunE2E?.alinanKlipler ?? [])).includes(anahtar), {
-      message: `ses klibi bekleniyor: ${anahtar}`,
-      timeout: 10_000,
-    })
-    .toBe(true);
+  try {
+    await expect
+      .poll(async () => (await page.evaluate(() => window.__okulumsunE2E?.alinanKlipler ?? [])).includes(anahtar), {
+        message: `ses klibi bekleniyor: ${anahtar}`,
+        timeout: 10_000,
+      })
+      .toBe(true);
+  } catch (hata) {
+    // Teşhis (Adım 54): CI'da yalnız günlük kalır; son alınan klipler ve ekran hataya eklenir.
+    const durum = await page
+      .evaluate(() => ({
+        son: (window.__okulumsunE2E?.alinanKlipler ?? []).filter((k) => !/^(sayi|op|soru|geri|yardim|ui)\./.test(k)),
+        ekran: [...document.querySelectorAll('[data-ekran]')].map((e) => e.getAttribute('data-ekran')),
+      }))
+      .catch(() => null);
+    throw new Error(`${(hata as Error).message}\nteşhis: ${JSON.stringify(durum)}`);
+  }
 }
 
 export async function sesKilidiniAc(page: Page, adres: string): Promise<void> {

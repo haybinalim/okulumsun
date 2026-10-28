@@ -95,6 +95,13 @@ class SpeechService {
   #sonTalimat: SpeakSource | null = null;
   /** Temel çalma hızı: veli "Ses hızı" × kapsayıcılık temposu (Adım 55). Her klibin hızıyla çarpılır. */
   #temelHiz = 1;
+  /**
+   * Kesme kuşağı (Adım 54, KG-116): her `stop()` bir artırır ve bekleyenleri uyandırır. Çalmakta olan öğe
+   * (sinyali olsun olmasın) kuşak değişince yavaş bir indirmeyi veya klip arasını BEKLEMEZ; kuyruk hemen yeni
+   * ekranın talimatına geçer. Böylece sinyalsiz bir söz (ör. tema adı) yeni talimatın önünü tıkamaz.
+   */
+  #nesil = 0;
+  #durunca = new Set<() => void>();
 
   get primed(): boolean {
     return this._primed();
@@ -209,6 +216,9 @@ class SpeechService {
    * Ekran değişiminde ZORUNLU — yoksa önceki ekranın talimatı yenisinde çalar.
    */
   stop(): void {
+    this.#nesil += 1;
+    for (const uyan of [...this.#durunca]) uyan();
+    this.#durunca.clear();
     for (const item of this.#queue) item.resolve();
     this.#queue = [];
     if (this.#playing) {
@@ -251,17 +261,19 @@ class SpeechService {
   async #play(source: SpeakSource, options: SpeakOptions): Promise<void> {
     if (!this._primed()) return;
 
+    const nesil = this.#nesil;
+    const kesildi = () => options.signal?.aborted === true || this.#nesil !== nesil;
     const keys = source.kind === 'key' ? [source.key] : source.keys;
     for (let i = 0; i < keys.length; i++) {
-      if (options.signal?.aborted) return;
-      // İptal edilen konuşma, yavaş bir klip indirmesini BEKLEMEZ (Adım 54, KG-116): ekran değişince kuyruk
-      // hemen yeni ekranın talimatına geçer. İndirme arka planda sürer ve önbelleğe girer.
-      const buffer = await this.#yukleVeyaIptal(keys[i], options.signal);
-      if (options.signal?.aborted) return;
+      if (kesildi()) return;
+      // Kesilen konuşma (sinyal iptali veya `stop()`), yavaş bir klip indirmesini BEKLEMEZ (Adım 54, KG-116):
+      // ekran değişince kuyruk hemen yeni ekranın talimatına geçer. İndirme arka planda sürer ve önbelleğe girer.
+      const buffer = await this.#kesilene(this.#load(keys[i]), options.signal, nesil, null);
+      if (kesildi()) return;
       if (!buffer) continue;
       await this.#playBuffer(buffer, Math.max(EN_DUSUK_CALMA_HIZI, (options.rate ?? 1) * this.#temelHiz));
       const gap = klipArasi(source, i);
-      if (gap > 0 && i < keys.length - 1) await sleep(gap);
+      if (gap > 0 && i < keys.length - 1) await this.#kesilene(sleep(gap), options.signal, nesil, undefined);
     }
   }
 
@@ -292,17 +304,29 @@ class SpeechService {
     });
   }
 
-  /** `#load`, ama sinyal iptal edilirse hemen `null` döner (indirme sürer, sonuç önbelleğe girer). */
-  #yukleVeyaIptal(key: SpeechKey, signal: AbortSignal | undefined): Promise<AudioBuffer | null> {
-    const yukleme = this.#load(key);
-    if (!signal) return yukleme;
-    if (signal.aborted) return Promise.resolve(null);
-    return new Promise<AudioBuffer | null>((resolve) => {
-      const iptal = () => resolve(null);
-      signal.addEventListener('abort', iptal, { once: true });
-      void yukleme.then((b) => {
-        signal.removeEventListener('abort', iptal);
-        resolve(b);
+  /**
+   * `is` sonuçlanana dek bekler; ama sinyal iptal edilir ya da `stop()` kuşağı değiştirirse hemen `kesilince` ile
+   * döner (iş arka planda sürer; indirme sonucu önbelleğe girer).
+   */
+  #kesilene<T, K>(is: Promise<T>, signal: AbortSignal | undefined, nesil: number, kesilince: K): Promise<T | K> {
+    if (signal?.aborted || this.#nesil !== nesil) return Promise.resolve(kesilince);
+    return new Promise<T | K>((resolve) => {
+      let bitti = false;
+      const kes = () => {
+        if (bitti) return;
+        bitti = true;
+        signal?.removeEventListener('abort', kes);
+        this.#durunca.delete(kes);
+        resolve(kesilince);
+      };
+      signal?.addEventListener('abort', kes, { once: true });
+      this.#durunca.add(kes);
+      void is.then((sonuc) => {
+        if (bitti) return;
+        bitti = true;
+        signal?.removeEventListener('abort', kes);
+        this.#durunca.delete(kes);
+        resolve(sonuc);
       });
     });
   }

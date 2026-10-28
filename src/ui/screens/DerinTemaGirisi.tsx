@@ -10,7 +10,7 @@
  * anlatır (`maskot.selam` + `hikaye.t<tema>-1`, maskot sesi). Sahne dokunulmaz (`HikayeSahnesi`); anlatım bitince
  * `HIKAYE_SONRASI_MS` sonra 1. adıma geçilir. "Girişi geç" burada da tüm girişi atlar.
  */
-import { useCallback, useEffect, useReducer, useRef, useState, type RefObject } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useReducer, useRef, useState, type RefObject } from 'react';
 import { speech, randomPraise, type SpeakSource } from '../../audio/speech';
 import type { TemaGirisiIcerigi } from '../../content/schema/temaGirisi';
 import { temaGirisiIcerigi } from '../../content/temaGirisleri';
@@ -20,7 +20,12 @@ import { BigButton } from '../primitives/BigButton';
 import { Visual } from '../svg/Visual';
 import { GIRIS_BASLANGIC, girisIlerlet, OVGU_SONRASI_MS, type GirisDurumu, type GirisOlayi } from '../temaGirisiAkisi';
 import { girisHikayesiSesi, HIKAYE_SONRASI_MS } from '../hikayeAkisi';
-import HikayeSahnesi from './HikayeSahnesi';
+
+/**
+ * Sahne görünümü (hikâye JSON'u + tema sahneleri) TEMBEL: "Girişi geç" ve anlatım sahne parçası inmeden hemen
+ * başlar (yavaş ağda/soğuk sunucuda yetişkin düğmesi beklemez). Oturum sonu da aynı parçayı kullanır.
+ */
+const HikayeSahnesi = lazy(() => import('./HikayeSahnesi'));
 
 /** Kapsayıcının iç ölçüsü (görsel SVG'si sabit piksel ister). */
 function useOlcu(ref: RefObject<HTMLElement | null>): { w: number; h: number } {
@@ -120,7 +125,9 @@ function HikayeAcilisi({
       aria-label={`Temaya giriş: ${temaAdi}`}
       style={{ height: '100%', position: 'relative', overflow: 'hidden', background: renk }}
     >
-      <HikayeSahnesi tema={tema} sahneNo={1} />
+      <Suspense fallback={null}>
+        <HikayeSahnesi tema={tema} sahneNo={1} />
+      </Suspense>
       {/* Açık pastel sahne üstünde beyaz yazı okunmaz: yetişkin düğmesi koyu. */}
       <GirisiGec onGec={onGec} koyu />
     </main>

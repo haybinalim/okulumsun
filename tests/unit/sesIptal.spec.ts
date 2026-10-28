@@ -34,6 +34,7 @@ class SahteBaglam {
 
 const istenen: string[] = [];
 let yavasBitir: (() => void) | null = null;
+let yavasBitir2: (() => void) | null = null;
 
 beforeAll(async () => {
   (window as unknown as { AudioContext: unknown }).AudioContext = SahteBaglam;
@@ -44,6 +45,8 @@ beforeAll(async () => {
       const yanit = { ok: true, status: 200, arrayBuffer: async () => new ArrayBuffer(8) };
       // maskot/selam yavaş: elle bitirilene kadar bekler.
       if (url.includes('maskot/selam')) return new Promise((r) => (yavasBitir = () => r(yanit)));
+      // tema/geometri-1 da yavaş (sinyalsiz söz senaryosu).
+      if (url.includes('tema/geometri-1')) return new Promise((r) => (yavasBitir2 = () => r(yanit)));
       return Promise.resolve(yanit);
     }),
   );
@@ -69,4 +72,26 @@ describe('iptal edilen konuşma kuyruğu kilitlemez', () => {
     expect(istenen.some((u) => u.includes('hikaye/t1-1'))).toBe(false);
     yavasBitir?.();
   });
+
+  it('sinyalsiz bir sözün yavaş indirmesi de yeni yüksek öncelikli talimatı bekletmez (stop kuşağı)', async () => {
+    istenen.length = 0;
+    // Ana ekrandaki tema adı gibi: sinyalsiz, normal öncelik.
+    void speech.speak({ kind: 'key', key: 'tema.geometri-1' });
+    await new Promise((r) => setTimeout(r, 5));
+    expect(istenen.some((u) => u.includes('tema/geometri-1'))).toBe(true);
+
+    const yeni = speech.speak(
+      { kind: 'sequence', keys: ['isinma.bitti', 'soru.kac-tane'], ilkAraMs: 450 },
+      { priority: 'high', talimat: true },
+    );
+    await new Promise((r) => setTimeout(r, 5));
+    expect(istenen.some((u) => u.includes('isinma/bitti'))).toBe(true);
+
+    // Klip arası (450 ms) da kesilebilir: yeni ekran gelince sıradaki klip istenmez, kuyruk hemen boşalır.
+    speech.stop();
+    const sonuc = await Promise.race([yeni.then(() => 'bitti'), new Promise((r) => setTimeout(() => r('kilitli'), 300))]);
+    expect(sonuc).toBe('bitti');
+    yavasBitir2?.();
+  });
 });
+

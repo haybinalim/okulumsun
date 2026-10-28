@@ -217,9 +217,11 @@ describe('bağlama yalnız tembel parçalardan (KG-116)', () => {
     expect(ihlal).toEqual([]);
   });
 
-  it('HikayeSahnesi yalnız tembel DerinTemaGirisi içinden statik, OturumSonu içinden dinamik içe aktarılır', () => {
+  it('HikayeSahnesi hiçbir yerden statik içe aktarılmaz; DerinTemaGirisi ve OturumSonu tembel yükler', () => {
+    // Adım 54: derin girişte de tembel — "Girişi geç" ve anlatım sahne parçası inmeden başlar.
     const statik = dosyalar.filter((p) => /from '\.\/HikayeSahnesi'/.test(oku(p)));
-    expect(statik).toEqual(['src/ui/screens/DerinTemaGirisi.tsx']);
+    expect(statik).toEqual([]);
+    expect(oku('src/ui/screens/DerinTemaGirisi.tsx')).toMatch(/lazy\(\(\) => import\('\.\/HikayeSahnesi'\)\)/);
     expect(oku('src/ui/screens/OturumSonu.tsx')).toMatch(/lazy\(\(\) => import\('\.\/HikayeSahnesi'\)\)/);
     expect(oku('src/ui/screens/TemaGirisi.tsx')).toMatch(/lazy\(\(\) => import\('\.\/DerinTemaGirisi'\)\)/);
   });
