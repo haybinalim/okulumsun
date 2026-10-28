@@ -26,13 +26,20 @@
  *           Vekil modu: GOOGLE_TTS_API_KEY=proxy GOOGLE_TTS_UC_NOKTA=<Google uç noktası>
  *           NODE_USE_ENV_PROXY=1 (anahtarı vekil ekler).
  *
- * ARTIMLI ÜRETİM: yalnız metni değişen anahtarlar yeniden sentezlenir (hash
- * karşılaştırması). Ücretli sağlayıcılarda bu, maliyeti sıfıra yakın tutar.
+ * ARTIMLI ÜRETİM: yalnız metni değişen veya dosyası eksik anahtarlar yeniden sentezlenir
+ * (özet karşılaştırması, scripts/ses/uretimPlani.ts). Tam yeniden üretim yalnız `--zorla`.
+ *
+ * ÜCRETSİZ KATMAN KORUMASI (KG-109, scripts/ses/ucretsizKatman.ts): Google isteklerinde aylık
+ * karakter defteri (depo dışında; TTS_KULLANIM_DOSYASI) tutulur. Çalışma başında üretilecek
+ * kliplerin toplam karakteri kalan bütçeyi (varsayılan 900.000/ay, TTS_GUVENLI_SINIR ile yalnız
+ * aşağı) aşarsa hiç başlanmaz; her istekten önce de aynı denetim yapılır.
  *
  * Kullanım:
  *   npm run audio                       (aktif kaynak: src/content/sesKaynagi.json)
  *   npm run audio -- --prototip         (macOS say; çıktı public/audio-prototip/, dağıtılmaz)
- *   npm run audio -- --force            (hash'i yoksay, hepsini yeniden üret)
+ *   npm run audio -- --kuru             (--dry-run: hiç istek atmadan üretilecek klip ve
+ *                                        karakter toplamını, defter durumunu yazdırır)
+ *   npm run audio -- --zorla            (özetleri yoksay, hepsini yeniden üret; --force eşanlamlı)
  *   npm run audio -- --en-cok 60        (en çok 60 klip üret ve dur; özetler her klipten sonra
  *                                        yazıldığı için kesilen çalışma kaldığı yerden sürer)
  *   npm run audio -- --ornek [--ses Kore,Aoede,Puck]
@@ -61,6 +68,8 @@ import {
   googleSesAdi,
   modelKimligindenSes,
 } from './ses/googleTts.ts';
+import { Defter, defterYolu, guvenliSinir, karakterSay, onTahmin, UCRETSIZ_AYLIK_KARAKTER } from './ses/ucretsizKatman.ts';
+import { uretimPlani } from './ses/uretimPlani.ts';
 
 const exec = promisify(execFile);
 
@@ -69,7 +78,10 @@ const CONTENT = path.join(ROOT, 'src/content/tr.json');
 const SES_KAYNAGI = path.join(ROOT, 'src/content/sesKaynagi.json');
 const OUT_MANIFEST = path.join(ROOT, 'src/audio/audioManifest.generated.ts');
 
-const FORCE = process.argv.includes('--force');
+/** Tam yeniden üretim yalnız açık bayrakla (KG-109). `--force` eski eşanlamlı. */
+const FORCE = process.argv.includes('--zorla') || process.argv.includes('--force');
+/** Kuru çalışma: hiç istek atılmaz, hiçbir dosya yazılmaz; yalnız tahmin yazdırılır. */
+const KURU = process.argv.includes('--kuru') || process.argv.includes('--dry-run');
 /** Bu çalışmada en çok kaç klip sentezlensin (kota/süre sınırlı ortamlar için). */
 const EN_COK = Number.parseInt(process.argv[process.argv.indexOf('--en-cok') + 1] ?? '', 10);
 /** macOS `say` yalnız prototip içindir; çıktısı dağıtılan klasöre asla yazılmaz. */
@@ -218,10 +230,28 @@ const bekle = (ms: number) => new Promise((r) => setTimeout(r, ms));
 /** Gizlilik kanıtı (Adım 31 alt görev 10): yalnız sayılar yazdırılır, içerik değil. */
 const sayac = { istek: 0, karakter: 0 };
 
+/** Ücretsiz katman defteri (KG-109). Yalnız Google isteklerinde kullanılır. */
+let defterOrnegi: Defter | undefined;
+function defter(): Defter {
+  defterOrnegi ??= new Defter(defterYolu(ROOT), guvenliSinir());
+  return defterOrnegi;
+}
+
+/** Bütçe durumunu yazdırır (yalnız sayılar). */
+function butceYaz(etiket: string): void {
+  const d = defter();
+  const durum = d.durum();
+  console.log(
+    `${etiket}: ${durum.ay} (Pacific) kullanılan ${durum.kullanilan} · güvenli sınır ${durum.sinir} ` +
+      `(ücretsiz ${UCRETSIZ_AYLIK_KARAKTER}) · kalan ${durum.kalan}` +
+      (d.var() ? '' : ` · UYARI: defter yok (${d.yol}); gerçek istek atılmaz`),
+  );
+}
+
 async function synthGoogle(text: string, out: string, sesAdi: string): Promise<void> {
   sayac.istek++;
-  sayac.karakter += [...text].length;
-  const wav = await googleSentezle(googleIstegi(text, sesAdi), await googleAnahtari());
+  sayac.karakter += karakterSay(text);
+  const wav = await googleSentezle(googleIstegi(text, sesAdi), await googleAnahtari(), { koruma: defter() });
   await wavdanM4a(wav, out);
   await bekle(350);
 }
@@ -281,10 +311,18 @@ export const CORE_KEYS: readonly SpeechKey[] = Object.entries(AUDIO_MANIFEST)
 /** KG-04: aday seslerle örnek üretimi. Ücretsiz kotanın çok altında (~3 × 150 karakter). */
 async function ornekUret(): Promise<void> {
   const sesler = (argDegeri('--ses') ?? VARSAYILAN_ORNEK_SESLER.join(',')).split(',').map((s) => googleSesAdi(s.trim()));
+  const tumKlipler = klipleriTopla(JSON.parse(await readFile(CONTENT, 'utf8')) as Record<string, unknown>);
+  const metinler = sesler.flatMap(() =>
+    ORNEK_ANAHTARLAR.map((k) => tumKlipler.find((x) => x.key === k)?.text ?? ''),
+  );
+  const toplam = metinler.reduce((t, m) => t + karakterSay(m), 0);
+  console.log(`örnek: ${sesler.length} ses × ${ORNEK_ANAHTARLAR.length} klip · ${toplam} karakter`);
+  butceYaz('ücretsiz katman');
+  if (KURU) return;
+  onTahmin(metinler, defter().durum());
   if (!(await googleAnahtari())) {
     throw new Error('GOOGLE_TTS_API_KEY tanımlı değil (.env.local veya ortam değişkeni). Bkz. ADR-0004.');
   }
-  const tumKlipler = klipleriTopla(JSON.parse(await readFile(CONTENT, 'utf8')) as Record<string, unknown>);
   const secilen = ORNEK_ANAHTARLAR.map((k) => {
     const c = tumKlipler.find((x) => x.key === k);
     if (!c) throw new Error(`Örnek anahtarı içerikte yok: ${k}`);
@@ -326,41 +364,50 @@ async function main(): Promise<void> {
   if (provider === 'google') aktifGoogleSesi = modelKimligindenSes(kaynak.modelKimligi);
   const clips = klipleriTopla(JSON.parse(await readFile(CONTENT, 'utf8')) as Record<string, unknown>);
   console.log(
-    `${clips.length} klip · kaynak: ${kaynak.modelKimligi}${PROTOTIP ? ' · --prototip' : ''}${FORCE ? ' · --force' : ''}`,
+    `${clips.length} klip · kaynak: ${kaynak.modelKimligi}${PROTOTIP ? ' · --prototip' : ''}${FORCE ? ' · --zorla' : ''}${KURU ? ' · --kuru' : ''}`,
   );
   if (!kaynak.ticariDagitimIzni) {
     console.warn('UYARI LİSANS: aktif ses kaynağının ticari dağıtım izni yok (ADR-0004).');
   }
 
   // Geriye uyum: eski düz biçim de okunur; yazarken yeni biçim ({ $kaynak, ... }) kullanılır.
-  const hashes: Record<string, string> =
-    !FORCE && existsSync(CACHE)
-      ? { ...ozetDosyasiniOku(JSON.parse(await readFile(CACHE, 'utf8'))).ozetler }
-      : {};
+  const hashes: Record<string, string> = existsSync(CACHE)
+    ? { ...ozetDosyasiniOku(JSON.parse(await readFile(CACHE, 'utf8'))).ozetler }
+    : {};
 
   let made = 0;
-  let skipped = 0;
-  let kalan = 0;
   let ardisikHata = 0;
   const failures: string[] = [];
   // Manifestte olmayan (tr.json'dan silinmiş) anahtarların özetleri atılır.
   const gecerli = new Set(clips.map((c) => c.key));
   for (const k of Object.keys(hashes)) if (!gecerli.has(k)) delete hashes[k];
 
-  for (const clip of clips) {
+  // Yalnız özeti değişen / dosyası eksik klipler (özete sağlayıcı + model kimliği girer).
+  const plan = uretimPlani(
+    clips,
+    hashes,
+    (metin) => klipOzeti(kaynak, metin),
+    (dosya) => existsSync(path.join(OUT_AUDIO, dosya)),
+    { zorla: FORCE, enCok: Number.isFinite(EN_COK) ? EN_COK : undefined },
+  );
+  const skipped = plan.atlanan;
+  const kalan = plan.kalan;
+  const planMetinleri = plan.uretilecek.map((u) => u.clip.text);
+  const planKarakter = planMetinleri.reduce((t, m) => t + karakterSay(m), 0);
+  console.log(
+    `plan: üretilecek ${plan.uretilecek.length} klip · ${planKarakter} karakter · atlanan ${skipped}` +
+      (kalan ? ` · sonraki çalışmaya kalan ${kalan}` : ''),
+  );
+  if (provider === 'google') butceYaz('ücretsiz katman');
+  if (KURU) {
+    console.log('--kuru: hiç istek atılmadı, dosya yazılmadı.');
+    return;
+  }
+  // Çalışma başı kuru tahmin: bütçeyi aşacaksa hiç başlama (KG-109).
+  if (provider === 'google' && plan.uretilecek.length > 0) onTahmin(planMetinleri, defter().durum());
+
+  for (const { clip, ozet: hash } of plan.uretilecek) {
     const out = path.join(OUT_AUDIO, clip.file);
-    // Özete sağlayıcı + model kimliği girer: model değişince tüm klipler yenilenir.
-    const hash = klipOzeti(kaynak, clip.text);
-
-    if (hashes[clip.key] === hash && existsSync(out)) {
-      skipped++;
-      continue;
-    }
-
-    if (Number.isFinite(EN_COK) && made >= EN_COK) {
-      kalan++;
-      continue;
-    }
     await mkdir(path.dirname(out), { recursive: true });
     try {
       await synth(provider, clip.text, out);
@@ -371,6 +418,11 @@ async function main(): Promise<void> {
       if (made % 25 === 0) console.log(`  ${made} üretildi...`);
       ardisikHata = 0;
     } catch (err) {
+      // Ücretsiz katman sınırı kalıcıdır: hemen dur, sonraki klipleri deneme.
+      if ((err as Error).name === 'UcretsizKatmanAsimi' || /ÜCRETSİZ KATMAN KORUMASI/.test((err as Error).message)) {
+        await ozetleriYaz(kaynak, hashes);
+        throw err;
+      }
       failures.push(`${clip.key}: ${(err as Error).message.split('\n')[0]}`);
       // Kota/faturalandırma gibi kalıcı hatada 287 kez denemek yerine dur.
       if (++ardisikHata >= 3) {
@@ -389,7 +441,10 @@ async function main(): Promise<void> {
   }
 
   console.log(`\nüretilen: ${made} · atlanan: ${skipped}${kalan ? ` · sonraki çalışmaya kalan: ${kalan}` : ''} · toplam: ${clips.length}`);
-  if (provider === 'google') console.log(`sağlayıcıya giden: ${sayac.istek} istek · ${sayac.karakter} karakter (içerik yazdırılmaz)`);
+  if (provider === 'google') {
+    console.log(`sağlayıcıya giden: ${sayac.istek} istek · ${sayac.karakter} karakter (içerik yazdırılmaz)`);
+    butceYaz('ücretsiz katman (sonra)');
+  }
   console.log(`manifesto: ${path.relative(ROOT, OUT_MANIFEST)}`);
 
   if (failures.length) {

@@ -53,7 +53,7 @@ Piper `tr_TR-dfki` (CC BY-NC-SA) · Piper `fahrettin`/`fettah` (kaldırıldı) �
 - Sözleşme ve özet: `scripts/ses/sesKaynagi.ts` — `klipOzeti = sha256('<sağlayıcı>:<modelKimligi>:<metin>').slice(0,16)`.
 - Klip kümesi: `scripts/ses/klipler.ts` (üretici ve denetim aynı modülü kullanır).
 - `.hashes.json` yeni biçimi `{ "$kaynak": SesKaynagi, "<anahtar>": "<özet>" }`; eski düz biçim geriye uyumlu okunur.
-- Google kaynağına geçiş (Adım 31): `sesKaynagi.json` → `{ "saglayici": "google", "modelKimligi": "google:tr-TR-Chirp3-HD-<ses>@<tarih>", "ticariDagitimIzni": true, ... }`, `npm run audio -- --force`, CI'dan `SES_GECIS_MODU` kaldırılır.
+- Google kaynağına geçiş (Adım 31): `sesKaynagi.json` → `{ "saglayici": "google", "modelKimligi": "google:tr-TR-Chirp3-HD-<ses>@<tarih>", "ticariDagitimIzni": true, ... }`, `npm run audio -- --zorla` (eski `--force`), CI'dan `SES_GECIS_MODU` kaldırılır.
 
 ## 8. Karar (Adım 18, ADR-0004)
 
@@ -74,3 +74,14 @@ Piper `tr_TR-dfki` (CC BY-NC-SA) · Piper `fahrettin`/`fettah` (kaldırıldı) �
 - Tarayıcı uyumu: m4a (AAC) Safari/iOS, Chrome, Edge, Firefox'ta çalar; Playwright'ın Chromium derlemesinde AAC çözücü yok — e2e testleri çözme adımını sınamaz (`onizleme-csp`, `sorun-bildir` notları), yalnız dosyanın sunulduğunu sınar.
 - Kulakla örneklem (alt görev 9) ve birleştirme dinlemesi (alt görev 2) **kullanıcıda**: her ad alanından 2 klip (56 klip) ve "on yedi elma", "yedi artı beş kaç eder", "kırk iki lira" birleştirmeleri ayrı dinleme dosyasında verildi. Çocukla dinleme Adım 32.
 
+## 10. Ücretsiz katman koruması (KG-109, 28 Ekim 2026)
+
+Kullanıcı kuralı (28 Eki 2026): "yaptığımız çalışmaların API'de ücretsiz katmanın sınırlarını aşmamasına dikkat et." Chirp 3 HD ücretsiz katmanı **ayda 1.000.000 karakter**, aşımda 30 $ / 1M karakter (https://cloud.google.com/text-to-speech/pricing, 28 Eki 2026'da okundu).
+
+- **Defter:** `scripts/ses/ucretsizKatman.ts`. Aylık karakter defteri depo DIŞINDA: `TTS_KULLANIM_DOSYASI`, yoksa deponun yanındaki `../work/tts-kullanim.json`, o da yoksa `~/.okulumsun/tts-kullanim.json`. Biçim `{ "2026-10": { "karakter", "istek", "guncelleme" } }`; ay anahtarı **Pacific** saatine göre (Google Cloud faturalama ayı). Defter yoksa gerçek istek atılmaz (kullanım bilinmiyor); bozuk defter sessizce sıfırlanmaz.
+- **Sınır:** güvenli sınır varsayılan **900.000** (%10 pay). `TTS_GUVENLI_SINIR` yalnız aşağı çekilir; daha yüksek değer (1.000.000 dahil) hata verir.
+- **Denetim:** çalışma başında üretilecek kliplerin toplam karakteri kalan bütçeyi aşarsa hiç başlanmaz; ayrıca her istekten (429/5xx yeniden denemeleri dahil) önce `kullanılan + istek > sınır` ise istek gönderilmez ve betik açık hatayla durur. `googleSentezle` korumasız çağrılamaz.
+- **Sayım:** Google kuralı — girdi metnindeki tüm karakterler, boşluk dahil (UTF-16 birimi; kod noktası sayısına eşit ya da büyük, temkinli). Gönderilen her deneme sonucu ne olursa olsun karakteriyle deftere **atomik** yazılır (geçici dosya + rename).
+- **Artımlı üretim:** yalnız özeti değişen veya dosyası eksik klipler (`scripts/ses/uretimPlani.ts`); tam yeniden üretim yalnız açık `--zorla` (eşanlamlı `--force`) ile.
+- **Kuru çalışma:** `npm run audio -- --kuru` (veya `--dry-run`): hiç istek atmadan, hiçbir dosya yazmadan üretilecek klip sayısı, karakter toplamı ve defter durumunu yazdırır. `--ornek` için de geçerli.
+- **Başlangıç değeri:** 2026-10 için 5.000 karakter (temkinli tahmin: KG-04 örnekleri ≈1.000 + Adım 31 üretimi 3.365 + test istekleri).
