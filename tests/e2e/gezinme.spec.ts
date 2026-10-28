@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { geometriTemiz, kisiselModaGir, sesKilidiniAc, temayiBaslat } from './yardimci/akis';
+import { geometriTemiz, kisiselModaGir, sesKilidiniAc, temayiBaslat, klipIstendi } from './yardimci/akis';
 
 /**
  * KG-103: her ekranda "Geri" ve "Ana menü" (kullanıcı bildirimi: etkinlik içinde geri/ana menü yoktu).
@@ -125,6 +125,7 @@ for (const boyut of ['proje', 'kucuk-tahta'] as const) {
       await geri(page).click();
       const pencere = page.getByRole('alertdialog');
       await expect(pencere).toContainText('Etkinlikten çıkmak istiyor musun?');
+      await klipIstendi(page, 'ui.cikis-onayi');
       await geometriTemiz(page, 'çıkış onayı');
       await page.getByRole('button', { name: 'Hayır, devam et' }).click();
       await expect(pencere).toHaveCount(0);

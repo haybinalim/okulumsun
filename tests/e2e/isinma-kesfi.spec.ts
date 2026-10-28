@@ -6,6 +6,7 @@ import {
   sesKilidiniAc,
   temayiBaslat,
   yetiskinAlaniniAc,
+  klipIstendi,
 } from './yardimci/akis';
 import { depolamaDurumu, depolamaIhlalleri } from './yardimci/gizlilik';
 
@@ -58,6 +59,9 @@ test('kişisel: anahtar varsayılan kapalı; açınca ısınma, 2 yanlışta bit
     await expect.poll(() => alistirmaSirasi(page), { timeout: 15_000 }).not.toBe(sira);
   }
   expect(isinmaMaddesi).toBe(2);
+  // KG-110: ısınma "Haydi biraz ısınalım!" ile açıldı; oturumun ilk sorusu "Isındık, şimdi oynayalım!".
+  await klipIstendi(page, 'isinma.basliyor');
+  await klipIstendi(page, 'isinma.bitti');
 
   // Ardından normal oturum (en çok 8 soru) ve oturum sonu.
   const adet = await oturumuBitir(page);

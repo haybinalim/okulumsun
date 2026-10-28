@@ -14,6 +14,19 @@ export async function geometriTemiz(page: Page, ekran: string): Promise<void> {
   expect(ihlal, `${ekran}: erişim/boyut ihlali\n${ihlal}`).toBe('');
 }
 
+/**
+ * Bir ses klibinin istendiğini (indirildiğini) bekler (KG-110). Playwright Chromium AAC çözemez; çalma
+ * değil alım ölçülür (`e2eKanca.alinanKlipler`). Klip ekran talimatının parçasıysa ekranla birlikte istenir.
+ */
+export async function klipIstendi(page: Page, anahtar: string): Promise<void> {
+  await expect
+    .poll(async () => (await page.evaluate(() => window.__okulumsunE2E?.alinanKlipler ?? [])).includes(anahtar), {
+      message: `ses klibi bekleniyor: ${anahtar}`,
+      timeout: 10_000,
+    })
+    .toBe(true);
+}
+
 export async function sesKilidiniAc(page: Page, adres: string): Promise<void> {
   // Giriş animasyonları (ölçek 0→1) bitmiş yerleşimi ölçmek için; son geometri aynıdır.
   await page.emulateMedia({ reducedMotion: 'reduce' });

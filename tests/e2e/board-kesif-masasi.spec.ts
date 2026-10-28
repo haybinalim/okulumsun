@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { geometriTemiz, sesKilidiniAc } from './yardimci/akis';
+import { geometriTemiz, klipIstendi, sesKilidiniAc } from './yardimci/akis';
 import { agIhlalleri, agKaydet } from './yardimci/gizlilik';
 
 /**
@@ -21,6 +21,7 @@ test('tahta: Keşif Masası beş araç, geometri ve sınırlar', async ({ page, 
 
   // Onluk çerçeve (varsayılan): 20 göz.
   await expect(page.getByRole('main', { name: 'Keşif Masası' })).toHaveAttribute('data-kesif-arac', 'onlukCerceve');
+  await klipIstendi(page, 'kesif.hosgeldin');
   await expect(page.getByRole('button', { name: /^Göz \d+/ })).toHaveCount(20);
   await geometriTemiz(page, 'Keşif Masası — onluk çerçeve');
   await page.getByRole('button', { name: 'Göz 3, boş' }).click();

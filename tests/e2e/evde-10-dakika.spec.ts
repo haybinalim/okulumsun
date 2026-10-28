@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { geometriTemiz } from './yardimci/akis';
+import { geometriTemiz, klipIstendi } from './yardimci/akis';
 import { agIhlalleri, agKaydet } from './yardimci/gizlilik';
 
 /**
@@ -48,6 +48,7 @@ test('evde 10 dakika: veli başlatır, 8 soru, ipucu kartı; ağ ve depolama tem
   }
 
   await expect(page.getByRole('main', { name: 'Ev çalışması bitti' })).toBeVisible();
+  await klipIstendi(page, 'ev.yetiskine-ver');
   await page.getByRole('button', { name: 'Devam etmek için dokun' }).click();
   // Öğretmen bağlantısındaki [Ev] yerine yetişkine ipucu kartı düğmesi.
   await expect(page.getByRole('button', { name: 'Ev', exact: true })).toHaveCount(0);
