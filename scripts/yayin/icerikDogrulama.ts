@@ -1,7 +1,7 @@
 /**
  * İÇERİK DOĞRULAMA — DERLEME ZAMANI (plan v2 KG-87, K5 boyut bütçesi).
  *
- * Uygulama içerik JSON'larını (beceri grafı, kazanımlar, plan düzeltmeleri, ev ipuçları, maskot hikâyeleri) eskiden açılışta zod
+ * Uygulama içerik JSON'larını (beceri grafı, kazanımlar, plan düzeltmeleri, ev ipuçları, maskot hikâyeleri, tema girişleri) eskiden açılışta zod
  * ile ayrıştırıyordu; zod (~69 KB) bu yüzden üretim paketindeydi. Bu Vite eklentisi aynı ayrıştırıcıları
  * Node'da, dosya modül olarak yüklenirken çalıştırır ve modüle AYRIŞTIRILMIŞ veriyi (varsayılanlar
  * doldurulmuş, tanımsız alanlar atılmış) verir. Bozuk veri derlemeyi ve geliştirme sunucusunu kırar;
@@ -30,6 +30,10 @@ const KAYNAKLAR: Readonly<Record<string, { modul: string; sec: (m: Record<string
   'maskotHikayeleri.json': {
     modul: 'maskotHikayesi.ts',
     sec: (m) => (v) => (m.MaskotHikayeleriSchema as { parse: Ayristirici }).parse(v),
+  },
+  'temaGirisleri.json': {
+    modul: 'temaGirisi.ts',
+    sec: (m) => (v) => (m.TemaGirisleriSchema as { parse: Ayristirici }).parse(v),
   },
 };
 

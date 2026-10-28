@@ -36,6 +36,7 @@ import { PlanDuzeltmeleriSchema } from '../src/content/schema/haftalikPlan';
 import { haftalikPlanUret } from '../src/ogretmen/haftalikPlan';
 import { EvIpuclariSchema } from '../src/content/schema/evIpucu';
 import { MaskotHikayeleriSchema } from '../src/content/schema/maskotHikayesi';
+import { TemaGirisleriSchema } from '../src/content/schema/temaGirisi';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel: string): unknown => JSON.parse(readFileSync(path.join(ROOT, rel), 'utf8'));
@@ -250,6 +251,16 @@ try {
   sonuc.istatistik.push(`maskot hikâyeleri: ${mh.hikayeler.length} tema × ${mh.hikayeler[0]?.sahneler.length ?? 0} sahne`);
 } catch (e) {
   hata(`maskotHikayeleri.json: ${e instanceof Error ? e.message : String(e)}`);
+}
+
+// ------------------------------------------------ derin tema girişi (Adım 45)
+// Şema: 7 tema × 4 adım; her `ses` manifestte (SpeechKeySchema), her `gorsel` geçerli VisualSpec.
+try {
+  const tg = TemaGirisleriSchema.parse(read('src/content/temaGirisleri.json'));
+  const dokun = tg.girisler.flatMap((g) => g.adimlar).filter((a) => a.eylem === 'dokun').length;
+  sonuc.istatistik.push(`tema girişleri: ${tg.girisler.length} tema × ${tg.girisler[0]?.adimlar.length ?? 0} adım (${dokun} dokunma)`);
+} catch (e) {
+  hata(`temaGirisleri.json: ${e instanceof Error ? e.message : String(e)}`);
 }
 
 // ------------------------------------------------ haftalık MEB planı (Adım 37)
