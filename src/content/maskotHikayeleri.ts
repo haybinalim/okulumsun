@@ -2,8 +2,8 @@
  * Maskot tema hikâyeleri yükleyicisi (plan v2 Adım 54). `maskotHikayeleri.json` derleme zamanında şemayla doğrulanır
  * (KG-87, scripts/yayin/icerikDogrulama.ts); buraya ayrıştırılmış veri gelir.
  *
- * Uygulamaya BAĞLI DEĞİL (KG-91): ses kaynağı (Adım 31) ve maskot sesi kararı (K-12) gelene kadar hiçbir ekran bu
- * modülü içe aktarmaz; üretim paketine girmez. Bağlanınca tembel yüklenen ekranlardan içe aktarılır.
+ * Bağlama (KG-116): yalnız tembel yüklenen `ui/screens/HikayeSahnesi.tsx` içe aktarır (derin tema girişi ve oturum
+ * sonu hikâyesi); ana pakete girmez. Ses anahtarı/sıra mantığı JSON'suz `ui/hikayeAkisi.ts`'te.
  */
 import hikayelerHam from './maskotHikayeleri.json';
 import type { HikayeSahnesi, MaskotHikayeleri, TemaHikayesi } from './schema/maskotHikayesi';

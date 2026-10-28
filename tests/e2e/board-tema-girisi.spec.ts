@@ -3,7 +3,7 @@ import { geometriTemiz, kisiselModaGir, klipIstendi, sesKilidiniAc } from './yar
 
 /**
  * Plan v2 Adım 45 aşama 2 (KG-112): derin tema girişi.
- *  · Tahta: konu seçiminin ilk kartı "Temaya giriş" → 4 adımlı sesli giriş (izle → dokun → dokun → izle);
+ *  · Tahta: konu seçiminin ilk kartı "Temaya giriş" → hikâye açılışı (Adım 54, KG-116) + 4 adımlı sesli giriş (izle → dokun → dokun → izle);
  *    dokun hedefi alt bölgede, ≥ 102 px, merkezi üst %35'in altında; bitince konu seçimine döner.
  *  · "Girişi geç" (yetişkin) her an çıkar.
  *  · Kişisel: oturumdaki ilk tema seçimi derin, sonraki kısa (yalnız bellek).
@@ -36,8 +36,13 @@ test('tahta: "Temaya giriş" kartı → 4 adımlı derin giriş, dokunma hedefi 
   expect(ilkKart).toBe('Temaya giriş');
   await page.getByRole('button', { name: 'Temaya giriş', exact: true }).click();
 
-  await expect(ekran(page)).toBeVisible();
+  await expect(ekran(page)).toBeVisible({ timeout: 15_000 }); // tembel parça (dev sunucusunda ilk dönüşüm)
   await expect(ekran(page)).toHaveAttribute('data-giris-tema', '1');
+  // Adım 54 (KG-116): önce hikâye açılışı — maskot selamı + 1. sahne (dokunulmaz), sonra adımlar.
+  await klipIstendi(page, 'maskot.selam');
+  await klipIstendi(page, 'hikaye.t1-1');
+  // Hikâye açılışı anlatım + 1,2 sn sürer (CI'da klip alımı yavaş olabilir): 1. adımı cömert süreyle bekle.
+  await adimBekle(page, 0, 20_000);
   await expect(ekran(page)).toHaveAttribute('data-giris-eylem', 'izle');
   await klipIstendi(page, 'giris.t1-1');
   await geometriTemiz(page, 'derin giriş — izle');
@@ -71,6 +76,7 @@ test('tahta: dokunulmazsa bir kez tekrarlanır, sonra kendiliğinden ilerler', a
   test.setTimeout(90_000);
   await tahtadaKonuSecimi(page);
   await page.getByRole('button', { name: 'Temaya giriş', exact: true }).click();
+  await adimBekle(page, 0, 20_000); // hikâye açılışı (KG-116) bitti
   await adimBekle(page, 1);
   // Dokun adımı: 8 sn sonra anlatım tekrarı, 8 sn daha sonra sonraki adım (toplam ≈16 sn).
   await page.waitForTimeout(9_000);
@@ -82,12 +88,12 @@ test('tahta: "Girişi geç" konu seçimine döner; Geri de konu seçimine döner
   test.setTimeout(60_000);
   await tahtadaKonuSecimi(page);
   await page.getByRole('button', { name: 'Temaya giriş', exact: true }).click();
-  await expect(ekran(page)).toBeVisible();
+  await expect(ekran(page)).toBeVisible({ timeout: 15_000 }); // tembel parça (dev sunucusunda ilk dönüşüm)
   await page.getByRole('button', { name: 'Girişi geç', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Temaya giriş', exact: true })).toBeVisible();
 
   await page.getByRole('button', { name: 'Temaya giriş', exact: true }).click();
-  await expect(ekran(page)).toBeVisible();
+  await expect(ekran(page)).toBeVisible({ timeout: 15_000 }); // tembel parça (dev sunucusunda ilk dönüşüm)
   await page.getByRole('button', { name: 'Geri', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Temaya giriş', exact: true })).toBeVisible();
 });
@@ -98,7 +104,7 @@ test('kişisel: oturumdaki ilk tema derin girişle, ikincisi kısa girişle aç�
   await sesKilidiniAc(page, '/?device=tablet');
   await kisiselModaGir(page);
   await page.getByRole('button', { name: 'Başla', exact: true }).click();
-  await expect(ekran(page)).toBeVisible();
+  await expect(ekran(page)).toBeVisible({ timeout: 15_000 }); // tembel parça (dev sunucusunda ilk dönüşüm)
   await klipIstendi(page, 'giris.t1-1');
   await geometriTemiz(page, 'kişisel derin giriş');
   await page.getByRole('button', { name: 'Girişi geç', exact: true }).click();

@@ -5,9 +5,13 @@
  * bölgede büyük bir karttır (tahtada alt %65, ≥ `--size-choice`), dokununca kısa övgü. Dokunulmazsa anlatım bir
  * kez tekrarlanır, sonra kendiliğinden ilerler (`temaGirisiAkisi.ts`). Uyaran (maskot, tema adı) üstte.
  * Yetişkin için küçük "Girişi geç" (üst köşe, `data-yetiskin`; "Seti bitir" gibi). Hiçbir şey saklanmaz.
+ *
+ * HİKÂYE AÇILIŞI (Adım 54 aşama 2, KG-116): adımlardan önce maskot kendini tanıtır ve temanın hikâyesinin 1. sahnesini
+ * anlatır (`maskot.selam` + `hikaye.t<tema>-1`, maskot sesi). Sahne dokunulmaz (`HikayeSahnesi`); anlatım bitince
+ * `HIKAYE_SONRASI_MS` sonra 1. adıma geçilir. "Girişi geç" burada da tüm girişi atlar.
  */
-import { useEffect, useReducer, useRef, useState, type RefObject } from 'react';
-import { speech, randomPraise } from '../../audio/speech';
+import { lazy, Suspense, useCallback, useEffect, useReducer, useRef, useState, type RefObject } from 'react';
+import { speech, randomPraise, type SpeakSource } from '../../audio/speech';
 import type { TemaGirisiIcerigi } from '../../content/schema/temaGirisi';
 import { temaGirisiIcerigi } from '../../content/temaGirisleri';
 import { COLOR } from '../../design/tokens';
@@ -15,6 +19,13 @@ import { Maskot } from '../feedback/Maskot';
 import { BigButton } from '../primitives/BigButton';
 import { Visual } from '../svg/Visual';
 import { GIRIS_BASLANGIC, girisIlerlet, OVGU_SONRASI_MS, type GirisDurumu, type GirisOlayi } from '../temaGirisiAkisi';
+import { girisHikayesiSesi, HIKAYE_SONRASI_MS } from '../hikayeAkisi';
+
+/**
+ * Sahne görünümü (hikâye JSON'u + tema sahneleri) TEMBEL: "Girişi geç" ve anlatım sahne parçası inmeden hemen
+ * başlar (yavaş ağda/soğuk sunucuda yetişkin düğmesi beklemez). Oturum sonu da aynı parçayı kullanır.
+ */
+const HikayeSahnesi = lazy(() => import('./HikayeSahnesi'));
 
 /** Kapsayıcının iç ölçüsü (görsel SVG'si sabit piksel ister). */
 function useOlcu(ref: RefObject<HTMLElement | null>): { w: number; h: number } {
@@ -45,10 +56,115 @@ export default function DerinTemaGirisi({
   onBitti: () => void;
 }) {
   const icerik = temaGirisiIcerigi(tema);
+  const hikayeSesi = girisHikayesiSesi(tema);
+  const [hikayeBitti, setHikayeBitti] = useState(hikayeSesi === null);
+  // "Girişi geç" ve doğal bitiş tek kez çıkar (hikâye açılışı ile adımlar arasında paylaşılır).
+  const cikildi = useRef(false);
+  const bitir = useCallback(() => {
+    if (cikildi.current) return;
+    cikildi.current = true;
+    onBitti();
+  }, [onBitti]);
   useEffect(() => {
-    if (!icerik) onBitti();
-  }, [icerik, onBitti]);
-  return icerik ? <DerinGiris icerik={icerik} temaAdi={temaAdi} renk={renk} onBitti={onBitti} /> : null;
+    if (!icerik) bitir();
+  }, [icerik, bitir]);
+  if (!icerik) return null;
+  if (!hikayeBitti && hikayeSesi) {
+    return (
+      <HikayeAcilisi
+        tema={tema}
+        temaAdi={temaAdi}
+        renk={renk}
+        ses={hikayeSesi}
+        onDevam={() => setHikayeBitti(true)}
+        onGec={bitir}
+      />
+    );
+  }
+  return <DerinGiris icerik={icerik} temaAdi={temaAdi} renk={renk} onBitti={bitir} />;
+}
+
+/** Hikâye açılışı: selam + 1. sahne, dokunulmaz sahne; anlatım bitince kısa bekleme, sonra adımlar. */
+function HikayeAcilisi({
+  tema,
+  temaAdi,
+  renk,
+  ses,
+  onDevam,
+  onGec,
+}: {
+  tema: number;
+  temaAdi: string;
+  renk: string;
+  ses: SpeakSource;
+  onDevam: () => void;
+  onGec: () => void;
+}) {
+  useEffect(() => {
+    const ctrl = new AbortController();
+    let zaman: number | undefined;
+    void speech.speak(ses, { priority: 'high', signal: ctrl.signal, talimat: true }).then(() => {
+      if (ctrl.signal.aborted) return;
+      zaman = window.setTimeout(onDevam, HIKAYE_SONRASI_MS);
+    });
+    return () => {
+      ctrl.abort();
+      window.clearTimeout(zaman);
+      speech.stop();
+      speech.talimatiUnut();
+    };
+    // Yalnız açılışta bir kez (ses temadan türetilir).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tema]);
+
+  return (
+    <main
+      data-ekran="tema-girisi-derin"
+      data-giris-tema={tema}
+      data-giris-asama="hikaye"
+      aria-label={`Temaya giriş: ${temaAdi}`}
+      style={{ height: '100%', position: 'relative', overflow: 'hidden', background: renk }}
+    >
+      <Suspense fallback={null}>
+        <HikayeSahnesi tema={tema} sahneNo={1} />
+      </Suspense>
+      {/* Açık pastel sahne üstünde beyaz yazı okunmaz: yetişkin düğmesi koyu. */}
+      <GirisiGec onGec={onGec} koyu />
+    </main>
+  );
+}
+
+/** Yetişkin: girişi geç (bilerek küçük ve soluk, üst köşede). */
+function GirisiGec({ onGec, koyu = false }: { onGec: () => void; koyu?: boolean }) {
+  return (
+    <button
+      type="button"
+      data-yetiskin=""
+      aria-label="Girişi geç"
+      onClick={onGec}
+      style={{
+        position: 'absolute',
+        top: 8,
+        right: 8,
+        minWidth: 44,
+        minHeight: 44,
+        padding: '0 12px',
+        border: 'none',
+        borderRadius: 8,
+        background: 'transparent',
+        color: koyu ? COLOR.ink : '#fff',
+        opacity: 0.7,
+        cursor: 'pointer',
+        fontSize: 'var(--text-adult)',
+        // Çocuk yüzeyinde Andika indirilmez (KG-96/98): yetişkin düğmesi de TemelYazi ile yazılır;
+        // `data-yetiskin` yalnız erişim bölgesi/hedef boyutu muafiyeti için.
+        fontFamily: 'var(--font-sans)',
+        zIndex: 5,
+      }}
+    >
+      Girişi geç
+    </button>
+  );
 }
 
 function DerinGiris({
@@ -230,37 +346,13 @@ function DerinGiris({
       </div>
 
       {/* Yetişkin: girişi geç (bilerek küçük ve soluk, üst köşede). */}
-      <button
-        type="button"
-        data-yetiskin=""
-        aria-label="Girişi geç"
-        onClick={() => {
+      <GirisiGec
+        onGec={() => {
           if (bitirildi.current) return;
           bitirildi.current = true;
           onBitti();
         }}
-        style={{
-          position: 'absolute',
-          top: 8,
-          right: 8,
-          minWidth: 44,
-          minHeight: 44,
-          padding: '0 12px',
-          border: 'none',
-          borderRadius: 8,
-          background: 'transparent',
-          color: '#fff',
-          opacity: 0.7,
-          cursor: 'pointer',
-          fontSize: 'var(--text-adult)',
-          // Çocuk yüzeyinde Andika indirilmez (KG-96/98): yetişkin düğmesi de TemelYazi ile yazılır;
-          // `data-yetiskin` yalnız erişim bölgesi/hedef boyutu muafiyeti için.
-          fontFamily: 'var(--font-sans)',
-          zIndex: 5,
-        }}
-      >
-        Girişi geç
-      </button>
+      />
     </main>
   );
 }

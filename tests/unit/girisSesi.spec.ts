@@ -98,11 +98,11 @@ describe('ertelenen klipler (KG-110)', () => {
     }
   });
 
-  it('yedek klip kalmadı: ui.oturum-bitti yalnız kişisel oturum sonunda', () => {
+  it('yedek klip kalmadı: ui.oturum-bitti yalnız kişisel oturum sonunda (Adım 54: hikâye sesi hikayeAkisi.ts)', () => {
     const kullananlar = kaynakDosyalari(path.resolve(__dirname, '../../src'))
       .filter((f) => readFileSync(f, 'utf8').includes("'ui.oturum-bitti'"))
       .map((f) => path.basename(f));
-    expect(kullananlar).toEqual(['OturumSonu.tsx']);
+    expect(kullananlar.sort()).toEqual(['OturumSonu.tsx', 'hikayeAkisi.ts']);
   });
 
   it('çıkış onayının sesi ekrandaki cümleyle aynı', () => {

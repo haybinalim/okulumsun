@@ -19,16 +19,24 @@ const ozetDosyasi = ozetDosyasiniOku(
   JSON.parse(readFileSync(new URL('../../public/audio/.hashes.json', import.meta.url), 'utf8')),
 );
 const { ozetler } = ozetDosyasi;
-const { aktif } = sesKaynagiDosyasiniAyir(sesKaynagiJson as Record<string, unknown>);
+// Anahtar bazlı sesler (KG-114): maskot/hikâye klipleri kendi sesinin özetiyle denetlenir.
+const { aktif, anahtarSesleri } = sesKaynagiDosyasiniAyir(sesKaynagiJson as Record<string, unknown>);
 
 describe('ses kökeni denetimi', () => {
   it('her özet aktif kaynakla eşleşir; eski piper özeti yok (Adım 31, K4 tam)', () => {
-    const sonuc = kokenDenetle(aktif, klipler, ozetler);
+    const sonuc = kokenDenetle(aktif, klipler, ozetler, anahtarSesleri);
     expect(sonuc.eslesmeyen).toEqual([]);
     expect(sonuc.ozetsiz).toEqual([]);
     expect(sonuc.eskiEslesen).toBe(0);
     expect(sonuc.yeniEslesen).toBe(klipler.length);
     expect(klipler.filter((k) => ozetler[k.key] === eskiOzet('piper', k.text))).toEqual([]);
+  });
+
+  it('anahtar sesleri verilmezse maskot klipleri (Achernar) Puck özetiyle eşleşmez — denetim sesi ayırt eder', () => {
+    const sonuc = kokenDenetle(aktif, klipler, ozetler);
+    expect(sonuc.eslesmeyen.sort()).toEqual(
+      klipler.filter((k) => k.key.startsWith('hikaye.') || k.key.startsWith('maskot.')).map((k) => k.key).sort(),
+    );
   });
 
   it("aktif kaynak ticari izinli: lisans uyarısı yok; .hashes.json'daki $kaynak aktif kaynakla aynı", () => {
@@ -40,7 +48,7 @@ describe('ses kökeni denetimi', () => {
   it('tuzak: say önekli sahte özet denetimi kırar', () => {
     const ilk = klipler[0];
     const sahte = { ...ozetler, [ilk.key]: eskiOzet('say', ilk.text) };
-    expect(kokenDenetle(aktif, klipler, sahte).eslesmeyen).toEqual([ilk.key]);
+    expect(kokenDenetle(aktif, klipler, sahte, anahtarSesleri).eslesmeyen).toEqual([ilk.key]);
   });
 
   it('ticari izinsiz kaynak lisans uyarısı üretir (geçiş istisnası yok)', () => {

@@ -163,18 +163,23 @@ async function main(): Promise<void> {
 
   // Köken denetimi.
   // Köken her zaman AKTİF kaynağa göre denetlenir (`bekleyen` varsa yalnız doğrulanır).
-  const { aktif } = sesKaynagiDosyasiniAyir(JSON.parse(await readFile(SES_KAYNAGI, 'utf8')) as Record<string, unknown>);
+  // Anahtar bazlı sesler (KG-114): maskot/hikâye klipleri kendi sesinin özetiyle denetlenir.
+  const { aktif, anahtarSesleri } = sesKaynagiDosyasiniAyir(JSON.parse(await readFile(SES_KAYNAGI, 'utf8')) as Record<string, unknown>);
   const ozetDosyasi = existsSync(HASHES)
     ? ozetDosyasiniOku(JSON.parse(await readFile(HASHES, 'utf8')))
     : { kaynak: null, ozetler: {} };
-  const koken = kokenDenetle(aktif, clips, ozetDosyasi.ozetler);
+  const koken = kokenDenetle(aktif, clips, ozetDosyasi.ozetler, anahtarSesleri);
   for (const k of koken.ozetsiz) problems.push(`ÖZETSİZ    ${k} (.hashes.json'da yok)`);
-  for (const k of koken.eslesmeyen) problems.push(`KÖKEN      ${k} — özet aktif kaynakla (${aktif.modelKimligi}) eşleşmiyor`);
+  for (const k of koken.eslesmeyen) problems.push(`KÖKEN      ${k} — özet klibin kaynağıyla eşleşmiyor`);
 
   console.log(`${checked}/${entries.length} klip denetlendi · ${(totalBytes / 1048576).toFixed(2)} MB`);
   console.log(
     `köken: ${aktif.modelKimligi} · yeni özet ${koken.yeniEslesen} · eski 'piper:' özeti ${koken.eskiEslesen}`,
   );
+  for (const a of anahtarSesleri) {
+    const n = clips.filter((c) => a.onekler.some((o) => c.key.startsWith(o))).length;
+    console.log(`anahtar sesi (${a.karar}): ${a.onekler.join(', ')} → ${a.modelKimligi} hız ${a.hiz} · ${n} klip`);
+  }
   // K4 (Adım 31): ticari izinsiz kaynak her zaman kırmızı; geçiş istisnası kaldırıldı.
   if (koken.lisansUyarisi) problems.push(koken.lisansUyarisi);
   if (orphans.length) {

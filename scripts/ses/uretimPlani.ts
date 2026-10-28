@@ -22,7 +22,8 @@ export interface UretimPlani {
 export function uretimPlani(
   klipler: readonly Clip[],
   ozetler: Readonly<Record<string, string>>,
-  ozetHesapla: (metin: string) => string,
+  /** İkinci parametre klibin kendisi: anahtar bazlı ses (KG-114) özeti anahtara göre hesaplar. */
+  ozetHesapla: (metin: string, clip: Clip) => string,
   dosyaVarMi: (dosya: string) => boolean,
   secenekler: PlanSecenekleri,
 ): UretimPlani {
@@ -31,7 +32,7 @@ export function uretimPlani(
   let kalan = 0;
   const enCok = secenekler.enCok !== undefined && Number.isFinite(secenekler.enCok) ? secenekler.enCok : Infinity;
   for (const clip of klipler) {
-    const ozet = ozetHesapla(clip.text);
+    const ozet = ozetHesapla(clip.text, clip);
     if (!secenekler.zorla && ozetler[clip.key] === ozet && dosyaVarMi(clip.file)) {
       atlanan++;
       continue;

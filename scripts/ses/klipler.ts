@@ -4,7 +4,12 @@
  * `scripts/generate-audio.ts` ve `scripts/audit-audio.ts` aynı klip kümesini
  * buradan alır; ikinci bir düzleştirme yazmak YASAK (sayı klipleri dâhil).
  * Dosya sistemi okuması çağırana aittir: içerik parametreyle verilir.
+ *
+ * YER TUTUCULAR (KG-115): metindeki `{maskotAdi}` maskotun adıyla doldurulur; ad TEK KAYNAKTAN
+ * (`src/content/maskot.json`) gelir. Özet doldurulmuş metinle hesaplandığı için ad değişince yalnız
+ * adın geçtiği klipler yeniden üretilir. Bilinmeyen yer tutucu hata verir (sessizce okunmaz).
  */
+import maskotHam from '../../src/content/maskot.json' with { type: 'json' };
 
 export interface Clip {
   readonly key: string;
@@ -32,8 +37,29 @@ export function turkishNumber(n: number): string {
   return o === 0 ? ONLAR[t] : `${ONLAR[t]} ${BIRLER[o]}`;
 }
 
+/** Ses metinlerindeki yer tutucuların değerleri (KG-115). */
+export const ICERIK_DEGISKENLERI: Readonly<Record<string, string>> = { maskotAdi: (maskotHam as { ad: string }).ad };
+
+/** `{ad}` yer tutucularını doldurur; bilinmeyen yer tutucu ya da boş değer hata verir. */
+export function yerTutuculariDoldur(
+  metin: string,
+  degiskenler: Readonly<Record<string, string>> = ICERIK_DEGISKENLERI,
+  anahtar = '?',
+): string {
+  return metin.replace(/\{([A-Za-z]+)\}/g, (_, ad: string) => {
+    const deger = degiskenler[ad];
+    if (typeof deger !== 'string' || deger.trim() === '') {
+      throw new Error(`Bilinmeyen ya da boş yer tutucu {${ad}} (${anahtar})`);
+    }
+    return deger.trim();
+  });
+}
+
 /** `src/content/tr.json` içeriğinden konuşulacak tüm klipleri, manifest sırasıyla çıkarır. */
-export function klipleriTopla(trJson: Readonly<Record<string, unknown>>): readonly Clip[] {
+export function klipleriTopla(
+  trJson: Readonly<Record<string, unknown>>,
+  degiskenler: Readonly<Record<string, string>> = ICERIK_DEGISKENLERI,
+): readonly Clip[] {
   const clips: Clip[] = [];
 
   for (const [ns, value] of Object.entries(trJson)) {
@@ -54,7 +80,8 @@ export function klipleriTopla(trJson: Readonly<Record<string, unknown>>): readon
 
     for (const [k, text] of Object.entries(group)) {
       if (k.startsWith('$') || typeof text !== 'string') continue;
-      clips.push({ key: `${ns}.${k}`, text, file: `${ns}/${k}.m4a`, core });
+      const key = `${ns}.${k}`;
+      clips.push({ key, text: yerTutuculariDoldur(text, degiskenler, key), file: `${ns}/${k}.m4a`, core });
     }
   }
   return clips;

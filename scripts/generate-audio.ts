@@ -26,6 +26,12 @@
  *           Vekil modu: GOOGLE_TTS_API_KEY=proxy GOOGLE_TTS_UC_NOKTA=<Google uç noktası>
  *           NODE_USE_ENV_PROXY=1 (anahtarı vekil ekler).
  *
+ * ANAHTAR BAZLI SES (KG-114): `sesKaynagi.json` `anahtarSesleri` belirli öneklerin kliplerini
+ *   aynı sağlayıcının başka bir sesiyle üretir: maskot sesi `maskot.*` ve `hikaye.*` →
+ *   tr-TR-Chirp3-HD-Achernar, hız 0,9; diğer tüm anahtarlar yönerge sesiyle (Puck). Özet o
+ *   klibin ses adını (ve varsayılandan farklıysa hızını) içerir; ses değişince yalnız o klipler
+ *   yeniden üretilir, Puck kliplerinin özeti değişmez (scripts/ses/sesKaynagi.ts anahtarliKlipOzeti).
+ *
  * ARTIMLI ÜRETİM: yalnız metni değişen veya dosyası eksik anahtarlar yeniden sentezlenir
  * (özet karşılaştırması, scripts/ses/uretimPlani.ts). Tam yeniden üretim yalnız `--zorla`.
  *
@@ -56,9 +62,11 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { klipleriTopla, type Clip } from './ses/klipler.ts';
 import {
-  klipOzeti,
+  anahtarinSesi,
+  anahtarliKlipOzeti,
   ozetDosyasiniOku,
   sesKaynagiDosyasiniAyir,
+  type AnahtarSesi,
   type SesKaynagi,
 } from './ses/sesKaynagi.ts';
 import {
@@ -125,9 +133,14 @@ const CACHE = path.join(OUT_AUDIO, '.hashes.json');
 type Provider = 'say' | 'piper' | 'eleven' | 'google';
 
 /** Aktif kaynağı okur; `--prototip` → say. `TTS_PROVIDER` yalnız kaynağın sağlayıcısını geçersiz kılar. */
-async function aktifKaynagiOku(): Promise<{ kaynak: SesKaynagi; provider: Provider }> {
+async function aktifKaynagiOku(): Promise<{
+  kaynak: SesKaynagi;
+  anahtarSesleri: readonly AnahtarSesi[];
+  provider: Provider;
+}> {
   if (PROTOTIP) {
     return {
+      anahtarSesleri: [],
       kaynak: {
         saglayici: 'say',
         modelKimligi: `say:${SAY_VOICE}@${SAY_RATE}`,
@@ -139,7 +152,7 @@ async function aktifKaynagiOku(): Promise<{ kaynak: SesKaynagi; provider: Provid
       provider: 'say',
     };
   }
-  const { aktif: kaynak } = sesKaynagiDosyasiniAyir(
+  const { aktif: kaynak, anahtarSesleri } = sesKaynagiDosyasiniAyir(
     JSON.parse(await readFile(SES_KAYNAGI, 'utf8')) as Record<string, unknown>,
   );
   const istenen = process.env.TTS_PROVIDER ?? kaynak.saglayici;
@@ -155,7 +168,8 @@ async function aktifKaynagiOku(): Promise<{ kaynak: SesKaynagi; provider: Provid
         'Önce src/content/sesKaynagi.json güncellenmeli (model kimliği özete girer).',
     );
   }
-  return { kaynak, provider: istenen };
+  // Anahtar sesleri yalnız aktif sağlayıcıyla (şimdilik google) anlamlı; doğrulama aynı öneki ister.
+  return { kaynak, anahtarSesleri, provider: istenen };
 }
 
 /**
@@ -248,17 +262,21 @@ function butceYaz(etiket: string): void {
   );
 }
 
-async function synthGoogle(text: string, out: string, sesAdi: string): Promise<void> {
+async function synthGoogle(text: string, out: string, sesAdi: string, hiz?: number): Promise<void> {
   sayac.istek++;
   sayac.karakter += karakterSay(text);
-  const wav = await googleSentezle(googleIstegi(text, sesAdi), await googleAnahtari(), { koruma: defter() });
+  const wav = await googleSentezle(googleIstegi(text, sesAdi, hiz), await googleAnahtari(), { koruma: defter() });
   await wavdanM4a(wav, out);
   await bekle(350);
 }
 
-let aktifGoogleSesi = '';
+/** Klibin sesi (KG-114): Google'da anahtar bazlı ses adı ve hız; diğer sağlayıcılarda yok sayılır. */
+interface KlipSesi {
+  readonly googleSesi: string;
+  readonly hiz: number;
+}
 
-async function synth(provider: Provider, text: string, out: string): Promise<void> {
+async function synth(provider: Provider, text: string, out: string, ses: KlipSesi): Promise<void> {
   switch (provider) {
     case 'say':
       return synthSay(text, out);
@@ -267,7 +285,7 @@ async function synth(provider: Provider, text: string, out: string): Promise<voi
     case 'eleven':
       throw new Error('ElevenLabs kullanılmaz (KG-01, ADR-0004).');
     case 'google':
-      return synthGoogle(text, out, aktifGoogleSesi);
+      return synthGoogle(text, out, ses.googleSesi, ses.hiz);
   }
 }
 
@@ -351,17 +369,29 @@ function vekilUyarisi(): void {
 }
 
 /** Özet dosyasını atomik yazar (kesilen çalışma yarım JSON bırakmaz). */
-async function ozetleriYaz(kaynak: SesKaynagi, hashes: Record<string, string>): Promise<void> {
+async function ozetleriYaz(
+  kaynak: SesKaynagi,
+  anahtarSesleri: readonly AnahtarSesi[],
+  hashes: Record<string, string>,
+): Promise<void> {
   const gecici = `${CACHE}.tmp`;
-  await writeFile(gecici, JSON.stringify({ $kaynak: kaynak, ...hashes }, null, 2));
+  // `$anahtarSesleri` yalnız tanımlıysa yazılır (KG-114): hangi önekin hangi sesle üretildiği kayıtta görünür.
+  const ust = anahtarSesleri.length ? { $kaynak: kaynak, $anahtarSesleri: anahtarSesleri } : { $kaynak: kaynak };
+  await writeFile(gecici, JSON.stringify({ ...ust, ...hashes }, null, 2));
   await rename(gecici, CACHE);
 }
 
 async function main(): Promise<void> {
   vekilUyarisi();
   if (ORNEK) return ornekUret();
-  const { kaynak, provider } = await aktifKaynagiOku();
-  if (provider === 'google') aktifGoogleSesi = modelKimligindenSes(kaynak.modelKimligi);
+  const { kaynak, anahtarSesleri: tanimliAnahtarSesleri, provider } = await aktifKaynagiOku();
+  const anahtarSesleri = provider === 'google' ? tanimliAnahtarSesleri : [];
+  const klipSesi = (anahtar: string): KlipSesi => {
+    const { kaynak: k, hiz } = anahtarinSesi(kaynak, anahtarSesleri, anahtar);
+    return { googleSesi: provider === 'google' ? modelKimligindenSes(k.modelKimligi) : '', hiz };
+  };
+  // Model kimlikleri baştan doğrulanır (yanlış ses adı istek atılmadan yakalanır).
+  if (provider === 'google') for (const a of anahtarSesleri) modelKimligindenSes(a.modelKimligi);
   const clips = klipleriTopla(JSON.parse(await readFile(CONTENT, 'utf8')) as Record<string, unknown>);
   console.log(
     `${clips.length} klip · kaynak: ${kaynak.modelKimligi}${PROTOTIP ? ' · --prototip' : ''}${FORCE ? ' · --zorla' : ''}${KURU ? ' · --kuru' : ''}`,
@@ -386,7 +416,7 @@ async function main(): Promise<void> {
   const plan = uretimPlani(
     clips,
     hashes,
-    (metin) => klipOzeti(kaynak, metin),
+    (metin, clip) => anahtarliKlipOzeti(kaynak, anahtarSesleri, clip.key, metin),
     (dosya) => existsSync(path.join(OUT_AUDIO, dosya)),
     { zorla: FORCE, enCok: Number.isFinite(EN_COK) ? EN_COK : undefined },
   );
@@ -398,6 +428,21 @@ async function main(): Promise<void> {
     `plan: üretilecek ${plan.uretilecek.length} klip · ${planKarakter} karakter · atlanan ${skipped}` +
       (kalan ? ` · sonraki çalışmaya kalan ${kalan}` : ''),
   );
+  // Ses başına döküm (KG-114): ör. "Puck 0 klip · Achernar 22 klip". Yalnız sayılar.
+  if (provider === 'google') {
+    const dokum = new Map<string, { klip: number; karakter: number }>();
+    const sesAdlari = [kaynak.modelKimligi, ...anahtarSesleri.map((a) => a.modelKimligi)].map(modelKimligindenSes);
+    for (const ad of sesAdlari) dokum.set(ad, { klip: 0, karakter: 0 });
+    for (const { clip } of plan.uretilecek) {
+      const d = dokum.get(klipSesi(clip.key).googleSesi)!;
+      d.klip++;
+      d.karakter += karakterSay(clip.text);
+    }
+    console.log(
+      'ses dökümü: ' +
+        [...dokum].map(([ad, d]) => `${ad.replace('tr-TR-Chirp3-HD-', '')} ${d.klip} klip · ${d.karakter} karakter`).join(' | '),
+    );
+  }
   if (provider === 'google') butceYaz('ücretsiz katman');
   if (KURU) {
     console.log('--kuru: hiç istek atılmadı, dosya yazılmadı.');
@@ -410,17 +455,17 @@ async function main(): Promise<void> {
     const out = path.join(OUT_AUDIO, clip.file);
     await mkdir(path.dirname(out), { recursive: true });
     try {
-      await synth(provider, clip.text, out);
+      await synth(provider, clip.text, out, klipSesi(clip.key));
       hashes[clip.key] = hash;
       made++;
       // Her klipten sonra: kesilen çalışma kaldığı yerden sürer.
-      if (!PROTOTIP) await ozetleriYaz(kaynak, hashes);
+      if (!PROTOTIP) await ozetleriYaz(kaynak, anahtarSesleri, hashes);
       if (made % 25 === 0) console.log(`  ${made} üretildi...`);
       ardisikHata = 0;
     } catch (err) {
       // Ücretsiz katman sınırı kalıcıdır: hemen dur, sonraki klipleri deneme.
       if ((err as Error).name === 'UcretsizKatmanAsimi' || /ÜCRETSİZ KATMAN KORUMASI/.test((err as Error).message)) {
-        await ozetleriYaz(kaynak, hashes);
+        await ozetleriYaz(kaynak, anahtarSesleri, hashes);
         throw err;
       }
       failures.push(`${clip.key}: ${(err as Error).message.split('\n')[0]}`);
@@ -433,7 +478,7 @@ async function main(): Promise<void> {
   }
 
   await mkdir(OUT_AUDIO, { recursive: true });
-  await ozetleriYaz(kaynak, hashes);
+  await ozetleriYaz(kaynak, anahtarSesleri, hashes);
   // Prototip çıktısı dağıtılmadığı için manifesto yalnız gerçek üretimde yazılır.
   if (!PROTOTIP) {
     await mkdir(path.dirname(OUT_MANIFEST), { recursive: true });
