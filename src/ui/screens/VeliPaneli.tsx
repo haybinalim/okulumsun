@@ -11,6 +11,7 @@ import { COLOR } from '../../design/tokens';
 import type { ReadingLevel } from '../../store/appStore';
 import { VERI_SAKLAMA_BILDIRIMI } from '../../persistence/veriSaklamaPolitikasi';
 import { SURUM_METNI } from '../../hata/surum';
+import { paraGorseliBeyani } from '../../content/paraGorseli';
 import { useCihazProfili } from '../../design/CihazProfiliBaglami';
 import type { DeviceProfile } from '../../design/tokens';
 import { EKRAN_BOYUTU_SECENEKLERI } from '../../design/ekranBoyutu';
@@ -174,7 +175,7 @@ export function VeliPaneli() {
           Müfredat kaynağı: MEB 2024 Türkiye Yüzyılı Maarif Modeli, İlkokul Matematik Dersi Öğretim Programı.
         </p>
         <p style={{ ...bilgiMetniStili, margin: '8px 0 12px' }}>
-          Ses klipleri Piper TTS ile önceden üretilir; banknot görselleri TCMB örnek banknotlarıdır. Uygulama öğrenci veya veli verisi toplamaz ya da saklamaz.
+          Ses klipleri Google Cloud Text-to-Speech ile önceden üretilir ve uygulamanın içindedir. {paraGorseliBeyani().kisa} Uygulama öğrenci veya veli verisi toplamaz ya da saklamaz.
         </p>
         <button
           type="button"

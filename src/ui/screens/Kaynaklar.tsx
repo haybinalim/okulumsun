@@ -12,9 +12,11 @@
 
 import { SURUM_METNI } from '../../hata/surum';
 import { UCUNCU_TARAF_VARLIKLAR } from '../../content/ucuncuTarafVarliklar';
+import { paraGorseliBeyani } from '../../content/paraGorseli';
 
 /** Kullanıcıya dağıtılan varlıklar; geliştirme araçları LICENSES.md'de listelenir. */
 const DAGITILAN = UCUNCU_TARAF_VARLIKLAR.filter((v) => v.dagitimdaVar);
+const PARA_BEYANI = paraGorseliBeyani();
 
 export function Kaynaklar() {
   return (
@@ -87,14 +89,14 @@ export function Kaynaklar() {
         </p>
       </section>
 
-      {/* Para görselleri notu */}
+      {/* Para görselleri notu (KG-117): metin stratejiden türetilir, TCMB izni iddia edilmez (KG-19). */}
       <section style={{ marginBottom: '2rem' }}>
         <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Para Görselleri</h2>
-        <p style={{ fontSize: '0.9rem', lineHeight: 1.6, color: '#333' }}>
-          Türk Lirası banknot görselleri, TCMB'nin kamuya açık örnek banknot
-          görsellerinden türetilmiştir. Uygulama yalnız 5, 10, 20, 50, 100 ve
-          200 TL kupürleri için bu resmî örnek görselleri kullanır.
-        </p>
+        {PARA_BEYANI.paragraflar.map((p) => (
+          <p key={p} style={{ fontSize: '0.9rem', lineHeight: 1.6, color: '#333', marginBottom: '0.5rem' }}>
+            {p}
+          </p>
+        ))}
       </section>
 
       {/* Geri (veli paneline) / Ana menü: ortak gezinme rayı (KG-103). */}
