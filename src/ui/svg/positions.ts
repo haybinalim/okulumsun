@@ -7,13 +7,11 @@
  */
 
 /** Yerleşim biçimine göre normalize konum dizisi üretir (deterministik). */
-export function nesneKonumlari(
-  spec: {
-    adet: number;
-    layout: 'sira' | 'gruplu' | 'onlukCerceve' | 'dagınık';
-    konumlar?: readonly { x: number; y: number }[];
-  },
-): readonly { x: number; y: number }[] {
+export function nesneKonumlari(spec: {
+  adet: number;
+  layout: 'sira' | 'gruplu' | 'onlukCerceve' | 'dagınık';
+  konumlar?: readonly { x: number; y: number }[];
+}): readonly { x: number; y: number }[] {
   const n = spec.adet;
   if (spec.layout === 'dagınık' && spec.konumlar && spec.konumlar.length >= n) {
     return spec.konumlar.slice(0, n);
@@ -38,10 +36,12 @@ function siraKonumlari(n: number, x0: number, x1: number): readonly { x: number;
   const adimX = sutun > 1 ? (x1 - x0) / (sutun - 1) : 0;
   const adimY = satir > 1 ? 0.85 / (satir - 1) : 0;
   const out: { x: number; y: number }[] = [];
+  // Tek sütun yatayda, tek satır dikeyde ortalanır (KG-105: tek nesne eskiden sol üst köşeye, yarısı kırpılarak düşüyordu).
+  const ortaX = (x0 + x1) / 2;
   for (let i = 0; i < n; i++) {
     const r = Math.floor(i / sutun);
     const c = i % sutun;
-    out.push({ x: x0 + c * adimX, y: 0.12 + r * adimY });
+    out.push({ x: sutun > 1 ? x0 + c * adimX : ortaX, y: satir > 1 ? 0.12 + r * adimY : 0.5 });
   }
   return out;
 }

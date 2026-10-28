@@ -91,3 +91,77 @@ export function sayfalaraDagit(maddeler: readonly KagitMaddesi[], duzen: KagitDu
   if (sayfa.length > 0) sayfalar.push(sayfa);
   return sayfalar;
 }
+
+// ------------------------------------------------------------ sahne kutusu (KG-105)
+
+/**
+ * Basılı sayfanın gerçek ölçüleri (`kagit.css`: A4 − 12 mm kenar = 186 × 272; üst 10, alt 8, ızgara dolgusu 2 × 3,
+ * hücre aralığı 3; madde çerçevesi 0,5 + dolgu 1,5/2). `HUCRE_MM` sığma kararı için ihtiyatlı (küçük) kalır;
+ * sahne kutusu ise kalan GERÇEK yeri doldurur.
+ */
+const SAYFA_IC = { w: 186, h: 272 } as const;
+const IZGARA_H = SAYFA_IC.h - 10 - 8 - 6;
+const HUCRE_ARASI = 3;
+const MADDE_IC_W = 1 + 4;
+const MADDE_IC_H = 1 + 3;
+/** Yönerge satırı: 4 mm × 1,32; alt eylem satırı 2,8 mm × 1,3; numara + ikon + aralıklar 17 mm. */
+const YONERGE_SATIRI_MM = 5.28;
+const EYLEM_SATIRI_MM = 3.64;
+const YONERGE_YAN_MM = 17;
+/** TemelYazi kalın 4 mm'de ortalama harf genişliği (ihtiyatlı; ölçülen ≈ 1,92 mm). */
+const HARF_MM = 2.05;
+/** Dar hücrede sahnenin en az yüksekliği (eski sabit değer); yatayda sahne sütunu. */
+export const SAHNE_EN_AZ_MM = SAHNE_DAR_MM;
+export const SAHNE_YATAY_EN_AZ_MM = SAHNE_GENIS_MM;
+export const SAHNE_YATAY_GENISLIK_MM = SAHNE_SUTUNU_MM - BOSLUK_MM;
+
+/** Maddenin basılı iç ölçüsü (mm). */
+export function maddeIcOlcusu(duzen: KagitDuzeni, kaplama: 1 | 2): { readonly w: number; readonly h: number } {
+  const sutun = duzen === '2x3' ? 2 : 1;
+  const satir = duzen === '2x3' ? 3 : 4;
+  const w1 = (SAYFA_IC.w - (sutun - 1) * HUCRE_ARASI) / sutun;
+  const h1 = (IZGARA_H - (satir - 1) * HUCRE_ARASI) / satir;
+  const w = duzen === '2x3' && kaplama === 2 ? 2 * w1 + HUCRE_ARASI : w1;
+  const h = duzen === '1x4' && kaplama === 2 ? 2 * h1 + HUCRE_ARASI : h1;
+  return { w: w - MADDE_IC_W, h: h - MADDE_IC_H };
+}
+
+/** Yönerge bloğunun tahmini yüksekliği (mm): kelime kaydırmalı satır sayısı × satır + eylem satırı. */
+export function yonergeYuksekligi(metin: string, icGenislik: number): number {
+  const satirHarf = Math.max(8, Math.floor((icGenislik - YONERGE_YAN_MM) / HARF_MM));
+  let satir = 1;
+  let uzunluk = 0;
+  for (const kelime of metin.split(/\s+/).filter(Boolean)) {
+    const ek = uzunluk === 0 ? kelime.length : uzunluk + 1 + kelime.length;
+    if (ek > satirHarf && uzunluk > 0) {
+      satir += 1;
+      uzunluk = kelime.length;
+    } else uzunluk = ek;
+  }
+  return Math.max(9, satir * YONERGE_SATIRI_MM + EYLEM_SATIRI_MM);
+}
+
+/**
+ * Sahnenin basılı kutusu (mm): dar hücrede tam genişlik × yönerge, seçenek satırları ve yazma kutusundan kalan
+ * yükseklik (en az eski 28 mm); yatayda (iki hücre / 1x4) 75 mm sütun × kalan yükseklik. Yalnız çizimin en-boy
+ * oranı ve mm ölçeği için tahmindir; CSS kutuyu gerçek kalan yerle doldurur, çizim oranıyla içine sığar.
+ * Sığma kararı (`maddeKaplama`) DEĞİŞMEZ: sayfa planı ve metin özeti aynı kalır.
+ */
+export function sahneKutusu(m: KagitMaddesi, duzen: KagitDuzeni): { readonly w: number; readonly h: number } {
+  const kaplama = maddeKaplama(m, duzen) ?? 1;
+  const ic = maddeIcOlcusu(duzen, kaplama);
+  const yatay = duzen === '1x4' || kaplama === 2;
+  const yonerge = yonergeYuksekligi(m.yonergeMetni, ic.w);
+  const sirali = m.yanitBicimi === 'siraNumarasiYaz';
+  const kutuSatiri = m.kutular.length > 0 && !sirali ? 1 + 9 : 0;
+  if (yatay) {
+    return { w: SAHNE_YATAY_GENISLIK_MM, h: Math.max(SAHNE_YATAY_EN_AZ_MM, ic.h - yonerge - 1 - kutuSatiri) };
+  }
+  let secenek = 0;
+  if (m.secenekler.length > 0) {
+    const kutuW = secenekGenisligi(m);
+    const satir = Math.ceil(m.secenekler.length / satirdakiKutu(ic.w, kutuW));
+    secenek = 1 + satir * (SECENEK_KUTUSU_MM + (sirali ? 10 : 0)) + (satir - 1) * BOSLUK_MM;
+  }
+  return { w: ic.w, h: Math.max(SAHNE_EN_AZ_MM, ic.h - yonerge - 1 - secenek - kutuSatiri) };
+}
