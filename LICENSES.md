@@ -41,7 +41,7 @@ Uygulamadaki Kaynaklar ekranı aynı listeyi çizer.
 
 | Ad | Lisans | Sahip | Koşul |
 |---|---|---|---|
-| TCMB E9 5. tertip örnek banknot görselleri | TCMB kullanım şartları | Türkiye Cumhuriyet Merkez Bankası | Kaynak gösterilerek eğitim amaçlı; ticari kullanımda yazılı izin. TCMB'ye başvurulmaz (KG-19), Adım 29'da şematik banknotla değiştirilir |
+| TCMB E9 5. tertip örnek banknot görselleri | TCMB kullanım şartları | Türkiye Cumhuriyet Merkez Bankası | Yalnız ekranda; kaynak gösterilerek eğitim amaçlı (TCMB şartları ticari kullanımda yazılı izin ister). TCMB'ye başvurulmadı (KG-19); kâğıt ve arşivde şematik banknot |
 
 ### Ses
 

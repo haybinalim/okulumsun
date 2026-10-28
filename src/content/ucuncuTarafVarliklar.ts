@@ -71,7 +71,7 @@ export const UCUNCU_TARAF_VARLIKLAR: readonly UcuncuTarafVarlik[] = [
     sahip: 'Türkiye Cumhuriyet Merkez Bankası',
     kaynakUrl: 'docs/BANKNOT_GORSEL_KAYNAKLARI.md',
     dagitimdaVar: true,
-    kosul: 'Kaynak gösterilerek eğitim amaçlı; ticari kullanımda yazılı izin. TCMB\'ye başvurulmaz (KG-19), Adım 29\'da şematik banknotla değiştirilir',
+    kosul: 'Yalnız ekranda; kaynak gösterilerek eğitim amaçlı (TCMB şartları ticari kullanımda yazılı izin ister). TCMB\'ye başvurulmadı (KG-19); kâğıt ve arşivde şematik banknot',
   },
   // --- Ses
   sesVarligi(ses),

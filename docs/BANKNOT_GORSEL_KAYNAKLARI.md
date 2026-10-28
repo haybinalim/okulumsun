@@ -29,7 +29,9 @@ TCMB’nin [Kullanım Şartları](https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCM
 
 - `src/content/paraGorseli.ts` → `TCMB_YAZILI_IZIN = false` kalıcıdır; çalışma kâğıdı (Adım 35) ve
   arşiv (Adım 48) her zaman `SematikBanknot` kullanır.
-- Ekran Adım 29'a kadar bu sayfadaki örnek görselleri eğitim amaçlı, kaynak göstererek kullanır;
-  Adım 29'da ekran da şematiğe geçer ve `public/images/banknotlar/` depodan kaldırılır.
+- Ekran bu sayfadaki örnek görselleri eğitim amaçlı, kaynak göstererek kullanır. KG-19'a göre ekran
+  da şematiğe geçecek ve `public/images/banknotlar/` depodan kalkacaktı; Adım 29 bu geçişi yapmadan
+  kapandı → durum Ekim 2026'da hâlâ "ekranda TCMB örneği" (KG-117). Kaynaklar ekranı ve veli paneli
+  bu durumu `paraGorseliBeyani()` ile olduğu gibi söyler; TCMB izni veya onayı iddia etmez.
 - `SematikBanknot` TCMB tasarımını taklit etmez: portre, filigran, seri numarası, imza veya TCMB adı
   yoktur; değer rakamı, kupüre özgü renk, desen ve boy oranı ile "OYUN PARASI" ibaresi taşır.
