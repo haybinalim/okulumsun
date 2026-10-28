@@ -253,6 +253,9 @@ function DerinGiris({
           opacity: 0.7,
           cursor: 'pointer',
           fontSize: 'var(--text-adult)',
+          // Çocuk yüzeyinde Andika indirilmez (KG-96/98): yetişkin düğmesi de TemelYazi ile yazılır;
+          // `data-yetiskin` yalnız erişim bölgesi/hedef boyutu muafiyeti için.
+          fontFamily: 'var(--font-sans)',
           zIndex: 5,
         }}
       >

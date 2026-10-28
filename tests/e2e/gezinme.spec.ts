@@ -49,7 +49,7 @@ async function konuyuSec(page: Page): Promise<void> {
   const etiketler = await page
     .locator('button:not([disabled])')
     .evaluateAll((b) => b.map((x) => x.getAttribute('aria-label') ?? x.textContent ?? ''));
-  const ilk = etiketler.find((e) => e && !/Geri|Ana menü|Yardım|Yönergeyi|tekrar dinle|Tema turu/i.test(e));
+  const ilk = etiketler.find((e) => e && !/Geri|Ana menü|Yardım|Yönergeyi|tekrar dinle|Tema turu|Temaya giriş/i.test(e));
   await page.getByRole('button', { name: ilk!, exact: true }).first().click();
   await expect.poll(() => page.evaluate(() => window.__okulumsunE2E?.alistirma?.sira ?? null)).not.toBeNull();
 }
