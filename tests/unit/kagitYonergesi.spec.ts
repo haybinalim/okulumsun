@@ -30,7 +30,7 @@ const TR = trDuzlestir(tr as unknown as Record<string, unknown>);
 const kayitli = (t: string): boolean => REGISTRY.has(t);
 
 /** Çocuğa yönerge olarak söylenmeyen gruplar (geri bildirim, yardım, arayüz, tema adı; KG-110 akış sesleri: bahçe, Sınıf Turu, ev, keşif, tema turu, ısınma; KG-111 derin tema girişi). */
-const YONERGE_DISI = new Set(['geri', 'yardim', 'ui', 'tema', 'bahce', 'sinifturu', 'ev', 'kesif', 'tematuru', 'isinma', 'giris']);
+const YONERGE_DISI = new Set(['geri', 'yardim', 'ui', 'tema', 'bahce', 'sinifturu', 'ev', 'kesif', 'tematuru', 'isinma', 'giris', 'hikaye', 'maskot']);
 
 function sayfaMetni(plan: KagitPlani): string {
   const html = renderToStaticMarkup(

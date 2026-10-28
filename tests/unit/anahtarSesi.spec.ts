@@ -60,8 +60,12 @@ describe('maskot sesi kaydı (KG-114, K-12)', () => {
 
 describe('anahtarliKlipOzeti', () => {
   it('anahtar sesi olmayan klibin özeti klipOzeti ile birebir aynı (Puck klipleri yeniden üretilmez)', () => {
-    for (const c of klipler) {
+    const puck = klipler.filter((c) => anahtarinSesi(aktif, anahtarSesleri, c.key).anahtarSesi === null);
+    expect(puck).toHaveLength(342);
+    for (const c of puck) {
       expect(anahtarliKlipOzeti(aktif, anahtarSesleri, c.key, c.text)).toBe(klipOzeti(aktif, c.text));
+      // Commitli özet de aynı: Puck klipleri yeniden üretilmez.
+      expect(ozetler[c.key], c.key).toBe(klipOzeti(aktif, c.text));
     }
   });
 
@@ -85,10 +89,12 @@ describe('üretim planı ve köken (KG-114)', () => {
   const ozetHesapla = (metin: string, clip: Clip) => anahtarliKlipOzeti(aktif, anahtarSesleri, clip.key, metin);
   const dosyaVar = () => true;
 
-  it('commitli özetlerle 0 Puck klibi planlanır', () => {
+  it('commitli özetlerle 0 klip planlanır (Puck 0, Achernar 0 — 22 maskot klibi Achernar özetiyle üretildi)', () => {
     const p = uretimPlani(klipler, ozetler, ozetHesapla, dosyaVar, { zorla: false });
-    const puck = p.uretilecek.filter((u) => anahtarinSesi(aktif, anahtarSesleri, u.clip.key).anahtarSesi === null);
-    expect(puck).toHaveLength(0);
+    expect(p.uretilecek).toHaveLength(0);
+    const maskot = klipler.filter((c) => anahtarinSesi(aktif, anahtarSesleri, c.key).anahtarSesi !== null);
+    expect(maskot).toHaveLength(22);
+    for (const c of maskot) expect(ozetler[c.key]).not.toBe(klipOzeti(aktif, c.text));
   });
 
   it('yeni maskot klipleri eklenince yalnız onlar planlanır', () => {

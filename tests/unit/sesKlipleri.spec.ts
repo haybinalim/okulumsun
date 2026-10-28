@@ -6,8 +6,8 @@ import tr from '../../src/content/tr.json';
 describe('ses klibi çıkarımı', () => {
   const klipler = klipleriTopla(tr as Record<string, unknown>);
 
-  it('gerçek tr.json\'dan 342 klip üretir', () => {
-    expect(klipler).toHaveLength(342);
+  it('gerçek tr.json\'dan 364 klip üretir (Adım 54: +21 hikaye, +1 maskot)', () => {
+    expect(klipler).toHaveLength(364);
   });
 
   it('Türkçe sayı adları', () => {

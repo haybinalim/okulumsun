@@ -1,8 +1,8 @@
 # Maskot karakter kitabı (plan v2 Adım 54)
 
-> **Durum: aşama 1 (sessiz görsel kısımlar), 14 Ekim 2026.** İsim pilot sınıf oylamasını, ses maskot sesi kararını (K-12) ve
-> Adım 31'i bekliyor. Hikâye sahneleri uygulamaya **bağlı değil** (KG-91); geliştirmede `?gelistirme=hikaye&tema=2&sahne=1`
-> ile görülür. Bitti tanımındaki "3 çocuk + 1 öğretmen izledi" adımı yapılmadı.
+> **Durum: aşama 2, 28 Ekim 2026.** İsim **Lokum** (kullanıcı kararı, KG-115), maskot sesi Chirp 3 HD Achernar hız 0,9 (KG-114, K-12).
+> Hikâyeler uygulamada (KG-116): derin tema girişi maskotun selamı + 1. sahneyle açılır, kişisel oturum sonunda sıradaki sahne.
+> Geliştirmede tek sahne `?gelistirme=hikaye&tema=2&sahne=1` ile görülür. Bitti tanımındaki "3 çocuk + 1 öğretmen izledi" adımı yapılmadı.
 
 Kaynaklar: PLAN §7.1 (yanlış cevap), §7.5 (maskot), §8 (görsel varlıklar), §9 (renk); `src/ui/feedback/maskotState.ts`, `src/design/sahnePaleti.ts`,
 `src/ui/feedback/Maskot.tsx`, `src/content/maskotHikayeleri.json`, `src/ui/svg/temaSahneleri.tsx`.
@@ -11,7 +11,7 @@ Kaynaklar: PLAN §7.1 (yanlış cevap), §7.5 (maskot), §8 (görsel varlıklar)
 
 | Alan | Değer |
 |---|---|
-| **İsim** | **Pilot sınıf oylaması bekliyor.** Pilot okulunda sınıf, öğretmenin okuduğu 3 aday arasından el kaldırarak seçer (kimliksiz, sayım tahtada, kayıt yok). Adaylar öğretmenle birlikte belirlenir; ticari karakter adına benzememeli (PLAN §8), 1. sınıfın kolay söyleyeceği 2 heceli bir sözcük olmalı. Okul oylamaya izin vermezse kullanıcı seçer. İsim seçilene kadar metinlerde ad geçmez. |
+| **İsim** | **Lokum** — kullanıcı kararı, 28 Ekim 2026 (KG-115); pilot sınıf oylaması yerine kullanıcı seçti, **gerekirse sonradan değiştirilebilir**. Ad TEK KAYNAKTAN gelir: `src/content/maskot.json` (`ad`). Ses metinleri `{maskotAdi}` yer tutucusu kullanır (`maskot.selam`: "Merhaba! Ben {maskotAdi}."), ekranlar `MASKOT_ADI` (`src/content/maskot.ts`); adın başka bir dosyada düz yazılması testle engellenir. Değiştirmek: `maskot.json` → `npm run audio` (yalnız adın geçtiği klip yeniden üretilir). Hikâye metinlerinde ad geçmez. |
 | **Ne** | İnsan değil, türü belirsiz; yuvarlak, tüylü, iki yuvarlak kulak. Sabit sıcak turuncu (`COLOR.mascot`). Silüeti asla değişmez, yalnız yüz ve kol (PLAN §7.5). 16 px'te bile tanınır. |
 | **Görevi** | **Sesin sahibi olmak.** Bütün sesli yönerge ondan gelir; "kim konuşuyor?" sorusunu çözer, yardım istemeyi doğallaştırır (dokununca yardım). |
 
@@ -83,22 +83,25 @@ taraf varlık ve yapay zekâ görseli yok).
   yarışmaz, çünkü sahne alıştırmanın arkasına konmaz.
 - **Hareket yok:** sahne sabittir.
 
-## 6. Hikâye akışı (tasarım; bağlama sonra)
+## 6. Hikâye akışı (KG-116, uygulamada)
 
-- **Tema girişi:** derin tema girişinin (Adım 45) ilk sahnesi = hikâyenin 1. sahnesi.
-- **Oturum sonu (kişisel mod):** her tamamlanan oturumdan sonra bir sonraki sahne; 3. sahneden sonra 3'te kalır
-  (`siradakiSahne(tema, tamamlananOturum)`). Sayaç yalnız bellekte (Seçenek A); ADR-0002 Seçenek B onaylanırsa kalıcı olabilir.
+- **Tema girişi:** derin tema girişi (Adım 45) önce **hikâye açılışını** gösterir: tema dünyası + 1. sahnenin pozundaki maskot + sahne
+  görseli; maskot `maskot.selam` ("Merhaba! Ben {maskotAdi}.") ve hikâyenin 1. sahnesini söyler, anlatım bitince ≈1,2 sn sonra girişin
+  4 adımı başlar. "Girişi geç" burada da tüm girişi atlar. Kişiselde oturum başına bir derin giriş (KG-112); tahtada öğretmen "Temaya
+  giriş" kartıyla.
+- **Oturum sonu (kişisel mod):** her tamamlanan tema oturumunun sonunda arka planda bir sonraki sahne (1. oturum → 2. sahne, 2. ve sonrası →
+  3. sahne); maskot "oturum bitti" cümlesinin ardından sahneyi söyler, bahçeye geçiş anlatım bitince. Sayaç yalnız bellekte
+  (`appStore.temaOturumlari`, Seçenek A); uygulama kapanınca sıfırlanır. Set, ev ve tahta oturumunda hikâye yok.
 - **Tahta:** hikâye yalnız tema girişinde.
-- **Ses:** 21 klip `hikaye.t1-1` … `hikaye.t7-3` + `maskot.selam`; anahtarlar ve klipler ses kaynağı (Adım 31) ve maskot sesi kararıyla
-  (K-12: yönerge sesiyle aynı TTS sesi farklı ton / ayrı lisanslı ses / sözleşmeli insan sesi) gelir. O zamana kadar sahne sessiz
-  bir metin anı olurdu; çocuk okumadığı için bağlanmadı (KG-91).
+- **Dokunma:** sahne ve sahnedeki maskot dokunulmaz (`HikayeSahnesi.tsx`, `aria-hidden`, olay almaz); etkileşim alt %65 kuralı değişmez.
+  Metin ekranda yazılmaz.
+- **Ses:** 21 klip `hikaye.t1-1` … `hikaye.t7-3` + `maskot.selam`, maskot sesi `tr-TR-Chirp3-HD-Achernar` hız 0,9 (KG-114; yönergeler Puck).
+  Hikâye metni `tr.json` `hikaye` ad alanındadır; `maskotHikayeleri.json` `metin` onunla birebir aynı olmalı (test). Giriş anlatımıyla
+  aynı açılış cümlesi yinelenmesin diye üç 1. sahne metni kısaltıldı (t1-1, t5-1, t7-1).
 
 ## 7. Açık işler
 
 | İş | Kimde | Adım |
 |---|---|---|
-| İsim oylaması (pilot sınıf) | Kullanıcı + pilot okulu | 32/54 |
-| Maskot sesi kararı (K-12) | Kullanıcı | 54 alt görev 5 |
-| 22 klip | Ses kaynağı | 31/54 alt görev 8 |
-| TemaGirisi / OturumSonu bağlantısı | Geliştirici (ses gelince) | 45/54 alt görev 4 |
+| Yeni maskot kliplerinin kulakla dinlenmesi | Kullanıcı | 54 |
 | 3 çocuk + 1 öğretmen izlemesi, metinlerin öğretmen okuması | Kullanıcı | 54 Bitti tanımı |
