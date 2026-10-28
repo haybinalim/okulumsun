@@ -140,8 +140,18 @@ function DerinGiris({
       }}
     >
       {/* Uyaran üstte: maskot ve tema adı (dokunulmaz). */}
-      <header style={{ flex: '0 0 auto', maxHeight: '30%', display: 'flex', alignItems: 'center', gap: 'var(--size-gap)' }}>
-        <Maskot durum={d.dokunuldu ? 'sevinmis' : 'konusuyor'} size={96} />
+      {/* Üst %35 (tahtada çocuğun erişemediği bölge) yalnız uyaran: dokunma hedefi alt %65'te başlar (plan v2 Adım 45 #6). */}
+      <header
+        style={{
+          flex: '0 0 auto',
+          height: 'calc(35% - var(--size-edge))',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 'var(--size-gap)',
+        }}
+      >
+        <Maskot durum={d.dokunuldu ? 'sevinmis' : 'konusuyor'} size={96} dokunulmaz />
         <div
           style={{
             fontSize: 'var(--text-ui)',

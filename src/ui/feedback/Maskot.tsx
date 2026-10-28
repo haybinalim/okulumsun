@@ -151,6 +151,11 @@ export interface MaskotProps {
   size?: number;
   /** Maskota dokununca çağrılır (yardım isteği). */
   onDokun?: () => void;
+  /**
+   * Dokunulmaz uyaran (Adım 45 derin tema girişi, KG-112): düğme değil, `aria-hidden` görsel. Tahtada üst %35'e
+   * yerleşen maskot dokunma hedefi olmamalı (erişim bölgesi).
+   */
+  dokunulmaz?: boolean;
 }
 
 /**
@@ -159,30 +164,49 @@ export interface MaskotProps {
  * Dokunulabilir bir öğedir (yardım = maskota dokunmak, §7.5).
  * prefers-reduced-motion'da poz değişir ama animasyon yoktur.
  */
-export const Maskot = memo(function Maskot({ durum, size, onDokun }: MaskotProps) {
+export const Maskot = memo(function Maskot({ durum, size, onDokun, dokunulmaz }: MaskotProps) {
   const boyut = size ?? SIZE.mascot;
   const renk = COLOR.mascot;
   const reducedMotion = useHareketAzalt();
+
+  const animate =
+    reducedMotion
+      ? {}
+      : durum === 'sevinmis'
+        ? { scale: [1, 1.08, 1] }
+        : durum === 'uykulu'
+          ? { rotate: [0, -2, 2, 0] }
+          : { scale: 1 };
+  const transition = reducedMotion
+    ? { duration: 0 }
+    : { duration: MOTION.correct / 1000, times: durum === 'sevinmis' ? [0, 0.5, 1] : undefined };
+  const svg = (
+    <svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true">
+      <Govde renk={renk} />
+      <YuzVeKollar durum={durum} renk={renk} />
+    </svg>
+  );
+
+  if (dokunulmaz) {
+    return (
+      <m.div
+        aria-hidden="true"
+        animate={animate}
+        transition={transition}
+        style={{ width: boyut, height: boyut, display: 'block', pointerEvents: 'none' }}
+      >
+        {svg}
+      </m.div>
+    );
+  }
 
   return (
     <m.button
       type="button"
       aria-label="Yardım"
       onClick={onDokun}
-      animate={
-        reducedMotion
-          ? {}
-          : durum === 'sevinmis'
-            ? { scale: [1, 1.08, 1] }
-            : durum === 'uykulu'
-              ? { rotate: [0, -2, 2, 0] }
-              : { scale: 1 }
-      }
-      transition={
-        reducedMotion
-          ? { duration: 0 }
-          : { duration: MOTION.correct / 1000, times: durum === 'sevinmis' ? [0, 0.5, 1] : undefined }
-      }
+      animate={animate}
+      transition={transition}
       style={{
         // Dokunma alt sınırının altına inmez (Adım 55 büyük hedef: tahtada 118 px).
         width: `max(${boyut}px, var(--size-tap-min, 0px))`,
@@ -194,10 +218,7 @@ export const Maskot = memo(function Maskot({ durum, size, onDokun }: MaskotProps
         display: 'block',
       }}
     >
-      <svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true">
-        <Govde renk={renk} />
-        <YuzVeKollar durum={durum} renk={renk} />
-      </svg>
+      {svg}
     </m.button>
   );
 });
