@@ -11,7 +11,7 @@ bu rehbere göre çizilir. Önizleme: `npm run dev` → `/?gelistirme=nesneler` 
   (plan §4.2: Lucide, Phosphor, OpenMoji yasak), emoji yok, dışarıdan indirilmiş varlık yok,
   **yapay zekâ ile üretilmiş raster görsel yok** (PLAN §8: "7 nesne isteyip 6 almak ürünün temel işlevini bozar").
 - Bu yüzden lisans envanterine (`src/content/ucuncuTarafVarliklar.ts`) yeni satır girmez; `npm run lisans:denetle` değişmez.
-- Banknot ekranda TCMB'nin resmî "ÖRNEKTİR GEÇMEZ" görselidir (K5, ayrı kural); kâğıtta `SematikBanknot`.
+- Banknot ekranda da, kâğıtta da `SematikBanknot`'tur (şematik "OYUN PARASI"; KG-19, KG-121). TCMB görseli kullanılmaz.
   Bu rehber banknotu yeniden çizmez.
 
 ## 2. Stil

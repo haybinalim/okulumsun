@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import tr from '../../src/content/tr.json';
-import { paraGorselStratejisi, TCMB_YAZILI_IZIN } from '../../src/content/paraGorseli';
+import { TCMB_YAZILI_IZIN } from '../../src/content/paraGorseli';
 import { skillsData } from '../../src/content/skillsData';
 import { HATA_ETIKETLERI } from '../../src/exercises/distractors';
 import { REGISTRY } from '../../src/exercises/registry';
@@ -341,7 +341,7 @@ describe('yerleşim', () => {
 
 describe('para görselleri ve baskı kuralları', () => {
   it('TCMB yazılı izni yokken kâğıtta şematik banknot', () => {
-    expect(paraGorselStratejisi({ ortam: 'kagit', tcmbYaziliIzin: TCMB_YAZILI_IZIN })).toBe('sematik');
+    expect(TCMB_YAZILI_IZIN).toBe(false);
     const para = skillsData.find((d) => d.exerciseTemplates.includes('M-PARA-TANI') && gecerli.has(d.id));
     expect(para).toBeDefined();
     const set: GunlukSet = { surum: 1, dugumler: [para!.id], tohum: 11 };

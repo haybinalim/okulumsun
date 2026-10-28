@@ -2,23 +2,19 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { createElement } from 'react';
 import { describe, expect, it } from 'vitest';
 import { BANKNOTLAR } from '../../src/exercises/types';
-import { SEMATIK_BANKNOT_STILI, TCMB_YAZILI_IZIN, paraGorselStratejisi } from '../../src/content/paraGorseli';
+import { SEMATIK_BANKNOT_STILI, TCMB_YAZILI_IZIN } from '../../src/content/paraGorseli';
 import { SematikBanknot } from '../../src/ui/svg/SematikBanknot';
 
-/** Plan v2 Adım 21 — para görseli stratejisi ve şematik banknot (KG-19). */
-describe('para görseli stratejisi', () => {
+/** Plan v2 Adım 21 — para görselleri ve şematik banknot (KG-19, KG-121). */
+describe('para görselleri', () => {
   it('TCMB yazılı izni yok (KG-19: başvurulmaz)', () => {
     expect(TCMB_YAZILI_IZIN).toBe(false);
   });
 
-  it('izin yokken kağıt ve arşiv sematik kullanır', () => {
-    expect(paraGorselStratejisi({ ortam: 'kagit', tcmbYaziliIzin: false })).toBe('sematik');
-    expect(paraGorselStratejisi({ ortam: 'arsiv', tcmbYaziliIzin: false })).toBe('sematik');
-  });
-
-  it('ekran Adım 29 geçişine kadar tcmb, geçişten sonra sematik kullanır', () => {
-    expect(paraGorselStratejisi({ ortam: 'ekran', tcmbYaziliIzin: false })).toBe('tcmb');
-    expect(paraGorselStratejisi({ ortam: 'ekran', tcmbYaziliIzin: false }, false)).toBe('sematik');
+  it('KG-121: ekran-TCMB bayrağı ve "tcmb" stratejisi kalktı', async () => {
+    const modul: Record<string, unknown> = await import('../../src/content/paraGorseli');
+    expect(modul.EKRAN_TCMB_GECISI).toBeUndefined();
+    expect(modul.paraGorselStratejisi).toBeUndefined();
   });
 });
 

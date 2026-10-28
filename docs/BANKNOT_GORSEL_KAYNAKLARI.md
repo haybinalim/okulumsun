@@ -1,12 +1,20 @@
 # Banknot Görsel Kaynakları
 
-## Amaç ve kullanım sınırı
+> **Durum (29 Ekim 2026, KG-121 — kullanıcı onayı):** Ürünün hiçbir yerinde TCMB görseli **yoktur**. Banknotlar
+> ekranda, basılı çalışma kâğıtlarında ve kâğıt arşivinde aynı şematik "oyun parası" çizimidir
+> (`src/ui/svg/SematikBanknot.tsx`; ekran `Visual` → `Banknot`, kâğıt `KagitSayfalari` → `BanknotGorseli`).
+> Aşağıda listelenen `public/images/banknotlar/*.webp` dosyaları ve `src/ui/svg/banknotAssets.ts` depodan ve
+> dağıtımdan kaldırıldı; lisans envanterindeki TCMB satırı silindi. Bu belge yalnız **geçmiş kayıt** olarak
+> tutulur (29 Ekim 2026’ya kadar ekranda ne gösterildiği ve kaynağı). Geri dönmek yeni bir karar
+> günlüğü satırı ve ADR-0014 güncellemesi ister; TCMB'ye başvurulmaz (KG-19).
 
-Para tanıma ile para sıralama etkinliklerinde, Türkiye Cumhuriyet Merkez Bankası’nın (TCMB) dolaşımdaki E9 5. tertip kupürler için yayımladığı **ön yüz örnek banknot görselleri** kullanılmaktadır. Uygulamadaki görseller, yalnızca ilk sınıf matematik öğretiminde banknot değerlerini ayırt etmeyi desteklemek amacıyla yerel PWA varlığı olarak paketlenmiştir.
+## Amaç ve kullanım sınırı (geçmiş)
+
+Para tanıma ile para sıralama etkinliklerinde, Türkiye Cumhuriyet Merkez Bankası’nın (TCMB) dolaşımdaki E9 5. tertip kupürler için yayımladığı **ön yüz örnek banknot görselleri** 29 Ekim 2026'ya kadar ekranda kullanıldı. Görseller yalnızca ilk sınıf matematik öğretiminde banknot değerlerini ayırt etmeyi desteklemek amacıyla yerel PWA varlığı olarak paketlenmişti.
 
 > Her görsel, TCMB kaynağındaki kırmızı **`ORNEKTIR GECMEZ`** ibaresini korur. Görseller ödeme aracı olarak kullanılabilecek bir kopya üretmek veya gerçek banknotu taklit etmek amacıyla değiştirilmez.
 
-| Kupür | Yerel varlık | Resmî TCMB kaynak sayfası | Doğrudan TCMB örnek görseli |
+| Kupür | Yerel varlık (kaldırıldı) | Resmî TCMB kaynak sayfası | Doğrudan TCMB örnek görseli |
 | --- | --- | --- | --- |
 | 5 TL | `public/images/banknotlar/5-tl-on-yuz-resmi.webp` | [5 Türk Lirası](https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Banknotlar/Dolasimdaki+Banknotlar/5.+Tertip+Banknotlar/5+Turk+Lirasi/) | [Ön yüz örneği](https://www.tcmb.gov.tr/wps/wcm/connect/c0ca218c-193f-4338-8e6a-9fc03d6b8452/1/5+TL_E9_T5_onyuz_ORNEKTIR+GECMEZ.jpg?MOD=AJPERES) |
 | 10 TL | `public/images/banknotlar/10-tl-on-yuz-resmi.webp` | [10 Türk Lirası](https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Banknotlar/Dolasimdaki+Banknotlar/5.+Tertip+Banknotlar/10+Turk+Lirasi/) | [Ön yüz örneği](https://www.tcmb.gov.tr/wps/wcm/connect/e73b1e6c-8209-4c4a-a4a7-8df33b707096/1/10TL_E9_T5_on+yuz_ORNEKTIR+GECMEZ.jpg?MOD=AJPERES) |
@@ -15,7 +23,7 @@ Para tanıma ile para sıralama etkinliklerinde, Türkiye Cumhuriyet Merkez Bank
 | 100 TL | `public/images/banknotlar/100-tl-on-yuz-resmi.webp` | [100 Türk Lirası](https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Banknotlar/Dolasimdaki+Banknotlar/5.+Tertip+Banknotlar/100+Turk+Lirasi/) | [Ön yüz örneği](https://www.tcmb.gov.tr/wps/wcm/connect/7e8e9644-7f77-4f49-9b3d-07dcc54c2a64/1/E9-T5-100TL-on+yuz-ORNEKTIR+GECMEZ.jpg?MOD=AJPERES) |
 | 200 TL | `public/images/banknotlar/200-tl-on-yuz-resmi.webp` | [200 Türk Lirası](https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Banknotlar/Dolasimdaki+Banknotlar/5.+Tertip+Banknotlar/200+Turk+Lirasi/) | [Ön yüz örneği](https://www.tcmb.gov.tr/wps/wcm/connect/5091beb6-1687-4904-a3ed-eae91c31c93b/1/200+TL_E9_T5_onyuz_ORNEKTIR+GECMEZ.jpg?MOD=AJPERES) |
 
-## Teknik uygulama
+## Teknik uygulama (geçmiş)
 
 Görseller, görünüm değiştirilmeden WebP biçimine dönüştürülmüştür. Bu dönüşüm yalnızca çevrimdışı PWA yükleme boyutunu düşürür; kupür, kompozisyon ve `ORNEKTIR GECMEZ` ibaresi korunur. `vite.config.ts` içindeki Workbox önbellek deseni WebP dosyalarını da içerir; bu nedenle etkinlikler ilk yüklemeden sonra ağ bağlantısı olmadan kullanılabilir.
 
@@ -29,9 +37,9 @@ TCMB’nin [Kullanım Şartları](https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCM
 
 - `src/content/paraGorseli.ts` → `TCMB_YAZILI_IZIN = false` kalıcıdır; çalışma kâğıdı (Adım 35) ve
   arşiv (Adım 48) her zaman `SematikBanknot` kullanır.
-- Ekran bu sayfadaki örnek görselleri eğitim amaçlı, kaynak göstererek kullanır. KG-19'a göre ekran
-  da şematiğe geçecek ve `public/images/banknotlar/` depodan kalkacaktı; Adım 29 bu geçişi yapmadan
-  kapandı → durum Ekim 2026'da hâlâ "ekranda TCMB örneği" (KG-117). Kaynaklar ekranı ve veli paneli
-  bu durumu `paraGorseliBeyani()` ile olduğu gibi söyler; TCMB izni veya onayı iddia etmez.
+- Ekran 29 Ekim 2026'ya kadar bu sayfadaki örnek görselleri eğitim amaçlı, kaynak göstererek kullandı
+  (Adım 29 geçişi yapmadan kapanmıştı, KG-117). KG-121 ile ekran da şematiğe geçti ve
+  `public/images/banknotlar/` depodan kalktı. Kaynaklar ekranı ve veli paneli artık "her yerde şematik"
+  der (`paraGorseliBeyani()`); TCMB izni veya onayı iddia etmez.
 - `SematikBanknot` TCMB tasarımını taklit etmez: portre, filigran, seri numarası, imza veya TCMB adı
   yoktur; değer rakamı, kupüre özgü renk, desen ve boy oranı ile "OYUN PARASI" ibaresi taşır.

@@ -89,7 +89,7 @@ export function Kaynaklar() {
         </p>
       </section>
 
-      {/* Para görselleri notu (KG-117): metin stratejiden türetilir, TCMB izni iddia edilmez (KG-19). */}
+      {/* Para görselleri notu (KG-117, KG-121): her yerde şematik; TCMB izni iddia edilmez (KG-19). */}
       <section style={{ marginBottom: '2rem' }}>
         <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Para Görselleri</h2>
         {PARA_BEYANI.paragraflar.map((p) => (

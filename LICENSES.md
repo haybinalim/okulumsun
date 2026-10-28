@@ -37,12 +37,6 @@ Uygulamadaki Kaynaklar ekranı aynı listeyi çizer.
 | Andika | SIL OFL 1.1 | SIL International | — |
 | TemelYazi | MEB TTKB yayını; gömülü lisans metni yok | T.C. Millî Eğitim Bakanlığı TTKB (tasarım: HBY Tasarım) | Alt kümeler: rakam + işaret (TemelYazi-Rakam.woff2, KG-95) ve çocuğa dönük metnin harfleri — Türkçe alfabe, rakam, temel noktalama, ₺ % (TemelYazi-Harf.woff2, KG-96); ikisi de TemelYazi-Bold konturları, tam font dağıtılmaz. MEB amacı: "ders kitapları ve eğitim araçlarında kullanılması". Ticari dağıtım ve açık repo için MEB TTKB/tasarımcıdan yazılı izin önerilir (henüz istenmedi) |
 
-### Görseller
-
-| Ad | Lisans | Sahip | Koşul |
-|---|---|---|---|
-| TCMB E9 5. tertip örnek banknot görselleri | TCMB kullanım şartları | Türkiye Cumhuriyet Merkez Bankası | Yalnız ekranda; kaynak gösterilerek eğitim amaçlı (TCMB şartları ticari kullanımda yazılı izin ister). TCMB'ye başvurulmadı (KG-19); kâğıt ve arşivde şematik banknot |
-
 ### Ses
 
 | Ad | Lisans | Sahip | Koşul |
@@ -81,11 +75,7 @@ Programı'ndan referans alınmıştır. Ders kitabı görselleri kullanılmamı�
 
 ## Para görselleri
 
-Para etkinliklerinde, Türkiye Cumhuriyet Merkez Bankası'nın (TCMB) yayımladığı E9 5. tertip **ön yüz örnek banknot görselleri** kullanılır. Her yerel dosya, TCMB’nin kaynak görselindeki kırmızı `ORNEKTIR GECMEZ` ibaresini korur ve yalnız eğitim amaçlı banknot tanıma ile sıralama etkinliklerinde gösterilir.
-
-**TCMB'ye izin başvurusu yapılmaz** (KG-19, ADR-0014); bu görseller Adım 29'da ekranda, kâğıtta ve arşivde şematik banknot çizimleriyle (`SematikBanknot`) değiştirilir ve depodan kaldırılır.
-
-Kaynak sayfaları ve kupür eşlemesi [`docs/BANKNOT_GORSEL_KAYNAKLARI.md`](docs/BANKNOT_GORSEL_KAYNAKLARI.md) dosyasında belgelenmiştir. TCMB kullanım koşulları uyarınca kaynak gösterilmelidir; ticari kullanım planlanırsa TCMB’den yazılı izin alınmalıdır.
+Banknotlar ekranda, basılı çalışma kâğıtlarında ve kâğıt arşivinde **şematik "oyun parası" çizimleridir** (`SematikBanknot`, bu projenin kendi çizimi): değer rakamı, kupüre özgü renk ve desen taşır, üzerinde "OYUN PARASI" yazar; TCMB görseli, adı veya portresi yoktur. Daha önce ekranda kullanılan TCMB E9 5. tertip örnek banknot görselleri 29 Ekim 2026'da depodan ve dağıtımdan kaldırıldı (KG-121). **TCMB'ye izin başvurusu yapılmamıştır** (KG-19, ADR-0014); bu kullanım TCMB'nin izni veya onayı anlamına gelmez. Geçmiş kayıt: [`docs/BANKNOT_GORSEL_KAYNAKLARI.md`](docs/BANKNOT_GORSEL_KAYNAKLARI.md).
 
 ## Gizlilik beyanı
 

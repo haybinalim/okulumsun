@@ -63,16 +63,8 @@ export const UCUNCU_TARAF_VARLIKLAR: readonly UcuncuTarafVarlik[] = [
     dagitimdaVar: true,
     kosul: 'Alt kümeler: rakam + işaret (TemelYazi-Rakam.woff2, KG-95) ve çocuğa dönük metnin harfleri — Türkçe alfabe, rakam, temel noktalama, ₺ % (TemelYazi-Harf.woff2, KG-96); ikisi de TemelYazi-Bold konturları, tam font dağıtılmaz. MEB amacı: "ders kitapları ve eğitim araçlarında kullanılması". Ticari dağıtım ve açık repo için MEB TTKB/tasarımcıdan yazılı izin önerilir (henüz istenmedi)',
   },
-  // --- Görsel
-  {
-    ad: 'TCMB E9 5. tertip örnek banknot görselleri',
-    tur: 'gorsel',
-    lisans: 'TCMB kullanım şartları',
-    sahip: 'Türkiye Cumhuriyet Merkez Bankası',
-    kaynakUrl: 'docs/BANKNOT_GORSEL_KAYNAKLARI.md',
-    dagitimdaVar: true,
-    kosul: 'Yalnız ekranda; kaynak gösterilerek eğitim amaçlı (TCMB şartları ticari kullanımda yazılı izin ister). TCMB\'ye başvurulmadı (KG-19); kâğıt ve arşivde şematik banknot',
-  },
+  // --- Görsel: üçüncü taraf görsel yok. TCMB E9 örnek banknotları KG-121 ile kaldırıldı; banknotlar her yerde
+  // şematik (`SematikBanknot`, kendi çizimimiz).
   // --- Ses
   sesVarligi(ses),
   // --- Geliştirme araçları (dağıtılmaz; çıktıya lisans geçirmez)

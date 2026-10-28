@@ -1,6 +1,7 @@
 /**
  * Kırmızı yok denetimi (plan v2 Adım 29, K9'a bağlı). `src/ui/**` ve `src/design/**`
- * içinde kırmızı tonlar yasak (PLAN §0 kural 5). İstisna: `src/dev/**` ve TCMB raster banknotlar.
+ * içinde kırmızı tonlar yasak (PLAN §0 kural 5). İstisna: `src/dev/**`. (TCMB raster banknot
+ * istisnası KG-121 ile kalktı: dosyalar depodan kaldırıldı, banknotlar şematik.)
  */
 export interface KirmiziBulgu {
   readonly dosya: string;
@@ -17,7 +18,6 @@ const DESENLER: readonly RegExp[] = [
 ];
 
 export function kirmiziKapsamdaMi(dosya: string): boolean {
-  if (dosya.startsWith('public/images/banknotlar/')) return false;
   if (dosya.startsWith('src/dev/')) return false;
   return dosya.startsWith('src/ui/') || dosya.startsWith('src/design/');
 }

@@ -6,8 +6,6 @@
  * (rakam/harf/desen de var); "Siyah-beyaz" seçeneği `filter: grayscale(1)` ile hem önizler hem basar.
  */
 import type { CSSProperties } from 'react';
-import { paraGorselStratejisi } from '../../content/paraGorseli';
-import { TCMB_YAZILI_IZIN } from '../../content/paraGorseli';
 import type { OptionDeger, VisualSpec } from '../../exercises/types';
 import { anahtarSayfalari, grupCumlesi, type AnahtarSayfasi } from '../../ogretmen/calismaKagidi/anahtarSayfalari';
 import {
@@ -88,11 +86,9 @@ function Ikon({ ikon }: { ikon: YonergeIkonu }) {
   );
 }
 
-/** Banknot: kâğıtta TCMB izni yoksa (KG-19) şematik banknot, izin varsa TCMB görseli. */
+/** Banknot: kâğıtta (ekran ve arşivle aynı) şematik "oyun parası" (KG-19, KG-121). */
 function BanknotGorseli({ deger, genislik }: { deger: 5 | 10 | 20 | 50 | 100 | 200; genislik: number }) {
-  const strateji = paraGorselStratejisi({ ortam: 'kagit', tcmbYaziliIzin: TCMB_YAZILI_IZIN });
-  if (strateji === 'sematik') return <SematikBanknot deger={deger} genislik={genislik} />;
-  return <Visual spec={{ type: 'banknot', deger }} width={genislik} height={Math.round(genislik / 2)} />;
+  return <SematikBanknot deger={deger} genislik={genislik} />;
 }
 
 /**
