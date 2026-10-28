@@ -84,7 +84,12 @@
     "kilitli-acik-konu": "Bu konu henüz açılmadı. Önce renkli açık karta dokun.",
     "yarim-yol": "Yarı yoldasın!",
     "oturum-bitti": "Bugünlük bu kadar. Çok iyiydin!",
-    "cikartma-kazandin": "Bir çıkartma kazandın!"
+    "cikartma-kazandin": "Bir çıkartma kazandın!",
+    "bir-sorun-oldu": "Küçük bir sorun oldu. Ana ekrana dönelim.",
+    "hazirlaniyor": "Hazırlanıyor.",
+    "set-basliyor": "Bugünün etkinlikleri başlıyor.",
+    "set-bitti": "Bugünkü etkinlikleri bitirdik.",
+    "cikis-onayi": "Etkinlikten çıkmak istiyor musun?"
   },
 
   "tema": {
@@ -309,5 +314,51 @@
     "en-cok-hangisi": "En çok hangisi var?",
     "en-az-hangisi": "En az hangisi var?",
     "toplam-kac": "Toplam kaç tane var?"
+  },
+
+  "bahce": {
+    "$not": "Bahçem (Adım 29, PLAN §4.3): sayı klibi + bu klip ('üç' + 'çiçek ekledin.'). Sayı bugün tamamlanan oturumdur, doğru sayısı değil.",
+    "bugun": "çiçek ekledin."
+  },
+
+  "sinifturu": {
+    "$not": "Sınıf Turu (Adım 36). Sıra duyurusu tam cümle (PLAN §4.3; renk klibinden birleştirilmez). Takım adı yok, yalnız renk.",
+    "basliyor": "Sınıf turu başlıyor!",
+    "sira-mor": "Sıra mor takımda.",
+    "sira-turuncu": "Sıra turuncu takımda.",
+    "sira-yesil": "Sıra yeşil takımda.",
+    "sira-mavi": "Sıra mavi takımda.",
+    "sira-pembe": "Sıra pembe takımda.",
+    "sira-sari": "Sıra sarı takımda.",
+    "hep-birlikte": "Hep birlikte çözelim.",
+    "son-tur": "Bu son tur.",
+    "kavanoz-doldu": "Kavanozu birlikte doldurduk!",
+    "birlikte-calistik": "Bugün birlikte çalıştık!"
+  },
+
+  "ev": {
+    "$not": "Ev çalışması (Adım 42–43).",
+    "okuldaki-konu": "Okulda çalıştığımız konuyu evde de oynayalım.",
+    "bitti": "Bugünkü ev çalışmasını bitirdin!",
+    "yetiskine-ver": "Şimdi telefonu bir büyüğüne ver."
+  },
+
+  "kesif": {
+    "$not": "Keşif Masası (Adım 44): soru, puan, süre yok.",
+    "hosgeldin": "Keşif masasına hoş geldin, dokun ve keşfet.",
+    "dengede": "İki taraf eşit.",
+    "ayir": "İkiye ayırdık."
+  },
+
+  "tematuru": {
+    "$not": "Tema sonu turu (Adım 46).",
+    "basliyor": "Bu temada neler öğrendik, birlikte bakalım!",
+    "bitti": "Turu bitirdik. Çok güzeldi!"
+  },
+
+  "isinma": {
+    "$not": "Isınma Keşfi (Adım 47, ADR-0007): sınav algısı yok.",
+    "basliyor": "Haydi biraz ısınalım!",
+    "bitti": "Isındık, şimdi oynayalım!"
   }
 }
