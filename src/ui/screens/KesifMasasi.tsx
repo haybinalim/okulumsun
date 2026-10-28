@@ -63,7 +63,11 @@ export default function KesifMasasi() {
         aralik: px('--size-gap'),
       };
       setOlcu((o) =>
-        o && o.genislik === yeni.genislik && o.tapMin === yeni.tapMin && o.olcek === yeni.olcek && o.aralik === yeni.aralik
+        o &&
+        o.genislik === yeni.genislik &&
+        o.tapMin === yeni.tapMin &&
+        o.olcek === yeni.olcek &&
+        o.aralik === yeni.aralik
           ? o
           : yeni,
       );
@@ -105,7 +109,14 @@ export default function KesifMasasi() {
       <section
         ref={ustBolge}
         aria-live="polite"
-        style={{ flex: 1, minHeight: 0, alignSelf: 'stretch', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        style={{
+          flex: 1,
+          minHeight: 0,
+          ...(sikisik ? { alignSelf: 'stretch' } : null),
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
       >
         <m.output
           key={`${durum.arac}-${metin}`}
@@ -117,7 +128,7 @@ export default function KesifMasasi() {
             // Rakam üst bölgeye sığar (KG-120): bölge rakamdan kısaysa boyut bölge yüksekliğine iner.
             fontSize: ustSinirli(
               metin.length > 3 ? 'calc(var(--text-stimulus) * 0.7)' : 'var(--text-stimulus)',
-              ustYukseklik,
+              sikisik ? ustYukseklik : null,
             ),
             fontWeight: 700,
             color: COLOR.ink,
@@ -186,8 +197,8 @@ export default function KesifMasasi() {
 
 /**
  * Yazı boyutunu ölçülen bölge yüksekliğiyle sınırlar. Satır yüksekliği 1 olsa da rakam glifleri satır kutusundan
- * taşar (TemelYazi size-adjust); %80 pay bölgede kesilmeden görünmesini sağlar. Ölçü yoksa olduğu gibi.
+ * taşar (TemelYazi size-adjust); %75 pay bölgede kesilmeden görünmesini sağlar. Ölçü yoksa olduğu gibi.
  */
 function ustSinirli(boyut: string, yukseklik: number | null): string {
-  return yukseklik === null || yukseklik <= 0 ? boyut : `min(${boyut}, ${Math.floor(yukseklik * 0.8)}px)`;
+  return yukseklik === null || yukseklik <= 0 ? boyut : `min(${boyut}, ${Math.floor(yukseklik * 0.75)}px)`;
 }
