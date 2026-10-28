@@ -3,7 +3,11 @@ import {
   CHIRP3_HD_SESLERI,
   VARSAYILAN_HIZ,
   VARSAYILAN_ORNEK_SESLER,
+  VARSAYILAN_UC_NOKTA,
+  geriCekilmeMs,
   googleIstegi,
+  istekBasliklari,
+  ucNokta,
   googleModelKimligi,
   googleSesAdi,
   modelKimligindenSes,
@@ -56,5 +60,25 @@ describe('Google Cloud TTS istemcisi (Adım 18, KG-01)', () => {
     expect(() => googleIstegi('  ', 'Kore')).toThrow(/Boş/);
     expect(() => googleIstegi('ş'.repeat(2600), 'Kore')).toThrow(/5.000/);
     expect(() => googleIstegi('bir', 'Kore', 3)).toThrow(/hız/);
+  });
+
+  it('uç nokta varsayılan googleapis; GOOGLE_TTS_UC_NOKTA yalnız Google https adresi kabul eder (KG-107)', () => {
+    expect(ucNokta({})).toBe(VARSAYILAN_UC_NOKTA);
+    expect(ucNokta({ GOOGLE_TTS_UC_NOKTA: 'https://texttospeech.clients6.google.com/v1/text:synthesize' })).toBe(
+      'https://texttospeech.clients6.google.com/v1/text:synthesize',
+    );
+    expect(() => ucNokta({ GOOGLE_TTS_UC_NOKTA: 'http://texttospeech.clients6.google.com/v1/text:synthesize' })).toThrow();
+    expect(() => ucNokta({ GOOGLE_TTS_UC_NOKTA: 'https://ornek.com/v1/text:synthesize' })).toThrow();
+  });
+
+  it("vekil yer tutucusunda ('proxy') anahtar başlığı gönderilmez; gerçek anahtarda gönderilir", () => {
+    expect(istekBasliklari('proxy')).toEqual({ 'Content-Type': 'application/json; charset=utf-8' });
+    expect(istekBasliklari('abc')['X-Goog-Api-Key']).toBe('abc');
+  });
+
+  it("429'da geri çekilme üstel artar, Retry-After'a uyar ve 120 sn ile sınırlıdır", () => {
+    expect([0, 1, 2, 3, 4, 9].map((d) => geriCekilmeMs(d, null))).toEqual([2000, 4000, 8000, 16000, 32000, 32000]);
+    expect(geriCekilmeMs(0, '7')).toBe(7000);
+    expect(geriCekilmeMs(0, '999')).toBe(120000);
   });
 });

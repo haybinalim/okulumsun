@@ -55,8 +55,8 @@ Piper `tr_TR-dfki` (CC BY-NC-SA) · Piper `fahrettin`/`fettah` (kaldırıldı) �
 
 ## 8. Karar (Adım 18, ADR-0004)
 
-- Sağlayıcı: **Google Cloud TTS, Chirp 3 HD `tr-TR`** (KG-01). Durum: ADR-0004 `Önerildi`; ses adı seçilince `Kabul`.
+- Sağlayıcı: **Google Cloud TTS, Chirp 3 HD `tr-TR`** (KG-01). Durum: ADR-0004 `Kabul` (28 Eki 2026). Ses: **`tr-TR-Chirp3-HD-Puck`**, hız 0,9 — kullanıcı Kore/Aoede/Puck örneklerinden seçti (KG-107).
 - `sesKaynagi.json` → `bekleyen`: karar kaydı; `aktif` Adım 31'e kadar `piper:bilinmiyor` kalır, `audio:audit` köken denetimini aktif kaynağa göre yapar.
-- Anahtar: `GOOGLE_TTS_API_KEY`, yalnız ortam değişkeni veya `.env.local` (`*.local` gitignore'da). Depoya, CI'ya, günlüğe girmez (KG-03).
+- Anahtar: `GOOGLE_TTS_API_KEY`, yalnız ortam değişkeni veya `.env.local` (`*.local` gitignore'da). Depoya, CI'ya, günlüğe girmez (KG-03). Vekil modu (anahtarı aradaki vekil ekler): `GOOGLE_TTS_API_KEY=proxy GOOGLE_TTS_UC_NOKTA=https://texttospeech.clients6.google.com/v1/text:synthesize NODE_USE_ENV_PROXY=1 npm run audio` — yer tutucu modunda anahtar başlığı gönderilmez.
 - Ses seçimi (KG-04): `npm run audio -- --ornek` → Kore, Aoede, Puck (veya `--ses A,B,C`) için 10'ar örnek + `birlesim-on-yedi-elma.m4a` (PLAN §4.3 tını kontrolü). Çıktı `public/audio-prototip/ornek/<ses>/`, dağıtılmaz.
 - Şartlar ve alıntılar: ADR-0004 "Karar" bölümü.
