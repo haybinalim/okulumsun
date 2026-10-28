@@ -57,7 +57,8 @@ export const GERI_KURALLARI: Readonly<Record<Ekran, GeriKurali | null>> = {
   anaEkran: null,
   avatarSecimi: { ustler: sabit('modSecimi') },
   renkSecimi: { ustler: sabit('avatarSecimi') },
-  temaGirisi: { ustler: sabit('anaEkran') },
+  // Kişisel: ana ekran; tahtada derin giriş "Temaya giriş" kartıyla konu seçiminden açılır (Adım 45).
+  temaGirisi: { ustler: sabit('anaEkran', 'konuSecimi') },
   konuSecimi: { ustler: sabit('anaEkran') },
   alistirma: {
     // Kişisel: ana ekran (tema girişi kendiliğinden geçer). Tahta seti: seti başlatan ekran (ders sonu

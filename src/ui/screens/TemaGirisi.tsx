@@ -1,13 +1,14 @@
 /**
- * TEMA GİRİŞİ EKRANI — plan §11 [5].
+ * TEMA GİRİŞİ EKRANI — plan §11 [5], plan v2 Adım 45 (KG-112).
  *
- * Tema seçildikten sonra 2 sn otomatik geçiş. Maskot tema adını söyler.
- * Çocuk bir sonraki ekrana hazırlanır — "Bugün sayı sayacağız" vb.
- *
- * Bu ekran dokunulabilir DEĞİL — otomatik geçiş.
+ * İki biçim (`appStore.temaGirisiBicimi`):
+ *  - `kisa`: 2 sn otomatik geçiş; maskot tema adını söyler. Dokunulabilir değil.
+ *  - `derin`: temanın 4 adımlı sesli girişi (`DerinTemaGirisi`, tembel yüklenir). Kişiselde oturum başına bir
+ *    kez (ilk tema seçiminde); tahtada öğretmen konu seçimindeki "Temaya giriş" kartıyla başlatır.
+ * Bitince kişisel → alıştırma, tahta → konu seçimi.
  */
 
-import { useEffect } from 'react';
+import { lazy, Suspense, useCallback, useEffect } from 'react';
 import { useAppStore, TEMALAR } from '../../store/appStore';
 import { Maskot } from '../feedback/Maskot';
 import { useScreenSpeech } from '../../audio/useSpeak';
@@ -15,28 +16,46 @@ import { m } from 'framer-motion';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import { COLOR, MOTION } from '../../design/tokens';
 
+const DerinTemaGirisi = lazy(() => import('./DerinTemaGirisi'));
+
 export function TemaGirisi() {
-  const { secilenTemaNo, ekranGit, mod } = useAppStore();
+  const { secilenTemaNo, ekranGit, mod, temaGirisiBicimi } = useAppStore();
+  const tema = TEMALAR.find((t) => t.no === secilenTemaNo);
+  const bitir = useCallback(() => ekranGit(mod === 'tahta' ? 'konuSecimi' : 'alistirma'), [ekranGit, mod]);
+
+  if (temaGirisiBicimi === 'derin' && tema) {
+    return (
+      <Suspense fallback={<KisaGiris tema={tema} otomatikGecis={false} onBitti={bitir} />}>
+        <DerinTemaGirisi tema={tema.no} temaAdi={tema.ad} renk={tema.renk} onBitti={bitir} />
+      </Suspense>
+    );
+  }
+  return <KisaGiris tema={tema} otomatikGecis onBitti={bitir} />;
+}
+
+function KisaGiris({
+  tema,
+  otomatikGecis,
+  onBitti,
+}: {
+  tema: (typeof TEMALAR)[number] | undefined;
+  otomatikGecis: boolean;
+  onBitti: () => void;
+}) {
   const reducedMotion = useHareketAzalt();
 
-  const tema = TEMALAR.find((t) => t.no === secilenTemaNo);
+  useScreenSpeech(tema ? { kind: 'key', key: tema.speechKey as never } : null, [tema?.no]);
 
-  useScreenSpeech(
-    tema ? { kind: 'key', key: tema.speechKey as never } : null,
-    [secilenTemaNo],
-  );
-
-  // 2 sn sonra otomatik geçiş
+  // 2 sn sonra otomatik geçiş (derin giriş yüklenirken bekleme görünümü olarak geçmez).
   useEffect(() => {
-    const timer = setTimeout(() => {
-      // Kişisel mod → alıştırma, Tahta modu → konu seçimi
-      ekranGit(mod === 'tahta' ? 'konuSecimi' : 'alistirma');
-    }, 2000);
+    if (!otomatikGecis) return;
+    const timer = setTimeout(onBitti, 2000);
     return () => clearTimeout(timer);
-  }, [ekranGit, mod]);
+  }, [onBitti, otomatikGecis]);
 
   return (
     <main
+      data-ekran="tema-girisi-kisa"
       style={{
         height: '100%',
         display: 'flex',
