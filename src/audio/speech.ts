@@ -254,7 +254,10 @@ class SpeechService {
     const keys = source.kind === 'key' ? [source.key] : source.keys;
     for (let i = 0; i < keys.length; i++) {
       if (options.signal?.aborted) return;
-      const buffer = await this.#load(keys[i]);
+      // İptal edilen konuşma, yavaş bir klip indirmesini BEKLEMEZ (Adım 54, KG-116): ekran değişince kuyruk
+      // hemen yeni ekranın talimatına geçer. İndirme arka planda sürer ve önbelleğe girer.
+      const buffer = await this.#yukleVeyaIptal(keys[i], options.signal);
+      if (options.signal?.aborted) return;
       if (!buffer) continue;
       await this.#playBuffer(buffer, Math.max(EN_DUSUK_CALMA_HIZI, (options.rate ?? 1) * this.#temelHiz));
       const gap = klipArasi(source, i);
@@ -286,6 +289,21 @@ class SpeechService {
       // Güvenlik ağı: bazı tarayıcılarda kesilen bir kaynak `onended`
       // tetiklemeyebiliyor. Kuyruk kilitlenmesin.
       setTimeout(finish, (buffer.duration / rate) * 1000 + 400);
+    });
+  }
+
+  /** `#load`, ama sinyal iptal edilirse hemen `null` döner (indirme sürer, sonuç önbelleğe girer). */
+  #yukleVeyaIptal(key: SpeechKey, signal: AbortSignal | undefined): Promise<AudioBuffer | null> {
+    const yukleme = this.#load(key);
+    if (!signal) return yukleme;
+    if (signal.aborted) return Promise.resolve(null);
+    return new Promise<AudioBuffer | null>((resolve) => {
+      const iptal = () => resolve(null);
+      signal.addEventListener('abort', iptal, { once: true });
+      void yukleme.then((b) => {
+        signal.removeEventListener('abort', iptal);
+        resolve(b);
+      });
     });
   }
 

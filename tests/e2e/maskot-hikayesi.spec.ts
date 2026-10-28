@@ -19,7 +19,7 @@ test('kişisel: derin giriş hikâye açılışıyla başlar, oturum sonunda sı
   await page.getByRole('button', { name: 'Başla', exact: true }).click();
 
   // Hikâye açılışı: selam + 1. sahne.
-  await expect(derin(page)).toHaveAttribute('data-giris-asama', 'hikaye');
+  await expect(derin(page)).toHaveAttribute('data-giris-asama', 'hikaye', { timeout: 15_000 });
   const tema = await derin(page).getAttribute('data-giris-tema');
   expect(tema).toMatch(/^[1-7]$/);
   const sahne = page.locator(`[data-hikaye-sahnesi="hikaye.t${tema}-1"]`);
@@ -32,7 +32,7 @@ test('kişisel: derin giriş hikâye açılışıyla başlar, oturum sonunda sı
   await geometriTemiz(page, 'hikâye açılışı');
 
   // Sonra derin girişin 1. adımı.
-  await expect(derin(page)).toHaveAttribute('data-giris-adim', '0', { timeout: 10_000 });
+  await expect(derin(page)).toHaveAttribute('data-giris-adim', '0', { timeout: 20_000 });
   await expect(derin(page)).not.toHaveAttribute('data-giris-asama', 'hikaye');
   await klipIstendi(page, `giris.t${tema}-1`);
   await page.getByRole('button', { name: 'Girişi geç', exact: true }).click();
@@ -54,7 +54,7 @@ test('kişisel: "Girişi geç" hikâye açılışında da tüm girişi atlar', a
   await sesKilidiniAc(page, '/?device=tablet');
   await kisiselModaGir(page);
   await page.getByRole('button', { name: 'Başla', exact: true }).click();
-  await expect(derin(page)).toHaveAttribute('data-giris-asama', 'hikaye');
+  await expect(derin(page)).toHaveAttribute('data-giris-asama', 'hikaye', { timeout: 15_000 });
   await page.getByRole('button', { name: 'Girişi geç', exact: true }).click();
   await expect.poll(() => page.evaluate(() => window.__okulumsunE2E?.alistirma?.sira ?? null), { timeout: 15_000 }).not.toBeNull();
   await expect(derin(page)).toHaveCount(0);

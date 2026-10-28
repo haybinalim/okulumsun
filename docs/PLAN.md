@@ -1297,7 +1297,7 @@ Her adımın **"Bitti tanımı"** vardır: listedeki her madde doğrulanmadan ad
 ve bir sonraki adıma geçilemez. Durum sütunu bu repodaki gerçeği yansıtır; bir adımı
 bitiren, bu tabloyu ve `docs/PROGRESS.md`'yi aynı commit'te günceller.
 
-<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=364 durum:birim_dosya=98 durum:e2e_dosya=36 durum:adr=15 -->
+<!-- durum:kazanim=19 durum:beceri=57 durum:hazir_beceri=57 durum:sablon=39 durum:hata_etiketi=15 durum:ses=364 durum:birim_dosya=99 durum:e2e_dosya=36 durum:adr=15 -->
 
 | # | İş | Durum | Bitti tanımı |
 |---|---|---|---|

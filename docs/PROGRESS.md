@@ -5,7 +5,7 @@
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
 > Tarih: 28 Ekim 2026 (Adım 54 — maskot sesi Achernar KG-114, maskotun adı tek kaynaktan KG-115, hikâyeler tema girişine ve oturum sonuna bağlandı, 22 maskot klibi KG-116; Adım 45 — derin tema girişi: içerik + 28 klip KG-111, ekran ve Konu seçimi kartı KG-112; Adım 31 aşama 2 — ertelenen 27 klip üretildi ve akışlara bağlandı KG-110; Adım 31 — TTS ücretsiz katman koruması KG-109; 287 klip Puck sesiyle yeniden üretildi, K4 tam; Adım 18 — ses seçildi: Puck, ADR-0004 Kabul KG-107; Adım 59 — kâğıtta nesneler sayfa artmadan büyüdü KG-105/106; soru görselleri yeniden çizildi KG-104; Adım 27 — her ekranda Geri / Ana menü KG-103; Adım 35 — cevap anahtarı tek A4, sayfa numarası gerçek KG-102; Adım 27 — ana ekran yerleşimi KG-101; Adım 35 — kâğıt yönergeleri ekran fiilsiz KG-99, altbilgi KG-100; Adım 30 — MEB TemelYazi KG-95/96/98)
 
-<!-- durum:birim_test=874 durum:birim_dosya=98 durum:e2e_dosya=36 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=364 durum:hata_etiketi=15 durum:adr=15 -->
+<!-- durum:birim_test=875 durum:birim_dosya=99 durum:e2e_dosya=36 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=364 durum:hata_etiketi=15 durum:adr=15 -->
 
 ## Yönetici özeti
 
