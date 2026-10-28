@@ -38,6 +38,8 @@ npm run build
 npm run e2e
 ```
 
+**Ses üretimi ve ücretsiz katman (KG-109):** `npm run audio` yalnız değişen/eksik klipleri üretir; `npm run audio -- --kuru` hiç istek atmadan üretilecek klip ve karakter toplamını yazdırır, tam yeniden üretim yalnız `--zorla` ile. Google Cloud TTS isteklerinde aylık karakter defteri (depo dışında, `TTS_KULLANIM_DOSYASI`) tutulur ve betik ayda 900.000 karakterde (ücretsiz katman 1.000.000) durur; `TTS_GUVENLI_SINIR` yalnız aşağı çekilebilir. Ayrıntı: `docs/ses/SES_KAYNAKLARI.md` §10.
+
 ## Mimari notlar
 
 | Alan | Yaklaşım |

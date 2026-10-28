@@ -3,9 +3,9 @@
 > Bu rapor, `docs/PLAN.md`'deki plan ile projenin mevcut durumunu karşılaştırır.
 > Bir adımı bitiren, bu raporu ve PLAN §14 durum sütununu AYNI commit'te günceller.
 > Kural: **kanıt neredeyse durum odur.** Kanıtı olmayan ✅ yazılmaz.
-> Tarih: 28 Ekim 2026 (Adım 31 — 287 klip Puck sesiyle yeniden üretildi, K4 tam; Adım 18 — ses seçildi: Puck, ADR-0004 Kabul KG-107; Adım 59 — kâğıtta nesneler sayfa artmadan büyüdü KG-105/106; soru görselleri yeniden çizildi KG-104; Adım 27 — her ekranda Geri / Ana menü KG-103; Adım 35 — cevap anahtarı tek A4, sayfa numarası gerçek KG-102; Adım 27 — ana ekran yerleşimi KG-101; Adım 35 — kâğıt yönergeleri ekran fiilsiz KG-99, altbilgi KG-100; Adım 30 — MEB TemelYazi KG-95/96/98)
+> Tarih: 28 Ekim 2026 (Adım 31 — TTS ücretsiz katman koruması KG-109; 287 klip Puck sesiyle yeniden üretildi, K4 tam; Adım 18 — ses seçildi: Puck, ADR-0004 Kabul KG-107; Adım 59 — kâğıtta nesneler sayfa artmadan büyüdü KG-105/106; soru görselleri yeniden çizildi KG-104; Adım 27 — her ekranda Geri / Ana menü KG-103; Adım 35 — cevap anahtarı tek A4, sayfa numarası gerçek KG-102; Adım 27 — ana ekran yerleşimi KG-101; Adım 35 — kâğıt yönergeleri ekran fiilsiz KG-99, altbilgi KG-100; Adım 30 — MEB TemelYazi KG-95/96/98)
 
-<!-- durum:birim_test=785 durum:birim_dosya=91 durum:e2e_dosya=34 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=15 -->
+<!-- durum:birim_test=802 durum:birim_dosya=92 durum:e2e_dosya=34 durum:kazanim=19 durum:beceri=57 durum:sablon=39 durum:ses=287 durum:hata_etiketi=15 durum:adr=15 -->
 
 ## Yönetici özeti
 
@@ -57,7 +57,7 @@ testleri (Adım 32, 33), PWA kurulabilirlik ve çevrimdışı kanıtı (Adım 25
 | 28 | Tam ekran + Wake Lock (tahtada ses kilidi dokunuşunda tam ekran; ders ekranlarında ekran uyanık; veli paneli "Derste tam ekran") | ✅ |
 | 29 | Ürün hijyeni (hata/yükleme ekranı, açılış temizliği, bugünün bahçesi, kırmızı denetimi) | ✅ |
 | 30 | Rakam glifleri: MEB TYMM resmî fontu TemelYazi (KG-95) — ekran glifleri (dolgulu path), metin/kâğıt rakamları alt küme font, MEB yazım yönü, öğretmen formu; KG-96: çocuğa dönük metnin harfleri de TemelYazi, yetişkin yüzeyleri Andika; KG-98: okunur kart etiketleri (20/30 px), çocuk yüzeyi ve kâğıtlarda Andika yok | ✅ (öğretmen teyidi isteğe bağlı; yazılı kullanım izni kullanıcıda) |
-| 31 | Ses klipleri lisanslı kaynakla yeniden üretildi (Google Chirp 3 HD Puck, hız 0,9; ADR-0004) | 🔄 287/287 klip yeni sesle, K4 geçiş istisnası kaldırıldı; ertelenmiş klipler, kulakla örneklem ve `v0.2.0-pilot` etiketi kalan |
+| 31 | Ses klipleri lisanslı kaynakla yeniden üretildi (Google Chirp 3 HD Puck, hız 0,9; ADR-0004) | 🔄 287/287 klip yeni sesle, K4 geçiş istisnası kaldırıldı; ücretsiz katman koruması (aylık 900.000 karakterde durur, KG-109); ertelenmiş klipler, kulakla örneklem ve `v0.2.0-pilot` etiketi kalan |
 | 34 | Bugünün seti: öğretmen ≤4 etkinlik seçip tahtada başlatır (`src/ogretmen/`, `SetHazirla`, kararlı düğüm kodları); set yalnız bellekte | ✅ |
 | 35 | Yazdırılabilir çalışma kâğıdı + cevap anahtarı (`src/ogretmen/calismaKagidi/`, `CalismaKagidi`, `KagitSayfalari`; ADR-0006 Kabul); 23 uygun · 14 uyarlanır · 2 uygun değil şablon; kâğıt yönergeleri ve cevap anahtarı ekran fiili taşımaz (KG-99), altbilgi okunur boyda (KG-100); cevap anahtarı sıkı ve kodda sayfalanır, altbilgideki toplam sayfa basılan PDF ile aynı, CI denetler (KG-102) | ✅ (iki öğretmen incelemesi ve elle siyah-beyaz baskı bekliyor) |
 | 36 | Sınıf Turu: tahtada 2–4 takımlı iş birlikçi oyun (kurulum, sıra duyurusu, gömülü soru, tur kutlaması, kavanoz kutlaması); puan/skor/kazanan yok, durum yalnız bellekte. 10 yeni ses klibi Adım 31'e ertelendi; ADR-0008 Kabul (KG-49) | ✅ (sesler hariç) |

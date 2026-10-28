@@ -122,22 +122,55 @@ export const EN_COK_DENEME = 5;
 const uyu = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 /**
+ * Ücretsiz katman koruması (KG-109). Her denemeden ÖNCE `istekOncesi` çağrılır (bütçe yetmezse
+ * fırlatır → istek gönderilmez); gönderilen her deneme, sonucu ne olursa olsun, `kaydet` ile
+ * karakteriyle deftere yazılır (429/5xx yeniden denemeleri dahil, temkinli).
+ */
+export interface IstekKorumasi {
+  istekOncesi(karakter: number, ne?: string): void;
+  kaydet(karakter: number, istek?: number): unknown;
+}
+
+export interface SentezSecenekleri {
+  /** Zorunlu: korumasız istek gönderilemez. */
+  readonly koruma: IstekKorumasi;
+  /** Testler için. */
+  readonly fetchFn?: typeof fetch;
+  readonly uyuFn?: (ms: number) => Promise<unknown>;
+}
+
+/**
  * Ağ çağrısı (derleme anı). WAV (LINEAR16, başlıklı) baytlarını döndürür.
  * Anahtar URL yerine `X-Goog-Api-Key` başlığında gider; hata iletisine anahtar yazılmaz.
  * 429 (Chirp3RequestsPerMinutePerProject) ve 5xx'te geri çekilip yeniden dener.
  */
-export async function googleSentezle(istek: GoogleIstegi, anahtar: string): Promise<Buffer> {
+export async function googleSentezle(
+  istek: GoogleIstegi,
+  anahtar: string,
+  secenekler: SentezSecenekleri,
+): Promise<Buffer> {
+  const { koruma, fetchFn = fetch, uyuFn = uyu } = secenekler;
+  if (!koruma) throw new Error('Ücretsiz katman koruması olmadan Google TTS isteği gönderilmez (KG-109).');
   if (!anahtar) throw new Error('GOOGLE_TTS_API_KEY tanımlı değil (.env.local veya ortam değişkeni).');
   const adres = ucNokta();
+  // Google kuralı: girdi metnindeki tüm karakterler (boşluk dahil); UTF-16 sayımı temkinli.
+  const karakter = istek.input.text.length;
   for (let deneme = 0; ; deneme++) {
-    const yanit = await fetch(adres, {
-      method: 'POST',
-      headers: istekBasliklari(anahtar),
-      body: JSON.stringify(istek),
-    });
+    koruma.istekOncesi(karakter, deneme === 0 ? 'İstek' : `Yeniden deneme ${deneme}`);
+    let yanit: Response;
+    try {
+      yanit = await fetchFn(adres, {
+        method: 'POST',
+        headers: istekBasliklari(anahtar),
+        body: JSON.stringify(istek),
+      });
+    } finally {
+      // Ağ hatasında da istek gitmiş olabilir: temkinli say.
+      koruma.kaydet(karakter, 1);
+    }
     if ((yanit.status === 429 || yanit.status >= 500) && deneme < EN_COK_DENEME) {
       await yanit.text();
-      await uyu(geriCekilmeMs(deneme, yanit.headers.get('retry-after')));
+      await uyuFn(geriCekilmeMs(deneme, yanit.headers.get('retry-after')));
       continue;
     }
     if (!yanit.ok) {
