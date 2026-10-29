@@ -127,9 +127,12 @@ test('soru hoparlörü: tahta 1080×810 geometrisi + ekran görüntüleri', asyn
   if (EKRAN_KLASORU) await page.screenshot({ path: `${EKRAN_KLASORU}/tahta-1920.png` });
   await page.setViewportSize({ width: 1080, height: 810 });
   await expect.poll(async () => (await olc(page)).vh).toBe(810);
+  // Kart boyu ResizeObserver ile yeniden ölçülür; sıkışık düzen oturana dek bekle (CI'da bir kare geç gelebilir).
+  await expect(page.locator('[data-secenekler][data-sikisik]')).toBeVisible();
   await yerlesimDenetle(page, 'M-PARA-TANI 1080×810', 'board');
   for (const sablon of ['M-GEO-ADLANDIR', 'M-KONUM', 'M-RAKAM-TANI', 'M-TAHMIN-ISLEM', 'M-KARSILASTIR'] as const) {
     await ac(page, sablon, 'board');
+    await expect(page.locator('[data-secenekler][data-sikisik]')).toBeVisible();
     await yerlesimDenetle(page, `${sablon} 1080×810`, 'board');
   }
   if (EKRAN_KLASORU) {

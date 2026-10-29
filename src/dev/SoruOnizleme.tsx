@@ -38,8 +38,9 @@ export function SoruOnizleme() {
         data-harness=""
         style={{ margin: 40, fontSize: 32, padding: 24 }}
         onClick={() => {
-          void speech.prime();
-          setAcik(true);
+          // prime() jestin içinde senkron başlar (resume); bağlam gerçekten çalışınca soru açılır — yoksa ilk
+          // talimat kilitli motorda sessizce düşer (CI'da AudioContext askıda başlıyor).
+          void speech.prime().then(() => setAcik(true));
         }}
       >
         Sesi aç
