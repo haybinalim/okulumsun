@@ -10,6 +10,7 @@ import {
   onlukSirasi,
   onlukTekMi,
   pencereBaslangici,
+  sayiDogrusuDuzeni,
   teraziEgimi,
 } from '../../src/ui/kesif/kesifEkrani';
 import { KESIF_ARACLARI, kesifBaslangic, kesifIndirge, type KesifDurumu } from '../../src/kesif/kesifMasasi';
@@ -65,5 +66,23 @@ describe('Keşif Masası ekranı', () => {
   });
   it('onluk sırası: 0–9 birinci, 10–19 ikinci onluk', () => {
     expect([0, 9, 10, 19].map(onlukSirasi)).toEqual([0, 0, 1, 1]);
+  });
+  // KG-124: sayı doğrusu 11 nokta × tapMin tek sıraya sığmıyorsa zikzak (çiftler üstte, tekler altta).
+  it('sayı doğrusu: 1920 tahtada ve tablette tek sıra (değişmedi), 1080×810 tahtada zikzak', () => {
+    expect(sayiDogrusuDuzeni({ ...tahta, genislik: 1665 })).toEqual({ tur: 'sira' });
+    expect(sayiDogrusuDuzeni({ ...tablet, genislik: 920 })).toEqual({ tur: 'sira' });
+    const z = sayiDogrusuDuzeni({ ...tahta, genislik: 825 });
+    expect(z.tur).toBe('zikzak');
+    if (z.tur !== 'zikzak') return;
+    expect(z.adim).toBeCloseTo(72.3, 5);
+    // Çizgi ölçülen genişliği aşmaz; aynı sıradaki komşular arası ≥ ızgara boşluğu (19,2 px), düğmeler 102 px kalır.
+    expect(10 * z.adim + tahta.tapMin).toBeLessThanOrEqual(825);
+    expect(2 * z.adim - tahta.tapMin).toBeGreaterThanOrEqual(12 * tahta.olcek);
+  });
+  it('sayı doğrusu sınırı: tek sıra tam 11 × tapMin + 10 boşlukta başlar; çok dar alanda adım alt sınırda kalır', () => {
+    const tam = 11 * 102 + 10 * 19.2;
+    expect(sayiDogrusuDuzeni({ ...tahta, genislik: tam }).tur).toBe('sira');
+    expect(sayiDogrusuDuzeni({ ...tahta, genislik: tam - 1 }).tur).toBe('zikzak');
+    expect(sayiDogrusuDuzeni({ ...tahta, genislik: 500 })).toEqual({ tur: 'zikzak', adim: (102 + 19.2) / 2 });
   });
 });

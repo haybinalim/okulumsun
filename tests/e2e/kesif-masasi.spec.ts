@@ -16,6 +16,8 @@ test('tablet: kişisel modda Keşif Masası', async ({ page }, testInfo) => {
     await expect(page.getByRole('main', { name: 'Keşif Masası' })).toHaveAttribute('data-kesif-sayi', '1');
     await geometriTemiz(page, `Keşif Masası — ${arac} (tablet)`);
   }
+  // KG-124: tablette 11 nokta tek sıraya sığar (zikzak yalnız küçük tahtada).
+  await expect(page.locator('[data-arac="sayiDogrusu"]')).toHaveAttribute('data-duzen', 'sira');
   for (const arac of ['Terazi', 'Ayır ve birleştir']) {
     await page.getByRole('button', { name: arac, exact: true }).click();
     await geometriTemiz(page, `Keşif Masası — ${arac} (tablet)`);
