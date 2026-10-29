@@ -21,6 +21,7 @@ import {
   nesneTekOnlukMu,
   onlukTekMi,
   sayiDogrusuDuzeni,
+  teraziSikisikMi,
   type KesifOlcu,
 } from '../kesif/kesifEkrani';
 import { OnlukCerceveAraci } from '../kesif/OnlukCerceveAraci';
@@ -46,10 +47,12 @@ export default function KesifMasasi() {
   }, [durum]);
 
   // KG-120: araç alanının ve üst gösterim bölgesinin ölçüsü (küçük tahtada tek onluk; rakam bölgeye sığar).
+  const ekranKoku = useRef<HTMLElement>(null);
   const aracAlani = useRef<HTMLElement>(null);
   const ustBolge = useRef<HTMLElement>(null);
   const [olcu, setOlcu] = useState<KesifOlcu | null>(null);
   const [ustYukseklik, setUstYukseklik] = useState<number | null>(null);
+  const [ekranYuksekligi, setEkranYuksekligi] = useState<number | null>(null);
   useLayoutEffect(() => {
     const alan = aracAlani.current;
     const ust = ustBolge.current;
@@ -73,22 +76,27 @@ export default function KesifMasasi() {
           : yeni,
       );
       setUstYukseklik(ust.clientHeight);
+      if (ekranKoku.current) setEkranYuksekligi(ekranKoku.current.clientHeight);
     };
     olc();
     if (typeof ResizeObserver === 'undefined') return;
     const g = new ResizeObserver(olc);
     g.observe(alan);
     g.observe(ust);
+    if (ekranKoku.current) g.observe(ekranKoku.current);
     return () => g.disconnect();
   }, []);
   const onlukTek = olcu !== null && onlukTekMi(olcu);
   const nesneTek = olcu !== null && nesneTekOnlukMu(olcu);
   // KG-124: sayı doğrusu 11 nokta tek sıraya sığmıyorsa zikzak (iki sıra) — üst bölge rakamı ölçüye göre küçülür.
+  // KG-125: kısa ekranda (1080×810 tahta) terazi sıkı çizilir, büyük rakam ölçülen bölgeye sığar.
+  const teraziSiki = olcu !== null && ekranYuksekligi !== null && teraziSikisikMi(ekranYuksekligi, olcu.tapMin);
   const dogruDuzeni = olcu === null ? ({ tur: 'sira' } as const) : sayiDogrusuDuzeni(olcu);
   const sikisik =
     (durum.arac === 'onlukCerceve' && onlukTek) ||
     (durum.arac === 'nesneKumesi' && nesneTek) ||
-    (durum.arac === 'sayiDogrusu' && dogruDuzeni.tur === 'zikzak');
+    (durum.arac === 'sayiDogrusu' && dogruDuzeni.tur === 'zikzak') ||
+    (durum.arac === 'terazi' && teraziSiki);
   // KG-126: sıkı düzene geçişte üst bölgenin yeni yüksekliği boyamadan ÖNCE okunur (ResizeObserver bir kare
   // sonra bildirir; arada rakam eski boyutta üstten taşan bir kare çiziliyordu). Bölge `flex: 1` olduğundan
   // yüksekliği rakamın boyutuna bağlı değil — döngü yok.
@@ -102,6 +110,7 @@ export default function KesifMasasi() {
 
   return (
     <main
+      ref={ekranKoku}
       aria-label="Keşif Masası"
       data-kesif-arac={durum.arac}
       data-kesif-sayi={sayi}
@@ -158,7 +167,7 @@ export default function KesifMasasi() {
         {durum.arac === 'onlukCerceve' && <OnlukCerceveAraci dolu={durum.dolu} gonder={gonder} tek={onlukTek} />}
         {durum.arac === 'nesneKumesi' && <NesneKumesiAraci sayi={durum.sayi} gonder={gonder} tekOnluk={nesneTek} />}
         {durum.arac === 'sayiDogrusu' && <SayiDogrusuAraci konum={durum.konum} gonder={gonder} duzen={dogruDuzeni} />}
-        {durum.arac === 'terazi' && <TeraziAraci sol={durum.sol} sag={durum.sag} gonder={gonder} />}
+        {durum.arac === 'terazi' && <TeraziAraci sol={durum.sol} sag={durum.sag} gonder={gonder} siki={teraziSiki} />}
         {durum.arac === 'ayirBirlestir' && (
           <AyirBirlestirAraci toplam={durum.toplam} ayirma={durum.ayirma} gonder={gonder} />
         )}

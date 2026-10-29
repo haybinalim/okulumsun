@@ -70,6 +70,8 @@ test('tahta: Keşif Masası beş araç, geometri ve sınırlar', async ({ page, 
 
   // Terazi (aşama 3): kefe düğmeleri; genel +1/−1 yok; eşitlikte "=".
   await page.getByRole('button', { name: 'Terazi', exact: true }).click();
+  // KG-125: 1920×1080 tahtada terazi olağan boyutta (sıkı düzen yalnız kısa ekranda).
+  await expect(page.locator('[data-arac="terazi"]')).not.toHaveAttribute('data-siki', /.*/);
   await expect(page.getByRole('button', { name: 'Bir ekle', exact: true })).toHaveCount(0);
   await geometriTemiz(page, 'Keşif Masası — terazi');
   await page.getByRole('button', { name: 'Sol kefeye bir ekle' }).click();
@@ -235,6 +237,55 @@ test('küçük tahta 1080×810 (KG-124): sayı doğrusu zikzak, 11 nokta ekranda
   await expect(page.getByRole('button', { name: 'Sayı 20', exact: true })).toBeInViewport({ ratio: 1 });
   await geometriTemiz(page, 'Keşif Masası 1080×810 — sayı doğrusu 10–20');
   expect(await ekranDisi(page), 'sayı doğrusu 10–20: ekran dışı düğme').toEqual([]);
+});
+
+/** Büyük rakam (output) ve üst bölge kutuları; yazı boyu px. */
+async function rakamKutusu(page: Page) {
+  return page.locator('output').evaluate((o) => {
+    const r = o.getBoundingClientRect();
+    const b = o.parentElement!.getBoundingClientRect();
+    return { ust: r.top, alt: r.bottom, bolgeUst: b.top, bolgeAlt: b.bottom, boy: parseFloat(getComputedStyle(o).fontSize) };
+  });
+}
+
+test('küçük tahta 1080×810 (KG-125): terazide büyük rakam tam görünür, kefe ve düğmeler ekranda', async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width: 1080, height: 810 });
+  await sesKilidiniAc(page, '/?device=board');
+  await page.getByRole('button', { name: 'Tahtada birlikte çalışalım.' }).click();
+  await page.getByRole('button', { name: 'Keşif Masası' }).click();
+  await page.getByRole('button', { name: 'Terazi', exact: true }).click();
+  const terazi = page.locator('[data-arac="terazi"]');
+  // Eski yerleşimde: üst bölge 56 px, 179 px'lik "1   0" ekranın üstünden taşıyordu (top −24).
+  await expect(terazi).toHaveAttribute('data-siki', 'true');
+  await page.getByRole('button', { name: 'Sol kefeye bir ekle' }).click();
+  await expect(page.locator('output')).toHaveText('1   0');
+  await geometriTemiz(page, 'Keşif Masası 1080×810 — terazi');
+  expect(await ekranDisi(page), 'terazi: ekran dışı düğme').toEqual([]);
+
+  const k = await rakamKutusu(page);
+  expect(k.ust, 'rakam ekranın üstünde kesik').toBeGreaterThanOrEqual(0);
+  expect(k.ust).toBeGreaterThanOrEqual(k.bolgeUst - 1);
+  expect(k.alt).toBeLessThanOrEqual(k.bolgeAlt + 1);
+  // TemelYazi rakamları satır kutusundan taşar (size-adjust); boy bölgenin %75'ini aşmaz → glif bölgede kalır.
+  expect(k.boy).toBeLessThanOrEqual((k.bolgeAlt - k.bolgeUst) * 0.75 + 1);
+  // Okunur kalır: tahtada en az 80 px.
+  expect(k.boy).toBeGreaterThanOrEqual(80);
+
+  // En büyük eğimde (10 – 0, −16°) yükselen kefe rakamın üstüne binmez.
+  await page.waitForTimeout(260); // aynı düğmeye ardışık dokunuş soğuması (250 ms)
+  for (let i = 2; i <= 10; i++) {
+    await page.getByRole('button', { name: 'Sol kefeye bir ekle' }).click();
+    await expect(page.locator('output')).toHaveText(`${i}   0`);
+    await page.waitForTimeout(260);
+  }
+  await expect(terazi).toHaveAttribute('data-egim', '-16');
+  const kefe = await page.getByRole('img', { name: 'Sol kefede 10' }).evaluate((e) => e.getBoundingClientRect().top);
+  const k10 = await rakamKutusu(page);
+  expect(k10.ust).toBeGreaterThanOrEqual(0);
+  expect(kefe, 'yükselen kefe rakama biniyor').toBeGreaterThanOrEqual(k10.alt - 1);
+  await geometriTemiz(page, 'Keşif Masası 1080×810 — terazi 10–0');
+  expect(await ekranDisi(page), 'terazi 10–0: ekran dışı düğme').toEqual([]);
 });
 /**
  * KG-126: her animasyon karesinde göz düğmelerinin merkezini ve büyük rakamın üst kenarını kaydeder. Ölçüm

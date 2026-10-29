@@ -101,3 +101,16 @@ export function sayiDogrusuDuzeni(o: KesifOlcu): SayiDogrusuDuzeni {
   if (o.genislik + 0.5 >= 11 * o.tapMin + 10 * bosluk) return { tur: 'sira' };
   return { tur: 'zikzak', adim: Math.max((o.genislik - o.tapMin) / 10, (o.tapMin + bosluk) / 2) };
 }
+
+/**
+ * Terazi sıkı düzeni (KG-125). Terazi sütunu (kefe 1,4 × tapMin, ayak 0,5 × tapMin, kefe düğmeleri tapMin) +
+ * iki sıralı alt düğme çubuğu + büyük rakam ≈ 9 × tapMin yükseklik ister. 1080×810 elle seçilen tahtada
+ * (810 / 102 ≈ 7,9) büyük rakamın bölgesi 56 px'e iniyor, 179 px'lik rakam üstten kesiliyordu. Ekran yüksekliği
+ * bunun altındaysa terazi sıkı çizilir (kefe 1 × tapMin, sayaç 0,4 × tapMin, ayak 0,25 × tapMin) ve rakam
+ * ölçülen bölgeye sığar. 1920×1080 tahta (≈10,6) ve 1080×810 tablet (≈12,7) olduğu gibi kalır.
+ */
+export const TERAZI_RAHAT_YUKSEKLIK_HEDEF = 9;
+
+export function teraziSikisikMi(yukseklik: number, tapMin: number): boolean {
+  return tapMin > 0 && yukseklik + 0.5 < TERAZI_RAHAT_YUKSEKLIK_HEDEF * tapMin;
+}
