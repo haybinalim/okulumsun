@@ -236,6 +236,16 @@ async function pdfleriBas(kok: string, kayitlar: readonly ArsivKaydi[]): Promise
         }
       }
       await sayfa.evaluate(() => document.fonts.ready);
+      // KG-122: TCMB banknot görselleri (<img>) PDF'e girmeden önce yüklenmiş ve çözülmüş olmalı.
+      await sayfa.evaluate(() =>
+        Promise.all(
+          Array.from(document.images, (i) =>
+            i.decode().then(() => {
+              if (!i.naturalWidth) throw new Error(`görsel yüklenmedi: ${i.src}`);
+            }),
+          ),
+        ),
+      );
       const pdf = await sayfa.pdf({ format: 'A4', printBackground: true, preferCSSPageSize: true });
       // KG-102: PDF sayfa sayısı = altbilgideki "Sayfa n / N" toplamı (taşan sayfa basılmaz).
       const uyusmazlik = sayfaUyusmazligi(pdf, await sayfa.evaluate<BaskiBeyani>(BASKI_BEYANI_IFADESI));
