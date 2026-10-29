@@ -12,6 +12,7 @@ import {
   pencereBaslangici,
   sayiDogrusuDuzeni,
   teraziEgimi,
+  teraziSikisikMi,
 } from '../../src/ui/kesif/kesifEkrani';
 import { KESIF_ARACLARI, kesifBaslangic, kesifIndirge, type KesifDurumu } from '../../src/kesif/kesifMasasi';
 
@@ -84,5 +85,14 @@ describe('Keşif Masası ekranı', () => {
     expect(sayiDogrusuDuzeni({ ...tahta, genislik: tam }).tur).toBe('sira');
     expect(sayiDogrusuDuzeni({ ...tahta, genislik: tam - 1 }).tur).toBe('zikzak');
     expect(sayiDogrusuDuzeni({ ...tahta, genislik: 500 })).toEqual({ tur: 'zikzak', adim: (102 + 19.2) / 2 });
+  });
+  // KG-125: terazi sıkı düzeni ekran yüksekliğine bağlı (≈ 9 × tapMin altı).
+  it('terazi: 1080×810 tahtada (810 px, 102 px hedef) sıkı; 1920×1080 tahtada ve 1080×810 tablette değil', () => {
+    expect(teraziSikisikMi(810, 102)).toBe(true);
+    expect(teraziSikisikMi(1080, 102)).toBe(false);
+    expect(teraziSikisikMi(810, 64)).toBe(false);
+    expect(teraziSikisikMi(918, 102)).toBe(false);
+    expect(teraziSikisikMi(917, 102)).toBe(true);
+    expect(teraziSikisikMi(810, 0)).toBe(false);
   });
 });

@@ -20,6 +20,8 @@ test('tablet: kişisel modda Keşif Masası', async ({ page }, testInfo) => {
   await expect(page.locator('[data-arac="sayiDogrusu"]')).toHaveAttribute('data-duzen', 'sira');
   for (const arac of ['Terazi', 'Ayır ve birleştir']) {
     await page.getByRole('button', { name: arac, exact: true }).click();
+    // KG-125: tablette terazi olağan boyutta.
+    if (arac === 'Terazi') await expect(page.locator('[data-arac="terazi"]')).not.toHaveAttribute('data-siki', /.*/);
     await geometriTemiz(page, `Keşif Masası — ${arac} (tablet)`);
   }
   await page.getByRole('button', { name: 'Ana menü', exact: true }).click();
