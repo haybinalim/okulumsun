@@ -20,7 +20,7 @@ import { TcmbBanknot } from '../svg/TcmbBanknot';
 import { ortakKumeBoyutu, type KumeTarifi } from '../svg/kumeYerlesimi';
 import { KAGIT_NESNE_EN_AZ_MM, KAGIT_NESNE_EN_BUYUK_MM, Visual, type BaskiOlcegi } from '../svg/Visual';
 import './kagit.css';
-import { KAGIT_BANKNOT_GENISLIK_PX } from './kagitBanknot';
+import { kagitBanknotGenislikPx } from './kagitBanknot';
 import {
   ROZET_SERIDI_MM,
   SECENEK_BOSLUK,
@@ -89,11 +89,11 @@ function Ikon({ ikon }: { ikon: YonergeIkonu }) {
 
 /**
  * Banknot: kâğıtta da (ekran ve arşivle aynı) TCMB örnek görseli, "ÖRNEKTİR GEÇMEZ" (KG-122). TCMB duyurusu
- * madde 1: tek taraflı basılı çoğaltma gerçek en/boyun %75'inden küçük olmalı → `KAGIT_BANKNOT_GENISLIK_PX`
- * (≈ 39,7 mm; 5 TL'de %30,5) bunu her kupürde sağlar (birim testi `paraGorseli.spec`).
+ * madde 1: tek taraflı basılı çoğaltma gerçek en/boyun %75'inden küçük olmalı → 200 TL ≈ 39,7 mm, diğerleri gerçek
+ * uzunluk oranıyla (KG-123; 5 TL ≈ 32,2 mm); her kupürde gerçeğin ~%24,8'i (birim testi `paraGorseli.spec`).
  */
 function BanknotGorseli({ deger }: { deger: BanknotDegeri }) {
-  return <TcmbBanknot deger={deger} genislik={KAGIT_BANKNOT_GENISLIK_PX} />;
+  return <TcmbBanknot deger={deger} genislik={kagitBanknotGenislikPx(deger)} />;
 }
 
 /**

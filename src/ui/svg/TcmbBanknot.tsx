@@ -12,7 +12,7 @@ import { RESMI_BANKNOT_GORSELLERI } from './banknotAssets';
 
 export interface TcmbBanknotProps {
   readonly deger: BanknotDegeri;
-  /** CSS piksel genişlik; yoksa `%100` (kapsayıcıyı doldurur). */
+  /** CSS piksel genişlik (kesirli olabilir); yoksa `%100` (kapsayıcıyı doldurur). */
   readonly genislik?: number;
   readonly style?: CSSProperties;
 }
@@ -28,7 +28,7 @@ export function TcmbBanknot({ deger, genislik, style }: TcmbBanknotProps) {
       decoding="sync"
       loading="eager"
       data-banknot={deger}
-      width={genislik}
+      width={genislik === undefined ? undefined : Math.round(genislik)}
       height={genislik === undefined ? undefined : Math.round(genislik / oran)}
       style={{
         display: 'block',
