@@ -37,6 +37,12 @@ Uygulamadaki Kaynaklar ekranı aynı listeyi çizer.
 | Andika | SIL OFL 1.1 | SIL International | — |
 | TemelYazi | MEB TTKB yayını; gömülü lisans metni yok | T.C. Millî Eğitim Bakanlığı TTKB (tasarım: HBY Tasarım) | Alt kümeler: rakam + işaret (TemelYazi-Rakam.woff2, KG-95) ve çocuğa dönük metnin harfleri — Türkçe alfabe, rakam, temel noktalama, ₺ % (TemelYazi-Harf.woff2, KG-96); ikisi de TemelYazi-Bold konturları, tam font dağıtılmaz. MEB amacı: "ders kitapları ve eğitim araçlarında kullanılması". Ticari dağıtım ve açık repo için MEB TTKB/tasarımcıdan yazılı izin önerilir (henüz istenmedi) |
 
+### Görseller
+
+| Ad | Lisans | Sahip | Koşul |
+|---|---|---|---|
+| TCMB E9 5. tertip örnek banknot görselleri | TCMB kullanım şartları | Türkiye Cumhuriyet Merkez Bankası | Ekranda, basılı kâğıtta ve arşivde (KG-122); "ÖRNEKTİR GEÇMEZ" korunur, kaynak gösterilerek eğitim amaçlı. TCMB çoğaltma duyurusu (RG 24.02.2004/25383): dosyalar gerçek boyutta ≤ 72 dpi, kâğıtta tek yüz ve en/boyun %75'inden küçük. TCMB site kullanım şartları ticari kullanımı yazılı izne bağlar; TCMB'ye başvurulmadı (KG-19) |
+
 ### Ses
 
 | Ad | Lisans | Sahip | Koşul |
@@ -75,7 +81,11 @@ Programı'ndan referans alınmıştır. Ders kitabı görselleri kullanılmamı�
 
 ## Para görselleri
 
-Banknotlar ekranda, basılı çalışma kâğıtlarında ve kâğıt arşivinde **şematik "oyun parası" çizimleridir** (`SematikBanknot`, bu projenin kendi çizimi): değer rakamı, kupüre özgü renk ve desen taşır, üzerinde "OYUN PARASI" yazar; TCMB görseli, adı veya portresi yoktur. Daha önce ekranda kullanılan TCMB E9 5. tertip örnek banknot görselleri 29 Ekim 2026'da depodan ve dağıtımdan kaldırıldı (KG-121). **TCMB'ye izin başvurusu yapılmamıştır** (KG-19, ADR-0014); bu kullanım TCMB'nin izni veya onayı anlamına gelmez. Geçmiş kayıt: [`docs/BANKNOT_GORSEL_KAYNAKLARI.md`](docs/BANKNOT_GORSEL_KAYNAKLARI.md).
+Banknotlar ekranda, basılı çalışma kâğıtlarında ve kâğıt arşivinde Türkiye Cumhuriyet Merkez Bankası'nın (TCMB) internet sitesinde yayımladığı E9 5. tertip **ön yüz örnek banknot görselleridir** (KG-122). Her yerel dosya TCMB'nin kırmızı "ÖRNEKTİR GEÇMEZ" ibaresini korur; görseller yalnız eğitim amaçlı banknot tanıma ve sıralama etkinliklerinde, kaynak gösterilerek kullanılır.
+
+TCMB'nin "Banknotların Resim ve Görüntülerinin Çoğaltılması ve Yayınlanması ile İlgili Duyuru"suna (Resmî Gazete 24.02.2004/25383, değişik 13.10.2004/25612) uyum: dosyalar gerçek banknot boyutunda 72 dpi'ı aşmaz (madde 4) ve "ÖRNEKTİR GEÇMEZ" ibaresini taşır (madde 5); kâğıtta yalnız ön yüz, tek taraflı ve gerçek en/boyun %75'inden küçük basılır (madde 1; ≈ 39,7 mm genişlik).
+
+**TCMB'ye izin başvurusu yapılmamıştır** (KG-19, ADR-0014); bu kullanım TCMB'nin izni veya onayı anlamına gelmez. TCMB site kullanım şartları sitedeki bilgilerin ticari amaçlarla kullanımını TCMB'nin yazılı iznine bağlar: okul/kurum lisansı satışından (ADR-0014 c) önce yazılı izin alınmalı veya karar yeniden değerlendirilmelidir. Kaynak sayfaları ve kupür eşlemesi: [`docs/BANKNOT_GORSEL_KAYNAKLARI.md`](docs/BANKNOT_GORSEL_KAYNAKLARI.md).
 
 ## Gizlilik beyanı
 

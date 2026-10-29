@@ -29,7 +29,7 @@ Plan önerisi: ilk 12 ay satış yok; hibe + pilot okul ilişkisi (d), ardından
 
 Önerilen: TCMB için **(b) her yerde şematik** — kullanıcı kararı KG-19: TCMB'ye başvurulmaz, TCMB görselleri ürünün hiçbir yerinde kullanılmaz, kırmızı "ÖRNEKTİR" istisnası gereksizleşir. **İş modeli (kullanıcı kararı, 12 Eki 2026):** ilk 12 ay **satış yok** — ücretsiz, hibe/sponsorluk ve pilot okul ilişkisi (d); ardından **okul/kurum lisansı** (c: kurulum, eğitim, destek hizmeti). Veli aboneliği, reklam ve uygulama içi satın alma yapılmaz. Ticari lansmandan (c) önce avukat incelemesi (KVKK ile birlikte) şarttır.
 
-Uygulandı (Adım 21): `src/content/paraGorseli.ts` (`TCMB_YAZILI_IZIN = false`, strateji fonksiyonu), `src/ui/svg/SematikBanknot.tsx`, lisans envanteri `src/content/ucuncuTarafVarliklar.ts` ve K10 (`npm run lisans:denetle`). TCMB görselleri Adım 29'da kaldırılacaktı; ekran geçişi o adımda yapılmadı (KG-117). **29 Eki 2026 (KG-121, kullanıcı onayı):** ekran da `SematikBanknot`'a geçti, `public/images/banknotlar/` ve `src/ui/svg/banknotAssets.ts` depodan kaldırıldı, lisans envanterinden TCMB satırı silindi, kırmızı denetimindeki TCMB istisnası kalktı; karar artık ekran, kâğıt ve arşivde tam uygulanıyor.
+Uygulandı (Adım 21): `src/content/paraGorseli.ts` (`TCMB_YAZILI_IZIN = false`, strateji fonksiyonu), `src/ui/svg/SematikBanknot.tsx`, lisans envanteri `src/content/ucuncuTarafVarliklar.ts` ve K10 (`npm run lisans:denetle`). TCMB görselleri Adım 29'da kaldırılacaktı; ekran geçişi o adımda yapılmadı (KG-117). **29 Eki 2026 (KG-121, kullanıcı onayı):** ekran da `SematikBanknot`'a geçti, `public/images/banknotlar/` ve `src/ui/svg/banknotAssets.ts` depodan kaldırıldı, lisans envanterinden TCMB satırı silindi, kırmızı denetimindeki TCMB istisnası kalktı; karar artık ekran, kâğıt ve arşivde tam uygulanıyor. **29 Eki 2026 (KG-122, kullanıcı kararı — KG-121'in ve KG-19 şematik kuralının yerine geçer):** "banknotların hepsi TCMB görselleri olmalı"; çocuk gerçek parayı tanımalı, şematik çizim okuma gerektiriyor ve gerçek para olmadığı izlenimini veriyordu. Ekran, kâğıt ve arşiv TCMB E9 5. tertip ön yüz örnek görsellerini ("ÖRNEKTİR GEÇMEZ") kullanır (`src/ui/svg/TcmbBanknot.tsx`, `banknotAssets.ts`, `public/images/banknotlar/`); `SematikBanknot` silindi. TCMB çoğaltma duyurusuna (RG 24.02.2004/25383) uyum: dosyalar gerçek boyutta ≤ 72 dpi, kâğıtta tek yüz ve en/boyun %75'inden küçük. Lisans envanterine TCMB satırı ve kırmızı denetimine TCMB raster istisnası geri döndü. TCMB'ye başvuru yapılmadı (KG-19'un başvuru kısmı sürüyor); TCMB site kullanım şartları ticari kullanımı yazılı izne bağladığından okul/kurum lisansı satışından (c) önce yazılı izin alınmalı veya karar yeniden değerlendirilmelidir.
 
 ## Sonuçlar
 
@@ -42,7 +42,7 @@ Uygulandı (Adım 21): `src/content/paraGorseli.ts` (`TCMB_YAZILI_IZIN = false`,
 
 ## Lisans ve üçüncü taraf etkisi
 
-TCMB görselleri kaldırılır; fontlar OFL (ticari uygun); ses ADR-0004'e bağlı. Her varlık K10 envanterinde lisans ve ticari izin sütunuyla tutulur.
+TCMB örnek görselleri ekranda, kâğıtta ve arşivde kullanılır (KG-122; ticari lansmandan önce TCMB yazılı izni gerekir); fontlar OFL (ticari uygun); ses ADR-0004'e bağlı. Her varlık K10 envanterinde lisans ve ticari izin sütunuyla tutulur.
 
 ## Geri dönüş maliyeti
 

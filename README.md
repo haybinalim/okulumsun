@@ -46,7 +46,7 @@ npm run e2e
 |---|---|
 | Çocuk deneyimi | Ses öncelikli, görsel destekli, akıllı tahta erişim bölgesine uygun |
 | İçerik | MEB 2024 kazanımları ve beceri düğümleri |
-| Para görselleri | Her yerde şematik "OYUN PARASI" çizimi (`SematikBanknot`): ekranda, basılı kâğıtta ve arşivde aynı; TCMB görseli, adı veya portresi yok. TCMB'ye izin başvurusu yapılmadı (KG-19, KG-121) |
+| Para görselleri | Ekranda, basılı kâğıtta ve arşivde TCMB'nin E9 5. tertip ön yüz örnek banknot görselleri ("ÖRNEKTİR GEÇMEZ", 5–200 TL, eğitim amaçlı, kaynak gösterilerek; TCMB çoğaltma duyurusuna göre ≤ 72 dpi, kâğıtta gerçek boyutun %75'inden küçük). TCMB'ye izin başvurusu yapılmadı (KG-19, KG-122) |
 | Çevrimdışı çalışma | PWA + önbelleğe alınan statik varlıklar |
 | Öğrenci/veli verisi | Bu geliştirme sürümünde saklanmaz |
 | Yayın | Tek kaynak Vercel: https://okulumsun-tc.vercel.app — yalnız yeşil CI sonrası yayınlanır, PR'lara önizleme; CSP ile dış ağ isteği tarayıcıda engellenir (`docs/yayin.md`, ADR-0003) |
