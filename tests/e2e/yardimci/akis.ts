@@ -18,10 +18,15 @@ export async function geometriTemiz(page: Page, ekran: string): Promise<void> {
  * Bir ses klibinin istendiğini (indirildiğini) bekler (KG-110). Playwright Chromium AAC çözemez; çalma
  * değil alım ölçülür (`e2eKanca.alinanKlipler`). Klip ekran talimatının parçasıysa ekranla birlikte istenir.
  */
-export async function klipIstendi(page: Page, anahtar: string): Promise<void> {
+export async function klipIstendi(
+  page: Page,
+  anahtar: string,
+  /** KG-127: `istenenKlipler` = çalmak için istenen (bellek önbelleğinden de olsa). */
+  liste: 'alinanKlipler' | 'istenenKlipler' = 'alinanKlipler',
+): Promise<void> {
   try {
     await expect
-      .poll(async () => (await page.evaluate(() => window.__okulumsunE2E?.alinanKlipler ?? [])).includes(anahtar), {
+      .poll(async () => (await page.evaluate((l) => window.__okulumsunE2E?.[l] ?? [], liste)).includes(anahtar), {
         message: `ses klibi bekleniyor: ${anahtar}`,
         timeout: 10_000,
       })

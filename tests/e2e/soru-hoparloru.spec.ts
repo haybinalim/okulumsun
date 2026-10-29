@@ -103,21 +103,30 @@ test('soru hoparlörü: sahneli soruda (M-TOPLA-GORSEL) yok, ↻ var', async ({ 
 test('soru hoparlörü: dokununca para sorusu ("… lira") yeniden istenir — şıkka dokunduktan sonra da', async ({ page }, info) => {
   const cihaz = info.project.name === 'board' ? 'board' : 'tablet';
   await ac(page, 'M-PARA-TANI', cihaz);
-  // Açılış talimatı (sayi.N + para.lira) alındı; liste boşaltılır, dokunuşun isteği ayrıca görülsün.
-  await klipIstendi(page, 'para.lira');
+  // Teşhis (CI): ses motoru durumu ve /audio/ istekleri hata iletisine eklenir.
+  const teshis = () =>
+    page.evaluate(() => ({
+      ses: document.querySelector('[data-ses-durumu]')?.getAttribute('data-ses-durumu'),
+      istenen: window.__okulumsunE2E?.istenenKlipler ?? [],
+      istekler: performance.getEntriesByType('resource').map((e) => e.name).filter((n) => n.includes('/audio/')),
+    }));
+  // Açılış talimatı (sayi.N + para.lira) çalınmak üzere istendi.
+  await klipIstendi(page, 'para.lira', 'istenenKlipler').catch(async (h) => {
+    throw new Error(`${(h as Error).message}\nses: ${JSON.stringify(await teshis())}`);
+  });
   // Çocuk bir banknota dokunur (şıkkın adı söylenir) — hoparlör yine SORUYU çalmalı.
   await page.locator('main section').last().getByRole('button').first().click();
   await page.waitForTimeout(400);
-  const soruSayisi = await page.evaluate(() => {
-    const k = window.__okulumsunE2E!;
-    k.alinanKlipler.length = 0;
-    return 0;
+  // Çalma istekleri listesi boşaltılır (klip çözülebilen tarayıcıda ikinci çalma ağa gitmez; KG-127).
+  await page.evaluate(() => {
+    window.__okulumsunE2E!.istenenKlipler.length = 0;
   });
-  expect(soruSayisi).toBe(0);
   await page.getByRole('button', { name: HOPARLOR, exact: true }).click();
-  await klipIstendi(page, 'para.lira');
+  await klipIstendi(page, 'para.lira', 'istenenKlipler').catch(async (h) => {
+    throw new Error(`dokunuştan sonra: ${(h as Error).message}\nses: ${JSON.stringify(await teshis())}`);
+  });
   // Soru = tohum 1'in hedefi (sayi.100 + para.lira); sadece şık adı değil.
-  await klipIstendi(page, 'sayi.100');
+  await klipIstendi(page, 'sayi.100', 'istenenKlipler');
 });
 
 test('soru hoparlörü: tahta 1080×810 geometrisi + ekran görüntüleri', async ({ page }, info) => {

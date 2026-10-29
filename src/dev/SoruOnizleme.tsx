@@ -14,6 +14,7 @@ import { REGISTRY } from '../exercises/registry';
 import type { TemplateId } from '../exercises/types';
 import { ExerciseScreen } from '../ui/screens/ExerciseScreen';
 import { speech } from '../audio/speech';
+import { useSpeechState } from '../audio/useSpeak';
 
 export function SoruOnizleme() {
   const { profile } = useDeviceProfile();
@@ -22,6 +23,7 @@ export function SoruOnizleme() {
   const tohum = Number(p.get('tohum') ?? '1');
   const zorluk = Number(p.get('zorluk') ?? '3');
   const [acik, setAcik] = useState(false);
+  const sesDurumu = useSpeechState();
   const exercise = useMemo(() => {
     const g = REGISTRY.get(sablon);
     if (!g) return null;
@@ -48,7 +50,7 @@ export function SoruOnizleme() {
     );
   }
   return (
-    <div style={{ height: '100dvh' }} data-soru-onizleme={exercise.templateId}>
+    <div style={{ height: '100dvh' }} data-soru-onizleme={exercise.templateId} data-ses-durumu={sesDurumu}>
       <ExerciseScreen exercise={exercise} accent={{ id: a.id, hex: a.hex, speechKey: a.speechKey }} onDone={() => undefined} />
     </div>
   );

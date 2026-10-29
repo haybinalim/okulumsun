@@ -31,6 +31,11 @@ export interface E2eKancasi {
   yanlisCevapla: () => boolean;
   /** Başarıyla alınan ses klipleri (anahtar), sırayla. */
   readonly alinanKlipler: string[];
+  /**
+   * Çalmak için istenen klipler (KG-127), bellek önbelleğinden gelse de. Klip çözülebilen tarayıcıda (CI) ikinci
+   * çalma ağa gitmez; "dokununca soru yeniden istendi" bununla ölçülür.
+   */
+  readonly istenenKlipler: string[];
 }
 
 declare global {
@@ -40,7 +45,14 @@ declare global {
 }
 
 function kanca(): E2eKancasi {
-  window.__okulumsunE2E ??= { alistirma: null, sayac: 0, dogruCevapla: () => false, yanlisCevapla: () => false, alinanKlipler: [] };
+  window.__okulumsunE2E ??= {
+    alistirma: null,
+    sayac: 0,
+    dogruCevapla: () => false,
+    yanlisCevapla: () => false,
+    alinanKlipler: [],
+    istenenKlipler: [],
+  };
   return window.__okulumsunE2E;
 }
 
@@ -88,4 +100,10 @@ export function useE2eAlistirma(
 export function e2eKlipAlindi(anahtar: string): void {
   if (!E2E_KANCASI_ACIK) return;
   kanca().alinanKlipler.push(anahtar);
+}
+
+/** speech.ts bir klibi çalmak için istediğinde (önbellekten de olsa) çağırır (KG-127). */
+export function e2eKlipIstendi(anahtar: string): void {
+  if (!E2E_KANCASI_ACIK) return;
+  kanca().istenenKlipler.push(anahtar);
 }
