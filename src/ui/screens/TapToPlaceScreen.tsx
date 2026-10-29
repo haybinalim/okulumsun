@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { useSikisikKartBoyu } from '../secenekKartBoyu';
 import { GameShell } from '../layout/GameShell';
 import { ChoiceCard, type ChoiceState } from '../primitives/ChoiceCard';
 import { SpeakButton } from '../primitives/SpeakButton';
@@ -17,6 +18,11 @@ import { yanlisSecimBilgisi } from '../../exercises/hataDestek';
  * Sahne bir örüntü dizisi (oruntu), boşluklar yuvadır. Çocuk önce bir parça
  * kartı seçer (büyür), sonra bir yuvaya dokunur — parça yerleşir. Tüm yuvalar
  * dolunca Onayla. `siraOnemli:false` olduğu için doldurma sırası serbesttir.
+ *
+ * KG-129: parça kartları varsayılan boyda sığmıyorsa (1080×810 tahtada 2–5 kart iki satıra kırılıp üst %35'e
+ * taşıyor, ↻ ve Onayla ekran dışında kalıyordu; tablette M-VERİ-SIKLIK 5 kart) tek satıra ve alt alana sığacak kadar
+ * küçülür (KG-127 `sikisikKartBoyu`). Yuvanın dokunma alanı en az `--size-tap-min` (önce sahne ölçeğiyle 56 px:
+ * tablette 56, tahtada 90 px). Tahtada yuvaların sahnede, üst %35'te durması ayrı bir tasarım kararıdır (KG-129 notu).
  */
 export function TapToPlaceScreen({
   exercise,
@@ -95,6 +101,8 @@ export function TapToPlaceScreen({
   const scene = exercise.prompt.gorsel;
   const sceneW = 560;
   const sceneH = 200;
+  const kartlar = useRef<HTMLDivElement>(null);
+  const sikisik = useSikisikKartBoyu(kartlar, exercise.options.length);
 
   return (
     <GameShell
@@ -116,8 +124,9 @@ export function TapToPlaceScreen({
                   left: `${y.konum.x * 100}%`,
                   top: `${y.konum.y * 100}%`,
                   transform: 'translate(-50%, -50%)',
-                  width: 56,
-                  height: 56,
+                  // Sahne `scale(var(--scale))` içinde: tap-min / ölçek = ekranda tam `--size-tap-min` (KG-129).
+                  width: 'max(56px, calc(var(--size-tap-min) / var(--scale, 1)))',
+                  height: 'max(56px, calc(var(--size-tap-min) / var(--scale, 1)))',
                   borderRadius: 10,
                   border: seciliParca && !yerlesim[y.id] ? '3px dashed var(--color-accent)' : 'none',
                   background: 'transparent',
@@ -130,14 +139,20 @@ export function TapToPlaceScreen({
       }
       interaction={
         <>
-          <div style={{ display: 'flex', gap: 'var(--size-gap)', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <div
+            ref={kartlar}
+            data-secenekler=""
+            data-sikisik={sikisik ?? undefined}
+            style={{ display: 'flex', gap: 'var(--size-gap)', flexWrap: sikisik !== null ? 'nowrap' : 'wrap', justifyContent: 'center' }}
+          >
             {exercise.options.map((o) => {
               const yerlesti = yerlesmisOptionIdler.has(o.id);
               return (
                 <ChoiceCard
                   key={o.id}
                   option={o}
-                  size={140}
+                  size={sikisik ?? 140}
+                  sabitBoyut={sikisik !== null}
                   state={parcaStateOf(o.id)}
                   onSelect={() => !yerlesti && handleParca(o.id)}
                 />
