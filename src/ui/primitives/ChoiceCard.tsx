@@ -25,18 +25,24 @@ export interface ChoiceCardProps {
    * kendi ölçtüğü bir token'ı (ör. `--size-choice-min`) verdiğinde kullanılır (M-SAY, KG-86).
    */
   sabitBoyut?: boolean;
+  /**
+   * KG-128: kart genişliği `size`'dan farklıysa (yatay işlem kartı, MATCH_PAIRS). Yalnız `sabitBoyut` ile; görsel
+   * kartın iç alanını (%70 × %70) doldurur.
+   */
+  genislik?: number;
 }
 
-export function ChoiceCard({ option, size, state, onSelect, sabitBoyut = false }: ChoiceCardProps) {
+export function ChoiceCard({ option, size, state, onSelect, sabitBoyut = false, genislik }: ChoiceCardProps) {
+  const en = genislik ?? size;
   const selected = state === 'secili';
   const isCorrect = state === 'dogru';
   const isRetry = state === 'tekrar';
   const isDimmed = state === 'soluk';
 
   const style: CSSProperties = {
-    width: size,
+    width: en,
     height: size,
-    ...(sabitBoyut ? { minWidth: size, minHeight: size } : null),
+    ...(sabitBoyut ? { minWidth: en, minHeight: size } : null),
     background: 'var(--color-surface)',
     border: `${selected || isCorrect ? 5 : 3}px solid ${borderColor(state)}`,
     boxShadow: isCorrect
@@ -64,7 +70,7 @@ export function ChoiceCard({ option, size, state, onSelect, sabitBoyut = false }
       style={style}
     >
       <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}>
-        {renderDeger(option.deger, size)}
+        {renderDeger(option.deger, size, en)}
       </div>
     </BigButton>
   );
@@ -84,14 +90,15 @@ function borderColor(state: ChoiceState): string {
 }
 
 /** Şıkkın değerini görselleştirir — çocuk metin OKUYAMAZ, bu yüzden sayı/şekil/ikon. */
-function renderDeger(deger: OptionDeger, size: number): ReactNode {
+function renderDeger(deger: OptionDeger, size: number, en: number = size): ReactNode {
   const inner = size * 0.7;
+  const innerEn = en * 0.7;
   switch (deger.tur) {
     case 'sayi':
       return <Visual spec={{ type: 'rakam', sayi: deger.sayi }} width={inner} height={inner} />;
     case 'gorsel':
       if (deger.gorsel.type === 'banknot') return <KartBanknotu deger={deger.gorsel.deger} />;
-      return <Visual spec={deger.gorsel} width={inner} height={inner} />;
+      return <Visual spec={deger.gorsel} width={innerEn} height={inner} />;
     case 'sekil':
       return <Visual spec={{ type: 'sekil', sekil: deger.sekil }} width={inner} height={inner} />;
     case 'sekilKategorisi':
