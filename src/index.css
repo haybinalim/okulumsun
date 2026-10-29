@@ -204,7 +204,14 @@ body {
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    /*
+     * KG-126: geçiş süresi 0 — 0,01 ms DEĞİL. `transition-property`'nin başlangıç değeri `all` olduğundan sıfırdan
+     * büyük bir süre HER özellik değişimini (gap, font-size, yükseklik…) bir karelik geçişe çevirir: değişikliğin
+     * ilk karesinde eski değer çizilir (Keşif Masası 1080×810'da ilk göz satırı bir kare üst %35'te kalıyordu).
+     * 0 sn'de geçiş hiç başlamaz; uygulamada transitionend dinleyen kod yok.
+     */
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
   }
 }
 
@@ -223,5 +230,6 @@ body {
 :root[data-hareket-azalt] *::after {
   animation-duration: 0.01ms !important;
   animation-iteration-count: 1 !important;
-  transition-duration: 0.01ms !important;
+  transition-duration: 0s !important; /* KG-126: bkz. yukarıdaki not */
+  transition-delay: 0s !important;
 }
