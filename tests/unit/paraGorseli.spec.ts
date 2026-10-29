@@ -9,7 +9,7 @@ import {
   banknotOrani,
   tcmbEnBuyukPiksel,
 } from '../../src/content/paraGorseli';
-import { CSS_PX_MM, KAGIT_BANKNOT_GENISLIK_PX } from '../../src/ui/print/kagitBanknot';
+import { CSS_PX_MM, kagitBanknotGenislikPx } from '../../src/ui/print/kagitBanknot';
 
 /** WebP (VP8 / VP8L / VP8X) piksel ölçüsü — bağımlılıksız başlık okuyucu. */
 function webpOlcusu(b: Buffer): { en: number; boy: number } {
@@ -57,7 +57,7 @@ describe('TCMB çoğaltma koşulları (KG-122)', () => {
 
   it.each(BANKNOTLAR)("%i TL kâğıtta tek yüz ve en/boyun %%75'inden küçük (madde 1)", (deger) => {
     const o = BANKNOT_OLCULERI_MM[deger];
-    const enMm = KAGIT_BANKNOT_GENISLIK_PX * CSS_PX_MM;
+    const enMm = kagitBanknotGenislikPx(deger) * CSS_PX_MM;
     const boyMm = enMm / banknotOrani(deger);
     expect(enMm).toBeLessThan(o.en * TCMB_KAGIT_OLCEK_SINIRI);
     expect(boyMm).toBeLessThan(o.boy * TCMB_KAGIT_OLCEK_SINIRI);

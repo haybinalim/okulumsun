@@ -91,7 +91,7 @@ test('tahta: dörtten fazla etkinlik seçilemez', async ({ page }) => {
   await expect(page.getByText('4/4 seçildi — önce birini kaldır.')).toBeVisible();
 });
 
-test('ekranda banknot TCMB örnek görseli (KG-122): raster yüklenir, kartı doldurur', async ({ page }) => {
+test('ekranda banknot TCMB örnek görseli (KG-122): raster yüklenir, kupürler gerçek birbirine göre boyutta (KG-123)', async ({ page }) => {
   test.setTimeout(60_000);
   const istekler: string[] = [];
   page.on('request', (r) => istekler.push(r.url()));
@@ -114,13 +114,24 @@ test('ekranda banknot TCMB örnek görseli (KG-122): raster yüklenir, kartı do
   expect(await page.locator('[data-sematik-banknot]').count(), 'şematik banknot yok').toBe(0);
   await geometriTemiz(page, 'para sorusu (TCMB banknot)');
   expect(istekler.some((u) => /images\/banknotlar\/\d+-tl-on-yuz-resmi\.webp/.test(u))).toBe(true);
-  // Banknot kartın iç genişliğini doldurur (önce ~320 px kartta ~130 px'ti).
-  const oranlar = await page.locator('img[data-banknot]').evaluateAll((imgs) =>
+  // KG-123: kupürler gerçek birbirine göre boyutlarında — en büyük kupür (200 TL) kart iç genişliğinin %88'i,
+  // diğerleri gerçek uzunluk oranıyla (5 TL 130/160). 200 TL'ye göre normalize edilen pay kartı doldurur.
+  const UZUNLUK_MM: Record<string, number> = { 5: 130, 10: 136, 20: 142, 50: 148, 100: 154, 200: 160 };
+  const olculer = await page.locator('img[data-banknot]').evaluateAll((imgs) =>
     imgs.map((i) => {
       const kart = i.closest('button')!.getBoundingClientRect();
-      return i.getBoundingClientRect().width / kart.width;
+      const r = i.getBoundingClientRect();
+      return { deger: i.getAttribute('data-banknot')!, en: r.width, boy: r.height, kart: kart.width };
     }),
   );
-  expect(oranlar.length).toBeGreaterThan(1);
-  for (const o of oranlar) expect(o).toBeGreaterThan(0.75);
+  expect(olculer.length).toBeGreaterThan(1);
+  for (const o of olculer) {
+    const goreli = UZUNLUK_MM[o.deger] / 160;
+    expect(o.en / o.kart / goreli).toBeGreaterThan(0.75);
+  }
+  // Aynı ekrandaki iki kupürün genişlik ve yükseklik oranı gerçek ölçü oranı (±%2).
+  const BOY_MM: Record<string, number> = { 5: 64, 10: 64, 20: 68, 50: 68, 100: 72, 200: 72 };
+  const [a, b] = olculer;
+  expect(Math.abs(a.en / b.en / (UZUNLUK_MM[a.deger] / UZUNLUK_MM[b.deger]) - 1)).toBeLessThan(0.02);
+  expect(Math.abs(a.boy / b.boy / (BOY_MM[a.deger] / BOY_MM[b.deger]) - 1)).toBeLessThan(0.03);
 });

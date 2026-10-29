@@ -2,6 +2,7 @@ import type { CSSProperties, ReactNode } from 'react';
 import { BigButton } from './BigButton';
 import { Visual } from '../svg/Visual';
 import { TcmbBanknot } from '../svg/TcmbBanknot';
+import { kartBanknotYuzdesi } from './kartBanknot';
 import type { BanknotDegeri, Option, OptionDeger } from '../../exercises/types';
 import { secenekErisimEtiketi } from './choiceErisim';
 
@@ -106,13 +107,17 @@ function renderDeger(deger: OptionDeger, size: number): ReactNode {
 }
 
 /**
- * Banknot kartı doldurur (KG-122): kartın iç genişliğinin %88'i, gerçek kupür oranı korunur. `size` yerine CSS
- * yüzdesi: tahtada kart `--size-choice` alt sınırıyla `size`'dan büyük olabilir (1920×1080'de ~320 px kartta
- * banknot önce ~130 px kalıyordu).
+ * Banknot kartı (KG-122, KG-123): en büyük kupür (200 TL) kartın iç genişliğinin %88'i, diğerleri gerçek
+ * uzunluk oranıyla (5 TL %71,5); yükseklik gerçek en/boy oranından gelir, yani kupürler birbirine göre gerçek
+ * boyutlarındadır. `size` yerine CSS yüzdesi: tahtada kart `--size-choice` alt sınırıyla `size`'dan büyük
+ * olabilir. Görsel dosyası gerçek boyutta ≤ 72 dpi; CSS yalnız küçültür ya da ekran ölçeğine getirir.
  */
 function KartBanknotu({ deger }: { deger: BanknotDegeri }) {
   return (
-    <div style={{ width: '88%', display: 'grid', placeItems: 'center' }} data-kart-banknotu={deger}>
+    <div
+      style={{ width: `${kartBanknotYuzdesi(deger)}%`, display: 'grid', placeItems: 'center' }}
+      data-kart-banknotu={deger}
+    >
       <TcmbBanknot deger={deger} />
     </div>
   );

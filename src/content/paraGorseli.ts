@@ -34,6 +34,18 @@ export function banknotOrani(deger: BanknotDegeri): number {
   return o.en / o.boy;
 }
 
+/** En büyük (en uzun) kupür: oranlı gösterimde ölçek tabanı (KG-123). */
+export const EN_BUYUK_BANKNOT: BanknotDegeri = 200;
+
+/**
+ * Kupürün gerçek uzunluğunun en büyük kupüre oranı (KG-123, kullanıcı kararı 2026-10-29: banknotlar gerçek
+ * birbirine göre boyutlarında gösterilir; 200 TL 5 TL'den ~%23 uzun). 200 TL = 1; 5 TL = 130/160 = 0,8125.
+ * Yükseklik en/boy oranından gelir, dolayısıyla o da gerçek ölçüyle orantılıdır (64/72 … 72/72).
+ */
+export function banknotGoreliOlcek(deger: BanknotDegeri): number {
+  return BANKNOT_OLCULERI_MM[deger].en / BANKNOT_OLCULERI_MM[EN_BUYUK_BANKNOT].en;
+}
+
 /** Görsel dosyasının gerçek boyutta 72 dpi'ı aşmayan en büyük piksel ölçüsü. */
 export function tcmbEnBuyukPiksel(deger: BanknotDegeri): {
   readonly en: number;

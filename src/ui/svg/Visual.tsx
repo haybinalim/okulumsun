@@ -17,7 +17,7 @@ import { ACCENTS, FONT_YIGINI } from '../../design/tokens';
 import { RAKAM_ARALIGI, RAKAM_GLIF_HARITASI } from './rakamGlifleri';
 import { Sprite } from './Sprite';
 import { RESMI_BANKNOT_GORSELLERI } from './banknotAssets';
-import { banknotOrani } from '../../content/paraGorseli';
+import { BANKNOT_OLCULERI_MM, EN_BUYUK_BANKNOT } from '../../content/paraGorseli';
 import {
   besliKumeYerlesimi,
   ekranKumeYerlesimi,
@@ -264,12 +264,15 @@ function sekilYolu(sekil: SekilAdi, cx: number, cy: number, r: number): string {
 /**
  * Banknot — TCMB E9 5. tertip ön yüz örnek görseli ("ÖRNEKTİR GEÇMEZ"; KG-122). SVG bağlamı için `<image>`;
  * seçenek kartı ve kâğıt `TcmbBanknot` (HTML `<img>`) kullanır, dosya aynıdır. Kutuya ortalanır, gerçek kupür
- * oranı korunur (büyük kupür daha uzun). Erişilebilir ad seçenek düğmesinde; burada `aria-hidden`.
+ * oranı korunur; kupürler en büyük kupüre göre ölçeklenir (gerçek birbirine göre boyut, KG-123). Erişilebilir
+ * ad seçenek düğmesinde; burada `aria-hidden`.
  */
 function Banknot({ deger, width, height }: { deger: BanknotDegeri; width: number; height: number }) {
-  const oran = banknotOrani(deger);
-  const kartGenislik = Math.min(width * 0.96, height * 0.9 * oran);
-  const kartYukseklik = kartGenislik / oran;
+  // KG-123: ölçek en büyük kupüre (200 TL) göre; aynı kutudaki kupürler gerçek birbirine göre boyutlarında.
+  const enBuyuk = BANKNOT_OLCULERI_MM[EN_BUYUK_BANKNOT];
+  const mmPx = Math.min((width * 0.96) / enBuyuk.en, (height * 0.9) / enBuyuk.boy);
+  const kartGenislik = BANKNOT_OLCULERI_MM[deger].en * mmPx;
+  const kartYukseklik = BANKNOT_OLCULERI_MM[deger].boy * mmPx;
   const x = (width - kartGenislik) / 2;
   const y = (height - kartYukseklik) / 2;
 
