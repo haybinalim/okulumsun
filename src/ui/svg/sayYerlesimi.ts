@@ -201,10 +201,12 @@ export interface EkranOlculeri {
 }
 
 export interface EkranDuzeni {
-  readonly tur: 'yan' | 'dikey';
+  readonly tur: 'yan' | 'dikey' | 'cubuk';
   readonly sahne: Kutu;
   readonly kartlar: Kutu;
   readonly yerlesim: SahneYerlesimi;
+  /** Kart kenarı (px): `o.kart` ya da sıkışık ekranda küçültülmüş (≥ tapMin, KG-130). */
+  readonly kart: number;
 }
 
 /**
@@ -214,25 +216,59 @@ export interface EkranDuzeni {
  *  · 'dikey': sahne üstte tam genişlik, altında kart satır(lar)ı, en altta çubuk (dar ekranlar).
  */
 export function ekranDuzeni(o: EkranOlculeri, spec: SahneSpec): EkranDuzeni {
-  const kartSatiriW = o.kartSayisi * o.kart + Math.max(0, o.kartSayisi - 1) * o.darBosluk;
+  const ilk = duzenAdayi(o, spec, o.kart);
+  if (ilk.yerlesim.hucre >= o.tapMin - 0.5) return ilk;
+  // KG-130: varsayılan kartla nesneler tapMin hücreye sığmıyor (1080×810 elle seçilen tahta: alan 1004 × 409,
+  // kart 240 — sahne yüksekliği 0, nesne yok; kartlar ↻ ve Onayla'nın üstüne biniyordu). Kart, `yan`/`dikey`
+  // düzenin sığdığı boya (≥ tapMin) iner; üçüncü aday `cubuk`: kartlar alt çubuğun iki yanında, sahne çubuğun
+  // üstünde tam genişlik. Nesne hücresi en büyük olan seçilir (eşitlikte önceki).
+  const ust = o.h - o.cubukH - o.bosluk;
+  const yanda = Math.ceil(o.kartSayisi / 2);
+  const yanGenislik = (o.w - o.cubukW) / 2 - o.bosluk;
+  const kucuk = (k: number) => Math.max(o.tapMin, Math.floor(Math.min(o.kart, k)));
+  let en = ilk;
+  for (const aday of [
+    duzenAdayi(o, spec, kucuk(ust)),
+    duzenAdayi(o, spec, o.tapMin),
+    cubukAdayi(o, spec, kucuk(Math.min(o.cubukH, (yanGenislik - (yanda - 1) * o.darBosluk) / yanda)), ust),
+  ])
+    if (aday.yerlesim.hucre > en.yerlesim.hucre + 1e-9) en = aday;
+  return en;
+}
+
+function cubukAdayi(o: EkranOlculeri, spec: SahneSpec, kart: number, ust: number): EkranDuzeni {
+  const sahne = { x: 0, y: 0, w: o.w, h: Math.max(0, ust) };
+  return {
+    tur: 'cubuk',
+    sahne,
+    kartlar: { x: 0, y: o.h - o.cubukH, w: o.w, h: o.cubukH },
+    yerlesim: sahneYerlesimi(spec, sahne.w, sahne.h, o.tapMin),
+    kart,
+  };
+}
+
+function duzenAdayi(o: EkranOlculeri, spec: SahneSpec, kart: number): EkranDuzeni {
+  const kartSatiriW = o.kartSayisi * kart + Math.max(0, o.kartSayisi - 1) * o.darBosluk;
   const ustYukseklik = Math.max(0, o.h - o.cubukH - o.bosluk);
 
   const yanSahneW = Math.max(0, Math.min((o.w - o.cubukW) / 2 - o.bosluk, o.w - kartSatiriW - o.bosluk));
-  const yan: Omit<EkranDuzeni, 'yerlesim'> = {
-    tur: 'yan',
+  const yan = {
+    tur: 'yan' as const,
     sahne: { x: 0, y: 0, w: yanSahneW, h: o.h },
     kartlar: { x: yanSahneW + o.bosluk, y: 0, w: Math.max(0, o.w - yanSahneW - o.bosluk), h: ustYukseklik },
+    kart,
   };
-  const yanUygun = yanSahneW > 0 && ustYukseklik >= o.kart && o.w - yanSahneW - o.bosluk >= kartSatiriW;
+  const yanUygun = yanSahneW > 0 && ustYukseklik >= kart && o.w - yanSahneW - o.bosluk >= kartSatiriW;
 
-  const satirBasina = Math.max(1, Math.floor((o.w + o.darBosluk) / (o.kart + o.darBosluk)));
+  const satirBasina = Math.max(1, Math.floor((o.w + o.darBosluk) / (kart + o.darBosluk)));
   const kartSatirlari = Math.ceil(o.kartSayisi / satirBasina);
-  const kartlarH = kartSatirlari * o.kart + (kartSatirlari - 1) * o.darBosluk;
+  const kartlarH = kartSatirlari * kart + (kartSatirlari - 1) * o.darBosluk;
   const dikeySahneH = Math.max(0, o.h - kartlarH - o.cubukH - 2 * o.bosluk);
-  const dikey: Omit<EkranDuzeni, 'yerlesim'> = {
-    tur: 'dikey',
+  const dikey = {
+    tur: 'dikey' as const,
     sahne: { x: 0, y: 0, w: o.w, h: dikeySahneH },
     kartlar: { x: 0, y: dikeySahneH + o.bosluk, w: o.w, h: kartlarH },
+    kart,
   };
 
   const dikeyY = sahneYerlesimi(spec, dikey.sahne.w, dikey.sahne.h, o.tapMin);

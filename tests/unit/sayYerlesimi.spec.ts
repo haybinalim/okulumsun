@@ -130,4 +130,58 @@ describe('sayYerlesimi', () => {
     );
     expect(d.tur).toBe('dikey');
   });
+
+  describe('KG-130: 1080×810 elle seçilen tahta (alan 1004 × 409, kart 240)', () => {
+    const p = { w: 1004, h: 409, kart: 240, kartSayisi: 3, bosluk: 51, darBosluk: 38, cubukW: 416, cubukH: 224, tapMin: 102 };
+    const cubuk = { x: (p.w - p.cubukW) / 2, y: p.h - p.cubukH, w: p.cubukW, h: p.cubukH };
+    const kesisir = (a: { x: number; y: number; w: number; h: number }, b: typeof a) =>
+      a.x + a.w > b.x + 0.5 && b.x + b.w > a.x + 0.5 && a.y + a.h > b.y + 0.5 && b.y + b.h > a.y + 0.5;
+    /** Kartların gerçek kutuları (ekranın çizdiği gibi). */
+    function kartKutulari(d: ReturnType<typeof ekranDuzeni>) {
+      const k = d.kart;
+      const g = p.darBosluk;
+      const sira = (n: number, x0: number, y: number) => Array.from({ length: n }, (_, i) => ({ x: x0 + i * (k + g), y, w: k, h: k }));
+      const y = d.kartlar.y + (d.kartlar.h - k) / 2;
+      if (d.tur === 'cubuk') {
+        const sol = Math.ceil(p.kartSayisi / 2);
+        const sag = p.kartSayisi - sol;
+        return [...sira(sol, cubuk.x - p.bosluk - (sol * k + (sol - 1) * g), y), ...sira(sag, cubuk.x + cubuk.w + p.bosluk, y)];
+      }
+      const satirW = p.kartSayisi * k + (p.kartSayisi - 1) * g;
+      return sira(p.kartSayisi, d.kartlar.x + (d.kartlar.w - satirW) / 2, y);
+    }
+
+    it('1–8 nesne (zorluk 1–2 tamamı, 3’ün bir kısmı): nesneler ≥ tapMin hücrede, kart ≥ tapMin, hiçbir şey çubukla/birbiriyle çakışmaz', () => {
+      for (const spec of specler().filter((s) => s.adet <= 8)) {
+        const d = ekranDuzeni(p, spec);
+        const etiket = `${spec.adet} ${spec.layout} (${d.tur}, kart ${d.kart})`;
+        expect(d.yerlesim.noktalar, etiket).toHaveLength(spec.adet);
+        expect(d.yerlesim.hucre, etiket).toBeGreaterThanOrEqual(p.tapMin - 0.5);
+        expect(d.kart, etiket).toBeGreaterThanOrEqual(p.tapMin);
+        expect(d.kart, etiket).toBeLessThan(p.kart);
+        const sahne = d.sahne;
+        expect(kesisir(sahne, cubuk), `${etiket}: sahne × çubuk`).toBe(false);
+        const kartlar = kartKutulari(d);
+        for (const k of kartlar) {
+          expect(kesisir(k, cubuk), `${etiket}: kart × çubuk`).toBe(false);
+          expect(kesisir(k, sahne), `${etiket}: kart × sahne`).toBe(false);
+          expect(k.x >= -0.5 && k.y >= -0.5 && k.x + k.w <= p.w + 0.5 && k.y + k.h <= p.h + 0.5, `${etiket}: kart alanda`).toBe(true);
+        }
+      }
+    });
+
+    it('9–20 nesne: alan tapMin hücreye yetmez (kullanıcı kararı) — yine de sahne boş değil, kartlar çubukla çakışmaz', () => {
+      for (const spec of specler().filter((s) => s.adet > 8)) {
+        const d = ekranDuzeni(p, spec);
+        expect(d.sahne.h).toBeGreaterThan(0);
+        expect(d.yerlesim.noktalar).toHaveLength(spec.adet);
+        for (const k of kartKutulari(d)) expect(kesisir(k, cubuk)).toBe(false);
+      }
+    });
+
+    it('1920 tahta ve tablet profillerinde kart ve düzen değişmez', () => {
+      for (const q of PROFILLER) for (const spec of specler()) expect(ekranDuzeni(q, spec).kart).toBe(q.kart);
+    });
+  });
 });
+
