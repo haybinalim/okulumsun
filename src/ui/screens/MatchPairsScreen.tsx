@@ -6,9 +6,14 @@
  * Eşleşirse çift kaldırılır (yeşil). Tüm çiftler bulununca tamamlandı.
  *
  * validation.ciftler: [solOptionId, sagOptionId] çiftleri.
+ *
+ * KG-128: varsayılan iki sütun (her kart ≥ `--size-choice`) alt alana sığmıyorsa — tahtada da tablette de
+ * 3 + 3 / 3 + 5 kart sığmıyor, kartlar üst %35'e, hoparlörün üstüne ve ekran dışına taşıyordu — düzen ölçülür:
+ * sütun ya da SATIR (üstte sol grup, altta sağ grup), kart en büyük sığan boy (`eslestirmeDuzeni`).
  */
 
-import { useState } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
+import { useEslestirmeDuzeni } from '../secenekKartBoyu';
 import { GameShell } from '../layout/GameShell';
 import { ChoiceCard, type ChoiceState } from '../primitives/ChoiceCard';
 import { SpeakButton } from '../primitives/SpeakButton';
@@ -106,6 +111,32 @@ export function MatchPairsScreen({
   };
 
   const scene = exercise.prompt.gorsel;
+  const kartAlani = useRef<HTMLDivElement>(null);
+  const duzen = useEslestirmeDuzeni(kartAlani, solKartlar.length, sagKartlar.length);
+
+  /** Bir taraf: varsayılan/sütun düzeninde dikey, satır düzeninde yatay. */
+  const grup = (kartlar: EslesmeKarti[], sec: (id: string) => void, taraf: 'sol' | 'sag'): ReactNode => (
+    <div
+      data-taraf={taraf}
+      style={{
+        display: 'flex',
+        flexDirection: duzen?.yon === 'satir' ? 'row' : 'column',
+        gap: 'var(--size-gap)',
+        justifyContent: 'center',
+      }}
+    >
+      {kartlar.map((o) => (
+        <ChoiceCard
+          key={o.id}
+          option={o}
+          size={duzen?.kart ?? 100}
+          sabitBoyut={duzen !== null}
+          state={kartStateOf(o.id)}
+          onSelect={() => sec(o.id)}
+        />
+      ))}
+    </div>
+  );
 
   return (
     <GameShell
@@ -119,31 +150,18 @@ export function MatchPairsScreen({
       }
       interaction={
         <>
-          <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center', alignItems: 'flex-start' }}>
-            {/* Sol sütun */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--size-gap)' }}>
-              {solKartlar.map((o) => (
-                <ChoiceCard
-                  key={o.id}
-                  option={o}
-                  size={100}
-                  state={kartStateOf(o.id)}
-                  onSelect={() => handleSol(o.id)}
-                />
-              ))}
-            </div>
-            {/* Sağ sütun */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--size-gap)' }}>
-              {sagKartlar.map((o) => (
-                <ChoiceCard
-                  key={o.id}
-                  option={o}
-                  size={100}
-                  state={kartStateOf(o.id)}
-                  onSelect={() => handleSag(o.id)}
-                />
-              ))}
-            </div>
+          <div
+            ref={kartAlani}
+            data-eslestirme={duzen?.yon ?? 'varsayilan'}
+            data-kart={duzen?.kart}
+            style={
+              duzen
+                ? { display: 'flex', flexDirection: duzen.yon === 'satir' ? 'column' : 'row', gap: 'var(--size-gap)', alignItems: 'center' }
+                : { display: 'flex', gap: '2rem', justifyContent: 'center', alignItems: 'flex-start' }
+            }
+          >
+            {grup(solKartlar, handleSol, 'sol')}
+            {grup(sagKartlar, handleSag, 'sag')}
           </div>
           <div className="alt-cubuk" style={{ display: 'flex', gap: 'var(--size-gap)', alignItems: 'center' }}>
             <SpeakButton />

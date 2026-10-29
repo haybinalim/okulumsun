@@ -8,7 +8,8 @@
  * Dokunulan kart numaralanır, yanlış sıra tekrar deneme üretir.
  */
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { useSikisikKartBoyu } from '../secenekKartBoyu';
 import { GameShell } from '../layout/GameShell';
 import { ChoiceCard, type ChoiceState } from '../primitives/ChoiceCard';
 import { SpeakButton } from '../primitives/SpeakButton';
@@ -79,6 +80,10 @@ export function SequenceOrderScreen({
   };
 
   const scene = exercise.prompt.gorsel;
+  // KG-128: 4–5 kart varsayılan boyda (tahta 320 px) sığmıyorsa (1080×810 tahta: iki satıra kırılıp üst %35'e ve
+  // hoparlörün üstüne taşıyor, Onayla ekran dışında) tek satıra ve alt alana sığacak kadar küçülür (KG-127 kuralı).
+  const kartlar = useRef<HTMLDivElement>(null);
+  const sikisik = useSikisikKartBoyu(kartlar, exercise.options.length);
 
   return (
     <GameShell
@@ -92,12 +97,18 @@ export function SequenceOrderScreen({
       }
       interaction={
         <>
-          <div style={{ display: 'flex', gap: 'var(--size-gap)', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <div
+            ref={kartlar}
+            data-secenekler=""
+            data-sikisik={sikisik ?? undefined}
+            style={{ display: 'flex', gap: 'var(--size-gap)', flexWrap: sikisik !== null ? 'nowrap' : 'wrap', justifyContent: 'center' }}
+          >
             {exercise.options.map((o) => (
               <div key={o.id} style={{ position: 'relative' }}>
                 <ChoiceCard
                   option={o}
-                  size={120}
+                  size={sikisik ?? 120}
+                  sabitBoyut={sikisik !== null}
                   state={kartStateOf(o.id)}
                   onSelect={() => handleKart(o.id)}
                 />

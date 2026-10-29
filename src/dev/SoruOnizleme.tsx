@@ -22,6 +22,8 @@ export function SoruOnizleme() {
   const sablon = (p.get('sablon') ?? 'M-PARA-TANI') as TemplateId;
   const tohum = Number(p.get('tohum') ?? '1');
   const zorluk = Number(p.get('zorluk') ?? '3');
+  // KG-128: `mod=tahta|kisisel` verilirse profilden bağımsız (geometri taraması iki modu da açar).
+  const modParam = p.get('mod');
   const [acik, setAcik] = useState(false);
   const sesDurumu = useSpeechState();
   const exercise = useMemo(() => {
@@ -29,8 +31,8 @@ export function SoruOnizleme() {
     if (!g) return null;
     const [lo, hi] = g.zorlukAraligi;
     const d = Math.min(hi, Math.max(lo, zorluk));
-    return g.uret({ seed: tohum, difficulty: d, mod: profile === 'board' ? 'tahta' : 'kisisel' } as never, createRng(tohum));
-  }, [sablon, tohum, zorluk, profile]);
+    return g.uret({ seed: tohum, difficulty: d, mod: modParam === 'tahta' || modParam === 'kisisel' ? modParam : profile === 'board' ? 'tahta' : 'kisisel' } as never, createRng(tohum));
+  }, [sablon, tohum, zorluk, profile, modParam]);
   if (!exercise) return <p>Şablon yok: {sablon}</p>;
   const a = ACCENTS[0];
   if (!acik) {
