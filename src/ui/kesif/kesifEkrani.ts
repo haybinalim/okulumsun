@@ -86,3 +86,18 @@ export function nesneTekOnlukMu(o: KesifOlcu): boolean {
 export function onlukSirasi(indeks: number): 0 | 1 {
   return indeks >= 10 ? 1 : 0;
 }
+
+/**
+ * Sayı doğrusu düzeni (KG-124). 11 nokta (`tapMin` kare) tek sırada `11 × tapMin + 10 × ızgara boşluğu` ister;
+ * 1080×810 elle seçilen tahtada (araç alanı 825 px, 11 × 102 = 1122 px) sığmaz ve yatayda kırpılırdı.
+ * Sığmıyorsa **zikzak**: 0–10 çizgisi ölçülen genişliğe göre ölçeklenir (nokta aralığı `adim`), çift sayılar
+ * çizginin üstünde, tekler altında; her düğme yine `tapMin` kare ve aynı sıradaki komşusundan en az bir ızgara
+ * boşluğu uzakta (2 × adim − tapMin ≥ boşluk). Genişlik bunu da karşılamıyorsa `adim` bu alt sınırda kalır.
+ */
+export type SayiDogrusuDuzeni = { readonly tur: 'sira' } | { readonly tur: 'zikzak'; readonly adim: number };
+
+export function sayiDogrusuDuzeni(o: KesifOlcu): SayiDogrusuDuzeni {
+  const bosluk = izgaraBoslukPx(o.olcek);
+  if (o.genislik + 0.5 >= 11 * o.tapMin + 10 * bosluk) return { tur: 'sira' };
+  return { tur: 'zikzak', adim: Math.max((o.genislik - o.tapMin) / 10, (o.tapMin + bosluk) / 2) };
+}

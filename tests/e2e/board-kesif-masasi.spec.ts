@@ -56,6 +56,8 @@ test('tahta: Keşif Masası beş araç, geometri ve sınırlar', async ({ page, 
 
   // Sayı doğrusu: noktaya zıpla, pencere 10'u geçince kayar.
   await page.getByRole('button', { name: 'Sayı doğrusu' }).click();
+  // KG-124: 1920×1080 tahtada 11 nokta tek sırada (zikzak yalnız 1080×810'da).
+  await expect(page.locator('[data-arac="sayiDogrusu"]')).toHaveAttribute('data-duzen', 'sira');
   await geometriTemiz(page, 'Keşif Masası — sayı doğrusu');
   await page.getByRole('button', { name: 'Sayı 10', exact: true }).click();
   await expect.poll(() => sayi(page)).toBe('10');
@@ -165,4 +167,68 @@ test('küçük tahta 1080×810 (KG-120): tek onluk + "İkinci onluk", nesneler k
   expect(await ekranDisi(page), 'nesneler: ekran dışı düğme').toEqual([]);
   await page.getByRole('button', { name: 'Nesne 4', exact: true }).click();
   await expect.poll(() => sayi(page)).toBe('10');
+});
+
+/** Sayı noktalarının kutuları (görünür, aria-label "Sayı n"). */
+async function sayiNoktalari(page: Page) {
+  return page.evaluate(() =>
+    [...document.querySelectorAll('button')]
+      .filter((b) => /^Sayı \d+$/.test(b.getAttribute('aria-label') ?? ''))
+      .map((b) => {
+        const r = b.getBoundingClientRect();
+        return { ad: b.getAttribute('aria-label')!, x: r.left, y: r.top, w: r.width, h: r.height };
+      }),
+  );
+}
+
+test('küçük tahta 1080×810 (KG-124): sayı doğrusu zikzak, 11 nokta ekranda, ≥102 px, çakışmasız', async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width: 1080, height: 810 });
+  await sesKilidiniAc(page, '/?device=board');
+  await page.getByRole('button', { name: 'Tahtada birlikte çalışalım.' }).click();
+  await page.getByRole('button', { name: 'Keşif Masası' }).click();
+  await page.getByRole('button', { name: 'Sayı doğrusu' }).click();
+  const dogru = page.locator('[data-arac="sayiDogrusu"]');
+  // Eski yerleşimde: 11 × 102 px tek sıra (1314 px) 825 px'lik alana sığmıyor, 0 ve 10 ekran dışında.
+  await expect(dogru).toHaveAttribute('data-duzen', 'zikzak');
+  await geometriTemiz(page, 'Keşif Masası 1080×810 — sayı doğrusu');
+  expect(await ekranDisi(page), 'sayı doğrusu: ekran dışı düğme').toEqual([]);
+
+  const noktalar = await sayiNoktalari(page);
+  expect(noktalar.map((n) => n.ad)).toEqual(Array.from({ length: 11 }, (_, k) => `Sayı ${k}`));
+  for (const n of noktalar) {
+    expect(n.w, n.ad).toBeGreaterThanOrEqual(101);
+    expect(n.h, n.ad).toBeGreaterThanOrEqual(101);
+  }
+  // Çakışma yok; sayılar soldan sağa artar; çiftler üst, tekler alt sırada.
+  for (let i = 0; i < noktalar.length; i++) {
+    for (let j = i + 1; j < noktalar.length; j++) {
+      const a = noktalar[i]!;
+      const b = noktalar[j]!;
+      const kesisir = a.x < b.x + b.w - 0.5 && b.x < a.x + a.w - 0.5 && a.y < b.y + b.h - 0.5 && b.y < a.y + a.h - 0.5;
+      expect(kesisir, `${a.ad} ile ${b.ad} çakışıyor`).toBe(false);
+    }
+    if (i > 0) expect(noktalar[i]!.x).toBeGreaterThan(noktalar[i - 1]!.x);
+  }
+  expect(new Set(noktalar.filter((_, k) => k % 2 === 0).map((n) => Math.round(n.y))).size).toBe(1);
+  expect(new Set(noktalar.filter((_, k) => k % 2 === 1).map((n) => Math.round(n.y))).size).toBe(1);
+  expect(noktalar[1]!.y).toBeGreaterThan(noktalar[0]!.y + noktalar[0]!.h);
+  // Rakam okunur kalır (TemelYazi, seçenek etiketi boyu; tek sırayla aynı).
+  const yazi = await page.getByRole('button', { name: 'Sayı 7', exact: true }).evaluate((b) => getComputedStyle(b));
+  expect(parseFloat(yazi.fontSize)).toBeGreaterThanOrEqual(40);
+  expect(yazi.fontFamily).toContain('TemelYazi');
+  // Büyük rakam üst bölgede kesilmez.
+  expect(await page.locator('output').evaluate((o) => o.getBoundingClientRect().top)).toBeGreaterThanOrEqual(0);
+
+  // Dokunuş ve pencere kayması tek sıradaki gibi.
+  await page.getByRole('button', { name: 'Sayı 7', exact: true }).click();
+  await expect.poll(() => sayi(page)).toBe('7');
+  await page.getByRole('button', { name: 'Sayı 10', exact: true }).click();
+  await expect.poll(() => sayi(page)).toBe('10');
+  await page.getByRole('button', { name: 'Bir ekle' }).click();
+  await expect.poll(() => sayi(page)).toBe('11');
+  await expect(dogru).toHaveAttribute('data-pencere', '10-20');
+  await expect(page.getByRole('button', { name: 'Sayı 20', exact: true })).toBeInViewport({ ratio: 1 });
+  await geometriTemiz(page, 'Keşif Masası 1080×810 — sayı doğrusu 10–20');
+  expect(await ekranDisi(page), 'sayı doğrusu 10–20: ekran dışı düğme').toEqual([]);
 });

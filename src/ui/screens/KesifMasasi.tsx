@@ -20,6 +20,7 @@ import {
   gosterilenSayi,
   nesneTekOnlukMu,
   onlukTekMi,
+  sayiDogrusuDuzeni,
   type KesifOlcu,
 } from '../kesif/kesifEkrani';
 import { OnlukCerceveAraci } from '../kesif/OnlukCerceveAraci';
@@ -82,7 +83,12 @@ export default function KesifMasasi() {
   }, []);
   const onlukTek = olcu !== null && onlukTekMi(olcu);
   const nesneTek = olcu !== null && nesneTekOnlukMu(olcu);
-  const sikisik = (durum.arac === 'onlukCerceve' && onlukTek) || (durum.arac === 'nesneKumesi' && nesneTek);
+  // KG-124: sayı doğrusu 11 nokta tek sıraya sığmıyorsa zikzak (iki sıra) — üst bölge rakamı ölçüye göre küçülür.
+  const dogruDuzeni = olcu === null ? ({ tur: 'sira' } as const) : sayiDogrusuDuzeni(olcu);
+  const sikisik =
+    (durum.arac === 'onlukCerceve' && onlukTek) ||
+    (durum.arac === 'nesneKumesi' && nesneTek) ||
+    (durum.arac === 'sayiDogrusu' && dogruDuzeni.tur === 'zikzak');
 
   const sayi = gosterilenSayi(durum);
   const metin = gosterilenMetin(durum);
@@ -144,7 +150,7 @@ export default function KesifMasasi() {
       <section ref={aracAlani} style={{ flex: '0 0 auto', display: 'flex', justifyContent: 'center', width: '100%' }}>
         {durum.arac === 'onlukCerceve' && <OnlukCerceveAraci dolu={durum.dolu} gonder={gonder} tek={onlukTek} />}
         {durum.arac === 'nesneKumesi' && <NesneKumesiAraci sayi={durum.sayi} gonder={gonder} tekOnluk={nesneTek} />}
-        {durum.arac === 'sayiDogrusu' && <SayiDogrusuAraci konum={durum.konum} gonder={gonder} />}
+        {durum.arac === 'sayiDogrusu' && <SayiDogrusuAraci konum={durum.konum} gonder={gonder} duzen={dogruDuzeni} />}
         {durum.arac === 'terazi' && <TeraziAraci sol={durum.sol} sag={durum.sag} gonder={gonder} />}
         {durum.arac === 'ayirBirlestir' && (
           <AyirBirlestirAraci toplam={durum.toplam} ayirma={durum.ayirma} gonder={gonder} />
