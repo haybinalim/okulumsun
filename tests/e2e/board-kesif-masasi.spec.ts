@@ -113,9 +113,13 @@ test('küçük tahta 1080×810 (KG-120): tek onluk + "İkinci onluk", nesneler k
   await page.setViewportSize({ width: 1080, height: 810 });
   await sesKilidiniAc(page, '/?device=board');
   await page.getByRole('button', { name: 'Tahtada birlikte çalışalım.' }).click();
+  // KG-126: açılıştan yerleşim oturana dek HER karede ölç — ara karede de göz üst %35'te, rakam ekran üstünde olmamalı
+  // (azaltılmış harekette 0,01 ms'lik her-özellik geçişi bir kare eski gap'i çiziyordu; CI'da ara sıra yakalanıyordu).
+  await kareKaydiniBaslat(page);
   await page.getByRole('button', { name: 'Keşif Masası' }).click();
   const masa = page.getByRole('main', { name: 'Keşif Masası' });
   await expect(masa).toHaveAttribute('data-kesif-arac', 'onlukCerceve');
+  expect(await kareKaydiniBitir(page), 'ara karelerde erişim/rakam ihlali').toEqual([]);
 
   // Onluk çerçeve: bir onluk (10 göz) + geçiş düğmesi; ilk satır üst %35'in altında, hepsi ≥102 px.
   const arac = page.locator('[data-arac="onlukCerceve"]');
@@ -166,3 +170,40 @@ test('küçük tahta 1080×810 (KG-120): tek onluk + "İkinci onluk", nesneler k
   await page.getByRole('button', { name: 'Nesne 4', exact: true }).click();
   await expect.poll(() => sayi(page)).toBe('10');
 });
+
+/**
+ * KG-126: her animasyon karesinde göz düğmelerinin merkezini ve büyük rakamın üst kenarını kaydeder. Ölçüm
+ * yalnız ilk yerleşimde değil, React'in ölçüme bağlı ikinci çiziminde ve geçişlerde de kuralı sınar.
+ */
+async function kareKaydiniBaslat(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const w = window as unknown as { __kareIhlal: string[]; __kareDur: boolean };
+    w.__kareIhlal = [];
+    w.__kareDur = false;
+    const adim = () => {
+      const main = document.querySelector('main[aria-label="Keşif Masası"]');
+      if (main) {
+        const sinir = innerHeight * 0.35;
+        for (const b of main.querySelectorAll('button[aria-label^="Göz "]')) {
+          const r = b.getBoundingClientRect();
+          if (r.height > 0 && r.top + r.height / 2 < sinir - 1)
+            w.__kareIhlal.push(`${b.getAttribute('aria-label')}: merkez ${Math.round(r.top + r.height / 2)}`);
+        }
+        const o = main.querySelector('output');
+        if (o && o.getBoundingClientRect().top < -1)
+          w.__kareIhlal.push(`rakam üstte kesik: ${Math.round(o.getBoundingClientRect().top)}`);
+      }
+      if (!w.__kareDur) requestAnimationFrame(adim);
+    };
+    requestAnimationFrame(adim);
+  });
+}
+
+async function kareKaydiniBitir(page: Page): Promise<string[]> {
+  await page.waitForTimeout(500); // ResizeObserver ve ölçüme bağlı ikinci çizim dahil
+  return page.evaluate(() => {
+    const w = window as unknown as { __kareIhlal: string[]; __kareDur: boolean };
+    w.__kareDur = true;
+    return [...new Set(w.__kareIhlal)];
+  });
+}
