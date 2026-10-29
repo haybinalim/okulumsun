@@ -47,8 +47,9 @@ export function sikisikKartBoyu(o: {
  */
 export interface EslestirmeDuzeni {
   yon: 'sutun' | 'satir';
-  /** Kartın kenarı, px. */
+  /** Kartın yüksekliği ve genişliği, px (`enBoy` 1 ise kare). */
   kart: number;
+  genislik: number;
 }
 
 export function eslestirmeDuzeni(o: {
@@ -61,16 +62,31 @@ export function eslestirmeDuzeni(o: {
   altCubuk: number;
   aralik: number;
   tapMin: number;
+  /**
+   * İstenen kart en/boy oranı (varsayılan 1, kare). İşlem kartı ("5 + 2 = 7") yatay bir şerittir: kare kartta
+   * rakamları okunmayacak kadar küçülür; 2,8 verilince kart yüksekliği aynı kalır, genişlik sığdığı kadar büyür.
+   */
+  enBoy?: number;
 }): EslestirmeDuzeni | null {
   const { alanGenislik: W, alanYukseklik, sol, sag, secim, altCubuk, aralik: a, tapMin } = o;
+  const enBoy = Math.max(1, o.enBoy ?? 1);
   const n = Math.max(sol, sag);
   if (!(W > 0) || !(alanYukseklik > 0) || n < 1 || !(secim > 0)) return null;
   const H = alanYukseklik - altCubuk;
-  if (n * secim + (n - 1) * a <= H && 2 * secim + a <= W) return null;
-  const sutun = Math.min((H - (n - 1) * a) / n, (W - a) / 2);
-  const satir = Math.min((H - a) / 2, (W - (n - 1) * a) / n);
-  const yon = satir > sutun ? 'satir' : 'sutun';
-  return { yon, kart: Math.max(tapMin, Math.floor(Math.min(secim, Math.max(sutun, satir)))) };
+  if (enBoy === 1 && n * secim + (n - 1) * a <= H && 2 * secim + a <= W) return null;
+  // Her yön için kart yüksekliği (h) ve o yükseklikte en/boy oranına göre genişlik (w); yükseklik genişliğe de sığmalı.
+  const yerlesim = (yon: 'sutun' | 'satir') => {
+    const hBos = yon === 'satir' ? (H - a) / 2 : (H - (n - 1) * a) / n;
+    const wBos = yon === 'satir' ? (W - (n - 1) * a) / n : (W - a) / 2;
+    const h = Math.min(secim, hBos, wBos);
+    const w = Math.min(h * enBoy, wBos);
+    return { yon, h, w };
+  };
+  const sutun = yerlesim('sutun');
+  const satir = yerlesim('satir');
+  const iyi = satir.h > sutun.h ? satir : sutun;
+  const kart = Math.max(tapMin, Math.floor(iyi.h));
+  return { yon: iyi.yon, kart, genislik: Math.max(kart, Math.floor(iyi.w)) };
 }
 
 function px(cs: CSSStyleDeclaration, ad: string): number {
@@ -138,7 +154,12 @@ export function useSikisikKartBoyu(isaret: RefObject<HTMLElement | null>, adet: 
 }
 
 /** MATCH_PAIRS (alt çubukta yalnız ↻): `null` = varsayılan iki sütun. */
-export function useEslestirmeDuzeni(isaret: RefObject<HTMLElement | null>, sol: number, sag: number): EslestirmeDuzeni | null {
+export function useEslestirmeDuzeni(
+  isaret: RefObject<HTMLElement | null>,
+  sol: number,
+  sag: number,
+  enBoy = 1,
+): EslestirmeDuzeni | null {
   const a = useEtkilesimAlani(isaret);
   if (!a) return null;
   return eslestirmeDuzeni({
@@ -150,5 +171,6 @@ export function useEslestirmeDuzeni(isaret: RefObject<HTMLElement | null>, sol: 
     altCubuk: a.kontrol,
     aralik: a.aralik,
     tapMin: a.tapMin,
+    enBoy,
   });
 }

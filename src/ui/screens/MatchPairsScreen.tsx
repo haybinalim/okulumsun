@@ -24,6 +24,12 @@ import type { MatchPairsExercise, EslesmeKarti } from '../../exercises/types';
 import type { Vurgu } from '../../design/tokens';
 import { BILGISIZ_YANLIS, type YanlisBilgisi } from '../../progress/basitMaddeSonucu';
 
+/**
+ * İşlem kartının en/boy oranı (KG-128): `IslemKarti` rakam kutusu genişliğin %19'u; 1080×810 tahtada kart yüksekliği
+ * 108 px iken 2,8 oranı rakamı ≈ 40 px'e çıkarır (tahtada en küçük yazı 24 × 1,6 = 38 px).
+ */
+const ISLEM_KARTI_EN_BOY = 2.8;
+
 export function MatchPairsScreen({
   exercise,
   accent,
@@ -112,7 +118,9 @@ export function MatchPairsScreen({
 
   const scene = exercise.prompt.gorsel;
   const kartAlani = useRef<HTMLDivElement>(null);
-  const duzen = useEslestirmeDuzeni(kartAlani, solKartlar.length, sagKartlar.length);
+  // İşlem kartı ("5 + 2 = 7", M-TERS-İŞLEM) yatay şerittir; kare kartta rakamlar okunmaz.
+  const islemKartlari = exercise.options.every((o) => o.deger.tur === 'gorsel' && o.deger.gorsel.type === 'islemKarti');
+  const duzen = useEslestirmeDuzeni(kartAlani, solKartlar.length, sagKartlar.length, islemKartlari ? ISLEM_KARTI_EN_BOY : 1);
 
   /** Bir taraf: varsayılan/sütun düzeninde dikey, satır düzeninde yatay. */
   const grup = (kartlar: EslesmeKarti[], sec: (id: string) => void, taraf: 'sol' | 'sag'): ReactNode => (
@@ -131,6 +139,7 @@ export function MatchPairsScreen({
           option={o}
           size={duzen?.kart ?? 100}
           sabitBoyut={duzen !== null}
+          genislik={duzen?.genislik}
           state={kartStateOf(o.id)}
           onSelect={() => sec(o.id)}
         />
