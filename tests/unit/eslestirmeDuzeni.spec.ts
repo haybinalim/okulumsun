@@ -63,3 +63,19 @@ describe('SEQUENCE_ORDER kart boyu (sikisikKartBoyu, KG-128)', () => {
     expect(sikisikKartBoyu({ secim: 200, birincil: 140, aralik: 32, tapMin: 64, alanGenislik: 1032, alanYukseklik: 453, adet: 4 })).toBeNull();
   });
 });
+
+describe('TAP_TO_PLACE parça kartları (sikisikKartBoyu, KG-129)', () => {
+  const s = { secim: 320, birincil: 224, aralik: 51, tapMin: 102 };
+  it('1920×1080 tahta, 3–5 kart: varsayılan sığar (değişmez)', () => {
+    for (const adet of [3, 4, 5]) expect(sikisikKartBoyu({ ...s, alanGenislik: 1844, alanYukseklik: 585, adet })).toBeNull();
+  });
+  it('1080×810 tahta, 3 kart (M-RİTMİK): iki satıra kırılıyordu → tek satır 185 px; 2 kart da 185 px', () => {
+    expect(sikisikKartBoyu({ ...s, alanGenislik: 1004, alanYukseklik: 409, adet: 3 })).toBe(185);
+    expect(sikisikKartBoyu({ ...s, alanGenislik: 1004, alanYukseklik: 409, adet: 2 })).toBe(185);
+  });
+  it('1080×810 tablet, 5 kart (M-VERİ-SIKLIK): tek satır 180 px; 3 kart değişmez', () => {
+    const t = { secim: 200, birincil: 140, aralik: 32, tapMin: 64, alanGenislik: 1032, alanYukseklik: 453 };
+    expect(sikisikKartBoyu({ ...t, adet: 5 })).toBe(180);
+    expect(sikisikKartBoyu({ ...t, adet: 3 })).toBeNull();
+  });
+});
