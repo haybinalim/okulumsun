@@ -20,9 +20,8 @@ const SESLI = [
   'M-KARSILASTIR', // tohum 1: "Hangisi çok?" (görselsiz)
 ] as const;
 /**
- * SEQUENCE_ORDER / MATCH_PAIRS, uyaran alanı boş: hoparlör var. Bu ekranların kartları tahtada ÖNCEDEN de
- * üst %35'e taşıyor (MATCH_PAIRS 1920'de, SEQUENCE_ORDER 1080×810'da; KG-127 notu, ayrı iş) — burada yalnız
- * hoparlörün kendisi denetlenir.
+ * SEQUENCE_ORDER / MATCH_PAIRS, uyaran alanı boş: hoparlör var. KG-128'den beri kartları da alt alana sığar
+ * (ayrıntılı geometri: eslestir-sirala-yerlesim.spec.ts) — burada da tam yerleşim denetlenir.
  */
 const SESLI_DIGER = ['M-PARA-SIRALA', 'M-TERS-ISLEM', 'M-GEO-ESLE'] as const;
 
@@ -83,12 +82,10 @@ for (const sablon of SESLI) {
 }
 
 for (const sablon of SESLI_DIGER) {
-  test(`soru hoparlörü: ${sablon} — görünür, boyutu yeterli`, async ({ page }, info) => {
+  test(`soru hoparlörü: ${sablon} — görünür, yerleşim temiz (KG-128)`, async ({ page }, info) => {
     const cihaz = info.project.name === 'board' ? 'board' : 'tablet';
     await ac(page, sablon, cihaz);
-    const o = await olc(page);
-    expect(o.hop.w).toBeGreaterThanOrEqual(o.tapMin - 1);
-    expect(o.hop.y >= 0 && o.hop.y + o.hop.h <= o.vh).toBe(true);
+    await yerlesimDenetle(page, `${sablon} (${cihaz})`, cihaz);
   });
 }
 
