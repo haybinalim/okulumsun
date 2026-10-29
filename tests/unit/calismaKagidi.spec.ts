@@ -4,7 +4,6 @@ import { resolve } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import tr from '../../src/content/tr.json';
-import { TCMB_YAZILI_IZIN } from '../../src/content/paraGorseli';
 import { skillsData } from '../../src/content/skillsData';
 import { HATA_ETIKETLERI } from '../../src/exercises/distractors';
 import { REGISTRY } from '../../src/exercises/registry';
@@ -340,8 +339,7 @@ describe('yerleşim', () => {
 });
 
 describe('para görselleri ve baskı kuralları', () => {
-  it('TCMB yazılı izni yokken kâğıtta şematik banknot', () => {
-    expect(TCMB_YAZILI_IZIN).toBe(false);
+  it('KG-122: kâğıtta TCMB örnek banknot görseli (ekranla aynı dosya), şematik çizim yok', () => {
     const para = skillsData.find((d) => d.exerciseTemplates.includes('M-PARA-TANI') && gecerli.has(d.id));
     expect(para).toBeDefined();
     const set: GunlukSet = { surum: 1, dugumler: [para!.id], tohum: 11 };
@@ -351,9 +349,9 @@ describe('para görselleri ve baskı kuralları', () => {
     const html = renderToStaticMarkup(
       KagitSayfalari({ plan, duzen: '2x3', cevapAnahtariDahil: true, siyahBeyaz: false, kopya: 'onizleme' }),
     );
-    expect(html).toContain('data-sematik-banknot');
-    expect(html).not.toMatch(/tcmb|<image/i);
-    expect(html).toContain('OYUN PARASI');
+    expect(html).toMatch(/<img[^>]*src="[^"]*images\/banknotlar\/\d+-tl-on-yuz-resmi\.webp"[^>]*data-banknot="\d+"/);
+    expect(html).toMatch(/<img[^>]*width="150"/);
+    expect(html).not.toMatch(/data-sematik-banknot|OYUN PARASI/);
   });
 
   it('kağıt kabuğu: Adım satırı, altbilgi, sayfa numarası', () => {

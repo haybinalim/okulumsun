@@ -1,4 +1,4 @@
-/** KG-117, KG-121: Kaynaklar / veli paneli "Para görselleri" beyanı gerçeği söyler — banknotlar her yerde şematik (KG-19). */
+/** KG-117, KG-122: Kaynaklar / veli paneli "Para görselleri" beyanı gerçeği söyler — her yerde TCMB örnek görselleri, izin iddiası yok. */
 import { readFileSync } from 'node:fs';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -21,27 +21,32 @@ describe('Kaynaklar — Para Görselleri (KG-117)', () => {
   const html = metin(renderToStaticMarkup(createElement(Kaynaklar)));
   const bolum = html.slice(html.indexOf('Para Görselleri'));
 
-  it('metin sabitlenmiş: ekran, kâğıt ve arşiv şematik; izin başvurusu yok (KG-121)', () => {
-    expect(paraGorseliBeyani().paragraflar).toEqual([
-      'Ekranda, basılı çalışma kâğıtlarında ve kâğıt arşivinde banknotlar şematik çizimdir: değer, renk ve desen ' +
-        'taşır, üzerinde "OYUN PARASI" yazar; TCMB görseli, adı veya portresi yoktur.',
+  it('metin sabitlenmiş: ekran, kâğıt ve arşiv TCMB örnek görselleri, kaynak gösterilir (KG-122)', () => {
+    const b = paraGorseliBeyani();
+    expect(b.paragraflar).toHaveLength(3);
+    expect(b.paragraflar[0]).toContain(
+      'Ekranda, basılı çalışma kâğıtlarında ve kâğıt arşivinde 5, 10, 20, 50, 100 ve 200 TL',
+    );
+    expect(b.paragraflar[0]).toContain('E9 5. tertip ön yüz örnek görselleri');
+    expect(b.paragraflar[0]).toContain('"ÖRNEKTİR GEÇMEZ"');
+    expect(b.paragraflar[0]).toContain('Kaynak: TCMB, tcmb.gov.tr.');
+    expect(b.paragraflar[1]).toMatch(/72 dpi/);
+    expect(b.paragraflar[2]).toBe(
       "TCMB'ye izin başvurusu yapılmamıştır; bu kullanım TCMB'nin izni veya onayı anlamına gelmez.",
-    ]);
-    expect(paraGorseliBeyani().kisa).toBe('Banknotlar her yerde şematik "oyun parası" çizimleridir; TCMB görseli kullanılmaz.');
+    );
+    expect(b.kisa).toContain('ÖRNEKTİR GEÇMEZ');
   });
 
-  it('ekranda beyan aynen görünür; eski "yalnız resmî örnek görselleri kullanır" iddiası yok', () => {
+  it('ekranda beyan aynen görünür', () => {
     for (const p of paraGorseliBeyani().paragraflar) expect(bolum).toContain(p);
-    expect(bolum).not.toMatch(/yalnız 5, 10, 20, 50, 100 ve 200 TL kupürleri için bu resmî/);
   });
 
-  it('TCMB izni/onayı iddia edilmez; TCMB görseli kullanıldığı söylenmez', () => {
+  it('TCMB izni/onayı iddia edilmez; şematik/oyun parası iddiası kalktı', () => {
     const b = paraGorseliBeyani();
     const hepsi = [...b.paragraflar, b.kisa].join(' ');
     for (const p of [...b.paragraflar, b.kisa]) expect(p).not.toMatch(IZIN_IDDIASI);
-    expect(hepsi).not.toMatch(/ÖRNEKTİR GEÇMEZ|örnek görsel|E9 5\. tertip/);
-    expect(bolum).not.toMatch(/ÖRNEKTİR GEÇMEZ|örnek görsel/);
-    expect(hepsi).toMatch(/şematik/);
+    expect(hepsi).not.toMatch(/şematik|OYUN PARASI|oyun parası/i);
+    expect(bolum).not.toMatch(/şematik|OYUN PARASI/i);
   });
 
   it('veli paneli kısa beyanı kullanır ve eski Piper TTS iddiası kalkmıştır', () => {

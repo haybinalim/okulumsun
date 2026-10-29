@@ -16,9 +16,10 @@ KAPSAM DIŞI (kendi koşullarına tabidir)
   kazanım kodları/metinleri (docs/meb-ilkokul-matematik-2024.pdf ve çıkarılmış metni):
   Millî Eğitim Bakanlığı'na aittir; yalnız kaynak gösterilerek atıf yapılır.
 - Ses klipleri (public/audio/): ses kaynağının lisansına tabidir (ADR-0004, LICENSES.md).
-- Banknot görselleri: TCMB görseli kullanılmaz; ekranda, kâğıtta ve arşivde şematik "oyun
-  parası" çizimleri vardır (plan v2 KG-19, KG-121; LICENSES.md). Şematik çizimler bu istisnaya
-  girmez, bu lisansa tabidir.
+- Banknot görselleri (public/images/banknotlar/): Türkiye Cumhuriyet Merkez Bankası'nın
+  yayımladığı E9 5. tertip örnek görselleridir ("ÖRNEKTİR GEÇMEZ"); TCMB'ye aittir, TCMB
+  kullanım şartlarına ve banknot çoğaltma duyurusuna tabidir (plan v2 KG-122; LICENSES.md,
+  docs/BANKNOT_GORSEL_KAYNAKLARI.md). Bu lisans onlara hak vermez.
 - Yazı tipleri (public/fonts/, Andika — SIL OFL 1.1) ve emoji/görseller: kendi lisansları.
 
 İzin talepleri için depo sahibiyle GitHub üzerinden iletişime geçin.

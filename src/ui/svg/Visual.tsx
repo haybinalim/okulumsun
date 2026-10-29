@@ -16,8 +16,8 @@ import type { BanknotDegeri, Renk, SekilAdi, VisualSpec } from '../../exercises/
 import { ACCENTS, FONT_YIGINI } from '../../design/tokens';
 import { RAKAM_ARALIGI, RAKAM_GLIF_HARITASI } from './rakamGlifleri';
 import { Sprite } from './Sprite';
-import { SematikBanknot } from './SematikBanknot';
-import { SEMATIK_BANKNOT_STILI } from '../../content/paraGorseli';
+import { RESMI_BANKNOT_GORSELLERI } from './banknotAssets';
+import { banknotOrani } from '../../content/paraGorseli';
 import {
   besliKumeYerlesimi,
   ekranKumeYerlesimi,
@@ -262,31 +262,39 @@ function sekilYolu(sekil: SekilAdi, cx: number, cy: number, r: number): string {
 }
 
 /**
- * Banknot — ekranda da şematik "oyun parası" (`SematikBanknot`; KG-19, KG-121). Kâğıt ve arşivle aynı çizim:
- * değer rakamı + kupüre özgü renk + desen + oran; TCMB görseli, adı veya portresi yok. Kutuya ortalanır,
- * kupür oranı korunur (büyük kupür daha uzun). Erişilebilir ad seçenek düğmesinde; burada `aria-hidden`.
+ * Banknot — TCMB E9 5. tertip ön yüz örnek görseli ("ÖRNEKTİR GEÇMEZ"; KG-122). SVG bağlamı için `<image>`;
+ * seçenek kartı ve kâğıt `TcmbBanknot` (HTML `<img>`) kullanır, dosya aynıdır. Kutuya ortalanır, gerçek kupür
+ * oranı korunur (büyük kupür daha uzun). Erişilebilir ad seçenek düğmesinde; burada `aria-hidden`.
  */
 function Banknot({ deger, width, height }: { deger: BanknotDegeri; width: number; height: number }) {
-  const oran = SEMATIK_BANKNOT_STILI[deger].oran;
-  const kartGenislik = Math.min(width * 0.93, height * 0.7 * oran);
+  const oran = banknotOrani(deger);
+  const kartGenislik = Math.min(width * 0.96, height * 0.9 * oran);
   const kartYukseklik = kartGenislik / oran;
   const x = (width - kartGenislik) / 2;
   const y = (height - kartYukseklik) / 2;
 
   return (
     <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true" data-banknot={deger}>
-      <rect
-        x={x + 3}
-        y={y + 4}
+      <rect x={x + 2} y={y + 3} width={kartGenislik} height={kartYukseklik} rx={4} fill="#0f172a" opacity="0.16" />
+      <image
+        href={RESMI_BANKNOT_GORSELLERI[deger]}
+        x={x}
+        y={y}
         width={kartGenislik}
         height={kartYukseklik}
-        rx={kartYukseklik * 0.06}
-        fill="#0f172a"
-        opacity="0.16"
+        preserveAspectRatio="xMidYMid meet"
       />
-      <g transform={`translate(${x} ${y})`}>
-        <SematikBanknot deger={deger} genislik={kartGenislik} />
-      </g>
+      <rect
+        x={x}
+        y={y}
+        width={kartGenislik}
+        height={kartYukseklik}
+        rx={4}
+        fill="none"
+        stroke="#334155"
+        strokeOpacity={0.55}
+        strokeWidth={1}
+      />
     </svg>
   );
 }

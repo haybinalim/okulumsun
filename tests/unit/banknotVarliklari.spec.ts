@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -7,6 +7,8 @@ import { paraSiralaUret } from '../../src/exercises/templates/paraSirala';
 import { paraTaniUret } from '../../src/exercises/templates/paraTani';
 import { createRng } from '../../src/exercises/rng';
 import { BANKNOTLAR } from '../../src/exercises/types';
+import { RESMI_BANKNOT_GORSELLERI } from '../../src/ui/svg/banknotAssets';
+import { TcmbBanknot } from '../../src/ui/svg/TcmbBanknot';
 import { Visual } from '../../src/ui/svg/Visual';
 
 const KUPURLER = [5, 10, 20, 50, 100, 200] as const;
@@ -21,38 +23,66 @@ function banknotDegerleri(exercise: ReturnType<typeof paraTaniUret> | ReturnType
   });
 }
 
-/** KG-121: ekranda da şematik banknot; TCMB raster dosyaları depodan kalktı (KG-19). */
-describe('banknot görselleri (ekran)', () => {
-  it.each(KUPURLER)('%i TL ekranda şematik "OYUN PARASI" çizer; raster/TCMB yok', (deger) => {
-    const svg = renderToStaticMarkup(createElement(Visual, { spec: { type: 'banknot', deger }, width: 300, height: 200 }));
-    expect(svg).toContain(`data-sematik-banknot="${deger}"`);
-    expect(svg).toContain('OYUN PARASI');
-    expect(svg).toContain(`>${deger} TL<`);
-    expect(svg).not.toMatch(/<image|\.webp|Merkez Bankası|TCMB|ÖRNEKTİR|ORNEKTIR/i);
+/** KG-122: ekran, kâğıt ve arşivde TCMB E9 5. tertip ön yüz örnek görselleri ("ÖRNEKTİR GEÇMEZ"). */
+describe('banknot görselleri (TCMB örnekleri)', () => {
+  it('her dolaşımdaki kupür için yerel TCMB örnek görseli var; eşleme tam', () => {
+    for (const kupur of KUPURLER) {
+      const yol = RESMI_BANKNOT_GORSELLERI[kupur];
+      expect(yol).toMatch(/^(?:\.\/|\/)images\/banknotlar\/\d+-tl-on-yuz-resmi\.webp$/);
+      expect(existsSync(resolve(process.cwd(), 'public', yol.replace(/^\.?\//, '')))).toBe(true);
+    }
+    expect(
+      Object.keys(RESMI_BANKNOT_GORSELLERI)
+        .map(Number)
+        .sort((a, b) => a - b),
+    ).toEqual([...KUPURLER]);
+    expect(readdirSync(resolve(process.cwd(), 'public/images/banknotlar')).sort()).toEqual(
+      KUPURLER.map((k) => `${k}-tl-on-yuz-resmi.webp`).sort(),
+    );
   });
 
-  it('şematik banknot kutuya sığar ve kupür oranını korur', () => {
+  it.each(KUPURLER)('%i TL: TcmbBanknot <img> ve Visual <image> aynı dosyayı gösterir', (deger) => {
+    const img = renderToStaticMarkup(createElement(TcmbBanknot, { deger }));
+    expect(img).toContain(`src="${RESMI_BANKNOT_GORSELLERI[deger]}"`);
+    expect(img).toContain('alt=""');
+    expect(img).toContain(`data-banknot="${deger}"`);
+    const svg = renderToStaticMarkup(
+      createElement(Visual, {
+        spec: { type: 'banknot', deger },
+        width: 300,
+        height: 200,
+      }),
+    );
+    expect(svg).toContain(`href="${RESMI_BANKNOT_GORSELLERI[deger]}"`);
+  });
+
+  it('Visual banknotu kutuya sığar ve gerçek oranı korur', () => {
     for (const [w, h] of [
       [300, 200],
       [120, 120],
       [400, 100],
     ] as const) {
-      const svg = renderToStaticMarkup(createElement(Visual, { spec: { type: 'banknot', deger: 200 }, width: w, height: h }));
-      const ic = /<svg[^>]*data-sematik-banknot="200"[^>]*>/.exec(svg)?.[0] ?? '';
-      const gm = / width="([\d.]+)"/.exec(ic);
-      const ym = / height="([\d.]+)"/.exec(ic);
-      expect(gm && ym).toBeTruthy();
-      expect(Number(gm![1])).toBeLessThanOrEqual(w);
-      expect(Number(ym![1])).toBeLessThanOrEqual(h);
+      const svg = renderToStaticMarkup(
+        createElement(Visual, {
+          spec: { type: 'banknot', deger: 200 },
+          width: w,
+          height: h,
+        }),
+      );
+      const im = /<image[^>]*>/.exec(svg)?.[0] ?? '';
+      const gw = Number(/ width="([\d.]+)"/.exec(im)?.[1]);
+      const gh = Number(/ height="([\d.]+)"/.exec(im)?.[1]);
+      expect(gw).toBeLessThanOrEqual(w);
+      expect(gh).toBeLessThanOrEqual(h);
+      expect(gw / gh).toBeCloseTo(160 / 72, 3);
     }
   });
 
-  it('TCMB raster dosyaları ve eşlemesi depoda yok; kaynakta raster banknot yolu geçmez', () => {
-    expect(existsSync(resolve(process.cwd(), 'public/images/banknotlar'))).toBe(false);
-    expect(existsSync(resolve(process.cwd(), 'src/ui/svg/banknotAssets.ts'))).toBe(false);
+  it('şematik banknot bileşeni ve "OYUN PARASI" kaynakta yok', () => {
+    expect(existsSync(resolve(process.cwd(), 'src/ui/svg/SematikBanknot.tsx'))).toBe(false);
     const svgKlasoru = resolve(process.cwd(), 'src/ui/svg');
     for (const ad of readdirSync(svgKlasoru)) {
-      expect(readFileSync(resolve(svgKlasoru, ad), 'utf8'), ad).not.toMatch(/images\/banknotlar|RESMI_BANKNOT/);
+      expect(readFileSync(resolve(svgKlasoru, ad), 'utf8'), ad).not.toMatch(/SematikBanknot|OYUN PARASI/);
     }
   });
 

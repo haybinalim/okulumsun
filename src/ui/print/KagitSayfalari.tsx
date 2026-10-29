@@ -6,7 +6,7 @@
  * (rakam/harf/desen de var); "Siyah-beyaz" seçeneği `filter: grayscale(1)` ile hem önizler hem basar.
  */
 import type { CSSProperties } from 'react';
-import type { OptionDeger, VisualSpec } from '../../exercises/types';
+import type { BanknotDegeri, OptionDeger, VisualSpec } from '../../exercises/types';
 import { anahtarSayfalari, grupCumlesi, type AnahtarSayfasi } from '../../ogretmen/calismaKagidi/anahtarSayfalari';
 import {
   EYLEM_METNI,
@@ -16,10 +16,11 @@ import {
 } from '../../ogretmen/calismaKagidi/kagitMaddesi';
 import type { KagitDuzeni, KagitPlani } from '../../ogretmen/calismaKagidi/kagitPlani';
 import { maddeKaplama, sahneKutusu, sahneYanSecenekli } from '../../ogretmen/calismaKagidi/kagitYerlesimi';
-import { SematikBanknot } from '../svg/SematikBanknot';
+import { TcmbBanknot } from '../svg/TcmbBanknot';
 import { ortakKumeBoyutu, type KumeTarifi } from '../svg/kumeYerlesimi';
 import { KAGIT_NESNE_EN_AZ_MM, KAGIT_NESNE_EN_BUYUK_MM, Visual, type BaskiOlcegi } from '../svg/Visual';
 import './kagit.css';
+import { KAGIT_BANKNOT_GENISLIK_PX } from './kagitBanknot';
 import {
   ROZET_SERIDI_MM,
   SECENEK_BOSLUK,
@@ -86,9 +87,13 @@ function Ikon({ ikon }: { ikon: YonergeIkonu }) {
   );
 }
 
-/** Banknot: kâğıtta (ekran ve arşivle aynı) şematik "oyun parası" (KG-19, KG-121). */
-function BanknotGorseli({ deger, genislik }: { deger: 5 | 10 | 20 | 50 | 100 | 200; genislik: number }) {
-  return <SematikBanknot deger={deger} genislik={genislik} />;
+/**
+ * Banknot: kâğıtta da (ekran ve arşivle aynı) TCMB örnek görseli, "ÖRNEKTİR GEÇMEZ" (KG-122). TCMB duyurusu
+ * madde 1: tek taraflı basılı çoğaltma gerçek en/boyun %75'inden küçük olmalı → `KAGIT_BANKNOT_GENISLIK_PX`
+ * (≈ 39,7 mm; 5 TL'de %30,5) bunu her kupürde sağlar (birim testi `paraGorseli.spec`).
+ */
+function BanknotGorseli({ deger }: { deger: BanknotDegeri }) {
+  return <TcmbBanknot deger={deger} genislik={KAGIT_BANKNOT_GENISLIK_PX} />;
 }
 
 /**
@@ -123,10 +128,10 @@ function SecenekIcerigi({
     case 'sekil':
       return <Visual spec={{ type: 'sekil', sekil: deger.sekil }} width={140} height={140} />;
     case 'banknot':
-      return <BanknotGorseli deger={deger.deger} genislik={150} />;
+      return <BanknotGorseli deger={deger.deger} />;
     case 'gorsel':
       return deger.gorsel.type === 'banknot' ? (
-        <BanknotGorseli deger={deger.gorsel.deger} genislik={150} />
+        <BanknotGorseli deger={deger.gorsel.deger} />
       ) : (
         <Visual
           spec={deger.gorsel}

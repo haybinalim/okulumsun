@@ -1,7 +1,8 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { BigButton } from './BigButton';
 import { Visual } from '../svg/Visual';
-import type { Option, OptionDeger } from '../../exercises/types';
+import { TcmbBanknot } from '../svg/TcmbBanknot';
+import type { BanknotDegeri, Option, OptionDeger } from '../../exercises/types';
 import { secenekErisimEtiketi } from './choiceErisim';
 
 /**
@@ -88,19 +89,33 @@ function renderDeger(deger: OptionDeger, size: number): ReactNode {
     case 'sayi':
       return <Visual spec={{ type: 'rakam', sayi: deger.sayi }} width={inner} height={inner} />;
     case 'gorsel':
+      if (deger.gorsel.type === 'banknot') return <KartBanknotu deger={deger.gorsel.deger} />;
       return <Visual spec={deger.gorsel} width={inner} height={inner} />;
     case 'sekil':
       return <Visual spec={{ type: 'sekil', sekil: deger.sekil }} width={inner} height={inner} />;
     case 'sekilKategorisi':
       return <SekilKategori kategori={deger.kategori} size={inner} />;
     case 'banknot':
-      return <Visual spec={{ type: 'banknot', deger: deger.deger }} width={inner} height={inner} />;
+      return <KartBanknotu deger={deger.deger} />;
     case 'terim':
       return <Terim terim={deger.terim} size={inner} />;
     // 'metin' çocuk ekranında gelmemeli (alistirmaIhlalleri engeller); güvenlik ağı.
     case 'metin':
       return <span style={{ fontSize: inner * 0.3, color: 'var(--color-ink)' }}>{deger.metin}</span>;
   }
+}
+
+/**
+ * Banknot kartı doldurur (KG-122): kartın iç genişliğinin %88'i, gerçek kupür oranı korunur. `size` yerine CSS
+ * yüzdesi: tahtada kart `--size-choice` alt sınırıyla `size`'dan büyük olabilir (1920×1080'de ~320 px kartta
+ * banknot önce ~130 px kalıyordu).
+ */
+function KartBanknotu({ deger }: { deger: BanknotDegeri }) {
+  return (
+    <div style={{ width: '88%', display: 'grid', placeItems: 'center' }} data-kart-banknotu={deger}>
+      <TcmbBanknot deger={deger} />
+    </div>
+  );
 }
 
 /** Karşılaştırma terimi — < > = sembolleri 1. sınıfta YOK, ikonla gösterilir. */
