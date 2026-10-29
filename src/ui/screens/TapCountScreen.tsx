@@ -29,7 +29,8 @@ const RENK_HEX: Record<Renk, string> = Object.fromEntries(
  * Yerleşim (KG-86): alt %65 ölçülür; nesneler en az `--size-tap-min` (tahtada 102, büyük hedefte
  * 118 px) ve adet/yerleşime göre seçilen ızgarayla dizilir (`sayYerlesimi.ts`). Geniş ekranda sahne
  * solda tüm yüksekliği kullanır, kartlar (`--size-choice-min`) sağ üstte; alt çubuk her zaman altta
- * ortada. Dar ekranda sahne üstte, kartlar altında.
+ * ortada. Dar ekranda sahne üstte, kartlar altında. KG-130: varsayılan kartla nesneler tapMin hücreye sığmıyorsa
+ * (1080×810 elle seçilen tahta) kart küçülür ya da alt çubuğun iki yanına geçer (`ekranDuzeni`).
  */
 export function TapCountScreen({
   exercise,
@@ -214,27 +215,41 @@ export function TapCountScreen({
                 top: duzen.kartlar.y,
                 width: duzen.kartlar.w,
                 height: duzen.kartlar.h,
-                display: 'flex',
-                gap: 'var(--size-gap-tight)',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-                alignContent: 'center',
+                display: 'grid',
+                // KG-130 'cubuk': kartlar alt çubuğun iki yanında (orta sütun çubuğun yeri).
+                gridTemplateColumns: duzen.tur === 'cubuk' ? `1fr ${olcu.cubukW + 2 * olcu.bosluk}px 1fr` : '1fr',
+                alignItems: 'center',
               }}
             >
-              {exercise.options.map((o) => (
-                <ChoiceCard
-                  key={o.id}
-                  option={o}
-                  size={olcu.kart}
-                  sabitBoyut
-                  state={stateOf(o.id)}
-                  onSelect={() => {
-                    if (cozum === 'bos') {
-                      setSeciliId(o.id);
-                      if (o.ses) void speak(o.ses);
-                    }
+              {(duzen.tur === 'cubuk'
+                ? [exercise.options.slice(0, Math.ceil(exercise.options.length / 2)), [], exercise.options.slice(Math.ceil(exercise.options.length / 2))]
+                : [exercise.options]
+              ).map((grup, gi) => (
+                <div
+                  key={gi}
+                  style={{
+                    display: 'flex',
+                    gap: 'var(--size-gap-tight)',
+                    flexWrap: 'wrap',
+                    justifyContent: duzen.tur !== 'cubuk' ? 'center' : gi ? 'flex-start' : 'flex-end',
                   }}
-                />
+                >
+                  {grup.map((o) => (
+                    <ChoiceCard
+                      key={o.id}
+                      option={o}
+                      size={duzen.kart}
+                      sabitBoyut
+                      state={stateOf(o.id)}
+                      onSelect={() => {
+                        if (cozum === 'bos') {
+                          setSeciliId(o.id);
+                          if (o.ses) void speak(o.ses);
+                        }
+                      }}
+                    />
+                  ))}
+                </div>
               ))}
             </div>
           )}
