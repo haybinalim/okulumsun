@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { GameShell } from '../layout/GameShell';
 import { ChoiceCard, type ChoiceState } from '../primitives/ChoiceCard';
 import { SpeakButton } from '../primitives/SpeakButton';
@@ -7,6 +7,7 @@ import { Sprite } from '../svg/Sprite';
 import { ekranDuzeni, type EkranOlculeri } from '../svg/sayYerlesimi';
 import { useScreenSpeech, speak } from '../../audio/useSpeak';
 import { useGeriBildirim } from '../useGeriBildirim';
+import { sayZorlukTavani } from '../sayZorlukTavani';
 import { hataDestekKarari, yanlisSecimBilgisi, type HataDestekKarari } from '../../exercises/hataDestek';
 import type { TapCountExercise, Renk } from '../../exercises/types';
 import type { Vurgu } from '../../design/tokens';
@@ -31,9 +32,10 @@ const RENK_HEX: Record<Renk, string> = Object.fromEntries(
  * solda tüm yüksekliği kullanır, kartlar (`--size-choice-min`) sağ üstte; alt çubuk her zaman altta
  * ortada. Dar ekranda sahne üstte, kartlar altında. KG-130: varsayılan kartla nesneler tapMin hücreye sığmıyorsa
  * (1080×810 elle seçilen tahta) kart küçülür ya da alt çubuğun iki yanına geçer (`ekranDuzeni`).
+ * KG-131: ölçülen yerleşim zorluk 4–5 maddesini taşıyamıyorsa soru zorluk 3'te gösterilir (`sayZorlukTavani`).
  */
 export function TapCountScreen({
-  exercise,
+  exercise: girdi,
   accent,
   onDone,
   onYanlis,
@@ -44,8 +46,8 @@ export function TapCountScreen({
   /** Adım 36: her yanlış denemede (Sınıf Turu ikinci yanlışı sayar). */
   onYanlis?: (bilgi: YanlisBilgisi) => void;
 }) {
-  useScreenSpeech(exercise.prompt.ses, [exercise.itemId], exercise.prompt.tekrarSes);
-  const geriBildirim = useGeriBildirim(exercise.itemId);
+  useScreenSpeech(girdi.prompt.ses, [girdi.itemId], girdi.prompt.tekrarSes);
+  const geriBildirim = useGeriBildirim(girdi.itemId);
 
   const [dokunulan, setDokunulan] = useState<Set<string>>(new Set());
   const [seciliId, setSeciliId] = useState<string | null>(null);
@@ -92,6 +94,8 @@ export function TapCountScreen({
     };
   }, []);
 
+  // KG-131: ölçümden sonra gösterilecek madde (sığmayan zorluk 4–5 → zorluk 3; diğerleri aynen).
+  const exercise = useMemo(() => (olcu ? sayZorlukTavani(girdi, olcu) : girdi), [girdi, olcu]);
   // Sahne bir nesneKumesi olmalı (M-SAY her zaman öyle üretir).
   const sahne = exercise.prompt.gorsel;
   if (!sahne || sahne.type !== 'nesneKumesi') {
@@ -160,6 +164,7 @@ export function TapCountScreen({
         <div
           ref={alanRef}
           data-say-alani={duzen?.tur}
+          data-say-zorluk={exercise.difficulty}
           style={{ position: 'relative', alignSelf: 'stretch', flex: 1, minHeight: 0 }}
         >
           {/* Sayma sahnesi — dokunulabilir nesneler alt bölgede, ölçülen kutuda. */}
