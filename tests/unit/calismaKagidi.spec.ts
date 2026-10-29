@@ -8,7 +8,7 @@ import { skillsData } from '../../src/content/skillsData';
 import { HATA_ETIKETLERI } from '../../src/exercises/distractors';
 import { REGISTRY } from '../../src/exercises/registry';
 import { createRng } from '../../src/exercises/rng';
-import type { Exercise } from '../../src/exercises/types';
+import type { BanknotDegeri, Exercise } from '../../src/exercises/types';
 import misconceptions from '../../src/content/misconceptions.json';
 import { HATA_BASLIKLARI, hataNotu, celdiriciCumlesi } from '../../src/ogretmen/calismaKagidi/cevapAnahtari';
 import { kagitMaddesiYap, type KagitMaddesi } from '../../src/ogretmen/calismaKagidi/kagitMaddesi';
@@ -27,6 +27,7 @@ import { YAZDIRMA_SINIFI, yazdirmaSinifi } from '../../src/ogretmen/calismaKagid
 import { setlenebilirDugumler, type GunlukSet } from '../../src/ogretmen/gunlukSet';
 import { KagitSayfalari } from '../../src/ui/print/KagitSayfalari';
 import { depolamaCasusuKur } from './yardimci/depolamaCasusu';
+import { kagitBanknotGenislikPx } from '../../src/ui/print/kagitBanknot';
 
 const flat = trDuzlestir(tr as unknown as Record<string, unknown>);
 const metin = (s: Parameters<typeof sesMetni>[0]): string => sesMetni(s, flat);
@@ -350,7 +351,13 @@ describe('para görselleri ve baskı kuralları', () => {
       KagitSayfalari({ plan, duzen: '2x3', cevapAnahtariDahil: true, siyahBeyaz: false, kopya: 'onizleme' }),
     );
     expect(html).toMatch(/<img[^>]*src="[^"]*images\/banknotlar\/\d+-tl-on-yuz-resmi\.webp"[^>]*data-banknot="\d+"/);
-    expect(html).toMatch(/<img[^>]*width="150"/);
+    // KG-123: kupürler gerçek birbirine göre boyutlarında (200 TL 150 px, 5 TL ≈ 122 px).
+    const imgler = html.match(/<img[^>]*data-banknot="\d+"[^>]*>/g) ?? [];
+    expect(imgler.length).toBeGreaterThan(0);
+    for (const img of imgler) {
+      const deger = Number(/data-banknot="(\d+)"/.exec(img)?.[1]) as BanknotDegeri;
+      expect(img).toContain(`width="${Math.round(kagitBanknotGenislikPx(deger))}"`);
+    }
     expect(html).not.toMatch(/data-sematik-banknot|OYUN PARASI/);
   });
 
