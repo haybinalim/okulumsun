@@ -11,12 +11,10 @@
  * (RG 24.02.2004/25383, değişik 13.10.2004/25612) — elektronik ortamda gerçek boyutta ≤ 72 dpi ve
  * "ÖRNEKTİR GEÇMEZ" ibaresi (madde 4–5); kâğıtta tek taraflı ve en/boyun %75'inden küçük (madde 1).
  */
-import { BANKNOTLAR, type BanknotDegeri } from "../exercises/types";
+import { BANKNOTLAR, type BanknotDegeri } from '../exercises/types';
 
 /** Gerçek banknot ölçüleri, mm (TCMB E9 duyurusu: 64×130 … 72×160). */
-export const BANKNOT_OLCULERI_MM: Readonly<
-  Record<BanknotDegeri, { readonly en: number; readonly boy: number }>
-> = {
+export const BANKNOT_OLCULERI_MM: Readonly<Record<BanknotDegeri, { readonly en: number; readonly boy: number }>> = {
   5: { en: 130, boy: 64 },
   10: { en: 136, boy: 64 },
   20: { en: 142, boy: 68 },
@@ -59,14 +57,14 @@ export interface ParaGorseliBeyani {
 }
 
 export function paraGorseliBeyani(): ParaGorseliBeyani {
-  const kupurler = `${BANKNOTLAR.slice(0, -1).join(", ")} ve ${BANKNOTLAR[BANKNOTLAR.length - 1]} TL`;
+  const kupurler = `${BANKNOTLAR.slice(0, -1).join(', ')} ve ${BANKNOTLAR[BANKNOTLAR.length - 1]} TL`;
   return {
     paragraflar: [
       `Ekranda, basılı çalışma kâğıtlarında ve kâğıt arşivinde ${kupurler} banknotları için Türkiye Cumhuriyet ` +
-        "Merkez Bankası’nın (TCMB) internet sitesinde yayımladığı E9 5. tertip ön yüz örnek görselleri, " +
+        'Merkez Bankası’nın (TCMB) internet sitesinde yayımladığı E9 5. tertip ön yüz örnek görselleri, ' +
         'üzerlerindeki "ÖRNEKTİR GEÇMEZ" ibaresi korunarak, eğitim amacıyla kullanılır. Kaynak: TCMB, tcmb.gov.tr.',
-      "Görseller TCMB’nin banknot görüntülerinin çoğaltılmasına ilişkin duyurusuna göre hazırlanmıştır: " +
-        "dosyalar gerçek boyutta 72 dpi’ı aşmaz; kâğıtta tek yüz ve gerçek boyutun dörtte üçünden küçük basılır.",
+      'Görseller TCMB’nin banknot görüntülerinin çoğaltılmasına ilişkin duyurusuna göre hazırlanmıştır: ' +
+        'dosyalar gerçek boyutta 72 dpi’ı aşmaz; kâğıtta tek yüz ve gerçek boyutun dörtte üçünden küçük basılır.',
       "TCMB'ye izin başvurusu yapılmamıştır; bu kullanım TCMB'nin izni veya onayı anlamına gelmez.",
     ],
     kisa: 'Banknotlar TCMB’nin "ÖRNEKTİR GEÇMEZ" örnek görselleridir (kaynak: TCMB); TCMB izni veya onayı iddia edilmez.',

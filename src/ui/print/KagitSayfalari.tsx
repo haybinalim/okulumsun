@@ -5,42 +5,22 @@
  * kullanılır; tarayıcının "PDF olarak kaydet"i çevrimdışı PDF üretir. Renk tek başına anlam taşımaz
  * (rakam/harf/desen de var); "Siyah-beyaz" seçeneği `filter: grayscale(1)` ile hem önizler hem basar.
  */
-import type { CSSProperties } from "react";
-import type {
-  BanknotDegeri,
-  OptionDeger,
-  VisualSpec,
-} from "../../exercises/types";
-import { KAGIT_BANKNOT_GENISLIK_PX } from "./kagitBanknot";
-import {
-  anahtarSayfalari,
-  grupCumlesi,
-  type AnahtarSayfasi,
-} from "../../ogretmen/calismaKagidi/anahtarSayfalari";
+import type { CSSProperties } from 'react';
+import type { BanknotDegeri, OptionDeger, VisualSpec } from '../../exercises/types';
+import { anahtarSayfalari, grupCumlesi, type AnahtarSayfasi } from '../../ogretmen/calismaKagidi/anahtarSayfalari';
 import {
   EYLEM_METNI,
   type KagitMaddesi,
   type KagitSecenegi,
   type YonergeIkonu,
-} from "../../ogretmen/calismaKagidi/kagitMaddesi";
-import type {
-  KagitDuzeni,
-  KagitPlani,
-} from "../../ogretmen/calismaKagidi/kagitPlani";
-import {
-  maddeKaplama,
-  sahneKutusu,
-  sahneYanSecenekli,
-} from "../../ogretmen/calismaKagidi/kagitYerlesimi";
-import { TcmbBanknot } from "../svg/TcmbBanknot";
-import { ortakKumeBoyutu, type KumeTarifi } from "../svg/kumeYerlesimi";
-import {
-  KAGIT_NESNE_EN_AZ_MM,
-  KAGIT_NESNE_EN_BUYUK_MM,
-  Visual,
-  type BaskiOlcegi,
-} from "../svg/Visual";
-import "./kagit.css";
+} from '../../ogretmen/calismaKagidi/kagitMaddesi';
+import type { KagitDuzeni, KagitPlani } from '../../ogretmen/calismaKagidi/kagitPlani';
+import { maddeKaplama, sahneKutusu, sahneYanSecenekli } from '../../ogretmen/calismaKagidi/kagitYerlesimi';
+import { TcmbBanknot } from '../svg/TcmbBanknot';
+import { ortakKumeBoyutu, type KumeTarifi } from '../svg/kumeYerlesimi';
+import { KAGIT_NESNE_EN_AZ_MM, KAGIT_NESNE_EN_BUYUK_MM, Visual, type BaskiOlcegi } from '../svg/Visual';
+import './kagit.css';
+import { KAGIT_BANKNOT_GENISLIK_PX } from './kagitBanknot';
 import {
   ROZET_SERIDI_MM,
   SECENEK_BOSLUK,
@@ -48,20 +28,17 @@ import {
   YERLESIK_DOLGU_MM,
   kumeSecenekYerlesimi,
   type SecenekYerlesimi,
-} from "./secenekYerlesimi";
-import { KAGIT_ALT_YAZI, KAGIT_AYRAC, kagitYazisi } from "./kagitYazisi";
+} from './secenekYerlesimi';
+import { KAGIT_ALT_YAZI, KAGIT_AYRAC, kagitYazisi } from './kagitYazisi';
 
 const TERIM_METNI: Readonly<Record<string, string>> = {
-  cok: "çok",
-  "daha-cok": "daha çok",
-  az: "az",
-  "daha-az": "daha az",
-  esit: "eşit",
+  cok: 'çok',
+  'daha-cok': 'daha çok',
+  az: 'az',
+  'daha-az': 'daha az',
+  esit: 'eşit',
 };
-const KATEGORI_METNI: Readonly<Record<string, string>> = {
-  yuvarlak: "yuvarlak",
-  koseli: "köşeli",
-};
+const KATEGORI_METNI: Readonly<Record<string, string>> = { yuvarlak: 'yuvarlak', koseli: 'köşeli' };
 
 /**
  * Kısa çizgili metin (KG-98): kâğıt kodu ve "Ç-kodu:" etiketi. Metin aynen kalır ("ETKI-1-A"; kopyala-yapıştır
@@ -71,7 +48,7 @@ const KATEGORI_METNI: Readonly<Record<string, string>> = {
 export function KisaCizgili({ metin }: { readonly metin: string }) {
   return (
     <span className="kg-kod">
-      {metin.split("-").map((p, i) => (
+      {metin.split('-').map((p, i) => (
         <span key={i}>
           {i > 0 && <span className="kg-kod-ayrac">-</span>}
           {p}
@@ -87,31 +64,25 @@ export interface KagitSayfalariProps {
   readonly duzen: KagitDuzeni;
   readonly cevapAnahtariDahil: boolean;
   readonly siyahBeyaz: boolean;
-  readonly kopya: "onizleme" | "baski";
+  readonly kopya: 'onizleme' | 'baski';
   /** Üst bilgideki yazma satırının etiketi; varsayılan "Adım:" (etki formunda "Ç-kodu:", KG-93). */
   readonly adEtiketi?: string;
 }
 
 function Ikon({ ikon }: { ikon: YonergeIkonu }) {
   const ortak = {
-    fill: "none",
-    stroke: "#000",
+    fill: 'none',
+    stroke: '#000',
     strokeWidth: 3,
-    strokeLinecap: "round",
-    strokeLinejoin: "round",
+    strokeLinecap: 'round',
+    strokeLinejoin: 'round',
   } as const;
   return (
     <svg className="kg-ikon" viewBox="0 0 32 32" aria-hidden="true">
-      {ikon === "kalem" && (
-        <path {...ortak} d="M6 26l2-7L22 5l5 5L13 24z M19 8l5 5" />
-      )}
-      {ikon === "cizgi" && <path {...ortak} d="M5 9h6 M21 23h6 M11 9l10 14" />}
-      {ikon === "sira" && (
-        <path {...ortak} d="M6 8h4v6 M6 24h6l-6-5h6 M18 10h9 M18 22h9" />
-      )}
-      {ikon === "kulak" && (
-        <path {...ortak} d="M11 12a6 6 0 1 1 10 4c-2 2-3 3-3 6a3 3 0 0 1-6 0" />
-      )}
+      {ikon === 'kalem' && <path {...ortak} d="M6 26l2-7L22 5l5 5L13 24z M19 8l5 5" />}
+      {ikon === 'cizgi' && <path {...ortak} d="M5 9h6 M21 23h6 M11 9l10 14" />}
+      {ikon === 'sira' && <path {...ortak} d="M6 8h4v6 M6 24h6l-6-5h6 M18 10h9 M18 22h9" />}
+      {ikon === 'kulak' && <path {...ortak} d="M11 12a6 6 0 1 1 10 4c-2 2-3 3-3 6a3 3 0 0 1-6 0" />}
     </svg>
   );
 }
@@ -142,64 +113,38 @@ function SecenekIcerigi({
   yerlesik?: SecenekYerlesimi;
 }) {
   // KG-106: genişletilmiş küme kutusunda çizim iç alanın mm ölçüsüyle (1 birim = 0,1 mm).
-  if (yerlesik && deger.tur === "gorsel" && deger.gorsel.type === "nesneKumesi")
+  if (yerlesik && deger.tur === 'gorsel' && deger.gorsel.type === 'nesneKumesi')
     return (
       <Visual
         spec={deger.gorsel}
         width={Math.round(yerlesik.ic.w / SECENEK_MM_BIRIM)}
         height={Math.round(yerlesik.ic.h / SECENEK_MM_BIRIM)}
-        baski={{
-          mmBirim: SECENEK_MM_BIRIM,
-          kumeBoyutu: yerlesik.boyut,
-          bosluk: SECENEK_BOSLUK,
-        }}
+        baski={{ mmBirim: SECENEK_MM_BIRIM, kumeBoyutu: yerlesik.boyut, bosluk: SECENEK_BOSLUK }}
       />
     );
   switch (deger.tur) {
-    case "sayi":
-      return (
-        <Visual
-          spec={{ type: "rakam", sayi: deger.sayi }}
-          width={120}
-          height={120}
-        />
-      );
-    case "sekil":
-      return (
-        <Visual
-          spec={{ type: "sekil", sekil: deger.sekil }}
-          width={140}
-          height={140}
-        />
-      );
-    case "banknot":
+    case 'sayi':
+      return <Visual spec={{ type: 'rakam', sayi: deger.sayi }} width={120} height={120} />;
+    case 'sekil':
+      return <Visual spec={{ type: 'sekil', sekil: deger.sekil }} width={140} height={140} />;
+    case 'banknot':
       return <BanknotGorseli deger={deger.deger} />;
-    case "gorsel":
-      return deger.gorsel.type === "banknot" ? (
+    case 'gorsel':
+      return deger.gorsel.type === 'banknot' ? (
         <BanknotGorseli deger={deger.gorsel.deger} />
       ) : (
         <Visual
           spec={deger.gorsel}
-          width={
-            deger.gorsel.type === "islemKarti" ? 220 : SECENEK_GORSEL_BIRIM
-          }
+          width={deger.gorsel.type === 'islemKarti' ? 220 : SECENEK_GORSEL_BIRIM}
           height={SECENEK_GORSEL_BIRIM}
           baski={{ ...SECENEK_BASKISI, kumeBoyutu }}
         />
       );
-    case "terim":
-      return (
-        <span className="kg-yazi">
-          {TERIM_METNI[deger.terim] ?? deger.terim}
-        </span>
-      );
-    case "sekilKategorisi":
-      return (
-        <span className="kg-yazi">
-          {KATEGORI_METNI[deger.kategori] ?? deger.kategori}
-        </span>
-      );
-    case "metin":
+    case 'terim':
+      return <span className="kg-yazi">{TERIM_METNI[deger.terim] ?? deger.terim}</span>;
+    case 'sekilKategorisi':
+      return <span className="kg-yazi">{KATEGORI_METNI[deger.kategori] ?? deger.kategori}</span>;
+    case 'metin':
       return <span className="kg-yazi">{kagitYazisi(deger.metin)}</span>;
   }
 }
@@ -217,22 +162,14 @@ function Secenek({
   kutu: boolean;
   kumeBoyutu?: number;
   yerlesik?: SecenekYerlesimi;
-  yer?: SecenekYerlesimi["yerler"][number];
+  yer?: SecenekYerlesimi['yerler'][number];
 }) {
   const genis =
-    s.deger.tur === "banknot" ||
-    (s.deger.tur === "gorsel" &&
-      (s.deger.gorsel.type === "banknot" ||
-        s.deger.gorsel.type === "islemKarti"));
-  const kume =
-    yerlesik &&
-    s.deger.tur === "gorsel" &&
-    s.deger.gorsel.type === "nesneKumesi";
+    s.deger.tur === 'banknot' ||
+    (s.deger.tur === 'gorsel' && (s.deger.gorsel.type === 'banknot' || s.deger.gorsel.type === 'islemKarti'));
+  const kume = yerlesik && s.deger.tur === 'gorsel' && s.deger.gorsel.type === 'nesneKumesi';
   const sarmaStili: CSSProperties | undefined = yer
-    ? {
-        gridRow: `${yer.satir} / ${yer.satirBitis}`,
-        gridColumn: `${yer.sutun} / ${yer.sutunBitis}`,
-      }
+    ? { gridRow: `${yer.satir} / ${yer.satirBitis}`, gridColumn: `${yer.sutun} / ${yer.sutunBitis}` }
     : undefined;
   const kutuStili: CSSProperties | undefined =
     kume && yerlesik
@@ -240,33 +177,20 @@ function Secenek({
           width: `${yerlesik.kume.w}mm`,
           height: `${yerlesik.kume.h}mm`,
           padding: `${YERLESIK_DOLGU_MM}mm`,
-          [yerlesik.serit === "sol" ? "paddingLeft" : "paddingTop"]:
-            `${YERLESIK_DOLGU_MM + ROZET_SERIDI_MM}mm`,
+          [yerlesik.serit === 'sol' ? 'paddingLeft' : 'paddingTop']: `${YERLESIK_DOLGU_MM + ROZET_SERIDI_MM}mm`,
         }
       : undefined;
   return (
-    <div
-      className={`kg-secenek-sarma${yer ? " kg-secenek-sarma--yerlesik" : ""}`}
-      style={sarmaStili}
-    >
+    <div className={`kg-secenek-sarma${yer ? ' kg-secenek-sarma--yerlesik' : ''}`} style={sarmaStili}>
       <div
-        className={`kg-secenek${genis ? " kg-secenek--genis" : ""}${kume ? " kg-secenek--yerlesik" : ""}`}
+        className={`kg-secenek${genis ? ' kg-secenek--genis' : ''}${kume ? ' kg-secenek--yerlesik' : ''}`}
         data-secenek={s.etiket}
         style={kutuStili}
       >
         {harfRozeti && <span className="kg-rozet">{s.etiket}</span>}
-        <SecenekIcerigi
-          deger={s.deger}
-          kumeBoyutu={kumeBoyutu}
-          yerlesik={kume ? yerlesik : undefined}
-        />
+        <SecenekIcerigi deger={s.deger} kumeBoyutu={kumeBoyutu} yerlesik={kume ? yerlesik : undefined} />
       </div>
-      {kutu && (
-        <span
-          className="kg-yaz-kutusu kg-yaz-kutusu--kucuk"
-          aria-hidden="true"
-        />
-      )}
+      {kutu && <span className="kg-yaz-kutusu kg-yaz-kutusu--kucuk" aria-hidden="true" />}
     </div>
   );
 }
@@ -286,70 +210,33 @@ const SAHNE_W = 500;
 const SAHNE_H = 350;
 const SAHNE_PAY = 34;
 const MM_BIRIM = 10;
-const SABIT_ORANLI = new Set<VisualSpec["type"]>([
-  "konumSahnesi",
-  "yonKarti",
-  "banknot",
-  "islemKarti",
-]);
+const SABIT_ORANLI = new Set<VisualSpec['type']>(['konumSahnesi', 'yonKarti', 'banknot', 'islemKarti']);
 /** Nesneleri kutunun içinde kalan çizimler: kenar payı gerekmez. */
-const PAYSIZ = new Set<VisualSpec["type"]>(["nesneKumesi", "islemSahnesi"]);
+const PAYSIZ = new Set<VisualSpec['type']>(['nesneKumesi', 'islemSahnesi']);
 
-function Sahne({
-  spec,
-  m,
-  duzen,
-}: {
-  spec: VisualSpec;
-  m: KagitMaddesi;
-  duzen: KagitDuzeni;
-}) {
+function Sahne({ spec, m, duzen }: { spec: VisualSpec; m: KagitMaddesi; duzen: KagitDuzeni }) {
   // GEO sahneleri (örtüşen şekiller + işaretler) ekrandaki oranında kalır: geniş çerçevede şekiller hücreden taşıyordu.
   const genis =
-    !SABIT_ORANLI.has(spec.type) &&
-    !(
-      spec.type === "sahne" &&
-      spec.parcalar.some((p) => p.gorsel.type === "sekil")
-    );
+    !SABIT_ORANLI.has(spec.type) && !(spec.type === 'sahne' && spec.parcalar.some((p) => p.gorsel.type === 'sekil'));
   const kutu = sahneKutusu(m, duzen);
   const w = genis ? Math.round(kutu.w * MM_BIRIM) : SAHNE_W;
   const h = genis ? Math.round(kutu.h * MM_BIRIM) : SAHNE_H;
   // KG-106: yalnız nesne kümelerinden oluşan bileşik sahne de kutunun içinde kalır (kenar payı nesneye verilir).
   const payliYok =
-    PAYSIZ.has(spec.type) ||
-    (spec.type === "sahne" &&
-      spec.parcalar.every((p) => p.gorsel.type === "nesneKumesi"));
+    PAYSIZ.has(spec.type) || (spec.type === 'sahne' && spec.parcalar.every((p) => p.gorsel.type === 'nesneKumesi'));
   const pay = !genis ? SAHNE_PAY : payliYok ? 0 : Math.round(h * 0.04);
   const toplamW = w + 2 * pay;
   const toplamH = h + 2 * pay;
-  const yuzde = (v: number, boyut: number, toplam: number): string =>
-    `${((pay + v * boyut) / toplam) * 100}%`;
+  const yuzde = (v: number, boyut: number, toplam: number): string => `${((pay + v * boyut) / toplam) * 100}%`;
   return (
-    <div className="kg-sahne" data-sahne-turu={genis ? "genis" : "sabit"}>
-      <div
-        className="kg-sahne-ic"
-        style={{ "--sahne-oran": toplamW / toplamH } as CSSProperties}
-      >
-        <svg
-          viewBox={`${-pay} ${-pay} ${toplamW} ${toplamH}`}
-          aria-hidden="true"
-        >
-          <Visual
-            spec={spec}
-            width={w}
-            height={h}
-            baski={genis ? { mmBirim: 1 / MM_BIRIM } : undefined}
-          />
+    <div className="kg-sahne" data-sahne-turu={genis ? 'genis' : 'sabit'}>
+      <div className="kg-sahne-ic" style={{ '--sahne-oran': toplamW / toplamH } as CSSProperties}>
+        <svg viewBox={`${-pay} ${-pay} ${toplamW} ${toplamH}`} aria-hidden="true">
+          <Visual spec={spec} width={w} height={h} baski={genis ? { mmBirim: 1 / MM_BIRIM } : undefined} />
         </svg>
         {m.isaretler.map((i) => {
           const x = Math.min(0.97, Math.max(0.03, i.x));
-          const y = Math.min(
-            0.97,
-            Math.max(
-              0.03,
-              m.yanitBicimi === "daireIcineAl" ? i.y + i.yaricap : i.y,
-            ),
-          );
+          const y = Math.min(0.97, Math.max(0.03, m.yanitBicimi === 'daireIcineAl' ? i.y + i.yaricap : i.y));
           return (
             <span
               key={i.etiket}
@@ -368,14 +255,8 @@ function Sahne({
 /** Aynı maddedeki küme seçeneklerinin ortak nesne boyu (KG-105; karşılaştırmada boy miktarla değişmez). */
 function secenekKumeBoyutu(m: KagitMaddesi): number | undefined {
   const kumeler = m.secenekler.flatMap((s) =>
-    s.deger.tur === "gorsel" && s.deger.gorsel.type === "nesneKumesi"
-      ? [
-          {
-            spec: s.deger.gorsel as KumeTarifi,
-            w: SECENEK_GORSEL_BIRIM,
-            h: SECENEK_GORSEL_BIRIM,
-          },
-        ]
+    s.deger.tur === 'gorsel' && s.deger.gorsel.type === 'nesneKumesi'
+      ? [{ spec: s.deger.gorsel as KumeTarifi, w: SECENEK_GORSEL_BIRIM, h: SECENEK_GORSEL_BIRIM }]
       : [],
   );
   return ortakKumeBoyutu(
@@ -387,17 +268,17 @@ function secenekKumeBoyutu(m: KagitMaddesi): number | undefined {
 
 function Madde({ m, duzen }: { m: KagitMaddesi; duzen: KagitDuzeni }) {
   const kaplama = maddeKaplama(m, duzen) ?? 1;
-  const yatay = duzen === "1x4" || kaplama === 2;
-  const sirali = m.yanitBicimi === "siraNumarasiYaz";
-  const sol = m.secenekler.filter((s) => s.taraf === "sol");
-  const sag = m.secenekler.filter((s) => s.taraf === "sag");
+  const yatay = duzen === '1x4' || kaplama === 2;
+  const sirali = m.yanitBicimi === 'siraNumarasiYaz';
+  const sol = m.secenekler.filter((s) => s.taraf === 'sol');
+  const sag = m.secenekler.filter((s) => s.taraf === 'sag');
   const kumeBoyutu = secenekKumeBoyutu(m);
   // KG-106: karşılaştırma maddesinde küme kutuları maddedeki boş yeri kullanır (sayfa planı aynı).
   const yerlesik = kumeSecenekYerlesimi(m, duzen) ?? undefined;
   return (
     <article
-      className={`kg-madde kg-madde--k${kaplama}${yatay ? " kg-madde--yatay" : ""}${
-        sahneYanSecenekli(m, duzen) ? " kg-madde--yan-secenek" : ""
+      className={`kg-madde kg-madde--k${kaplama}${yatay ? ' kg-madde--yatay' : ''}${
+        sahneYanSecenekli(m, duzen) ? ' kg-madde--yan-secenek' : ''
       }`}
       data-madde={m.no}
       data-sablon={m.templateId}
@@ -411,28 +292,16 @@ function Madde({ m, duzen }: { m: KagitMaddesi; duzen: KagitDuzeni }) {
           <small>{kagitYazisi(EYLEM_METNI[m.yanitBicimi])}</small>
         </span>
       </div>
-      {m.yanitBicimi === "cizgiyleEsle" ? (
+      {m.yanitBicimi === 'cizgiyleEsle' ? (
         <div className="kg-esle">
           <div className="kg-esle-satir">
             {sol.map((s) => (
-              <Secenek
-                key={s.id}
-                s={s}
-                harfRozeti
-                kutu={false}
-                kumeBoyutu={kumeBoyutu}
-              />
+              <Secenek key={s.id} s={s} harfRozeti kutu={false} kumeBoyutu={kumeBoyutu} />
             ))}
           </div>
           <div className="kg-esle-satir">
             {sag.map((s) => (
-              <Secenek
-                key={s.id}
-                s={s}
-                harfRozeti
-                kutu={false}
-                kumeBoyutu={kumeBoyutu}
-              />
+              <Secenek key={s.id} s={s} harfRozeti kutu={false} kumeBoyutu={kumeBoyutu} />
             ))}
           </div>
         </div>
@@ -443,13 +312,7 @@ function Madde({ m, duzen }: { m: KagitMaddesi; duzen: KagitDuzeni }) {
             {m.secenekler.length > 0 && !yerlesik && (
               <div className="kg-secenekler">
                 {m.secenekler.map((s) => (
-                  <Secenek
-                    key={s.id}
-                    s={s}
-                    harfRozeti={m.harfRozeti}
-                    kutu={sirali}
-                    kumeBoyutu={kumeBoyutu}
-                  />
+                  <Secenek key={s.id} s={s} harfRozeti={m.harfRozeti} kutu={sirali} kumeBoyutu={kumeBoyutu} />
                 ))}
               </div>
             )}
@@ -458,12 +321,8 @@ function Madde({ m, duzen }: { m: KagitMaddesi; duzen: KagitDuzeni }) {
                 className="kg-secenekler kg-secenekler--yerlesik"
                 data-secenek-duzeni={yerlesik.duzen}
                 style={{
-                  gridTemplateColumns: yerlesik.sutunlar
-                    .map((x) => `${x}mm`)
-                    .join(" "),
-                  gridTemplateRows: yerlesik.satirlar
-                    .map((x) => `${x}mm`)
-                    .join(" "),
+                  gridTemplateColumns: yerlesik.sutunlar.map((x) => `${x}mm`).join(' '),
+                  gridTemplateRows: yerlesik.satirlar.map((x) => `${x}mm`).join(' '),
                 }}
               >
                 {m.secenekler.map((s, i) => (
@@ -483,7 +342,7 @@ function Madde({ m, duzen }: { m: KagitMaddesi; duzen: KagitDuzeni }) {
             <div className="kg-kutular">
               {m.kutular.map((k, i) => (
                 <span key={`${k}-${i}`} className="kg-kutu-grup">
-                  {k !== "" && <b>{k}:</b>}
+                  {k !== '' && <b>{k}:</b>}
                   <span className="kg-yaz-kutusu" aria-hidden="true" />
                 </span>
               ))}
@@ -557,33 +416,22 @@ export function KagitSayfalari({
   cevapAnahtariDahil,
   siyahBeyaz,
   kopya,
-  adEtiketi = "Adım:",
+  adEtiketi = 'Adım:',
 }: KagitSayfalariProps) {
   // KG-102: anahtar sayfaları kodda planlanır; altbilgideki N = basılan gerçek sayfa sayısı.
-  const anahtar = cevapAnahtariDahil
-    ? anahtarSayfalari(plan.cevapAnahtari)
-    : [];
+  const anahtar = cevapAnahtariDahil ? anahtarSayfalari(plan.cevapAnahtari) : [];
   const toplam = plan.sayfalar.length + anahtar.length;
   return (
     <div
-      className={`kg-kok kg-kok--${kopya}${siyahBeyaz ? " kg-kok--gri" : ""}`}
+      className={`kg-kok kg-kok--${kopya}${siyahBeyaz ? ' kg-kok--gri' : ''}`}
       data-kagit-kodu={plan.kod}
       data-sayfa-sayisi={toplam}
-      aria-hidden={kopya === "baski" ? true : undefined}
+      aria-hidden={kopya === 'baski' ? true : undefined}
     >
       {plan.sayfalar.map((maddeler, i) => {
-        const kazanimlar = [
-          ...new Set(maddeler.flatMap((m) => m.kazanimKodlari)),
-        ]
-          .sort()
-          .join(KAGIT_AYRAC);
+        const kazanimlar = [...new Set(maddeler.flatMap((m) => m.kazanimKodlari))].sort().join(KAGIT_AYRAC);
         return (
-          <section
-            key={i}
-            className="kg-sayfa"
-            data-sayfa={i + 1}
-            aria-label={`Çalışma kâğıdı, sayfa ${i + 1}`}
-          >
+          <section key={i} className="kg-sayfa" data-sayfa={i + 1} aria-label={`Çalışma kâğıdı, sayfa ${i + 1}`}>
             <header className="kg-ust">
               <span className="kg-ad">
                 <KisaCizgili metin={adEtiketi} /> <span className="kg-cizgi" />
@@ -615,11 +463,7 @@ export function KagitSayfalari({
             aria-label={`Cevap anahtarı, sayfa ${no}`}
           >
             <header className="kg-ust kg-ust--anahtar">
-              <h2>
-                {j === 0
-                  ? "Cevap anahtarı (öğretmen için)"
-                  : "Cevap anahtarı (devam)"}
-              </h2>
+              <h2>{j === 0 ? 'Cevap anahtarı (öğretmen için)' : 'Cevap anahtarı (devam)'}</h2>
             </header>
             <Anahtar sayfa={sayfa} />
             <footer className="kg-alt">

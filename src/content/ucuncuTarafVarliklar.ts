@@ -7,10 +7,9 @@
  *
  * SAF VERİ: yan etkisiz, yalnız JSON içe aktarımı.
  */
-import sesKaynagiHam from "./sesKaynagi.json";
+import sesKaynagiHam from './sesKaynagi.json';
 
-export type VarlikTuru =
-  "bagimlilik" | "font" | "emoji" | "ses" | "gorsel" | "arac";
+export type VarlikTuru = 'bagimlilik' | 'font' | 'emoji' | 'ses' | 'gorsel' | 'arac';
 
 export interface UcuncuTarafVarlik {
   /** npm paket adı (bağımlılık/araç) ya da varlığın adı. */
@@ -25,238 +24,89 @@ export interface UcuncuTarafVarlik {
   readonly kosul?: string;
 }
 
-const ses = sesKaynagiHam as {
-  modelKimligi: string;
-  ticariDagitimIzni: boolean;
-};
+const ses = sesKaynagiHam as { modelKimligi: string; ticariDagitimIzni: boolean };
 
 /** Ses satırı `sesKaynagi.json` aktif kaynağından türetilir (K10 aynılığı denetler). */
-export function sesVarligi(k: {
-  modelKimligi: string;
-  ticariDagitimIzni: boolean;
-}): UcuncuTarafVarlik {
+export function sesVarligi(k: { modelKimligi: string; ticariDagitimIzni: boolean }): UcuncuTarafVarlik {
   return {
     ad: `Ses klipleri (public/audio/, ${k.modelKimligi})`,
-    tur: "ses",
-    lisans: k.ticariDagitimIzni
-      ? "ADR-0004 kaynağının şartları"
-      : "Köken doğrulanamadı (ADR-0004)",
-    sahip: "Okulumsun (üretim), ses modeli sağlayıcısı",
-    kaynakUrl: "docs/ses/SES_KAYNAKLARI.md",
+    tur: 'ses',
+    lisans: k.ticariDagitimIzni ? 'ADR-0004 kaynağının şartları' : 'Köken doğrulanamadı (ADR-0004)',
+    sahip: 'Okulumsun (üretim), ses modeli sağlayıcısı',
+    kaynakUrl: 'docs/ses/SES_KAYNAKLARI.md',
     dagitimdaVar: true,
     kosul: k.ticariDagitimIzni
-      ? "Sesler Google Cloud Text-to-Speech ile üretilmiştir (gönüllü ifşa, ADR-0004)"
-      : "Ticari dağıtım izni yok; Google Cloud TTS ile yeniden üretilmeli (ADR-0004)",
+      ? 'Sesler Google Cloud Text-to-Speech ile üretilmiştir (gönüllü ifşa, ADR-0004)'
+      : 'Ticari dağıtım izni yok; Google Cloud TTS ile yeniden üretilmeli (ADR-0004)',
   };
 }
 
 export const UCUNCU_TARAF_VARLIKLAR: readonly UcuncuTarafVarlik[] = [
   // --- Çalışma zamanı bağımlılıkları (package.json "dependencies")
-  {
-    ad: "react",
-    tur: "bagimlilik",
-    lisans: "MIT",
-    sahip: "Meta Platforms, Inc.",
-    kaynakUrl: "https://github.com/facebook/react",
-    dagitimdaVar: true,
-  },
-  {
-    ad: "react-dom",
-    tur: "bagimlilik",
-    lisans: "MIT",
-    sahip: "Meta Platforms, Inc.",
-    kaynakUrl: "https://github.com/facebook/react",
-    dagitimdaVar: true,
-  },
-  {
-    ad: "zustand",
-    tur: "bagimlilik",
-    lisans: "MIT",
-    sahip: "Paul Henschel",
-    kaynakUrl: "https://github.com/pmndrs/zustand",
-    dagitimdaVar: true,
-  },
-  {
-    ad: "zod",
-    tur: "bagimlilik",
-    lisans: "MIT",
-    sahip: "Colin McDonnell",
-    kaynakUrl: "https://github.com/colinhacks/zod",
-    dagitimdaVar: true,
-  },
-  {
-    ad: "framer-motion",
-    tur: "bagimlilik",
-    lisans: "MIT",
-    sahip: "Matt Perry",
-    kaynakUrl: "https://github.com/motiondivision/motion",
-    dagitimdaVar: true,
-  },
-  {
-    ad: "qrcode-generator",
-    tur: "bagimlilik",
-    lisans: "MIT",
-    sahip: "Kazuhiko Arase",
-    kaynakUrl: "https://github.com/kazuhikoarase/qrcode-generator",
-    dagitimdaVar: true,
-    kosul: "yalnız Eve gönder ekranıyla tembel yüklenir (Adım 42)",
-  },
-  {
-    ad: "canvas-confetti",
-    tur: "bagimlilik",
-    lisans: "ISC",
-    sahip: "Kiril Vatev",
-    kaynakUrl: "https://github.com/catdad/canvas-confetti",
-    dagitimdaVar: true,
-  },
+  { ad: 'react', tur: 'bagimlilik', lisans: 'MIT', sahip: 'Meta Platforms, Inc.', kaynakUrl: 'https://github.com/facebook/react', dagitimdaVar: true },
+  { ad: 'react-dom', tur: 'bagimlilik', lisans: 'MIT', sahip: 'Meta Platforms, Inc.', kaynakUrl: 'https://github.com/facebook/react', dagitimdaVar: true },
+  { ad: 'zustand', tur: 'bagimlilik', lisans: 'MIT', sahip: 'Paul Henschel', kaynakUrl: 'https://github.com/pmndrs/zustand', dagitimdaVar: true },
+  { ad: 'zod', tur: 'bagimlilik', lisans: 'MIT', sahip: 'Colin McDonnell', kaynakUrl: 'https://github.com/colinhacks/zod', dagitimdaVar: true },
+  { ad: 'framer-motion', tur: 'bagimlilik', lisans: 'MIT', sahip: 'Matt Perry', kaynakUrl: 'https://github.com/motiondivision/motion', dagitimdaVar: true },
+  { ad: 'qrcode-generator', tur: 'bagimlilik', lisans: 'MIT', sahip: 'Kazuhiko Arase', kaynakUrl: 'https://github.com/kazuhikoarase/qrcode-generator', dagitimdaVar: true, kosul: 'yalnız Eve gönder ekranıyla tembel yüklenir (Adım 42)' },
+  { ad: 'canvas-confetti', tur: 'bagimlilik', lisans: 'ISC', sahip: 'Kiril Vatev', kaynakUrl: 'https://github.com/catdad/canvas-confetti', dagitimdaVar: true },
   // --- Service worker'a derlenen Workbox (vite-plugin-pwa üretir)
-  {
-    ad: "workbox-window",
-    tur: "bagimlilik",
-    lisans: "MIT",
-    sahip: "Google LLC",
-    kaynakUrl: "https://github.com/GoogleChrome/workbox",
-    dagitimdaVar: true,
-    kosul: "vite-plugin-pwa ile service worker içine derlenir",
-  },
+  { ad: 'workbox-window', tur: 'bagimlilik', lisans: 'MIT', sahip: 'Google LLC', kaynakUrl: 'https://github.com/GoogleChrome/workbox', dagitimdaVar: true, kosul: 'vite-plugin-pwa ile service worker içine derlenir' },
   // --- Font
+  { ad: 'Andika', tur: 'font', lisans: 'SIL OFL 1.1', sahip: 'SIL International', kaynakUrl: 'https://fonts.google.com/specimen/Andika/license', dagitimdaVar: true },
   {
-    ad: "Andika",
-    tur: "font",
-    lisans: "SIL OFL 1.1",
-    sahip: "SIL International",
-    kaynakUrl: "https://fonts.google.com/specimen/Andika/license",
+    ad: 'TemelYazi',
+    tur: 'font',
+    lisans: 'MEB TTKB yayını; gömülü lisans metni yok',
+    sahip: 'T.C. Millî Eğitim Bakanlığı TTKB (tasarım: HBY Tasarım)',
+    kaynakUrl: 'https://ttkb.meb.gov.tr/www/ilkokulturkcedersiogretimprogramiveilkokumayazmaderskitabindayeralanalfabeverakamlaryayimlandi/icerik/610',
     dagitimdaVar: true,
-  },
-  {
-    ad: "TemelYazi",
-    tur: "font",
-    lisans: "MEB TTKB yayını; gömülü lisans metni yok",
-    sahip: "T.C. Millî Eğitim Bakanlığı TTKB (tasarım: HBY Tasarım)",
-    kaynakUrl:
-      "https://ttkb.meb.gov.tr/www/ilkokulturkcedersiogretimprogramiveilkokumayazmaderskitabindayeralanalfabeverakamlaryayimlandi/icerik/610",
-    dagitimdaVar: true,
-    kosul:
-      'Alt kümeler: rakam + işaret (TemelYazi-Rakam.woff2, KG-95) ve çocuğa dönük metnin harfleri — Türkçe alfabe, rakam, temel noktalama, ₺ % (TemelYazi-Harf.woff2, KG-96); ikisi de TemelYazi-Bold konturları, tam font dağıtılmaz. MEB amacı: "ders kitapları ve eğitim araçlarında kullanılması". Ticari dağıtım ve açık repo için MEB TTKB/tasarımcıdan yazılı izin önerilir (henüz istenmedi)',
+    kosul: 'Alt kümeler: rakam + işaret (TemelYazi-Rakam.woff2, KG-95) ve çocuğa dönük metnin harfleri — Türkçe alfabe, rakam, temel noktalama, ₺ % (TemelYazi-Harf.woff2, KG-96); ikisi de TemelYazi-Bold konturları, tam font dağıtılmaz. MEB amacı: "ders kitapları ve eğitim araçlarında kullanılması". Ticari dağıtım ve açık repo için MEB TTKB/tasarımcıdan yazılı izin önerilir (henüz istenmedi)',
   },
   // --- Görsel
   {
-    ad: "TCMB E9 5. tertip örnek banknot görselleri",
-    tur: "gorsel",
-    lisans: "TCMB kullanım şartları",
-    sahip: "Türkiye Cumhuriyet Merkez Bankası",
-    kaynakUrl: "docs/BANKNOT_GORSEL_KAYNAKLARI.md",
+    ad: 'TCMB E9 5. tertip örnek banknot görselleri',
+    tur: 'gorsel',
+    lisans: 'TCMB kullanım şartları',
+    sahip: 'Türkiye Cumhuriyet Merkez Bankası',
+    kaynakUrl: 'docs/BANKNOT_GORSEL_KAYNAKLARI.md',
     dagitimdaVar: true,
-    kosul:
-      "Ekranda, basılı kâğıtta ve arşivde (KG-122); \"ÖRNEKTİR GEÇMEZ\" korunur, kaynak gösterilerek eğitim amaçlı. TCMB çoğaltma duyurusu (RG 24.02.2004/25383): dosyalar gerçek boyutta ≤ 72 dpi, kâğıtta tek yüz ve en/boyun %75'inden küçük. TCMB site kullanım şartları ticari kullanımı yazılı izne bağlar; TCMB'ye başvurulmadı (KG-19)",
+    kosul: 'Ekranda, basılı kâğıtta ve arşivde (KG-122); "ÖRNEKTİR GEÇMEZ" korunur, kaynak gösterilerek eğitim amaçlı. TCMB çoğaltma duyurusu (RG 24.02.2004/25383): dosyalar gerçek boyutta ≤ 72 dpi, kâğıtta tek yüz ve en/boyun %75\'inden küçük. TCMB site kullanım şartları ticari kullanımı yazılı izne bağlar; TCMB\'ye başvurulmadı (KG-19)',
   },
   // --- Ses
   sesVarligi(ses),
   // --- Geliştirme araçları (dağıtılmaz; çıktıya lisans geçirmez)
-  {
-    ad: "vite",
-    tur: "arac",
-    lisans: "MIT",
-    sahip: "Evan You ve Vite katkıcıları",
-    kaynakUrl: "https://github.com/vitejs/vite",
-    dagitimdaVar: false,
-  },
-  {
-    ad: "vite-plugin-pwa",
-    tur: "arac",
-    lisans: "MIT",
-    sahip: "Anthony Fu",
-    kaynakUrl: "https://github.com/vite-pwa/vite-plugin-pwa",
-    dagitimdaVar: false,
-  },
-  {
-    ad: "typescript",
-    tur: "arac",
-    lisans: "Apache-2.0",
-    sahip: "Microsoft Corp.",
-    kaynakUrl: "https://github.com/microsoft/TypeScript",
-    dagitimdaVar: false,
-  },
-  {
-    ad: "vitest",
-    tur: "arac",
-    lisans: "MIT",
-    sahip: "Anthony Fu ve Vitest katkıcıları",
-    kaynakUrl: "https://github.com/vitest-dev/vitest",
-    dagitimdaVar: false,
-  },
-  {
-    ad: "happy-dom",
-    tur: "arac",
-    lisans: "MIT",
-    sahip: "David Ortner",
-    kaynakUrl: "https://github.com/capricorn86/happy-dom",
-    dagitimdaVar: false,
-  },
-  {
-    ad: "fake-indexeddb",
-    tur: "arac",
-    lisans: "Apache-2.0",
-    sahip: "Jeremy Scheff",
-    kaynakUrl: "https://github.com/dumbmatter/fakeIndexedDB",
-    dagitimdaVar: false,
-  },
-  {
-    ad: "dexie",
-    tur: "arac",
-    lisans: "Apache-2.0",
-    sahip: "David Fahlander",
-    kaynakUrl: "https://github.com/dexie/Dexie.js",
-    dagitimdaVar: false,
-    kosul:
-      "Yalnız IndexedDB biçim uyum testinde (ADR-0015); uygulama kendi sarmalayıcısını kullanır",
-  },
-  {
-    ad: "Piper",
-    tur: "arac",
-    lisans: "GPL-3.0",
-    sahip: "Open Home Foundation",
-    kaynakUrl: "https://github.com/OHF-Voice/piper1-gpl",
-    dagitimdaVar: false,
-    kosul:
-      "Yalnız geliştirme makinesinde; ürettiği ses dosyalarına lisans geçirmez",
-  },
+  { ad: 'vite', tur: 'arac', lisans: 'MIT', sahip: 'Evan You ve Vite katkıcıları', kaynakUrl: 'https://github.com/vitejs/vite', dagitimdaVar: false },
+  { ad: 'vite-plugin-pwa', tur: 'arac', lisans: 'MIT', sahip: 'Anthony Fu', kaynakUrl: 'https://github.com/vite-pwa/vite-plugin-pwa', dagitimdaVar: false },
+  { ad: 'typescript', tur: 'arac', lisans: 'Apache-2.0', sahip: 'Microsoft Corp.', kaynakUrl: 'https://github.com/microsoft/TypeScript', dagitimdaVar: false },
+  { ad: 'vitest', tur: 'arac', lisans: 'MIT', sahip: 'Anthony Fu ve Vitest katkıcıları', kaynakUrl: 'https://github.com/vitest-dev/vitest', dagitimdaVar: false },
+  { ad: 'happy-dom', tur: 'arac', lisans: 'MIT', sahip: 'David Ortner', kaynakUrl: 'https://github.com/capricorn86/happy-dom', dagitimdaVar: false },
+  { ad: 'fake-indexeddb', tur: 'arac', lisans: 'Apache-2.0', sahip: 'Jeremy Scheff', kaynakUrl: 'https://github.com/dumbmatter/fakeIndexedDB', dagitimdaVar: false },
+  { ad: 'dexie', tur: 'arac', lisans: 'Apache-2.0', sahip: 'David Fahlander', kaynakUrl: 'https://github.com/dexie/Dexie.js', dagitimdaVar: false, kosul: 'Yalnız IndexedDB biçim uyum testinde (ADR-0015); uygulama kendi sarmalayıcısını kullanır' },
+  { ad: 'Piper', tur: 'arac', lisans: 'GPL-3.0', sahip: 'Open Home Foundation', kaynakUrl: 'https://github.com/OHF-Voice/piper1-gpl', dagitimdaVar: false, kosul: 'Yalnız geliştirme makinesinde; ürettiği ses dosyalarına lisans geçirmez' },
 ];
 
 const TUR_BASLIK: Readonly<Record<VarlikTuru, string>> = {
-  bagimlilik: "Çalışma zamanı bağımlılıkları",
-  font: "Yazı tipleri",
-  emoji: "Emoji",
-  ses: "Ses",
-  gorsel: "Görseller",
-  arac: "Geliştirme araçları (dağıtılmaz)",
+  bagimlilik: 'Çalışma zamanı bağımlılıkları',
+  font: 'Yazı tipleri',
+  emoji: 'Emoji',
+  ses: 'Ses',
+  gorsel: 'Görseller',
+  arac: 'Geliştirme araçları (dağıtılmaz)',
 };
 
-const TUR_SIRASI: readonly VarlikTuru[] = [
-  "bagimlilik",
-  "font",
-  "emoji",
-  "gorsel",
-  "ses",
-  "arac",
-];
+const TUR_SIRASI: readonly VarlikTuru[] = ['bagimlilik', 'font', 'emoji', 'gorsel', 'ses', 'arac'];
 
 /** LICENSES.md'deki üretilmiş tablo bölümü. Belirlenimci; `lisans:denetle` birebir karşılaştırır. */
-export function lisansTablolariMetni(
-  liste: readonly UcuncuTarafVarlik[] = UCUNCU_TARAF_VARLIKLAR,
-): string {
+export function lisansTablolariMetni(liste: readonly UcuncuTarafVarlik[] = UCUNCU_TARAF_VARLIKLAR): string {
   const parcalar: string[] = [];
   for (const tur of TUR_SIRASI) {
     const satirlar = liste.filter((v) => v.tur === tur);
     if (satirlar.length === 0) continue;
-    parcalar.push(
-      `### ${TUR_BASLIK[tur]}\n\n| Ad | Lisans | Sahip | Koşul |\n|---|---|---|---|`,
-    );
+    parcalar.push(`### ${TUR_BASLIK[tur]}\n\n| Ad | Lisans | Sahip | Koşul |\n|---|---|---|---|`);
     parcalar[parcalar.length - 1] += satirlar
-      .map(
-        (v) => `\n| ${v.ad} | ${v.lisans} | ${v.sahip} | ${v.kosul ?? "—"} |`,
-      )
-      .join("");
+      .map((v) => `\n| ${v.ad} | ${v.lisans} | ${v.sahip} | ${v.kosul ?? '—'} |`)
+      .join('');
   }
-  return parcalar.join("\n\n");
+  return parcalar.join('\n\n');
 }

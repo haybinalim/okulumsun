@@ -91,7 +91,7 @@ test('tahta: dörtten fazla etkinlik seçilemez', async ({ page }) => {
   await expect(page.getByText('4/4 seçildi — önce birini kaldır.')).toBeVisible();
 });
 
-test('ekranda banknot şematik "oyun parası" (KG-121): TCMB raster isteği yok', async ({ page }) => {
+test('ekranda banknot TCMB örnek görseli (KG-122): raster yüklenir, kartı doldurur', async ({ page }) => {
   test.setTimeout(60_000);
   const istekler: string[] = [];
   page.on('request', (r) => istekler.push(r.url()));
@@ -106,9 +106,21 @@ test('ekranda banknot şematik "oyun parası" (KG-121): TCMB raster isteği yok'
   await page.getByRole('button', { name: 'Paralarımız', exact: true }).click();
   await page.getByRole('button', { name: 'Bu kaç lira?', exact: true }).click();
   await page.getByRole('button', { name: 'Tahtada başlat' }).click();
-  await expect(page.locator('[data-sematik-banknot]').first()).toBeVisible({ timeout: 15_000 });
-  await expect(page.locator('[data-sematik-banknot]').first()).toContainText('OYUN PARASI');
-  await geometriTemiz(page, 'para sorusu (şematik banknot)');
-  expect(await page.locator('image').count(), 'raster <image> yok').toBe(0);
-  expect(istekler.filter((u) => /images\/banknotlar|\.webp(\?|$)/.test(u))).toEqual([]);
+  const banknot = page.locator('img[data-banknot]').first();
+  await expect(banknot).toBeVisible({ timeout: 15_000 });
+  await expect
+    .poll(() => banknot.evaluate((i: HTMLImageElement) => i.complete && i.naturalWidth > 0), { timeout: 10_000 })
+    .toBe(true);
+  expect(await page.locator('[data-sematik-banknot]').count(), 'şematik banknot yok').toBe(0);
+  await geometriTemiz(page, 'para sorusu (TCMB banknot)');
+  expect(istekler.some((u) => /images\/banknotlar\/\d+-tl-on-yuz-resmi\.webp/.test(u))).toBe(true);
+  // Banknot kartın iç genişliğini doldurur (önce ~320 px kartta ~130 px'ti).
+  const oranlar = await page.locator('img[data-banknot]').evaluateAll((imgs) =>
+    imgs.map((i) => {
+      const kart = i.closest('button')!.getBoundingClientRect();
+      return i.getBoundingClientRect().width / kart.width;
+    }),
+  );
+  expect(oranlar.length).toBeGreaterThan(1);
+  for (const o of oranlar) expect(o).toBeGreaterThan(0.75);
 });

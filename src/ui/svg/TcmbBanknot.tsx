@@ -5,10 +5,10 @@
  * gelir (büyük kupür daha uzun). Erişilebilir ad seçenek düğmesinde olduğu için burada `alt=""`.
  * `genislik` verilmezse kapsayıcının genişliğini doldurur (seçenek kartı, KG-122 madde 4).
  */
-import type { CSSProperties } from "react";
-import type { BanknotDegeri } from "../../exercises/types";
-import { banknotOrani } from "../../content/paraGorseli";
-import { RESMI_BANKNOT_GORSELLERI } from "./banknotAssets";
+import type { CSSProperties } from 'react';
+import type { BanknotDegeri } from '../../exercises/types';
+import { banknotOrani } from '../../content/paraGorseli';
+import { RESMI_BANKNOT_GORSELLERI } from './banknotAssets';
 
 export interface TcmbBanknotProps {
   readonly deger: BanknotDegeri;
@@ -31,13 +31,13 @@ export function TcmbBanknot({ deger, genislik, style }: TcmbBanknotProps) {
       width={genislik}
       height={genislik === undefined ? undefined : Math.round(genislik / oran)}
       style={{
-        display: "block",
-        width: genislik ?? "100%",
-        height: "auto",
+        display: 'block',
+        width: genislik ?? '100%',
+        height: 'auto',
         aspectRatio: String(oran),
         borderRadius: 4,
-        boxShadow: "0 2px 6px rgba(15, 23, 42, 0.22)",
-        outline: "1px solid rgba(51, 65, 85, 0.55)",
+        boxShadow: '0 2px 6px rgba(15, 23, 42, 0.22)',
+        outline: '1px solid rgba(51, 65, 85, 0.55)',
         ...style,
       }}
     />

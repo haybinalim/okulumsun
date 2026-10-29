@@ -1,9 +1,9 @@
-import type { CSSProperties, ReactNode } from "react";
-import { BigButton } from "./BigButton";
-import { Visual } from "../svg/Visual";
-import { TcmbBanknot } from "../svg/TcmbBanknot";
-import type { BanknotDegeri, Option, OptionDeger } from "../../exercises/types";
-import { secenekErisimEtiketi } from "./choiceErisim";
+import type { CSSProperties, ReactNode } from 'react';
+import { BigButton } from './BigButton';
+import { Visual } from '../svg/Visual';
+import { TcmbBanknot } from '../svg/TcmbBanknot';
+import type { BanknotDegeri, Option, OptionDeger } from '../../exercises/types';
+import { secenekErisimEtiketi } from './choiceErisim';
 
 /**
  * Cevap kartı — bir şıkkın değerini çizer ve seç-onayla (§7.3) durumlarını taşır.
@@ -12,7 +12,7 @@ import { secenekErisimEtiketi } from "./choiceErisim";
  * Asla KIRMIZI: yanlış cevap cezalandırıcı gösterilmez; yanlış "tekrar dene"
  * anlamında amber renkle soluklaşır (plan §7.1, §9).
  */
-export type ChoiceState = "bos" | "secili" | "dogru" | "tekrar" | "soluk";
+export type ChoiceState = 'bos' | 'secili' | 'dogru' | 'tekrar' | 'soluk';
 
 export interface ChoiceCardProps {
   option: Option;
@@ -26,23 +26,17 @@ export interface ChoiceCardProps {
   sabitBoyut?: boolean;
 }
 
-export function ChoiceCard({
-  option,
-  size,
-  state,
-  onSelect,
-  sabitBoyut = false,
-}: ChoiceCardProps) {
-  const selected = state === "secili";
-  const isCorrect = state === "dogru";
-  const isRetry = state === "tekrar";
-  const isDimmed = state === "soluk";
+export function ChoiceCard({ option, size, state, onSelect, sabitBoyut = false }: ChoiceCardProps) {
+  const selected = state === 'secili';
+  const isCorrect = state === 'dogru';
+  const isRetry = state === 'tekrar';
+  const isDimmed = state === 'soluk';
 
   const style: CSSProperties = {
     width: size,
     height: size,
     ...(sabitBoyut ? { minWidth: size, minHeight: size } : null),
-    background: "var(--color-surface)",
+    background: 'var(--color-surface)',
     border: `${selected || isCorrect ? 5 : 3}px solid ${borderColor(state)}`,
     boxShadow: isCorrect
       ? `0 0 0 calc(4px * var(--scale)) var(--color-correct-soft)`
@@ -51,11 +45,11 @@ export function ChoiceCard({
         : undefined,
     opacity: isRetry ? 0.5 : isDimmed ? 0.35 : 1,
     transition: `transform var(--tap) var(--ease), opacity var(--tap)`,
-    transform: selected ? "scale(1.06)" : "scale(1)",
+    transform: selected ? 'scale(1.06)' : 'scale(1)',
     // CSS değişkenleri --tap/--ease burada inline olarak verilmezse varsayılan
     // değerlerle düşer; var() fallback'i bunu sağlar.
-    ["--tap" as string]: "200ms",
-    ["--ease" as string]: "cubic-bezier(0.34, 1.56, 0.64, 1)",
+    ['--tap' as string]: '200ms',
+    ['--ease' as string]: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
   } as CSSProperties;
 
   return (
@@ -68,14 +62,7 @@ export function ChoiceCard({
       onPress={onSelect}
       style={style}
     >
-      <div
-        style={{
-          display: "grid",
-          placeItems: "center",
-          width: "100%",
-          height: "100%",
-        }}
-      >
+      <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}>
         {renderDeger(option.deger, size)}
       </div>
     </BigButton>
@@ -84,14 +71,14 @@ export function ChoiceCard({
 
 function borderColor(state: ChoiceState): string {
   switch (state) {
-    case "secili":
-      return "var(--color-accent)";
-    case "dogru":
-      return "var(--color-correct)";
-    case "tekrar":
-      return "var(--color-retry)";
+    case 'secili':
+      return 'var(--color-accent)';
+    case 'dogru':
+      return 'var(--color-correct)';
+    case 'tekrar':
+      return 'var(--color-retry)';
     default:
-      return "var(--color-border)";
+      return 'var(--color-border)';
   }
 }
 
@@ -99,124 +86,71 @@ function borderColor(state: ChoiceState): string {
 function renderDeger(deger: OptionDeger, size: number): ReactNode {
   const inner = size * 0.7;
   switch (deger.tur) {
-    case "sayi":
-      return (
-        <Visual
-          spec={{ type: "rakam", sayi: deger.sayi }}
-          width={inner}
-          height={inner}
-        />
-      );
-    case "gorsel":
-      if (deger.gorsel.type === "banknot")
-        return <KartBanknotu deger={deger.gorsel.deger} />;
+    case 'sayi':
+      return <Visual spec={{ type: 'rakam', sayi: deger.sayi }} width={inner} height={inner} />;
+    case 'gorsel':
+      if (deger.gorsel.type === 'banknot') return <KartBanknotu deger={deger.gorsel.deger} />;
       return <Visual spec={deger.gorsel} width={inner} height={inner} />;
-    case "sekil":
-      return (
-        <Visual
-          spec={{ type: "sekil", sekil: deger.sekil }}
-          width={inner}
-          height={inner}
-        />
-      );
-    case "sekilKategorisi":
+    case 'sekil':
+      return <Visual spec={{ type: 'sekil', sekil: deger.sekil }} width={inner} height={inner} />;
+    case 'sekilKategorisi':
       return <SekilKategori kategori={deger.kategori} size={inner} />;
-    case "banknot":
+    case 'banknot':
       return <KartBanknotu deger={deger.deger} />;
-    case "terim":
+    case 'terim':
       return <Terim terim={deger.terim} size={inner} />;
     // 'metin' çocuk ekranında gelmemeli (alistirmaIhlalleri engeller); güvenlik ağı.
-    case "metin":
-      return (
-        <span style={{ fontSize: inner * 0.3, color: "var(--color-ink)" }}>
-          {deger.metin}
-        </span>
-      );
+    case 'metin':
+      return <span style={{ fontSize: inner * 0.3, color: 'var(--color-ink)' }}>{deger.metin}</span>;
   }
 }
 
 /**
- * Banknot kartı doldurur (KG-122): kartın gerçek iç genişliğinin %88'i, gerçek kupür oranı korunur. `size`
- * yerine CSS yüzdesi: tahtada kart `--size-choice` alt sınırıyla `size`'dan büyük olabilir (1920×1080'de
- * ~320 px kartta banknot önce ~130 px kalıyordu).
+ * Banknot kartı doldurur (KG-122): kartın iç genişliğinin %88'i, gerçek kupür oranı korunur. `size` yerine CSS
+ * yüzdesi: tahtada kart `--size-choice` alt sınırıyla `size`'dan büyük olabilir (1920×1080'de ~320 px kartta
+ * banknot önce ~130 px kalıyordu).
  */
 function KartBanknotu({ deger }: { deger: BanknotDegeri }) {
   return (
-    <div
-      style={{ width: "88%", display: "grid", placeItems: "center" }}
-      data-kart-banknotu={deger}
-    >
+    <div style={{ width: '88%', display: 'grid', placeItems: 'center' }} data-kart-banknotu={deger}>
       <TcmbBanknot deger={deger} />
     </div>
   );
 }
 
 /** Karşılaştırma terimi — < > = sembolleri 1. sınıfta YOK, ikonla gösterilir. */
-function Terim({
-  terim,
-  size,
-}: {
-  terim: "cok" | "daha-cok" | "az" | "daha-az" | "esit";
-  size: number;
-}) {
+function Terim({ terim, size }: { terim: 'cok' | 'daha-cok' | 'az' | 'daha-az' | 'esit'; size: number }) {
   const dots = terimDots(terim);
   return (
-    <svg
-      viewBox="0 0 100 60"
-      width={size}
-      height={size * 0.6}
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 100 60" width={size} height={size * 0.6} aria-hidden="true">
       {dots.map((d, i) => (
-        <circle
-          key={i}
-          cx={10 + i * 18}
-          cy={30}
-          r={d.r}
-          fill="var(--color-ink)"
-        />
+        <circle key={i} cx={10 + i * 18} cy={30} r={d.r} fill="var(--color-ink)" />
       ))}
     </svg>
   );
 }
 
 /** Terim → nokta adedi/büyüklüğü (çok=dolu büyük, az=tek küçük, eşit=iki eşit). */
-function terimDots(
-  terim: "cok" | "daha-cok" | "az" | "daha-az" | "esit",
-): { r: number }[] {
+function terimDots(terim: 'cok' | 'daha-cok' | 'az' | 'daha-az' | 'esit'): { r: number }[] {
   switch (terim) {
-    case "cok":
+    case 'cok':
       return [{ r: 7 }, { r: 7 }, { r: 7 }, { r: 7 }];
-    case "daha-cok":
+    case 'daha-cok':
       return [{ r: 7 }, { r: 7 }, { r: 7 }];
-    case "az":
+    case 'az':
       return [{ r: 6 }];
-    case "daha-az":
+    case 'daha-az':
       return [{ r: 6 }, { r: 6 }];
-    case "esit":
+    case 'esit':
       return [{ r: 6 }, { r: 6 }];
   }
 }
 
 /** Şekil kategorisi (yuvarlak/köşeli) — MAT.1.3.3'ün birincil ayrımı. */
-function SekilKategori({
-  kategori,
-  size,
-}: {
-  kategori: "yuvarlak" | "koseli";
-  size: number;
-}) {
+function SekilKategori({ kategori, size }: { kategori: 'yuvarlak' | 'koseli'; size: number }) {
   return (
-    <svg
-      viewBox="0 0 100 100"
-      width={size}
-      height={size}
-      aria-hidden="true"
-      fill="var(--color-accent)"
-      stroke="#1f2937"
-      strokeWidth="3"
-    >
-      {kategori === "yuvarlak" ? (
+    <svg viewBox="0 0 100 100" width={size} height={size} aria-hidden="true" fill="var(--color-accent)" stroke="#1f2937" strokeWidth="3">
+      {kategori === 'yuvarlak' ? (
         <circle cx="50" cy="50" r="38" />
       ) : (
         <rect x="16" y="16" width="68" height="68" rx="6" />
