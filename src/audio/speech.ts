@@ -212,6 +212,17 @@ class SpeechService {
   }
 
   /**
+   * Ekranın SORUSUNU (son talimat; `Prompt.tekrarSes` varsa o) baştan söyler — soru hoparlörü (KG-127).
+   * `repeatLast`tan farkı: çocuk bir şıkka dokunup şıkkın adını duyduktan ya da "tekrar dene" geri
+   * bildiriminden sonra da soru çalar. Talimat yoksa `repeatLast`a düşer. Öncelik yüksek: çalan konuşma
+   * kesilir (stop), kuyruk boşalır, soru tek başına çalar. Yeni klip istemez; aynı ses anahtarları.
+   */
+  async soruyuTekrarla(rate?: number): Promise<void> {
+    if (!this.#sonTalimat) return this.repeatLast(rate);
+    return this.speak(this.#sonTalimat, { priority: 'high', talimat: true, rate });
+  }
+
+  /**
    * Kuyruğu ve mevcut konuşmayı durdurur.
    * Ekran değişiminde ZORUNLU — yoksa önceki ekranın talimatı yenisinde çalar.
    */

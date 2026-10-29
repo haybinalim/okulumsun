@@ -266,7 +266,8 @@ function findViolations(profile: DeviceProfile): Violation[] {
 
     // Ölçüt merkez, üst kenar değil: çocuk büyük bir butonun kenarına değil
     // ortasına nişan alır. (Aynı kural tests/e2e/board-geometry.spec.ts'te.)
-    if (r.top + r.height / 2 < deadTop) {
+    // KG-127: yedek hedef (soru hoparlörü) ölü bölge kuralından muaf; eşi (↻) alt çubukta.
+    if (r.top + r.height / 2 < deadTop && !el.closest('[data-yedek-hedef]')) {
       out.push({ label, reason: 'erişilemez bölgede', rect: r });
       continue;
     }

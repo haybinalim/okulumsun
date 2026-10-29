@@ -36,6 +36,11 @@ export interface BigButtonProps {
    * (`[data-yetiskin]`, src/index.css) ve e2e geometri denetimi muaf tutar.
    */
   'data-yetiskin'?: string;
+  /**
+   * Yedek dokunma hedefi (KG-127): aynı eylemin erişim bölgesinde bir eşi var (ör. üstteki soru hoparlörü ↔
+   * alt çubuktaki ↻). `<button>`a geçer; e2e geometri denetimi yalnız üst %35 kuralından muaf tutar.
+   */
+  'data-yedek-hedef'?: string;
 }
 
 /**
@@ -61,6 +66,7 @@ export function BigButton({
   className,
   ariaPressed,
   'data-yetiskin': yetiskin,
+  'data-yedek-hedef': yedekHedef,
 }: BigButtonProps) {
   // -Infinity, 0 DEĞİL. `performance.now()` sayfa yüklenmesinden bu yana geçen
   // süredir; 0 ile başlatılırsa ilk 250 ms içindeki dokunuş "çok hızlı tekrar"
@@ -85,6 +91,7 @@ export function BigButton({
       aria-label={label}
       aria-pressed={ariaPressed}
       data-yetiskin={yetiskin}
+      data-yedek-hedef={yedekHedef}
       // Devre dışı buton yine de dokunulabilir olmalı ki sesli açıklama yapabilsin.
       // `aria-disabled` durumu bildirir, `disabled` niteliği olayı öldürürdü.
       aria-disabled={disabled || undefined}

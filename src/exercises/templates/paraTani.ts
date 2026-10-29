@@ -4,7 +4,8 @@
  * KAZANIM: MAT.1.1.9 — Banknot tanıma (5, 10, 20, 50, 100, 200 TL).
  * Toplama YASAK — kazanım sadece tanıma.
  * ÇELDİRİCİ: PARA_BOYUT_DEGER (büyük banknot = daha değerli sanma)
- * ETKİLEŞİM: AUDIO_TO_IMAGE — sesli "Kaç lira?" sorusu, banknot görseli seç.
+ * ETKİLEŞİM: AUDIO_TO_IMAGE — sesi dinle ("beş lira" = `sayi.N` + `para.lira`), banknot görselini seç.
+ * Uyaran alanında görsel yok (soru yalnız ses); üstte soru hoparlörü durur (KG-127).
  * SAF VE SENKRON.
  */
 
