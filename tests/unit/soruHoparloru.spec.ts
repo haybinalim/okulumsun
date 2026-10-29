@@ -18,6 +18,7 @@ import { GameShell } from '../../src/ui/layout/GameShell';
 import { ExerciseScreen } from '../../src/ui/screens/ExerciseScreen';
 import { HoparlorSimgesi, SORU_HOPARLORU_ETIKETI } from '../../src/ui/primitives/SoruHoparloru';
 import { useAppStore } from '../../src/store/appStore';
+import { sikisikKartBoyu } from '../../src/ui/secenekKartBoyu';
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -204,5 +205,26 @@ describe('görsel dil (KG-104: kendi SVG)', () => {
     const bas = readFileSync('src/exercises/templates/paraTani.ts', 'utf8').slice(0, 800);
     expect(bas).not.toContain('Kaç lira');
     expect(bas).toContain('KG-127');
+  });
+});
+
+describe('sıkışık ekranda seçenek kartı (1080×810 tahta; hoparlörle çakışmasın)', () => {
+  const tahta = { secim: 320, birincil: 224, aralik: 51, tapMin: 102 };
+  it('1920×1080 tahta: varsayılan sığar → değişmez (null)', () => {
+    expect(sikisikKartBoyu({ ...tahta, alanGenislik: 1844, alanYukseklik: 585, adet: 3 })).toBeNull();
+    expect(sikisikKartBoyu({ ...tahta, alanGenislik: 1844, alanYukseklik: 585, adet: 4 })).toBeNull();
+  });
+  it('1080×810 tablet profili: değişmez', () => {
+    expect(sikisikKartBoyu({ secim: 200, birincil: 140, aralik: 32, tapMin: 64, alanGenislik: 1032, alanYukseklik: 453, adet: 4 })).toBeNull();
+  });
+  it('1080×810 tahta: 3 kart tek satır, alt alana sığar (409 − 224 = 185 px)', () => {
+    expect(sikisikKartBoyu({ ...tahta, alanGenislik: 1004, alanYukseklik: 409, adet: 3 })).toBe(185);
+  });
+  it('dar alanda yan yana sınırı belirler; asla tap-min altı değil', () => {
+    expect(sikisikKartBoyu({ ...tahta, alanGenislik: 825, alanYukseklik: 409, adet: 4 })).toBe(168);
+    expect(sikisikKartBoyu({ ...tahta, alanGenislik: 300, alanYukseklik: 250, adet: 4 })).toBe(102);
+  });
+  it('geçersiz ölçüde varsayılan', () => {
+    expect(sikisikKartBoyu({ ...tahta, alanGenislik: 0, alanYukseklik: 409, adet: 3 })).toBeNull();
   });
 });
