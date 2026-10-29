@@ -83,6 +83,13 @@ export default function KesifMasasi() {
   const onlukTek = olcu !== null && onlukTekMi(olcu);
   const nesneTek = olcu !== null && nesneTekOnlukMu(olcu);
   const sikisik = (durum.arac === 'onlukCerceve' && onlukTek) || (durum.arac === 'nesneKumesi' && nesneTek);
+  // KG-126: sıkı düzene geçişte üst bölgenin yeni yüksekliği boyamadan ÖNCE okunur (ResizeObserver bir kare
+  // sonra bildirir; arada rakam eski boyutta üstten taşan bir kare çiziliyordu). Bölge `flex: 1` olduğundan
+  // yüksekliği rakamın boyutuna bağlı değil — döngü yok.
+  useLayoutEffect(() => {
+    const ust = ustBolge.current;
+    if (ust) setUstYukseklik(ust.clientHeight);
+  }, [sikisik, durum.arac]);
 
   const sayi = gosterilenSayi(durum);
   const metin = gosterilenMetin(durum);
