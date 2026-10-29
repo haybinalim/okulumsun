@@ -69,7 +69,7 @@ for (const { kod, ad } of TEMSILCILER) {
 
     // İlk alıştırmada alt çubuk yönü ve taşma; sonra 3 soru (her birinde geometri).
     const onayla = page.getByRole('button', { name: 'Onayla' });
-    const dinle = page.getByRole('button', { name: /tekrar dinle/i });
+    const dinle = page.getByRole('button', { name: 'Tekrar dinle', exact: true });
     await expect(onayla).toBeVisible();
     await expect(dinle).toBeVisible();
     const [o, d] = [await onayla.boundingBox(), await dinle.boundingBox()];

@@ -224,6 +224,21 @@ body {
   flex-direction: row-reverse;
 }
 
+/*
+ * Soru hoparlörü (KG-127): konuşma sürerken dalgalar hafifçe nabız atar. Sınıf yalnız hareket azaltma kapalıyken
+ * verilir (useHareketAzalt); yukarıdaki ve aşağıdaki kurallar ayrıca animasyonu sıfırlar.
+ */
+@keyframes hoparlor-nabiz {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.hoparlor-dalga {
+  animation: hoparlor-nabiz 1.1s ease-in-out infinite;
+}
+.hoparlor-dalga-2 {
+  animation-delay: 0.18s;
+}
+
 /* Hareket azalt: işletim sistemi ayarından bağımsız, `prefers-reduced-motion` ile aynı kural. */
 :root[data-hareket-azalt] *,
 :root[data-hareket-azalt] *::before,

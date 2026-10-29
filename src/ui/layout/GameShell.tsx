@@ -1,5 +1,6 @@
 import { useRef, type CSSProperties, type ReactNode } from 'react';
 import { useTalimatTekrari } from '../useTalimatTekrari';
+import { SoruHoparloru } from '../primitives/SoruHoparloru';
 
 /**
  * Alıştırma ekranı iskeleti (plan §11).
@@ -10,6 +11,10 @@ import { useTalimatTekrari } from '../useTalimatTekrari';
  *   · ALT %65 — ETKİLEŞİM alanı. Tüm cevap kartları ve kontroller burada.
  * "Tekrar dinle" düğmesi alt çubukta SABİT yerde — yerini ezberlemek zorunda (çocuk okuyamıyor).
  * Sol el ayarı (Adım 55) alt çubuğu (`.alt-cubuk`) aynalar; yeri yine sabittir.
+ *
+ * KG-127: soru yalnız sesten ibaretse (`stimulus` boş — para/rakam tanıma, şekil adı, konum, sırala/eşleştir…)
+ * üst alana büyük bir SORU HOPARLÖRÜ konur: "soru burada, dinle". ↻ ile aynı eylemi yapan YEDEK hedeftir;
+ * tahtada çocuk üst %35'e uzanamadığı için ↻ alt çubukta kalır (öğretmen ve tablet üstteki hoparlörü kullanır).
  */
 export function GameShell({
   stimulus,
@@ -38,7 +43,7 @@ export function GameShell({
         ...accentStyle,
       }}
     >
-      {/* Üst: uyaran alanı — dokunulabilir öğe YOK. */}
+      {/* Üst: uyaran alanı — dokunulabilir öğe YOK (tek istisna: yedek soru hoparlörü, KG-127). */}
       <section
         style={{
           flex: '0 0 35%',
@@ -47,7 +52,7 @@ export function GameShell({
           minHeight: 0,
         }}
       >
-        {stimulus}
+        {stimulus ?? <SoruHoparloru />}
       </section>
 
       {/* Alt: etkileşim alanı — tüm seçenekler ve kontroller. */}

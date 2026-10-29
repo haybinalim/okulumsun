@@ -1,4 +1,5 @@
 import { useRef, useState, type ReactNode } from 'react';
+import { useSikisikKartBoyu } from '../secenekKartBoyu';
 import { basitMaddeSonucu, yanlisBilgisiBirlestir, type YanlisBilgisi } from '../../progress/basitMaddeSonucu';
 import type { MaddeSonuc } from '../../progress/itemLifecycle';
 import { GameShell } from '../layout/GameShell';
@@ -199,9 +200,14 @@ function InteractionArea({
   canConfirm: boolean;
   secimDurumu: string;
 }): ReactNode {
+  // KG-127: sıkışık ekranda (1080×810 tahta) kartlar tek satıra ve alt alana sığacak kadar küçülür; varsayılan
+  // sığıyorsa (1920 tahta, tablet) hiçbir şey değişmez. Ölçüm, GameShell'in etkileşim bölümü (bu işaretin ebeveyni).
+  const isaret = useRef<HTMLDivElement>(null);
+  const sikisik = useSikisikKartBoyu(isaret, options.length);
   return (
     <>
       <div
+        ref={isaret}
         role="status"
         aria-live="polite"
         style={{
@@ -218,12 +224,17 @@ function InteractionArea({
       >
         {secimDurumu}
       </div>
-      <div style={{ display: 'flex', gap: 'var(--size-gap)', flexWrap: 'wrap', justifyContent: 'center' }}>
+      <div
+        data-secenekler=""
+        data-sikisik={sikisik ?? undefined}
+        style={{ display: 'flex', gap: 'var(--size-gap)', flexWrap: sikisik !== null ? 'nowrap' : 'wrap', justifyContent: 'center' }}
+      >
         {options.map((o) => (
           <ChoiceCard
             key={o.id}
             option={o}
-            size={choiceSize}
+            size={sikisik ?? choiceSize}
+            sabitBoyut={sikisik !== null}
             state={stateOf(o.id)}
             onSelect={() => onSelect(o.id)}
           />

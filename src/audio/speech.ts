@@ -16,7 +16,7 @@
  * gerekiyor — `<audio>` elemanlarıyla bu, duyulur biçimde tutarsız oluyor.
  */
 
-import { e2eKlipAlindi } from '../dev/e2eKanca';
+import { e2eKlipAlindi, e2eKlipIstendi } from '../dev/e2eKanca';
 import { AUDIO_MANIFEST, type SpeechKey } from './audioManifest.generated';
 import { kayitEkle } from '../hata/hataKaydi';
 import { hash32 } from '../exercises/rng';
@@ -212,6 +212,17 @@ class SpeechService {
   }
 
   /**
+   * Ekranın SORUSUNU (son talimat; `Prompt.tekrarSes` varsa o) baştan söyler — soru hoparlörü (KG-127).
+   * `repeatLast`tan farkı: çocuk bir şıkka dokunup şıkkın adını duyduktan ya da "tekrar dene" geri
+   * bildiriminden sonra da soru çalar. Talimat yoksa `repeatLast`a düşer. Öncelik yüksek: çalan konuşma
+   * kesilir (stop), kuyruk boşalır, soru tek başına çalar. Yeni klip istemez; aynı ses anahtarları.
+   */
+  async soruyuTekrarla(rate?: number): Promise<void> {
+    if (!this.#sonTalimat) return this.repeatLast(rate);
+    return this.speak(this.#sonTalimat, { priority: 'high', talimat: true, rate });
+  }
+
+  /**
    * Kuyruğu ve mevcut konuşmayı durdurur.
    * Ekran değişiminde ZORUNLU — yoksa önceki ekranın talimatı yenisinde çalar.
    */
@@ -268,6 +279,7 @@ class SpeechService {
       if (kesildi()) return;
       // Kesilen konuşma (sinyal iptali veya `stop()`), yavaş bir klip indirmesini BEKLEMEZ (Adım 54, KG-116):
       // ekran değişince kuyruk hemen yeni ekranın talimatına geçer. İndirme arka planda sürer ve önbelleğe girer.
+      e2eKlipIstendi(keys[i]);
       const buffer = await this.#kesilene(this.#load(keys[i]), options.signal, nesil, null);
       if (kesildi()) return;
       if (!buffer) continue;

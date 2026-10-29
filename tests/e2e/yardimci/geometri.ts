@@ -19,6 +19,11 @@ import type { Page } from '@playwright/test';
  *  2. HEDEF BOYUTU. Tahta profilinde her dokunma hedefi en az 64×1.6 = 102px.
  *     IR dokunmatik tahtalarda isabet zaten kayıyor; küçük hedef ıskalanır.
  *
+ * YEDEK HEDEF (KG-127): `data-yedek-hedef` taşıyan öğe (üstteki soru hoparlörü) ölü bölge kuralından muaftır,
+ * çünkü aynı eylemin erişim bölgesinde bir eşi vardır. Bu muafiyet ancak eş gerçekten oradaysa geçerlidir:
+ * yedek hedef varken merkezi ölü bölgenin altında bir "Tekrar dinle" düğmesi yoksa ihlal sayılır. Boyut
+ * kuralı yedek hedefe de uygulanır.
+ *
  * Bu test geometriyi kanıtlar, fiziksel dokunma isabetini KANITLAMAZ.
  * Gerçek tahta doğrulaması yapıldığında (2. ay) eşikler ayarlanabilir.
  */
@@ -66,7 +71,8 @@ export async function findOffenders(
         };
 
         const center = r.top + r.height / 2;
-        if (center < deadTop) {
+        const yedek = el.closest('[data-yedek-hedef]') !== null;
+        if (center < deadTop && !yedek) {
           out.push({
             label,
             reason: `erişilemez üst bölgede (merkez y=${Math.round(center)} < ${Math.round(deadTop)})`,
@@ -78,6 +84,14 @@ export async function findOffenders(
         if (r.width < min || r.height < min) {
           out.push({ label, reason: `çok küçük (${box.w}×${box.h}, min ${minTarget})`, box });
         }
+      }
+      // KG-127: yedek hedefin erişilebilir eşi ("Tekrar dinle") ölü bölgenin altında olmalı.
+      if (document.querySelector('[data-yedek-hedef]')) {
+        const es = [...document.querySelectorAll<HTMLElement>('button[aria-label="Tekrar dinle"]')].some((b) => {
+          const r = b.getBoundingClientRect();
+          return r.width > 0 && r.top + r.height / 2 >= deadTop;
+        });
+        if (!es) out.push({ label: 'Tekrar dinle', reason: 'yedek hedefin erişilebilir eşi yok', box: { x: 0, y: 0, w: 0, h: 0 } });
       }
       return out;
     },

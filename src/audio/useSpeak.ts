@@ -47,8 +47,9 @@ export function usePrefetch(keys: readonly SpeechKey[]): void {
  *
  * Arka arkaya basıldığında yavaşlar (1.0 → 0.85 → 0.75). Çocuk anlamadığı için
  * tekrar basıyordur; aynı hızda tekrarlamak aynı sonucu verir.
+ * `hedef`: 'son' (↻, son söyleneni) | 'soru' (soru hoparlörü, ekranın talimatını — KG-127).
  */
-export function useReplay(): () => void {
+export function useReplay(hedef: 'son' | 'soru' = 'son'): () => void {
   const count = useRef(0);
   const timer = useRef<number | null>(null);
 
@@ -62,7 +63,8 @@ export function useReplay(): () => void {
   return () => {
     count.current = Math.min(count.current + 1, 2);
     const rate = [1, 0.85, 0.75][count.current];
-    void speech.repeatLast(rate);
+    // KG-127: soru hoparlörü ('soru') şık adı/geri bildirim yerine ekranın sorusunu çalar.
+    void (hedef === 'soru' ? speech.soruyuTekrarla(rate) : speech.repeatLast(rate));
 
     // Bir süre basılmazsa hız normale döner.
     if (timer.current !== null) clearTimeout(timer.current);
