@@ -130,3 +130,35 @@ for (const { adet, yerlesim } of [
     await expect(page.getByText('📋 1')).toBeVisible();
   });
 }
+
+/**
+ * KG-131 (kullanıcı kararı 2026-10-30): 1080×810 elle seçilen tahtada zorluk 4–5'in 10–20 nesnesi sığmaz; ölçülen
+ * yerleşim taşıyamayınca soru zorluk 3'te (6–10 nesne) gösterilir — nesneler çakışmasız ve pencerede.
+ * 1920 tahta aynı istekte zorluk 4–5 sayılarını göstermeyi sürdürür.
+ */
+const ADET_ARALIGI: Record<number, [number, number]> = { 3: [6, 10], 4: [10, 15], 5: [14, 20] };
+for (const zorluk of [4, 5] as const) {
+  for (const tohum of [1, 2, 3]) {
+    test(`KG-131 M-SAY zorluk ${zorluk} tohum ${tohum}: 1080×810 tahtada zorluk 3, 1920 tahtada zorluk ${zorluk}`, async ({ page }, info) => {
+      test.skip(info.project.name !== 'board', 'yalnız tahta profili');
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      for (const [w, h, beklenen] of [
+        [1080, 810, 3],
+        [1920, 1080, zorluk],
+      ] as const) {
+        await page.setViewportSize({ width: w, height: h });
+        await page.goto(`/?gelistirme=soru&sablon=M-SAY&tohum=${tohum}&zorluk=${zorluk}&device=board&mod=tahta`);
+        await page.getByRole('button', { name: 'Sesi aç' }).click();
+        await expect(page.locator(`[data-say-zorluk="${beklenen}"]`)).toBeVisible();
+        await expect(page.getByRole('button', { name: 'nesne 1', exact: true })).toBeVisible();
+        const adet = await page.locator('button[aria-label^="nesne "]').count();
+        const [lo, hi] = ADET_ARALIGI[beklenen];
+        expect(adet, `${w}×${h} nesne sayısı`).toBeGreaterThanOrEqual(lo);
+        expect(adet, `${w}×${h} nesne sayısı`).toBeLessThanOrEqual(hi);
+        await denetle(page, 'board', adet, 102);
+        if (process.env.SAY_EKRAN_GORUNTUSU)
+          await page.screenshot({ path: `${process.env.SAY_EKRAN_GORUNTUSU}/kg131-${w}-z${zorluk}-t${tohum}.png` });
+      }
+    });
+  }
+}
