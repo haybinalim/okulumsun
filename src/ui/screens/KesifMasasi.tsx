@@ -47,7 +47,7 @@ export default function KesifMasasi() {
   }, [durum]);
 
   // KG-120: araç alanının ve üst gösterim bölgesinin ölçüsü (küçük tahtada tek onluk; rakam bölgeye sığar).
-  const kok = useRef<HTMLElement>(null);
+  const ekranKoku = useRef<HTMLElement>(null);
   const aracAlani = useRef<HTMLElement>(null);
   const ustBolge = useRef<HTMLElement>(null);
   const [olcu, setOlcu] = useState<KesifOlcu | null>(null);
@@ -76,14 +76,14 @@ export default function KesifMasasi() {
           : yeni,
       );
       setUstYukseklik(ust.clientHeight);
-      if (kok.current) setEkranYuksekligi(kok.current.clientHeight);
+      if (ekranKoku.current) setEkranYuksekligi(ekranKoku.current.clientHeight);
     };
     olc();
     if (typeof ResizeObserver === 'undefined') return;
     const g = new ResizeObserver(olc);
     g.observe(alan);
     g.observe(ust);
-    if (kok.current) g.observe(kok.current);
+    if (ekranKoku.current) g.observe(ekranKoku.current);
     return () => g.disconnect();
   }, []);
   const onlukTek = olcu !== null && onlukTekMi(olcu);
@@ -97,13 +97,20 @@ export default function KesifMasasi() {
     (durum.arac === 'nesneKumesi' && nesneTek) ||
     (durum.arac === 'sayiDogrusu' && dogruDuzeni.tur === 'zikzak') ||
     (durum.arac === 'terazi' && teraziSiki);
+  // KG-126: sıkı düzene geçişte üst bölgenin yeni yüksekliği boyamadan ÖNCE okunur (ResizeObserver bir kare
+  // sonra bildirir; arada rakam eski boyutta üstten taşan bir kare çiziliyordu). Bölge `flex: 1` olduğundan
+  // yüksekliği rakamın boyutuna bağlı değil — döngü yok.
+  useLayoutEffect(() => {
+    const ust = ustBolge.current;
+    if (ust) setUstYukseklik(ust.clientHeight);
+  }, [sikisik, durum.arac]);
 
   const sayi = gosterilenSayi(durum);
   const metin = gosterilenMetin(durum);
 
   return (
     <main
-      ref={kok}
+      ref={ekranKoku}
       aria-label="Keşif Masası"
       data-kesif-arac={durum.arac}
       data-kesif-sayi={sayi}
