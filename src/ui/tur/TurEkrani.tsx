@@ -17,10 +17,14 @@ import { glifAdi, glifAnahtari, HIZ_ADI, HIZLAR, sekmeGlifleri, type Hiz } from 
 import { turEkraniAc, turEkraniKapat, type TurEkrani as TurEkraniDurumu } from './turEkrani';
 import { useHamleVerisi } from './useHamleVerisi';
 import { YazilisGlifi } from './YazilisGlifi';
+import { KagitMenusu, KagitOnizleme, KagitSecimi } from './TurKagitEkranlari';
+import { Baslik, ekranStili, SEKME_SAYISI } from './turOrtak';
 
 export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; profil: DeviceProfile }) {
   const geri = () => {
     if (ekran.ekran === 'yazilis') turEkraniAc({ ekran: 'yazilisSecimi', sekme: ekran.sekme });
+    else if (ekran.ekran === 'kagit') turEkraniAc(ekran.geri);
+    else if (ekran.ekran === 'kagitSecimi') turEkraniAc({ ekran: 'kagitlar' });
     else if (ekran.ekran === 'giris') turEkraniKapat();
     else turEkraniAc({ ekran: 'giris' });
   };
@@ -31,7 +35,9 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
         {ekran.ekran === 'giris' ? (
           <Giris />
         ) : ekran.ekran === 'kagitlar' ? (
-          <Giris />
+          <KagitMenusu />
+        ) : ekran.ekran === 'kagit' ? (
+          <KagitOnizleme istek={ekran.istek} />
         ) : (
           <VeriIle>
             {(glifler) =>
@@ -40,38 +46,16 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
                   key={ekran.anahtar}
                   glif={glifler.find((g) => glifAnahtari(g) === ekran.anahtar) ?? glifler[0]}
                 />
+              ) : ekran.ekran === 'kagitSecimi' ? (
+                <KagitSecimi glifler={glifler} durum={ekran} />
               ) : (
-                <YazilisSecimi glifler={glifler} sekme={ekran.sekme ?? 0} />
+                <YazilisSecimi glifler={glifler} sekme={ekran.ekran === 'yazilisSecimi' ? (ekran.sekme ?? 0) : 0} />
               )
             }
           </VeriIle>
         )}
       </div>
     </div>
-  );
-}
-
-const ekranStili = {
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  gap: 'var(--size-gap)',
-  padding: 'var(--size-edge)',
-  paddingBottom: 'var(--size-edge-bottom)',
-  boxSizing: 'border-box',
-} as const;
-
-function Baslik({ baslik, alt }: { baslik: string; alt?: string }) {
-  return (
-    <header data-yetiskin="" style={{ textAlign: 'center', flex: '0 0 auto' }}>
-      <h1 style={{ margin: 0, fontSize: 'calc(var(--text-ui) * 1.1)' }}>{baslik}</h1>
-      {alt && (
-        <p style={{ margin: '0.3em 0 0', fontSize: 'var(--text-adult)', color: 'var(--color-ink-soft, #6B6B6B)' }}>
-          {alt}
-        </p>
-      )}
-    </header>
   );
 }
 
@@ -86,6 +70,9 @@ function Giris() {
           onPress={() => turEkraniAc({ ekran: 'yazilisSecimi' })}
         >
           <span style={{ padding: '0 0.6em' }}>Harf ve rakam yazılışı</span>
+        </BigButton>
+        <BigButton label="Kâğıtlar" size="primary" onPress={() => turEkraniAc({ ekran: 'kagitlar' })}>
+          <span style={{ padding: '0 0.6em' }}>Kâğıtlar</span>
         </BigButton>
       </div>
     </main>
@@ -105,8 +92,6 @@ function VeriIle({ children }: { children: (glifler: readonly TurHamleGlifi[]) =
     </main>
   );
 }
-
-const SEKME_SAYISI = HARF_GRUPLARI.length + 1;
 
 function YazilisSecimi({ glifler, sekme }: { glifler: readonly TurHamleGlifi[]; sekme: number }) {
   const [secili, setSecili] = useState(Math.min(Math.max(sekme, 0), SEKME_SAYISI - 1));

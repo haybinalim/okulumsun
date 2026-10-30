@@ -25,7 +25,16 @@ const CIZGI = '#555';
 const YAZI = "'TemelYazi', 'TemelYaziRakam', 'Andika', sans-serif";
 const u = (mm: number): number => mm / BIRIM_MM; // mm → hamle birimi
 
-export function TurKagitSayfasi({ sayfa, glif }: { readonly sayfa: Sayfa; readonly glif?: TurHamleGlifi }) {
+export function TurKagitSayfasi({
+  sayfa,
+  glif,
+  glifler,
+}: {
+  readonly sayfa: Sayfa;
+  readonly glif?: TurHamleGlifi;
+  /** Destek kâğıdı: satırın `glifSirasi` buradan seçer. */
+  readonly glifler?: readonly TurHamleGlifi[];
+}) {
   return (
     <svg
       className="tk-sayfa"
@@ -41,7 +50,7 @@ export function TurKagitSayfasi({ sayfa, glif }: { readonly sayfa: Sayfa; readon
       <UstBilgi sayfa={sayfa} />
       {sayfa.ornek && glif && <BuyukOrnek glif={glif} kutu={sayfa.ornek} />}
       {sayfa.satirlar.map((s, k) => (
-        <Satir key={k} satir={s} glif={glif} />
+        <Satir key={k} satir={s} glif={s.glifSirasi !== undefined ? glifler?.[s.glifSirasi] : glif} />
       ))}
       {sayfa.gozlem.length > 0 && <GozlemTablosu sayfa={sayfa} />}
       <AltBilgi kod={sayfa.kod} />
@@ -336,9 +345,9 @@ function AltBilgi({ kod }: { readonly kod: string }) {
         {KALIBRASYON_NOTU}
       </text>
       <text x={ICERIK.x + KALIBRASYON_MM + 3} y={y + 8.6} fontSize={2.8} fill={MUREKKEP}>
-        Okulumsun, MEB TYMM 2026 Türkçe 1. sınıf. Ücretsizdir, çoğaltılabilir.
+        Okulumsun, MEB TYMM 2026 Türkçe 1. sınıf. Ücretsiz, çoğaltılabilir.
       </text>
-      <text x={ICERIK.x + ICERIK.en} y={y + 8.6} fontSize={2.8} fill={MUREKKEP} textAnchor="end" data-kagit-kodu="">
+      <text x={ICERIK.x + ICERIK.en} y={y + 4.2} fontSize={2.8} fill={MUREKKEP} textAnchor="end" data-kagit-kodu="">
         {kod}
       </text>
     </g>

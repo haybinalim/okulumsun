@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import type { TurKagitIstegi } from './kagit/turKagidi';
 
 /**
  * Türkçe (Okuma Yazma) ekran durumu — YALNIZ `VITE_DERS_TUR=1` derlemesinde kullanılır (Adım 64, ADR-0016).
@@ -13,7 +14,16 @@ export type TurEkrani =
   | { readonly ekran: 'giris' }
   | { readonly ekran: 'yazilisSecimi'; readonly sekme?: number }
   | { readonly ekran: 'yazilis'; readonly anahtar: string; readonly sekme: number }
-  | { readonly ekran: 'kagitlar' };
+  | { readonly ekran: 'kagitlar' }
+  /** Kâğıt için glif seçimi: `harf` tek glif → önizleme; `destek` çoklu seçim (glif anahtarları, seçim sırası). */
+  | {
+      readonly ekran: 'kagitSecimi';
+      readonly tur: 'harf' | 'destek';
+      readonly sekme?: number;
+      readonly secim?: readonly string[];
+    }
+  /** Kâğıt önizlemesi + Yazdır; `geri` önizlemeyi açan ekran. */
+  | { readonly ekran: 'kagit'; readonly istek: TurKagitIstegi; readonly geri: TurEkrani };
 
 /** `undefined`: henüz okunmadı — ilk okumada açılış adresinden (`?ders=tur`) alınır. */
 let durum: TurEkrani | null | undefined;
