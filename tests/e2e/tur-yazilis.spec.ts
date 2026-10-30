@@ -36,7 +36,10 @@ async function turGirisi(page: Page, cihaz: string): Promise<void> {
   await expect(page.getByRole('main', { name: 'Okuma Yazma' })).toBeVisible();
 }
 
-test('yazılış gösterimi: seçim, adım kipi, kesikli, sol el, gezinme; geometri ve gizlilik', async ({ page, baseURL }, bilgi) => {
+test('yazılış gösterimi: seçim, adım kipi, kesikli, sol el, gezinme; geometri ve gizlilik', async ({
+  page,
+  baseURL,
+}, bilgi) => {
   test.setTimeout(120_000);
   const tahta = bilgi.project.name === 'board';
   const ag = agKaydet(page);

@@ -31,8 +31,22 @@ describe('çizim yardımcıları', () => {
   });
 
   it('yol verisi noktaları sırayla izler', () => {
-    expect(yolVerisi([[1, 2], [3.456, 4]])).toBe('M1 2 L3.46 4');
-    expect(yolVerisi([[0, 0], [1, 1]], 10, 5)).toBe('M10 5 L11 6');
+    expect(
+      yolVerisi([
+        [1, 2],
+        [3.456, 4],
+      ]),
+    ).toBe('M1 2 L3.46 4');
+    expect(
+      yolVerisi(
+        [
+          [0, 0],
+          [1, 1],
+        ],
+        10,
+        5,
+      ),
+    ).toBe('M10 5 L11 6');
   });
 
   it('zamanlama: hamleler sırayla, örtüşmeden; hızlıda daha kısa', () => {
@@ -75,7 +89,9 @@ describe('çizim yardımcıları', () => {
   });
 
   it('sekmeler: 5 harf grubu (küçük + büyük, öğretim sırasıyla) ve rakamlar = 68 glif', () => {
-    const sekmeler = Array.from({ length: HARF_GRUPLARI.length + 1 }, (_, i) => sekmeGlifleri(VERI.glifler, HARF_GRUPLARI, i));
+    const sekmeler = Array.from({ length: HARF_GRUPLARI.length + 1 }, (_, i) =>
+      sekmeGlifleri(VERI.glifler, HARF_GRUPLARI, i),
+    );
     expect(sekmeler.map((s) => s.length)).toEqual([12, 12, 12, 10, 12, 10]);
     expect(sekmeler.flat()).toHaveLength(68);
     expect(sekmeler[0].map((x) => x.glif).join('')).toBe('aAnNeEtTiİlL');
@@ -85,8 +101,10 @@ describe('çizim yardımcıları', () => {
   });
 
   it('el tercihi parametresi yok: sol el ayarı hamle yönünü değiştiremez (K-OY-19)', () => {
-    for (const f of [yolVerisi, zamanlama, yonOku, baslangicYonu, cerceve, hamleUzunlugu]) expect(f.length).toBeLessThanOrEqual(3);
-    const kaynak = readFileSync('src/ui/tur/hamleCizim.ts', 'utf8') + readFileSync('src/ui/tur/YazilisGlifi.tsx', 'utf8');
+    for (const f of [yolVerisi, zamanlama, yonOku, baslangicYonu, cerceve, hamleUzunlugu])
+      expect(f.length).toBeLessThanOrEqual(3);
+    const kaynak =
+      readFileSync('src/ui/tur/hamleCizim.ts', 'utf8') + readFileSync('src/ui/tur/YazilisGlifi.tsx', 'utf8');
     expect(kaynak).not.toMatch(/solEl|sol-el|scale\(-1|scaleX\(-1/);
   });
 

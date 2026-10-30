@@ -102,7 +102,8 @@ export function YazilisGlifi({
           glif.hamleler.map((h, i) => {
             if (kip === 'adim' && i !== adim - 1) return null;
             const o = yonOku(h.noktalar);
-            const belir = kip === 'oynat' ? { className: 'tur-belir', style: { animationDelay: `${z[i].gecikme}s` } } : {};
+            const belir =
+              kip === 'oynat' ? { className: 'tur-belir', style: { animationDelay: `${z[i].gecikme}s` } } : {};
             return (
               <g key={`ok-${i}`} data-yon-oku={h.sira} {...belir}>
                 <line

@@ -77,8 +77,12 @@ describe('üretim paketi korunur', () => {
       "const TurEkrani = import.meta.env.VITE_DERS_TUR === '1' ? lazy(() => import('./ui/tur/TurEkrani')) : null;",
     );
     const app = oku('src/App.tsx');
-    expect(app).toContain("const useTurEkraniBayrakli = import.meta.env.VITE_DERS_TUR === '1' ? useTurEkrani : () => null;");
-    expect(app).toMatch(/if \(import\.meta\.env\.VITE_DERS_TUR === '1' && TurEkrani && turEkrani\) \{\n\s*return kabuk\(/);
+    expect(app).toContain(
+      "const useTurEkraniBayrakli = import.meta.env.VITE_DERS_TUR === '1' ? useTurEkrani : () => null;",
+    );
+    expect(app).toMatch(
+      /if \(import\.meta\.env\.VITE_DERS_TUR === '1' && TurEkrani && turEkrani\) \{\n\s*return kabuk\(/,
+    );
     // Durum modülünün üst düzeyinde çağrı yok (ağaç sallamada atılabilir olmalı).
     const durum = oku('src/ui/tur/turEkrani.ts');
     expect(durum).not.toMatch(/^(?:export )?(?:const|let) \w+[^=\n]*= *(?:new |create|[a-zA-Z_]+\()/m);

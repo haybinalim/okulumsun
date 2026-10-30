@@ -66,7 +66,11 @@ function Baslik({ baslik, alt }: { baslik: string; alt?: string }) {
   return (
     <header data-yetiskin="" style={{ textAlign: 'center', flex: '0 0 auto' }}>
       <h1 style={{ margin: 0, fontSize: 'calc(var(--text-ui) * 1.1)' }}>{baslik}</h1>
-      {alt && <p style={{ margin: '0.3em 0 0', fontSize: 'var(--text-adult)', color: 'var(--color-ink-soft, #6B6B6B)' }}>{alt}</p>}
+      {alt && (
+        <p style={{ margin: '0.3em 0 0', fontSize: 'var(--text-adult)', color: 'var(--color-ink-soft, #6B6B6B)' }}>
+          {alt}
+        </p>
+      )}
     </header>
   );
 }
@@ -76,7 +80,11 @@ function Giris() {
     <main aria-label="Okuma Yazma" style={{ ...ekranStili, justifyContent: 'space-between' }}>
       <Baslik baslik="Okuma Yazma" alt="Geliştirme önizlemesi. Yazılış verisi öğretmen teyidi bekliyor." />
       <div style={{ display: 'flex', gap: 'var(--size-gap)', flexWrap: 'wrap', justifyContent: 'center' }}>
-        <BigButton label="Harf ve rakam yazılışı" size="primary" onPress={() => turEkraniAc({ ekran: 'yazilisSecimi' })}>
+        <BigButton
+          label="Harf ve rakam yazılışı"
+          size="primary"
+          onPress={() => turEkraniAc({ ekran: 'yazilisSecimi' })}
+        >
           <span style={{ padding: '0 0.6em' }}>Harf ve rakam yazılışı</span>
         </BigButton>
       </div>
@@ -88,7 +96,11 @@ function VeriIle({ children }: { children: (glifler: readonly TurHamleGlifi[]) =
   const v = useHamleVerisi();
   if (v.durum === 'hazir') return <>{children(v.veri.glifler)}</>;
   return (
-    <main aria-label="Okuma Yazma" aria-busy={v.durum === 'yukleniyor'} style={{ ...ekranStili, justifyContent: 'center' }}>
+    <main
+      aria-label="Okuma Yazma"
+      aria-busy={v.durum === 'yukleniyor'}
+      style={{ ...ekranStili, justifyContent: 'center' }}
+    >
       <p data-yetiskin="">{v.durum === 'yukleniyor' ? 'Yükleniyor…' : `Yazılış verisi açılamadı: ${v.mesaj}`}</p>
     </main>
   );
@@ -102,8 +114,20 @@ function YazilisSecimi({ glifler, sekme }: { glifler: readonly TurHamleGlifi[]; 
   return (
     <main aria-label="Harf ve rakam yazılışı" style={{ ...ekranStili, justifyContent: 'space-between' }}>
       <Baslik baslik="Harf ve rakam yazılışı" alt="Harf grubunu (1–5) ya da rakamları, sonra harfi seçin." />
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--size-gap)', width: '100%' }}>
-        <div role="group" aria-label="Gruplar" style={{ display: 'flex', gap: 'var(--size-gap-tight)', flexWrap: 'wrap', justifyContent: 'center' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 'var(--size-gap)',
+          width: '100%',
+        }}
+      >
+        <div
+          role="group"
+          aria-label="Gruplar"
+          style={{ display: 'flex', gap: 'var(--size-gap-tight)', flexWrap: 'wrap', justifyContent: 'center' }}
+        >
           {Array.from({ length: SEKME_SAYISI }, (_, i) => {
             const rakam = i === HARF_GRUPLARI.length;
             return (
@@ -119,13 +143,27 @@ function YazilisSecimi({ glifler, sekme }: { glifler: readonly TurHamleGlifi[]; 
             );
           })}
         </div>
-        <div role="group" aria-label="Harfler ve rakamlar" style={{ display: 'flex', gap: 'var(--size-gap-tight)', flexWrap: 'wrap', justifyContent: 'center', maxWidth: '100%' }}>
+        <div
+          role="group"
+          aria-label="Harfler ve rakamlar"
+          style={{
+            display: 'flex',
+            gap: 'var(--size-gap-tight)',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            maxWidth: '100%',
+          }}
+        >
           {liste.map((g) => (
             <BigButton
               key={glifAnahtari(g)}
               label={glifAdi(g)}
               onPress={() => turEkraniAc({ ekran: 'yazilis', anahtar: glifAnahtari(g), sekme: secili })}
-              style={{ width: 'var(--size-tap-min)', height: 'var(--size-tap-min)', padding: 'calc(6px * var(--scale))' }}
+              style={{
+                width: 'var(--size-tap-min)',
+                height: 'var(--size-tap-min)',
+                padding: 'calc(6px * var(--scale))',
+              }}
             >
               <span aria-hidden="true" style={{ width: '100%', height: '100%', display: 'block' }}>
                 <YazilisGlifi glif={g} kip="tam" cizgiler={false} kenar={3} />
@@ -182,14 +220,24 @@ function YazilisGosterimi({ glif }: { glif: TurHamleGlifi }) {
           />
         </div>
       </div>
-      <p data-yetiskin="" aria-live="polite" style={{ margin: 0, fontSize: 'var(--text-adult)', textAlign: 'center', flex: '0 0 auto' }}>
+      <p
+        data-yetiskin=""
+        aria-live="polite"
+        style={{ margin: 0, fontSize: 'var(--text-adult)', textAlign: 'center', flex: '0 0 auto' }}
+      >
         {aktif ? `${aktif.sira}. hamle / ${n}: ${aktif.aciklama}` : `${ad}: ${n} hamle.`}
       </p>
       <div
         className="alt-cubuk"
         role="group"
         aria-label="Gösterim denetimleri"
-        style={{ display: 'flex', gap: 'var(--size-gap-tight)', flexWrap: 'wrap', justifyContent: 'center', flex: '0 0 auto' }}
+        style={{
+          display: 'flex',
+          gap: 'var(--size-gap-tight)',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          flex: '0 0 auto',
+        }}
       >
         <BigButton label="Önceki hamle" onPress={() => adimaGit(etkinKip === 'adim' ? adim - 1 : n - 1)}>
           <Simge yol="M15 5 L8 12 L15 19" /> <span>Önceki</span>
@@ -215,7 +263,12 @@ function YazilisGosterimi({ glif }: { glif: TurHamleGlifi }) {
             <span>{HIZ_ADI[hiz]}</span>
           </BigButton>
         )}
-        <BigButton label="Kesik çizgili göster" ariaPressed={kesikli} variant={kesikli ? 'accent' : 'solid'} onPress={() => setKesikli((k) => !k)}>
+        <BigButton
+          label="Kesik çizgili göster"
+          ariaPressed={kesikli}
+          variant={kesikli ? 'accent' : 'solid'}
+          onPress={() => setKesikli((k) => !k)}
+        >
           <span>Kesikli</span>
         </BigButton>
       </div>

@@ -21,7 +21,9 @@ export function hamleVerisiBicimliMi(d: unknown): d is TurHamleDosyasi {
         x !== null &&
         typeof (x as { glif?: unknown }).glif === 'string' &&
         Array.isArray((x as { hamleler?: unknown }).hamleler) &&
-        (x as { hamleler: { noktalar?: unknown }[] }).hamleler.every((h) => Array.isArray(h.noktalar) && h.noktalar.length >= 2),
+        (x as { hamleler: { noktalar?: unknown }[] }).hamleler.every(
+          (h) => Array.isArray(h.noktalar) && h.noktalar.length >= 2,
+        ),
     )
   );
 }

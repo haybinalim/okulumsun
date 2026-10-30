@@ -18,9 +18,7 @@ export const KALEM = 5.5;
 export const KESIK_DIZISI = '3.2 3';
 
 export function yolVerisi(noktalar: readonly Nokta[], dx = 0, dy = 0): string {
-  return noktalar
-    .map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${+(x + dx).toFixed(2)} ${+(y + dy).toFixed(2)}`)
-    .join(' ');
+  return noktalar.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${+(x + dx).toFixed(2)} ${+(y + dy).toFixed(2)}`).join(' ');
 }
 
 export function hamleUzunlugu(noktalar: readonly Nokta[]): number {
@@ -90,12 +88,19 @@ export function yonOku(noktalar: readonly Nokta[], olcek = 1): YonOku {
   return {
     numara: [x0 - ux * 6 * olcek - nx * 1.5 * olcek, y0 - uy * 6 * olcek - ny * 1.5 * olcek],
     govde: [b, [e[0] - ux * u, e[1] - uy * u]],
-    uc: [e, [e[0] - ux * u * 1.8 + nx * u, e[1] - uy * u * 1.8 + ny * u], [e[0] - ux * u * 1.8 - nx * u, e[1] - uy * u * 1.8 - ny * u]],
+    uc: [
+      e,
+      [e[0] - ux * u * 1.8 + nx * u, e[1] - uy * u * 1.8 + ny * u],
+      [e[0] - ux * u * 1.8 - nx * u, e[1] - uy * u * 1.8 - ny * u],
+    ],
   };
 }
 
 /** Gösterim çerçevesi: glif ortada, satır dizgesi iki yana taşar; y −4…104 (İ noktası, kuyruk ve numaralar sığar). */
-export function cerceve(g: Pick<TurHamleGlifi, 'genislik'>, kenar = 18): { genislik: number; dx: number; viewBox: string } {
+export function cerceve(
+  g: Pick<TurHamleGlifi, 'genislik'>,
+  kenar = 18,
+): { genislik: number; dx: number; viewBox: string } {
   const genislik = Math.max(g.genislik + 2 * kenar, 64);
   const dx = (genislik - g.genislik) / 2;
   return { genislik, dx, viewBox: `0 -4 ${genislik} 108` };
@@ -109,7 +114,9 @@ export function sekmeGlifleri(
 ): TurHamleGlifi[] {
   if (sekme >= gruplar.length) return glifler.filter((g) => g.bicim === 'rakam');
   return gruplar[sekme].flatMap((h) =>
-    glifler.filter((g) => (g.bicim === 'kucuk' && g.glif === h) || (g.bicim === 'buyuk' && g.glif === h.toLocaleUpperCase('tr-TR'))),
+    glifler.filter(
+      (g) => (g.bicim === 'kucuk' && g.glif === h) || (g.bicim === 'buyuk' && g.glif === h.toLocaleUpperCase('tr-TR')),
+    ),
   );
 }
 
