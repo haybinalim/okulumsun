@@ -28,6 +28,12 @@ jobs:
       # E2E kancası (src/dev/e2eKanca.ts) üretim derlemesine girmemeli (KG-38).
       - name: E2E kancası üretimde yok
         run: "! grep -rq __okulumsunE2E dist/"
+      # ADR-0016 (Okuma Yazma Adım 61): Türkçe ders paketi bayraksız üretim derlemesine girmez.
+      - name: Türkçe kod üretimde yok
+        run: "! grep -rq __okulumsunTUR__ dist/ && test ! -e dist/tur"
+      # Bayraklı ikinci derleme yalnız ölçüm içindir (dağıtılmaz); ders veri bütçesi yayına kadar uyarı.
+      - name: Türkçe bayraklı derleme ve ders veri bütçesi
+        run: VITE_DERS_TUR=1 npx vite build --outDir dist-tur && grep -rq __okulumsunTUR__ dist-tur/assets && npm run boyut:ders -- --js dist-tur
       # Adım 49 (KG-71): okul ağı paketi; yalnız main'de artefakt (Release eki yok — kurum dağıtımı yazılı izin ister).
       - name: Okul paketi
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'

@@ -14,6 +14,7 @@
     "e2e": "playwright test",
     "e2e:onizleme": "playwright test --project=onizleme",
     "boyut": "tsx scripts/boyut-butcesi.ts",
+    "boyut:ders": "tsx scripts/ders-veri-butcesi.ts",
     "arsiv": "tsx scripts/calisma-kagidi-arsivi.ts",
     "okul-paketi": "tsx scripts/okul-paketi.ts",
     "uyum-matrisi": "tsx scripts/meb-uyum-matrisi.ts",

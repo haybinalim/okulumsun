@@ -26,9 +26,11 @@ const izinliAnahtarDeseni = new RegExp(
 export const KURALLAR: readonly Kural[] = [
   { ad: 'Math.random yasak', desen: /\bMath\.random\s*\(/ },
   {
-    ad: 'fetch yalnız src/audio/speech.ts (AUDIO_BASE)',
+    ad: 'fetch yalnız src/audio/speech.ts (AUDIO_BASE) ve Türkçe veri yükleyicisi (turVeriYolu, ADR-0016)',
     desen: /(^|[^\w.])fetch\s*\(/,
-    izin: (d, s) => d === 'src/audio/speech.ts' && s.includes('AUDIO_BASE'),
+    izin: (d, s) =>
+      (d === 'src/audio/speech.ts' && s.includes('AUDIO_BASE')) ||
+      (d === 'src/content/dersler/tur/veriYukleyici.ts' && /\bfetch\(turVeriYolu\(/.test(s)),
     yalnizSrc: true,
   },
   { ad: 'navigator.sendBeacon yasak', desen: /\bsendBeacon\s*\(/, yalnizSrc: true },

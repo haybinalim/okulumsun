@@ -27,6 +27,9 @@ const acilisAyarlari = ayarKodunuAcilistaOku(tarayiciAdresi())
 if (acilisAyarlari) useAppStore.getState().kapsayicilikAyarla(acilisAyarlari)
 // Adım 56: `?gomulu=eba|okul-portali` + iframe içinde → sade mod (kökte `data-gomulu`); üst pencereyle iletişim yok.
 gomuluDurum()
+// Okuma Yazma planı Adım 61 (ADR-0016): Türkçe ders paketi YALNIZ `VITE_DERS_TUR=1` derlemesinde yüklenir;
+// üretimde bayrak tanımsız → dal ve dinamik içe aktarım ölü kod olarak atılır (CI imleç denetimi).
+if (import.meta.env.VITE_DERS_TUR === '1') void import('./content/dersler/tur/index.ts').then((m) => m.turDersiniKaydet())
 
 /*
  * Hata sınırı EN DIŞTA. Bir render hatası aksi hâlde #root'u tamamen boşaltır

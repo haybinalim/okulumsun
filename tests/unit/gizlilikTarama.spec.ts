@@ -42,6 +42,10 @@ describe('K9 gizlilik taraması (Adım 24)', () => {
 
   it('izinler: speech.ts AUDIO_BASE fetch, izinli localStorage anahtarı, persistence Dexie', () => {
     expect(tara('src/audio/speech.ts', 'const r = await fetch(`${AUDIO_BASE}${f}`);')).toEqual([]);
+    // ADR-0016: Türkçe veri yükleyicisi yalnız doğrulanmış göreli yolla (aynı köken).
+    expect(tara('src/content/dersler/tur/veriYukleyici.ts', 'const y = await fetch(turVeriYolu(dosya), {});')).toEqual([]);
+    expect(tara('src/content/dersler/tur/veriYukleyici.ts', 'await fetch("https://dis.example.com");')).toHaveLength(1);
+    expect(tara('src/content/dersler/tur/baska.ts', 'await fetch(turVeriYolu(dosya));')).toHaveLength(1);
     expect(tara('src/audio/speech.ts', 'await fetch("https://dis");')).toHaveLength(1);
     expect(tara('src/design/x.ts', 'localStorage.setItem(CIHAZ_PROFILI_ANAHTARI, p);')).toEqual([]);
     expect(tara('src/design/x.ts', "localStorage.setItem('okulumsun.deviceOverride', p);")).toEqual([]);
