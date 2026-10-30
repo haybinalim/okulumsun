@@ -49,9 +49,15 @@ export const EKRAN_NESNE_ORANI = 0.22;
  */
 const KAGIT_HUCRE_TAVANI = { duzenli: 0.88, daginik: 0.95 } as const;
 
-/** Ekran kipi: eski konumlar, kutunun içine eşlenmiş. */
-export function ekranKumeYerlesimi(spec: KumeTarifi, w: number, h: number): KumeCizimi {
-  const boyut = Math.min(w, h) * EKRAN_NESNE_ORANI;
+/**
+ * KG-132: tek nesneli kümeler, kardeşleri de tek nesneyken (M-VERİ-GRUPLA kategori nesneleri) kutunun kısa
+ * kenarının bu kadarı — %22'de kart ve sahnede ≈ 10–20 px kalıyordu. Miktar ipucu doğmaz: hepsi aynı boyda.
+ */
+export const EKRAN_TEK_NESNE_ORANI = 0.7;
+
+/** Ekran kipi: eski konumlar, kutunun içine eşlenmiş. `tekBuyuk`: tek nesne kutuyu doldurur (KG-132). */
+export function ekranKumeYerlesimi(spec: KumeTarifi, w: number, h: number, tekBuyuk = false): KumeCizimi {
+  const boyut = Math.min(w, h) * (tekBuyuk && spec.adet === 1 ? EKRAN_TEK_NESNE_ORANI : EKRAN_NESNE_ORANI);
   const noktalar = nesneKonumlari(spec).map((p) => ({
     x: boyut / 2 + p.x * Math.max(0, w - boyut),
     y: boyut / 2 + p.y * Math.max(0, h - boyut),

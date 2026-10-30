@@ -103,6 +103,8 @@ export function TapToPlaceScreen({
   const sceneH = 200;
   const kartlar = useRef<HTMLDivElement>(null);
   const sikisik = useSikisikKartBoyu(kartlar, exercise.options.length);
+  // KG-132: tüm parça kartları tek nesneyse (M-VERİ-GRUPLA) kartta ve sahnede nesne kutuyu doldurur.
+  const tekBuyuk = exercise.options.every((o) => o.deger.tur === 'gorsel' && o.deger.gorsel.type === 'nesneKumesi' && o.deger.gorsel.adet === 1);
 
   return (
     <GameShell
@@ -110,7 +112,7 @@ export function TapToPlaceScreen({
       stimulus={
         scene ? (
           <div style={{ position: 'relative', transform: 'scale(var(--scale,1))', transformOrigin: 'center' }}>
-            <Visual spec={scene} width={sceneW} height={sceneH} />
+            <Visual spec={scene} width={sceneW} height={sceneH} tekBuyuk={tekBuyuk} />
             {/* Yuvaları tıklanabilir kaplama olarak üret. */}
             {exercise.yuvalar.map((y) => (
               <button
@@ -153,6 +155,7 @@ export function TapToPlaceScreen({
                   option={o}
                   size={sikisik ?? 140}
                   sabitBoyut={sikisik !== null}
+                  tekBuyuk={tekBuyuk}
                   state={parcaStateOf(o.id)}
                   onSelect={() => !yerlesti && handleParca(o.id)}
                 />
