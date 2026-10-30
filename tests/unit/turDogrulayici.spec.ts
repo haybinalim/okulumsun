@@ -12,7 +12,7 @@ import {
   turKodunuTara,
   type KuralKodu,
 } from '../../src/content/dersler/tur/dogrulayici';
-import { turIcerikDosyasiniAyristir, type TurIcerikDosyasi } from '../../src/content/dersler/tur/sema';
+import { turIcerikDosyasiniAyristir, type TurIcerikDosyasi } from '../../src/content/schema/turIcerik';
 import { gecerliHam, TUZAKLAR } from './turTuzak';
 
 const OTOMATIK: readonly KuralKodu[] = [

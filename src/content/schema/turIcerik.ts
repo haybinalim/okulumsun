@@ -1,13 +1,13 @@
-import '../../schema/zodAyari';
+import './zodAyari';
 import { z } from 'zod';
-import { ALFABE, PROGRAM_SURUMU, trKucuk } from './alfabe';
+import { ALFABE, PROGRAM_SURUMU, trKucuk } from '../dersler/tur/alfabe';
 
 /**
  * Türkçe içerik şeması (Okuma Yazma planı §2.4.3, Adım 62; `docs/mufredat-kisitlari-turkce.md`).
  *
  * Bütün nesneler `strict`: tanımsız alan reddedilir — örneğin hece/sözcük parçasına renk veren bir alan
  * (D-06, K-OY-07) şemaya hiç giremez. Şema yapıyı denetler; MEB kurallarının öğeler arası olanları
- * `dogrulayici.ts`'tedir. Bu modül YALNIZ doğrulamada (CI, testler) kullanılır; zod üretim paketine girmez.
+ * `src/content/dersler/tur/dogrulayici.ts`'tedir. Bu modül YALNIZ doğrulamada (CI, testler) kullanılır; zod üretim paketine girmez.
  */
 
 const harfKumesi = ALFABE.join('');

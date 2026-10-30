@@ -1,6 +1,6 @@
 /**
  * K-OY DOĞRULAYICISI — MEB TYMM 2026 Türkçe ilk okuma yazma kısıtlarının CI karşılığı (Okuma Yazma planı
- * Adım 62; `docs/mufredat-kisitlari-turkce.md` §5, D-01…D-24). SAF; zod içermez (girdi `sema.ts` ile
+ * Adım 62; `docs/mufredat-kisitlari-turkce.md` §5, D-01…D-24). SAF; zod içermez (girdi `src/content/schema/turIcerik.ts` ile
  * ayrıştırılmış dosyadır). `npm run validate` ders verisini bununla denetler; ihlal CI'ı kırmızı yapar.
  *
  * Kapsanan otomatik kurallar: D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10, D-11, D-12, D-13,
@@ -22,7 +22,7 @@ import {
 } from './alfabe';
 import { hecele, heceTuru } from './heceleme';
 import { dekodlanabilirMi, girisNoktasi, harfSirasi, resmiKume } from './ogretilenKume';
-import type { TurCumle, TurEtkinlik, TurHece, TurIcerikDosyasi, TurSozcuk } from './sema';
+import type { TurCumle, TurEtkinlik, TurHece, TurIcerikDosyasi, TurSozcuk } from '../../schema/turIcerik';
 
 export type KuralKodu =
   | 'D-01' | 'D-02' | 'D-03' | 'D-04' | 'D-05' | 'D-06' | 'D-07' | 'D-08' | 'D-09' | 'D-10'
