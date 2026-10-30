@@ -40,7 +40,10 @@ const kok = createRoot(document.getElementById('root')!)
 
 // Adım 30: rakam glif kartı YALNIZ geliştirmede (`?gelistirme=glif`); üretim
 // derlemesinde DEV `false` olduğundan dal ve dinamik içe aktarma atılır.
-if (arsivKodu) {
+if (import.meta.env.VITE_DERS_TUR === '1' && arsivKodu?.startsWith('tur-')) {
+  // Okuma Yazma Adım 65: Türkçe kâğıt ailesi (`?arsiv=tur-…`) YALNIZ bayraklı derlemede; üretimde ölü kod.
+  void import('./ui/tur/kagit/TurArsivKagidi.tsx').then(({ TurArsivKagidi }) => kok.render(<TurArsivKagidi kod={arsivKodu} />))
+} else if (arsivKodu) {
   void import('./ui/print/ArsivKagidi.tsx').then(({ ArsivKagidi }) => kok.render(<ArsivKagidi kod={arsivKodu} />))
 } else if (import.meta.env.DEV && new URLSearchParams(location.search).get('gelistirme') === 'glif') {
   void import('./dev/GlifKarti.tsx').then(({ GlifKarti }) => kok.render(<GlifKarti />))

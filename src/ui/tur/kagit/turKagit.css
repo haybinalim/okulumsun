@@ -1,0 +1,49 @@
+/*
+ * Türkçe kâğıt ailesi (Okuma Yazma Adım 65). Sayfa tek SVG, 210 × 297 mm; `@page` kenarsız (kenar SVG içinde 12 mm),
+ * böylece yazdırmada SVG'nin mm'si gerçek mm'dir (kalibrasyon karesi 1 cm). Yalnız bayraklı derlemede yüklenir.
+ */
+@page {
+  size: A4;
+  margin: 0;
+}
+
+.tk-kok {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8mm;
+  align-items: flex-start;
+}
+.tk-sayfa {
+  display: block;
+  flex: none;
+  background: #fff;
+  box-shadow: 0 1mm 4mm rgb(0 0 0 / 25%);
+}
+.tk-kok--baski {
+  display: none;
+}
+
+@media print {
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+    background: #fff !important;
+    margin: 0 !important;
+  }
+  body > #root {
+    display: none !important;
+  }
+  .tk-kok--baski {
+    display: block !important;
+  }
+  .tk-kok--baski .tk-sayfa {
+    box-shadow: none;
+    break-after: page;
+    page-break-after: always;
+  }
+  .tk-kok--baski .tk-sayfa:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+}
