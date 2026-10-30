@@ -53,6 +53,11 @@ const TemaTuru = lazy(() => import('./ui/screens/TemaTuru'));
 import { setSorusu } from './ogretmen/gunlukSet';
 import { setSorusuUret, tahtaSorusuUret } from './ogretmen/tahtaSorusu';
 import { girisliSoru } from './audio/girisSesi';
+import { useTurEkrani } from './ui/tur/turEkrani';
+// Türkçe (Okuma Yazma) önizlemesi (Adım 64, ADR-0016): YALNIZ `VITE_DERS_TUR=1` derlemesinde; üretimde ölü kod.
+const TurEkrani = import.meta.env.VITE_DERS_TUR === '1' ? lazy(() => import('./ui/tur/TurEkrani')) : null;
+// Bayrak derleme sabiti: kanca seçimi modül düzeyinde, çağrı koşulsuz (üretimde `() => null`).
+const useTurEkraniBayrakli = import.meta.env.VITE_DERS_TUR === '1' ? useTurEkrani : () => null;
 
 /**
  * Uygulama kabuğu — plan §11 ekran akışını yönetir.
@@ -98,6 +103,7 @@ export default function App() {
   }, [aktifSet, setSirasi, secilenDugumId, tahtaTohumu]);
 
   const kisiselOturum = useKisiselOturum(ekran, mod);
+  const turEkrani = useTurEkraniBayrakli();
   useKapsayicilikEtkileri();
   useUyanikTut(ekran);
   // KG-103: tarayıcı/Android geri tuşu = ekrandaki Geri; gömülü modda geçmişe dokunulmaz (üst portal).
@@ -130,6 +136,15 @@ export default function App() {
         // Adım 42: geçerli eve link okunduysa ses kilidinden sonra doğrudan ev çalışması.
         onUnlocked={() => useAppStore.getState().ekranGit(useAppStore.getState().evSeti ? 'evdeCalis' : 'modSecimi')}
       />,
+    );
+  }
+
+  // Türkçe (Okuma Yazma) önizlemesi: `?ders=tur`; kendi gezinmesi ortak çubukla (yalnız bayraklı derleme).
+  if (import.meta.env.VITE_DERS_TUR === '1' && TurEkrani && turEkrani) {
+    return kabuk(
+      <Suspense fallback={<OturumYukleniyor />}>
+        <TurEkrani ekran={turEkrani} profil={profile} />
+      </Suspense>,
     );
   }
 

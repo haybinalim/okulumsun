@@ -1,0 +1,31 @@
+/*
+ * Türkçe yazılış gösterimi (Okuma Yazma Adım 64) — yalnız `VITE_DERS_TUR=1` derlemesindeki Türkçe parçasıyla yüklenir.
+ * Hamle `pathLength=1` ile normalize edilir: kesik dizisi 1 1, ofset 1 → 0 hamleyi baştan sona çizer. Hareket azaltmada
+ * bu sınıf hiç verilmez (adım kipi: statik kareler); genel kural yine de animasyonu sıfırlar.
+ */
+@keyframes tur-hamle-ciz {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes tur-belir {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.tur-hamle-ciz {
+  stroke-dashoffset: 1;
+  animation-name: tur-hamle-ciz;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+.tur-belir {
+  opacity: 0;
+  animation: tur-belir 0.25s ease-out both;
+}

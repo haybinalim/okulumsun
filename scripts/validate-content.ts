@@ -329,7 +329,13 @@ sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLE
   const turKok = path.join(ROOT, 'src/content/dersler/tur');
   const kod = readdirSync(turKok)
     .filter((d) => d.endsWith('.ts'))
-    .map((d) => ({ yol: `src/content/dersler/tur/${d}`, icerik: readFileSync(path.join(turKok, d), 'utf8') }));
+    .map((d) => ({ yol: `src/content/dersler/tur/${d}`, icerik: readFileSync(path.join(turKok, d), 'utf8') }))
+    // Türkçe arayüz paketi (Adım 64) aynı D-13 taramasına girer.
+    .concat(
+      readdirSync(path.join(ROOT, 'src/ui/tur'))
+        .filter((d) => /\.tsx?$/.test(d))
+        .map((d) => ({ yol: `src/ui/tur/${d}`, icerik: readFileSync(path.join(ROOT, 'src/ui/tur', d), 'utf8') })),
+    );
   const turIhlalleri = [...harfEnvanteriniDenetle(), ...turKodunuTara(kod)];
   const icerikKoku = path.join(ROOT, 'ders-verisi/tur/icerik');
   const dosyalar = existsSync(icerikKoku)
