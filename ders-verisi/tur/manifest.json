@@ -1,7 +1,7 @@
 {
   "ders": "tur",
   "programSurumu": "tymm-turkce-2026-09-02",
-  "cekirdek": ["manifest.json"],
+  "cekirdek": ["manifest.json", "hamleler.json"],
   "gruplar": {
     "1": [],
     "2": [],

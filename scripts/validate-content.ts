@@ -45,6 +45,8 @@ import {
   turKodunuTara,
 } from '../src/content/dersler/tur/dogrulayici';
 import { turIcerikDosyasiniAyristir } from '../src/content/schema/turIcerik';
+import { hamleDosyasiniAyristir } from '../src/content/schema/turHamle';
+import { hamleVerisiniDenetle, teyitBekleyenler } from '../src/content/dersler/tur/hamleTablosu';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel: string): unknown => JSON.parse(readFileSync(path.join(ROOT, rel), 'utf8'));
@@ -352,6 +354,26 @@ sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLE
   }
   for (const h of turIhlalleri) hata(`Türkçe: ${h.kural} ${h.oge}: ${h.mesaj}`);
   sonuc.istatistik.push(`Türkçe içerik (K-OY): ${dosyalar.length} dosya · ${oge} öğe${yayin ? ' (yayın kipi)' : ''}`);
+}
+
+// ------------------------------------------------ Türkçe yazılış hamle verisi (Okuma Yazma Adım 63, §2.4.9)
+// Şema + teyit tablosu (47/62/13) + yön kuralları. Öğretmen teyidi bekleyen glif geliştirmede uyarı, `--yayin` ile hata.
+{
+  const rel = 'ders-verisi/tur/hamleler.json';
+  try {
+    const d = hamleDosyasiniAyristir(read(rel));
+    for (const i of hamleVerisiniDenetle(d)) hata(`${rel}: ${i.oge}: ${i.mesaj}`);
+    const bekleyen = teyitBekleyenler(d);
+    if (bekleyen.length > 0) {
+      const mesaj = `${rel}: ${bekleyen.length}/${d.glifler.length} glif öğretmen teyidi bekliyor (teyit: bekliyor).`;
+      if (process.argv.includes('--yayin')) hata(`${mesaj} Yayın için iki öğretmen teyidi gerekir.`);
+      else sonuc.uyarilar.push(mesaj);
+    }
+    const toplam = d.glifler.reduce((t, g) => t + g.hamleler.length, 0);
+    sonuc.istatistik.push(`Türkçe hamle verisi: ${d.glifler.length} glif · ${toplam} hamle · teyitli ${d.glifler.length - bekleyen.length}`);
+  } catch (e) {
+    hata(`${rel}: ${(e as Error).message}`);
+  }
 }
 
 // -------------------------------------------------------------------- rapor
