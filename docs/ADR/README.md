@@ -23,6 +23,7 @@ Geri dönüş maliyeti olan her karar burada numaralı bir kayıtla tutulur. Kur
 | [0013](0013-uygulama-lisansi.md) | Uygulama lisansı | Kabul | 20 |
 | [0014](0014-ticari-model-ve-ucuncu-taraf-varliklar.md) | Ticari model ve üçüncü taraf varlık izinleri | Kabul | 21, 29, 35, 48, 56 |
 | [0015](0015-indexeddb-katmani-dexie.md) | IndexedDB katmanı (Dexie'yi küçültme veya değiştirme) | Kabul | 26 |
+| [0016](0016-ders-verisi-ve-derleme-bayragi.md) | Ders verisi JS dışında, derleme bayrağı ve ayrı veri bütçesi | Kabul | 60, 61, 73 |
 
 ## Durum sözlüğü
 
