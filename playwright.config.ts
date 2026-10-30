@@ -12,6 +12,11 @@ const ONIZLEME = '**/onizleme-*.spec.ts';
  * kanca gerektiren testler orada kendini atlar).
  */
 export const ONIZLEME_URL = process.env.E2E_HEDEF_URL ?? 'http://localhost:4173/';
+/**
+ * Türkçe (Okuma Yazma) bayraklı geliştirme sunucusu (Adım 64, ADR-0016): `VITE_DERS_TUR=1`. `tur-*.spec.ts`
+ * dosyaları `test.use({ baseURL: TUR_URL })` ile buraya koşar; diğer testler bayraksız sunucuda kalır.
+ */
+export const TUR_URL = 'http://localhost:5174';
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -74,6 +79,12 @@ export default defineConfig({
     {
       command: 'npm run dev',
       url: 'http://localhost:5173',
+      reuseExistingServer: true,
+      timeout: 60_000,
+    },
+    {
+      command: 'VITE_DERS_TUR=1 npx vite --port 5174 --strictPort',
+      url: TUR_URL,
       reuseExistingServer: true,
       timeout: 60_000,
     },

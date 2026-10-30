@@ -101,7 +101,7 @@ function YazilisSecimi({ glifler, sekme }: { glifler: readonly TurHamleGlifi[]; 
   const liste = sekmeGlifleri(glifler, HARF_GRUPLARI, secili);
   return (
     <main aria-label="Harf ve rakam yazılışı" style={{ ...ekranStili, justifyContent: 'space-between' }}>
-      <Baslik baslik="Harf ve rakam yazılışı" alt="Grubu, sonra harfi ya da rakamı seçin." />
+      <Baslik baslik="Harf ve rakam yazılışı" alt="Harf grubunu (1–5) ya da rakamları, sonra harfi seçin." />
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--size-gap)', width: '100%' }}>
         <div role="group" aria-label="Gruplar" style={{ display: 'flex', gap: 'var(--size-gap-tight)', flexWrap: 'wrap', justifyContent: 'center' }}>
           {Array.from({ length: SEKME_SAYISI }, (_, i) => {
@@ -114,7 +114,7 @@ function YazilisSecimi({ glifler, sekme }: { glifler: readonly TurHamleGlifi[]; 
                 variant={secili === i ? 'accent' : 'solid'}
                 onPress={() => setSecili(i)}
               >
-                <span aria-hidden="true">{rakam ? '0–9' : `${i + 1}. grup`}</span>
+                <span aria-hidden="true">{rakam ? '0–9' : i + 1}</span>
               </BigButton>
             );
           })}
