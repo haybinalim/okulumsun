@@ -20,7 +20,7 @@
  *
  * Kullanım: npm run validate
  */
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -38,6 +38,13 @@ import { EvIpuclariSchema } from '../src/content/schema/evIpucu';
 import { MaskotHikayeleriSchema } from '../src/content/schema/maskotHikayesi';
 import { TemaGirisleriSchema } from '../src/content/schema/temaGirisi';
 import { DERS_KODLARI, DERSLER } from '../src/content/dersler';
+import {
+  harfEnvanteriniDenetle,
+  renkAlaniBul,
+  turIceriginiDogrula,
+  turKodunuTara,
+} from '../src/content/dersler/tur/dogrulayici';
+import { turIcerikDosyasiniAyristir } from '../src/content/dersler/tur/sema';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel: string): unknown => JSON.parse(readFileSync(path.join(ROOT, rel), 'utf8'));
@@ -155,10 +162,12 @@ try {
     const onceki = kodlar.get(kod);
     if (onceki) hata(`Düğüm kodu '${kod}' hem ${onceki} hem ${d.id} için verilmiş.`);
     kodlar.set(kod, d.id);
-    if (SILINEN_KODLAR.includes(kod)) hata(`${d.id}: düğüm kodu '${kod}' silinmiş bir düğüme aitti, yeniden kullanılamaz.`);
+    if (SILINEN_KODLAR.includes(kod))
+      hata(`${d.id}: düğüm kodu '${kod}' silinmiş bir düğüme aitti, yeniden kullanılamaz.`);
   }
   for (const id of Object.keys(DUGUM_KODLARI)) {
-    if (!beceriIdleri.has(id)) hata(`dugumKodlari.ts: '${id}' skills.json'da yok (silinen düğümün kodu SILINEN_KODLAR'a taşınmalı).`);
+    if (!beceriIdleri.has(id))
+      hata(`dugumKodlari.ts: '${id}' skills.json'da yok (silinen düğümün kodu SILINEN_KODLAR'a taşınmalı).`);
   }
   // (g) yazdırma uygunluğu (Adım 35): 39 şablonun her biri tam bir sınıfta, sınıf tablosunda fazla şablon yok
   const sinifSayilari = { uygun: 0, uyarlanir: 0, uygunDegil: 0 };
@@ -214,9 +223,7 @@ try {
       hata(`misconceptions.json: ozdenetim.hataEtiketleri ${ozd.length} etiket, beklenen ${kodEtiketleri.size}.`);
     }
   }
-  sonuc.istatistik.push(
-    `misconceptions.json: ${dosyaEtiketleri.size}/${kodEtiketleri.size} etiket (birebir eşleşme).`,
-  );
+  sonuc.istatistik.push(`misconceptions.json: ${dosyaEtiketleri.size}/${kodEtiketleri.size} etiket (birebir eşleşme).`);
 } catch (e) {
   hata(`misconceptions.json: ${(e as Error).message}`);
 }
@@ -234,9 +241,7 @@ for (const g of JENERATORLER) {
     }
   }
 }
-sonuc.istatistik.push(
-  `jeneratörler: ${JENERATORLER.length} uygulandı (${[...UYGULANMIS_SABLONLAR].join(', ')}).`,
-);
+sonuc.istatistik.push(`jeneratörler: ${JENERATORLER.length} uygulandı (${[...UYGULANMIS_SABLONLAR].join(', ')}).`);
 
 // ------------------------------------------------ ev ipuçları (Adım 43)
 try {
@@ -249,7 +254,9 @@ try {
 // ------------------------------------------------ maskot tema hikâyeleri (Adım 54)
 try {
   const mh = MaskotHikayeleriSchema.parse(read('src/content/maskotHikayeleri.json'));
-  sonuc.istatistik.push(`maskot hikâyeleri: ${mh.hikayeler.length} tema × ${mh.hikayeler[0]?.sahneler.length ?? 0} sahne`);
+  sonuc.istatistik.push(
+    `maskot hikâyeleri: ${mh.hikayeler.length} tema × ${mh.hikayeler[0]?.sahneler.length ?? 0} sahne`,
+  );
 } catch (e) {
   hata(`maskotHikayeleri.json: ${e instanceof Error ? e.message : String(e)}`);
 }
@@ -259,7 +266,9 @@ try {
 try {
   const tg = TemaGirisleriSchema.parse(read('src/content/temaGirisleri.json'));
   const dokun = tg.girisler.flatMap((g) => g.adimlar).filter((a) => a.eylem === 'dokun').length;
-  sonuc.istatistik.push(`tema girişleri: ${tg.girisler.length} tema × ${tg.girisler[0]?.adimlar.length ?? 0} adım (${dokun} dokunma)`);
+  sonuc.istatistik.push(
+    `tema girişleri: ${tg.girisler.length} tema × ${tg.girisler[0]?.adimlar.length ?? 0} adım (${dokun} dokunma)`,
+  );
 } catch (e) {
   hata(`temaGirisleri.json: ${e instanceof Error ? e.message : String(e)}`);
 }
@@ -277,7 +286,8 @@ try {
   }
   for (const d of PlanDuzeltmeleriSchema.parse(read('src/content/planDuzeltmeleri.json')).duzeltmeler) {
     if (!OGRETIM_HAFTALARI.some((h) => h.no === d.hafta)) hata(`planDuzeltmeleri.json: hafta ${d.hafta} takvimde yok.`);
-    for (const k of d.kazanimKodlari) if (!kazanimKodlari.has(k)) hata(`planDuzeltmeleri.json: '${k}' kazanimlar.json'da yok.`);
+    for (const k of d.kazanimKodlari)
+      if (!kazanimKodlari.has(k)) hata(`planDuzeltmeleri.json: '${k}' kazanimlar.json'da yok.`);
   }
   const plandaki = new Set(plan.flatMap((p) => p.dugumler));
   for (const d of skillGrafiniAyristir(skillsHam).filter((x) => x.durum === 'hazir')) {
@@ -311,6 +321,41 @@ for (const kod of DERS_KODLARI) {
   }
 }
 sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLER[k].durum})`).join(', ')}`);
+
+// ------------------------------------------------ Türkçe içerik: K-OY doğrulayıcısı (Okuma Yazma Adım 62)
+// `ders-verisi/tur/icerik/*.json` şema + D-01…D-23 kuralları; Türkçe kodda süre ölçümü yok (D-13).
+// `--yayin` ile öğretmen teyidi (D-14) eksikliği hata olur (Adım 73 yayın kapısı).
+{
+  const yayin = process.argv.includes('--yayin');
+  const turKok = path.join(ROOT, 'src/content/dersler/tur');
+  const kod = readdirSync(turKok)
+    .filter((d) => d.endsWith('.ts'))
+    .map((d) => ({ yol: `src/content/dersler/tur/${d}`, icerik: readFileSync(path.join(turKok, d), 'utf8') }));
+  const turIhlalleri = [...harfEnvanteriniDenetle(), ...turKodunuTara(kod)];
+  const icerikKoku = path.join(ROOT, 'ders-verisi/tur/icerik');
+  const dosyalar = existsSync(icerikKoku)
+    ? readdirSync(icerikKoku)
+        .filter((d) => d.endsWith('.json'))
+        .sort()
+    : [];
+  let oge = 0;
+  for (const ad of dosyalar) {
+    const rel = `ders-verisi/tur/icerik/${ad}`;
+    try {
+      const ham = read(rel);
+      for (const yol of renkAlaniBul(ham)) hata(`${rel}: D-06 parça rengi alanı yasak (${yol}).`);
+      const d = turIcerikDosyasiniAyristir(ham);
+      oge += d.harfler.length + d.heceler.length + d.sozcukler.length + d.cumleler.length + d.etkinlikler.length;
+      const r = turIceriginiDogrula(d, { yayin });
+      for (const h of r.hatalar) hata(`${rel}: ${h.kural} ${h.oge}: ${h.mesaj}`);
+      for (const u of r.uyarilar) sonuc.uyarilar.push(`${rel}: ${u.kural} ${u.oge}: ${u.mesaj}`);
+    } catch (e) {
+      hata(`${rel}: ${(e as Error).message}`);
+    }
+  }
+  for (const h of turIhlalleri) hata(`Türkçe: ${h.kural} ${h.oge}: ${h.mesaj}`);
+  sonuc.istatistik.push(`Türkçe içerik (K-OY): ${dosyalar.length} dosya · ${oge} öğe${yayin ? ' (yayın kipi)' : ''}`);
+}
 
 // -------------------------------------------------------------------- rapor
 for (const s of sonuc.istatistik) console.log(`  ${s}`);

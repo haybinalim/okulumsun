@@ -244,7 +244,7 @@ export function renkAlaniBul(ham: unknown, yol = ''): string[] {
   if (Array.isArray(ham)) return ham.flatMap((v, i) => renkAlaniBul(v, `${yol}[${i}]`));
   if (ham && typeof ham === 'object')
     return Object.entries(ham).flatMap(([k, v]) => [
-      ...(/renk|color|colour/i.test(k) ? [`${yol}.${k}`] : []),
+      ...(/ren[kg]|colou?r/i.test(k) ? [`${yol}.${k}`] : []),
       ...renkAlaniBul(v, `${yol}.${k}`),
     ]);
   return [];
