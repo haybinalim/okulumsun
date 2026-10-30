@@ -128,7 +128,10 @@ describe('Türkçe ekran durumu (yalnız bellekte)', () => {
 });
 
 describe('Türkçe arayüz paketi kuralları (src/ui/tur)', () => {
-  const dosyalar = readdirSync('src/ui/tur').map((f) => [f, readFileSync(`src/ui/tur/${f}`, 'utf8')] as const);
+  // Alt klasörler dahil (Adım 65: `kagit/`).
+  const dosyalar = (readdirSync('src/ui/tur', { recursive: true }) as string[])
+    .filter((f) => /\.(ts|tsx|css)$/.test(f))
+    .map((f) => [f, readFileSync(`src/ui/tur/${f}`, 'utf8')] as const);
   it('ses yok: konuşma/klip çağrısı içe aktarılmaz (tek başına ünsüz sesi yok, K-OY-03)', () => {
     for (const [f, s] of dosyalar) expect(s, f).not.toMatch(/useSpeak|speech|speechSynthesis|\.m4a|\bAudio\(/);
   });

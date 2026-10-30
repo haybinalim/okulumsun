@@ -18,7 +18,7 @@ import './turKagit.css';
 
 /**
  * Türkçe kâğıt sayfası (Adım 65): A4, tek SVG, `viewBox` mm. Yazdırmada `width: 210mm` → kalibrasyon karesi gerçek
- * 1 cm (CSS mm). Renk yok; gri baskıda aynı. `<mask>` yok (KG kuralı), font konturu yok (orta çizgi verisi).
+ * 1 cm (CSS mm). Renk yok; gri baskıda aynı. SVG maskesi yok, font konturu yok (orta çizgi verisi).
  */
 const MUREKKEP = '#000';
 const CIZGI = '#555';
