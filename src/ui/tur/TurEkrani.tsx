@@ -101,7 +101,7 @@ function VeriIle({ children }: { children: (glifler: readonly TurHamleGlifi[]) =
       aria-busy={v.durum === 'yukleniyor'}
       style={{ ...ekranStili, justifyContent: 'center' }}
     >
-      <p data-yetiskin="">{v.durum === 'yukleniyor' ? 'Yükleniyor…' : `Yazılış verisi açılamadı: ${v.mesaj}`}</p>
+      <p data-yetiskin="">{v.durum === 'yukleniyor' ? 'Yükleniyor' : `Yazılış verisi açılamadı: ${v.mesaj}`}</p>
     </main>
   );
 }
@@ -113,7 +113,7 @@ function YazilisSecimi({ glifler, sekme }: { glifler: readonly TurHamleGlifi[]; 
   const liste = sekmeGlifleri(glifler, HARF_GRUPLARI, secili);
   return (
     <main aria-label="Harf ve rakam yazılışı" style={{ ...ekranStili, justifyContent: 'space-between' }}>
-      <Baslik baslik="Harf ve rakam yazılışı" alt="Harf grubunu (1–5) ya da rakamları, sonra harfi seçin." />
+      <Baslik baslik="Harf ve rakam yazılışı" alt="Harf grubunu (1-5) ya da rakamları, sonra harfi seçin." />
       <div
         style={{
           display: 'flex',
@@ -138,7 +138,7 @@ function YazilisSecimi({ glifler, sekme }: { glifler: readonly TurHamleGlifi[]; 
                 variant={secili === i ? 'accent' : 'solid'}
                 onPress={() => setSecili(i)}
               >
-                <span aria-hidden="true">{rakam ? '0–9' : i + 1}</span>
+                <span aria-hidden="true">{rakam ? '0-9' : i + 1}</span>
               </BigButton>
             );
           })}
