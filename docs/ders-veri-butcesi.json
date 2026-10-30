@@ -1,0 +1,11 @@
+{
+  "karar": "ADR-0016 (Okuma Yazma planı K-2, KG-133)",
+  "zorunlu": false,
+  "dersler": {
+    "tur": {
+      "cekirdekBayt": 1048576,
+      "grupBayt": 6291456,
+      "kodBayt": 122880
+    }
+  }
+}

@@ -45,6 +45,7 @@ public/audio-prototip/
 *.ndjson
 okulumsun-yedek-*.json
 dist-e2e
+dist-tur
 scripts/claude-cikti/
 
 # Öğretmen formu vb. üretilmiş içerik çıktıları (Adım 30) — depoya girmez.

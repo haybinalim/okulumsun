@@ -20,7 +20,7 @@
  *
  * Kullanım: npm run validate
  */
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -37,6 +37,7 @@ import { haftalikPlanUret } from '../src/ogretmen/haftalikPlan';
 import { EvIpuclariSchema } from '../src/content/schema/evIpucu';
 import { MaskotHikayeleriSchema } from '../src/content/schema/maskotHikayesi';
 import { TemaGirisleriSchema } from '../src/content/schema/temaGirisi';
+import { DERS_KODLARI, DERSLER } from '../src/content/dersler';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel: string): unknown => JSON.parse(readFileSync(path.join(ROOT, rel), 'utf8'));
@@ -288,6 +289,28 @@ try {
 } catch (e) {
   hata(`haftalık plan: ${(e as Error).message}`);
 }
+
+// ------------------------------------------------ ders paketleri (ADR-0011, ADR-0016; Okuma Yazma Adım 61)
+// Her dersin müfredat kısıt belgesi zorunlu; JS dışı verisi olan dersin manifesti okunur ve program sürümü
+// kısıt belgesindekiyle aynı olmalı.
+for (const kod of DERS_KODLARI) {
+  const paket = DERSLER[kod];
+  if (!existsSync(path.join(ROOT, paket.kisitBelgesi))) {
+    hata(`ders ${kod}: kısıt belgesi yok (${paket.kisitBelgesi}).`);
+    continue;
+  }
+  if (!paket.veriKoku) continue;
+  try {
+    const m = read(`${paket.veriKoku}/manifest.json`) as { ders?: unknown; programSurumu?: unknown };
+    if (m.ders !== kod) hata(`${paket.veriKoku}/manifest.json: ders '${String(m.ders)}' ≠ '${kod}'.`);
+    const belge = readFileSync(path.join(ROOT, paket.kisitBelgesi), 'utf8');
+    if (typeof m.programSurumu !== 'string' || !belge.includes(`\`${m.programSurumu}\``))
+      hata(`${paket.veriKoku}/manifest.json: programSurumu '${String(m.programSurumu)}' kısıt belgesinde yok.`);
+  } catch (e) {
+    hata(`ders ${kod}: ${(e as Error).message}`);
+  }
+}
+sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLER[k].durum})`).join(', ')}`);
 
 // -------------------------------------------------------------------- rapor
 for (const s of sonuc.istatistik) console.log(`  ${s}`);
