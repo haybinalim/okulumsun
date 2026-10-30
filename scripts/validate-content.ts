@@ -20,7 +20,7 @@
  *
  * Kullanım: npm run validate
  */
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -38,6 +38,13 @@ import { EvIpuclariSchema } from '../src/content/schema/evIpucu';
 import { MaskotHikayeleriSchema } from '../src/content/schema/maskotHikayesi';
 import { TemaGirisleriSchema } from '../src/content/schema/temaGirisi';
 import { DERS_KODLARI, DERSLER } from '../src/content/dersler';
+import {
+  harfEnvanteriniDenetle,
+  renkAlaniBul,
+  turIceriginiDogrula,
+  turKodunuTara,
+} from '../src/content/dersler/tur/dogrulayici';
+import { turIcerikDosyasiniAyristir } from '../src/content/schema/turIcerik';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel: string): unknown => JSON.parse(readFileSync(path.join(ROOT, rel), 'utf8'));
@@ -311,6 +318,41 @@ for (const kod of DERS_KODLARI) {
   }
 }
 sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLER[k].durum})`).join(', ')}`);
+
+// ------------------------------------------------ Türkçe içerik: K-OY doğrulayıcısı (Okuma Yazma Adım 62)
+// `ders-verisi/tur/icerik/*.json` şema + D-01…D-23 kuralları; Türkçe kodda süre ölçümü yok (D-13).
+// `--yayin` ile öğretmen teyidi (D-14) eksikliği hata olur (Adım 73 yayın kapısı).
+{
+  const yayin = process.argv.includes('--yayin');
+  const turKok = path.join(ROOT, 'src/content/dersler/tur');
+  const kod = readdirSync(turKok)
+    .filter((d) => d.endsWith('.ts'))
+    .map((d) => ({ yol: `src/content/dersler/tur/${d}`, icerik: readFileSync(path.join(turKok, d), 'utf8') }));
+  const turIhlalleri = [...harfEnvanteriniDenetle(), ...turKodunuTara(kod)];
+  const icerikKoku = path.join(ROOT, 'ders-verisi/tur/icerik');
+  const dosyalar = existsSync(icerikKoku)
+    ? readdirSync(icerikKoku)
+        .filter((d) => d.endsWith('.json'))
+        .sort()
+    : [];
+  let oge = 0;
+  for (const ad of dosyalar) {
+    const rel = `ders-verisi/tur/icerik/${ad}`;
+    try {
+      const ham = read(rel);
+      for (const yol of renkAlaniBul(ham)) hata(`${rel}: D-06 parça rengi alanı yasak (${yol}).`);
+      const d = turIcerikDosyasiniAyristir(ham);
+      oge += d.harfler.length + d.heceler.length + d.sozcukler.length + d.cumleler.length + d.etkinlikler.length;
+      const r = turIceriginiDogrula(d, { yayin });
+      for (const h of r.hatalar) hata(`${rel}: ${h.kural} ${h.oge}: ${h.mesaj}`);
+      for (const u of r.uyarilar) sonuc.uyarilar.push(`${rel}: ${u.kural} ${u.oge}: ${u.mesaj}`);
+    } catch (e) {
+      hata(`${rel}: ${(e as Error).message}`);
+    }
+  }
+  for (const h of turIhlalleri) hata(`Türkçe: ${h.kural} ${h.oge}: ${h.mesaj}`);
+  sonuc.istatistik.push(`Türkçe içerik (K-OY): ${dosyalar.length} dosya · ${oge} öğe${yayin ? ' (yayın kipi)' : ''}`);
+}
 
 // -------------------------------------------------------------------- rapor
 for (const s of sonuc.istatistik) console.log(`  ${s}`);

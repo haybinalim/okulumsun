@@ -44,6 +44,8 @@ describe('üretim paketi korunur', () => {
   it("Türkçe modülü src/ içinde yalnız main.tsx'teki bayrak korumalı dinamik içe aktarım yükler", () => {
     const bulunan = kaynaklar(path.join(KOK, 'src'))
       .filter((f) => !f.includes(`${path.sep}dersler${path.sep}tur${path.sep}`))
+      // Şema dosyaları yalnız doğrulamada kullanılır; uygulama onları içe aktarmaz (icerikDogrulama.spec).
+      .filter((f) => !f.includes(`${path.sep}content${path.sep}schema${path.sep}`))
       .flatMap((f) =>
         oku(path.relative(KOK, f))
           .split('\n')
