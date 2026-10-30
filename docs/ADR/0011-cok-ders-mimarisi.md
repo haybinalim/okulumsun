@@ -41,4 +41,4 @@ Orta (içerik dizini taşıması).
 ## Kabul koşulları
 
 - [x] Kullanıcı seçeneği onayladı (14 Eki 2026, Seçenek 1).
-- [ ] İkinci dersin kapsamı belli (uygulama bu koşula bağlı; o zamana dek kod değişikliği yok).
+- [x] İkinci dersin kapsamı belli: Türkçe ilk okuma yazma (30 Eki 2026, plan v2 KG-133, Okuma Yazma planı Adım 60–78). Uygulama Adım 61'de başlar; veri yerleşimi ve derleme bayrağı ADR-0016'da.
