@@ -38,23 +38,43 @@ export const ICERIK = {
   boy: A4.boy - 2 * A4.kenar - UST_BANT_MM - ALT_BANT_MM,
 } as const;
 
-export type TurKagitTuru = 'harf' | 'rakam' | 'dikte' | 'gozlem';
+export type TurKagitTuru = 'harf' | 'rakam' | 'dikte' | 'gozlem' | 'destek';
 
 export type TurKagitIstegi =
   | { readonly tur: 'harf'; readonly bicim: 'kucuk' | 'buyuk'; readonly glif: string }
   | { readonly tur: 'rakam'; readonly bicim: 'rakam'; readonly glif: string }
   | { readonly tur: 'dikte' }
-  | { readonly tur: 'gozlem' };
+  | { readonly tur: 'gozlem' }
+  | { readonly tur: 'destek'; readonly glifler: readonly DestekGlifi[] };
+
+/** Destek kâğıdında bir glif (öğretmen seçer; en çok `DESTEK_EN_COK`). */
+export interface DestekGlifi {
+  readonly bicim: 'kucuk' | 'buyuk' | 'rakam';
+  readonly glif: string;
+}
+
+/** Destek kâğıdı tek sayfa: glif başına izleme + bağımsız satır → en çok 6 glif. */
+export const DESTEK_EN_COK = 6;
 
 const KUCUK = 'abcçdefgğhıijklmnoöprsştuüvyz';
 const BUYUK = 'ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ';
 
 /**
- * Kâğıt kodu (`?arsiv=tur-…`): `tur-harf-a`, `tur-harf-A`, `tur-rakam-3`, `tur-dikte`, `tur-gozlem`. Büyük/küçük harf
- * anlamlı.
+ * Kâğıt kodu (`?arsiv=tur-…`): `tur-harf-a`, `tur-harf-A`, `tur-rakam-3`, `tur-dikte`, `tur-gozlem`, destek kâğıdı
+ * `tur-destek-a.n.E.4` (glifler noktayla, seçim sırasıyla; rakam 0–9). Büyük/küçük harf anlamlı. Kod yalnız glif
+ * seçimini taşır, öğrenciye ait hiçbir şey taşımaz; uygulama saklamaz.
  */
 export function turKagitKodu(i: TurKagitIstegi): string {
+  if (i.tur === 'destek') return `tur-destek-${i.glifler.map((g) => g.glif).join('.')}`;
   return i.tur === 'dikte' || i.tur === 'gozlem' ? `tur-${i.tur}` : `tur-${i.tur}-${i.glif}`;
+}
+
+function destekGlifi(ch: string): DestekGlifi | null {
+  if ([...ch].length !== 1) return null;
+  if (/^[0-9]$/.test(ch)) return { bicim: 'rakam', glif: ch };
+  if (KUCUK.includes(ch)) return { bicim: 'kucuk', glif: ch };
+  if (BUYUK.includes(ch)) return { bicim: 'buyuk', glif: ch };
+  return null;
 }
 
 export function turKagitKoduCoz(ham: string): TurKagitIstegi | null {
@@ -66,6 +86,14 @@ export function turKagitKoduCoz(ham: string): TurKagitIstegi | null {
   }
   if (kod === 'tur-dikte') return { tur: 'dikte' };
   if (kod === 'tur-gozlem') return { tur: 'gozlem' };
+  const d = /^tur-destek-(.+)$/u.exec(kod);
+  if (d) {
+    const parcalar = d[1].split('.');
+    if (parcalar.length < 1 || parcalar.length > DESTEK_EN_COK || new Set(parcalar).size !== parcalar.length)
+      return null;
+    const glifler = parcalar.map(destekGlifi);
+    return glifler.every((g): g is DestekGlifi => g !== null) ? { tur: 'destek', glifler } : null;
+  }
   const m = /^tur-(harf|rakam)-(.)$/u.exec(kod);
   if (!m) return null;
   const [, tur, glif] = m;
@@ -85,6 +113,8 @@ export interface KagitSatiri {
   readonly ornekX?: number;
   /** Kesikli / noktalı kopyaların sol kenarları (mm). */
   readonly kopyalar: readonly number[];
+  /** Destek kâğıdında satırın glifi (`destekGlifleri` sırası); diğer kâğıtlarda yok (sayfanın tek glifi). */
+  readonly glifSirasi?: number;
 }
 
 export interface OrnekKutusu {
@@ -168,7 +198,10 @@ const ORNEK_DIZGE_MM = 16;
  * sıradaki siyah, başlangıç noktası ve uçta yön oku, üstünde numarası); sonra 3 izleme (kesikli), 3 birleştirme
  * (noktalı) ve 3 bağımsız satır; her satırın başında düz örnek. Tek sayfa (sayfa tavanı).
  */
-export function yazilisSayfasi(i: Extract<TurKagitIstegi, { glif: string }>, g: TurHamleGlifi): TurKagitSayfasi {
+export function yazilisSayfasi(
+  i: Extract<TurKagitIstegi, { tur: 'harf' | 'rakam' }>,
+  g: TurHamleGlifi,
+): TurKagitSayfasi {
   const ornekBoy = ORNEK_DIZGE_MM * (110 / 60) + 8;
   const ornek: OrnekKutusu = { x: ICERIK.x, y: ICERIK.y, dizgeMm: ORNEK_DIZGE_MM, en: ICERIK.en, boy: ornekBoy };
   const ilkUst = ICERIK.y + ornekBoy + 10;
@@ -219,6 +252,40 @@ export function gozlemSayfasi(): TurKagitSayfasi {
   };
 }
 
+/**
+ * Öğrenciye özel destek kâğıdı (tür 8): öğretmenin seçtiği her glif için bir izleme (kesikli) ve bir bağımsız satır,
+ * satır başında düz örnek. Tek sayfa (≤ 6 glif). Öğretmen seçer; kâğıt kodu yalnız gliflerdir, uygulama saklamaz.
+ */
+export function destekSayfasi(
+  i: Extract<TurKagitIstegi, { tur: 'destek' }>,
+  glifler: readonly TurHamleGlifi[],
+): TurKagitSayfasi {
+  const solX = ICERIK.x + 2;
+  const satirlar: KagitSatiri[] = [];
+  i.glifler.forEach((dg, n) => {
+    const g = glifler.find((x) => x.bicim === dg.bicim && x.glif === dg.glif);
+    if (!g) return;
+    const en = glifEniMm(g);
+    const kopyaBas = solX + en + Math.max(8, en);
+    for (const [k, kip] of (['izle', 'bagimsiz'] as const).entries()) {
+      satirlar.push({
+        kip,
+        y: +(ICERIK.y + 6 + (2 * n + k) * SATIR_ADIMI_MM).toFixed(3),
+        ornekX: solX,
+        kopyalar: kip === 'izle' ? kopyaKonumlari(g, kopyaBas, ICERIK.x + ICERIK.en - 2) : [],
+        glifSirasi: n,
+      });
+    }
+  });
+  return {
+    kod: turKagitKodu(i),
+    baslik: 'Destek kâğıdı',
+    altBaslik: 'Örneğe bak. Kesik çizginin üzerinden geç, alt satırda kendin yaz.',
+    satirlar,
+    gozlem: [],
+  };
+}
+
 /** Satırın en alt noktası (kuyruk dahil), mm. */
 export const satirAltiMm = (s: Pick<KagitSatiri, 'y'>): number => s.y + (SATIR.kuyruk - SATIR.ust) * BIRIM_MM;
 
@@ -234,9 +301,15 @@ export function sayfaTasmasi(s: TurKagitSayfasi): string[] {
   return hata;
 }
 
+/** Destek isteğinin gliflerini veride bulur (sırayla; bulunamayan atlanır). */
+export function destekGlifleri(i: TurKagitIstegi, glifler: readonly TurHamleGlifi[]): TurHamleGlifi[] {
+  if (i.tur !== 'destek') return [];
+  return i.glifler.flatMap((d) => glifler.filter((g) => g.bicim === d.bicim && g.glif === d.glif));
+}
+
 /** İsteğin glifini hamle verisinde bulur (`bicim` + `glif`). */
 export function istekGlifi(i: TurKagitIstegi, glifler: readonly TurHamleGlifi[]): TurHamleGlifi | undefined {
-  if (!('glif' in i)) return undefined;
+  if (i.tur === 'dikte' || i.tur === 'gozlem' || i.tur === 'destek') return undefined;
   return glifler.find((g) => g.bicim === i.bicim && g.glif === i.glif);
 }
 
@@ -244,8 +317,12 @@ export function istekGlifi(i: TurKagitIstegi, glifler: readonly TurHamleGlifi[])
 export function turKagitSayfalari(
   i: TurKagitIstegi,
   glifler: readonly TurHamleGlifi[],
-): { sayfa: TurKagitSayfasi; glif?: TurHamleGlifi }[] {
+): { sayfa: TurKagitSayfasi; glif?: TurHamleGlifi; glifler?: readonly TurHamleGlifi[] }[] {
   if (i.tur === 'dikte') return [{ sayfa: dikteSayfasi() }];
+  if (i.tur === 'destek') {
+    const g = destekGlifleri(i, glifler);
+    return g.length === i.glifler.length ? [{ sayfa: destekSayfasi(i, glifler), glifler: g }] : [];
+  }
   if (i.tur === 'gozlem') return [{ sayfa: gozlemSayfasi() }];
   const g = istekGlifi(i, glifler);
   return g ? [{ sayfa: yazilisSayfasi(i, g), glif: g }] : [];

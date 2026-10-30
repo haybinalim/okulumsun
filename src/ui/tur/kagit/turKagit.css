@@ -1,8 +1,9 @@
 /*
- * Türkçe kâğıt ailesi (Okuma Yazma Adım 65). Sayfa tek SVG, 210 × 297 mm; `@page` kenarsız (kenar SVG içinde 12 mm),
- * böylece yazdırmada SVG'nin mm'si gerçek mm'dir (kalibrasyon karesi 1 cm). Yalnız bayraklı derlemede yüklenir.
+ * Türkçe kâğıt ailesi (Okuma Yazma Adım 65). Sayfa tek SVG, 210 × 297 mm; adlı `@page tur` kenarsız (kenar SVG içinde
+ * 12 mm), böylece yazdırmada SVG'nin mm'si gerçek mm'dir (kalibrasyon karesi 1 cm). Adlı sayfa: aynı oturumda yüklenen
+ * matematik kâğıdının `@page` kuralı (kenar 12 mm) ile çakışmaz. Yalnız bayraklı derlemede yüklenir.
  */
-@page {
+@page tur {
   size: A4;
   margin: 0;
 }
@@ -36,8 +37,10 @@
   }
   .tk-kok--baski {
     display: block !important;
+    page: tur;
   }
   .tk-kok--baski .tk-sayfa {
+    page: tur;
     box-shadow: none;
     break-after: page;
     page-break-after: always;
@@ -46,4 +49,19 @@
     break-after: auto;
     page-break-after: auto;
   }
+}
+
+/* Uygulama içi önizleme (Okuma Yazma "Kâğıtlar"): sayfa ayrılan alana sığar (en/boy oranı viewBox'tan). */
+.tk-uygulama [data-tur-kagit-hazir] {
+  height: 100%;
+}
+.tk-uygulama .tk-kok--onizleme {
+  height: 100%;
+  justify-content: center;
+  flex-wrap: nowrap;
+}
+.tk-uygulama .tk-kok--onizleme .tk-sayfa {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
 }

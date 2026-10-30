@@ -13,6 +13,7 @@ import { TurKagitSayfasi } from '../../src/ui/tur/kagit/TurKagitSayfasi';
 import {
   A4,
   BIRIM_MM,
+  DESTEK_EN_COK,
   CIZGI_MM,
   DIZGE_ARASI_MM,
   DIZGE_MM,
@@ -165,9 +166,62 @@ describe('sayfalar', () => {
   });
 });
 
+describe('destek kâğıdı (tür 8)', () => {
+  it('kod: seçim sırası korunur, rakam/küçük/büyük ayrılır; 1–6 glif, tekrarsız, Türkçe dışı yok', () => {
+    const i = turKagitKoduCoz('tur-destek-a.N.ı.İ.4.ğ');
+    expect(i).toEqual({
+      tur: 'destek',
+      glifler: [
+        { bicim: 'kucuk', glif: 'a' },
+        { bicim: 'buyuk', glif: 'N' },
+        { bicim: 'kucuk', glif: 'ı' },
+        { bicim: 'buyuk', glif: 'İ' },
+        { bicim: 'rakam', glif: '4' },
+        { bicim: 'kucuk', glif: 'ğ' },
+      ],
+    });
+    expect(turKagitKodu(i!)).toBe('tur-destek-a.N.ı.İ.4.ğ');
+    expect(turKagitKoduCoz(encodeURIComponent('tur-destek-a.N.ı.İ.4.ğ'))).toEqual(i);
+    expect(DESTEK_EN_COK).toBe(6);
+    for (const k of [
+      'tur-destek-',
+      'tur-destek-a.a',
+      'tur-destek-a.b.c.d.e.f.g',
+      'tur-destek-q',
+      'tur-destek-ab',
+      'tur-destek-a..b',
+    ])
+      expect(turKagitKoduCoz(k), k).toBeNull();
+  });
+
+  it('glif başına izleme + bağımsız satır, tek sayfa, en geniş 6 glifle bile taşmaz; her satır kendi glifi', () => {
+    const genis = [...VERI.glifler].sort((a, b) => b.genislik - a.genislik).slice(0, 6);
+    const i: TurKagitIstegi = { tur: 'destek', glifler: genis.map((g) => ({ bicim: g.bicim, glif: g.glif })) };
+    const s = turKagitSayfalari(i, VERI.glifler);
+    expect(s).toHaveLength(1);
+    const { sayfa, glifler } = s[0];
+    expect(sayfaTasmasi(sayfa)).toEqual([]);
+    expect(sayfa.satirlar.map((r) => r.kip)).toEqual(genis.flatMap(() => ['izle', 'bagimsiz']));
+    expect(sayfa.satirlar.map((r) => r.glifSirasi)).toEqual(genis.flatMap((_, n) => [n, n]));
+    expect(glifler).toEqual(genis);
+    const html = renderToStaticMarkup(createElement(TurKagitSayfasi, { sayfa, glifler }));
+    expect(html).toContain(`data-tur-kagit="${turKagitKodu(i)}"`);
+    expect(html.match(/data-glif-kalem="ornek"/g)).toHaveLength(12);
+  });
+
+  it('veride olmayan glif → kâğıt yok (sessizce eksik basılmaz)', () => {
+    expect(turKagitSayfalari({ tur: 'destek', glifler: [{ bicim: 'rakam', glif: 'a' }] }, VERI.glifler)).toEqual([]);
+  });
+});
+
 describe('ayrım', () => {
-  it('Türkçe kâğıt modülleri matematik kâğıt kodunu içe aktarmaz; main.tsx dalı bayrak korumalı', () => {
-    for (const d of ['turKagidi.ts', 'TurKagitSayfasi.tsx', 'TurArsivKagidi.tsx']) {
+  it('Türkçe kâğıt modülleri matematik kâğıt kodunu içe aktarmaz; main.tsx dalı bayrak korumalı; adlı @page', () => {
+    const css = readFileSync('src/ui/tur/kagit/turKagit.css', 'utf8');
+    // Adlı sayfa: aynı oturumdaki matematik kâğıdının `@page` kuralıyla (kenar 12 mm) çakışmaz.
+    expect(css).toMatch(/@page tur \{\s*size: A4;\s*margin: 0;/);
+    expect(css).not.toMatch(/@page\s*\{/);
+    expect(css).toMatch(/page: tur;/);
+    for (const d of ['turKagidi.ts', 'TurKagitSayfasi.tsx', 'TurArsivKagidi.tsx', '../TurKagitEkranlari.tsx']) {
       const k = readFileSync(`src/ui/tur/kagit/${d}`, 'utf8');
       expect(k, d).not.toMatch(/from '[^']*(ogretmen\/calismaKagidi|ui\/print\/)/);
       expect(k, d).not.toMatch(/localStorage|indexedDB|speechSynthesis/);

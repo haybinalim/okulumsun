@@ -27,8 +27,8 @@ export function TurKagitlari({ istek }: { readonly istek: TurKagitIstegi }) {
   if (sayfalar.length === 0) return <p role="status">Bu kâğıt kodu geçersiz.</p>;
   const ciz = (kopya: 'onizleme' | 'baski') => (
     <div className={`tk-kok tk-kok--${kopya}`} data-tur-kagit-sayfa-sayisi={sayfalar.length}>
-      {sayfalar.map(({ sayfa, glif }, k) => (
-        <TurKagitSayfasi key={k} sayfa={sayfa} glif={glif} />
+      {sayfalar.map(({ sayfa, glif, glifler }, k) => (
+        <TurKagitSayfasi key={k} sayfa={sayfa} glif={glif} glifler={glifler} />
       ))}
     </div>
   );
