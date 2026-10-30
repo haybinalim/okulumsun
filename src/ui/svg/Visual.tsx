@@ -58,11 +58,14 @@ export function Visual({
   width,
   height,
   baski,
+  tekBuyuk,
 }: {
   spec: VisualSpec;
   width: number;
   height: number;
   baski?: BaskiOlcegi;
+  /** KG-132 (yalnız ekran): tek nesneli kümeler kutuyu doldurur; tüm kardeşleri tek nesne olan yerde verilir. */
+  tekBuyuk?: boolean;
 }) {
   switch (spec.type) {
     case 'rakam':
@@ -76,7 +79,7 @@ export function Visual({
     case 'islemKarti':
       return <IslemKarti spec={spec} width={width} height={height} />;
     case 'nesneKumesi':
-      return <NesneKumesi spec={spec} width={width} height={height} baski={baski} />;
+      return <NesneKumesi spec={spec} width={width} height={height} baski={baski} tekBuyuk={tekBuyuk} />;
     case 'onlukCerceve':
       return <OnlukCerceve gruplar={spec.gruplar} width={width} height={height} />;
     case 'sayiDogrusu':
@@ -86,7 +89,7 @@ export function Visual({
     case 'yonKarti':
       return <YonKarti spec={spec} width={width} height={height} />;
     case 'sahne':
-      return <Sahne spec={spec} width={width} height={height} baski={baski} />;
+      return <Sahne spec={spec} width={width} height={height} baski={baski} tekBuyuk={tekBuyuk} />;
     case 'konumSahnesi':
       return <KonumSahnesi spec={spec} width={width} height={height} />;
     case 'olcumSahnesi':
@@ -310,11 +313,13 @@ function NesneKumesi({
   width,
   height,
   baski,
+  tekBuyuk,
 }: {
   spec: Extract<VisualSpec, { type: 'nesneKumesi' }>;
   width: number;
   height: number;
   baski?: BaskiOlcegi;
+  tekBuyuk?: boolean;
 }) {
   const renk = spec.renk ? RENK_HEX[spec.renk] : undefined;
   // KG-105: nesne kutunun içinde kalır (kenarda kırpılma yok); kâğıtta ölçülen kutuya ızgara, ≤ 14 mm.
@@ -328,7 +333,7 @@ function NesneKumesi({
         KAGIT_NESNE_EN_AZ_MM / baski.mmBirim,
         baski.bosluk,
       )
-    : ekranKumeYerlesimi(spec, width, height);
+    : ekranKumeYerlesimi(spec, width, height, tekBuyuk);
 
   return (
     <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true" data-nesne-boyutu={boyut}>
@@ -822,11 +827,13 @@ function Sahne({
   width,
   height,
   baski,
+  tekBuyuk,
 }: {
   spec: Extract<VisualSpec, { type: 'sahne' }>;
   width: number;
   height: number;
   baski?: BaskiOlcegi;
+  tekBuyuk?: boolean;
 }) {
   if (baski) {
     const kagit = KagitKumeSahnesi({ spec, width, height, baski });
@@ -834,6 +841,10 @@ function Sahne({
   }
   const pw = width * 0.46;
   const ph = height * 0.8;
+  // KG-132: ekranda nesne kümesi parçasının kutusu sahnenin içine kaydırılır (boyu aynı; M-VERİ-SIKLIK y 0,7'de alt
+  // satır, x 0,2/0,8'de kenar sütunlar kesiliyordu). Şekilli GEO sahneleri (kâğıtta ölçeksiz bu yoldan çizilir,
+  // bilerek örtüşür) ve kâğıt yolu eskisi gibi.
+  const icineAl = !baski && !spec.parcalar.some((p) => p.gorsel.type === 'sekil');
   // Kâğıtta (KG-105) küme parçalarının kutusu komşu küme parçasına taşmaz: örtüşen iki kutu, ayrımı oransal olarak
   // büyük olan eksende merkezler arası uzaklığa daraltılır (nesne hücrenin ≤ %88'i, arada boşluk kalır; çetele/grafik
   // satırındaki tek tek nesneler büyüyünce üst üste binmesin). Şekil parçaları (GEO sahneleri) bilerek örtüşür.
@@ -866,15 +877,18 @@ function Sahne({
     const boy = Math.min(ortak ?? Infinity, baski.kumeBoyutu ?? Infinity);
     parcaBaskisi = Number.isFinite(boy) ? { ...baski, kumeBoyutu: boy } : baski;
   }
+  const sinirla = (v: number, k: number, kenar: number, kume: boolean) =>
+    icineAl && kume ? Math.max(0, Math.min(v, kenar - k)) : v;
   return (
     <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
       {spec.parcalar.map((p, i) => {
         const { w: kw, h: kh } = kutular[i];
-        const px = p.konum.x * width - kw / 2;
-        const py = p.konum.y * height - kh / 2;
+        const kume = p.gorsel.type === 'nesneKumesi';
+        const px = sinirla(p.konum.x * width - kw / 2, kw, width, kume);
+        const py = sinirla(p.konum.y * height - kh / 2, kh, height, kume);
         return (
           <g key={i} transform={`translate(${px} ${py})`}>
-            <Visual spec={p.gorsel} width={kw} height={kh} baski={parcaBaskisi} />
+            <Visual spec={p.gorsel} width={kw} height={kh} baski={parcaBaskisi} tekBuyuk={tekBuyuk} />
           </g>
         );
       })}

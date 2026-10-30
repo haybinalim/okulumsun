@@ -30,9 +30,11 @@ export interface ChoiceCardProps {
    * kartın iç alanını (%70 × %70) doldurur.
    */
   genislik?: number;
+  /** KG-132: tüm kardeş kartlar tek nesneyse (M-VERİ-GRUPLA) nesne kartı doldurur (Visual `tekBuyuk`). */
+  tekBuyuk?: boolean;
 }
 
-export function ChoiceCard({ option, size, state, onSelect, sabitBoyut = false, genislik }: ChoiceCardProps) {
+export function ChoiceCard({ option, size, state, onSelect, sabitBoyut = false, genislik, tekBuyuk }: ChoiceCardProps) {
   const en = genislik ?? size;
   const selected = state === 'secili';
   const isCorrect = state === 'dogru';
@@ -70,7 +72,7 @@ export function ChoiceCard({ option, size, state, onSelect, sabitBoyut = false, 
       style={style}
     >
       <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}>
-        {renderDeger(option.deger, size, en)}
+        {renderDeger(option.deger, size, en, tekBuyuk)}
       </div>
     </BigButton>
   );
@@ -90,7 +92,7 @@ function borderColor(state: ChoiceState): string {
 }
 
 /** Şıkkın değerini görselleştirir — çocuk metin OKUYAMAZ, bu yüzden sayı/şekil/ikon. */
-function renderDeger(deger: OptionDeger, size: number, en: number = size): ReactNode {
+function renderDeger(deger: OptionDeger, size: number, en: number = size, tekBuyuk?: boolean): ReactNode {
   const inner = size * 0.7;
   const innerEn = en * 0.7;
   switch (deger.tur) {
@@ -98,6 +100,16 @@ function renderDeger(deger: OptionDeger, size: number, en: number = size): React
       return <Visual spec={{ type: 'rakam', sayi: deger.sayi }} width={inner} height={inner} />;
     case 'gorsel':
       if (deger.gorsel.type === 'banknot') return <KartBanknotu deger={deger.gorsel.deger} />;
+      // KG-132: onluk çerçeve ve tek nesne kartın GERÇEK boyunu (CSS %) doldurur; `size` kartın `--size-choice`
+      // alt sınırından küçük olabildiği için çerçeve kartın ≈ %40'ında kalıyordu.
+      if (deger.gorsel.type === 'onlukCerceve' || (tekBuyuk && deger.gorsel.type === 'nesneKumesi' && deger.gorsel.adet === 1)) {
+        const n = deger.gorsel.type === 'onlukCerceve' ? deger.gorsel.gruplar.length : 0;
+        return (
+          <div data-kart-dolu="" style={{ width: '86%', height: '86%', display: 'grid' }} className="[&>svg]:h-full [&>svg]:w-full">
+            <Visual spec={deger.gorsel} width={n ? 200 * n : 100} height={100} tekBuyuk />
+          </div>
+        );
+      }
       return <Visual spec={deger.gorsel} width={innerEn} height={inner} />;
     case 'sekil':
       return <Visual spec={{ type: 'sekil', sekil: deger.sekil }} width={inner} height={inner} />;
