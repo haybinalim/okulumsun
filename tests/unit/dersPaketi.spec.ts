@@ -60,7 +60,7 @@ describe('üretim paketi korunur', () => {
     expect(satir).toMatch(/^if \(import\.meta\.env\.VITE_DERS_TUR === '1'\) void import\('\.\/content\/dersler\/tur\//);
   });
 
-  it('Türkçe arayüz paketine (src/ui/tur) yalnız App.tsx bayrak sabitiyle ulaşır (Adım 64)', () => {
+  it('Türkçe arayüz paketine (src/ui/tur) yalnız App.tsx ve main.tsx bayrak sabitiyle ulaşır (Adım 64, 65)', () => {
     const bulunan = kaynaklar(path.join(KOK, 'src'))
       .filter((f) => !f.includes(`${path.sep}ui${path.sep}tur${path.sep}`))
       .flatMap((f) =>
@@ -69,8 +69,13 @@ describe('üretim paketi korunur', () => {
           .filter((s) => /ui\/tur\//.test(s) && !/^\s*(\/\/|\*)/.test(s))
           .map((s) => [path.relative(KOK, f), s.trim()] as const),
       );
-    expect(bulunan.map(([d]) => d)).toEqual(['src/App.tsx', 'src/App.tsx']);
+    expect(bulunan.map(([d]) => d)).toEqual(['src/App.tsx', 'src/App.tsx', 'src/main.tsx']);
     const satirlar = bulunan.map(([, s]) => s);
+    // Adım 65: Türkçe kâğıt görünümü (`?arsiv=tur-…`) main.tsx'te bayrak sabitine bağlı dalda, tembel.
+    const main = oku('src/main.tsx');
+    expect(main).toMatch(
+      /if \(import\.meta\.env\.VITE_DERS_TUR === '1' && arsivKodu\?\.startsWith\('tur-'\)\) \{\n(?:\s*\/\/[^\n]*\n)?\s*void import\('\.\/ui\/tur\/kagit\/TurArsivKagidi\.tsx'\)/,
+    );
     // Durum modülü yan etkisiz (tek içe aktarım); ekran tembel ve bayrak sabitine bağlı; kanca seçimi modül düzeyinde.
     expect(satirlar[0]).toBe("import { useTurEkrani } from './ui/tur/turEkrani';");
     expect(satirlar[1]).toBe(
