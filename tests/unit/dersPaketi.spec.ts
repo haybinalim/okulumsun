@@ -46,6 +46,8 @@ describe('üretim paketi korunur', () => {
       .filter((f) => !f.includes(`${path.sep}dersler${path.sep}tur${path.sep}`))
       // Şema dosyaları yalnız doğrulamada kullanılır; uygulama onları içe aktarmaz (icerikDogrulama.spec).
       .filter((f) => !f.includes(`${path.sep}content${path.sep}schema${path.sep}`))
+      // Türkçe arayüz paketi (Adım 64) kendisi bayrak arkasındadır; ona giden yollar aşağıdaki testte.
+      .filter((f) => !f.includes(`${path.sep}ui${path.sep}tur${path.sep}`))
       .flatMap((f) =>
         oku(path.relative(KOK, f))
           .split('\n')
@@ -56,6 +58,30 @@ describe('üretim paketi korunur', () => {
     const [dosya, satir] = bulunan[0];
     expect(dosya).toBe('src/main.tsx');
     expect(satir).toMatch(/^if \(import\.meta\.env\.VITE_DERS_TUR === '1'\) void import\('\.\/content\/dersler\/tur\//);
+  });
+
+  it('Türkçe arayüz paketine (src/ui/tur) yalnız App.tsx bayrak sabitiyle ulaşır (Adım 64)', () => {
+    const bulunan = kaynaklar(path.join(KOK, 'src'))
+      .filter((f) => !f.includes(`${path.sep}ui${path.sep}tur${path.sep}`))
+      .flatMap((f) =>
+        oku(path.relative(KOK, f))
+          .split('\n')
+          .filter((s) => /ui\/tur\//.test(s) && !/^\s*(\/\/|\*)/.test(s))
+          .map((s) => [path.relative(KOK, f), s.trim()] as const),
+      );
+    expect(bulunan.map(([d]) => d)).toEqual(['src/App.tsx', 'src/App.tsx']);
+    const satirlar = bulunan.map(([, s]) => s);
+    // Durum modülü yan etkisiz (tek içe aktarım); ekran tembel ve bayrak sabitine bağlı; kanca seçimi modül düzeyinde.
+    expect(satirlar[0]).toBe("import { useTurEkrani } from './ui/tur/turEkrani';");
+    expect(satirlar[1]).toBe(
+      "const TurEkrani = import.meta.env.VITE_DERS_TUR === '1' ? lazy(() => import('./ui/tur/TurEkrani')) : null;",
+    );
+    const app = oku('src/App.tsx');
+    expect(app).toContain("const useTurEkraniBayrakli = import.meta.env.VITE_DERS_TUR === '1' ? useTurEkrani : () => null;");
+    expect(app).toMatch(/if \(import\.meta\.env\.VITE_DERS_TUR === '1' && TurEkrani && turEkrani\) \{\n\s*return kabuk\(/);
+    // Durum modülünün üst düzeyinde çağrı yok (ağaç sallamada atılabilir olmalı).
+    const durum = oku('src/ui/tur/turEkrani.ts');
+    expect(durum).not.toMatch(/^(?:export )?(?:const|let) \w+[^=\n]*= *(?:new |create|[a-zA-Z_]+\()/m);
   });
 
   it("kayıt defteri uygulama girişinden içe aktarılmaz (üretim JS'i değişmez)", () => {
