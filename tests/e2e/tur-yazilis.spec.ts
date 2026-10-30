@@ -135,8 +135,8 @@ test('küçük tahta 1080×810: seçim ve gösterim geometrisi', async ({ page }
   await page.getByRole('button', { name: 'Harf ve rakam yazılışı' }).click();
   await expect(page.getByRole('group', { name: 'Harfler ve rakamlar' }).getByRole('button')).toHaveCount(12);
   await geometriTemiz(page, 'yazılış seçimi 1080×810');
-  await page.getByRole('button', { name: 'Büyük M', exact: true }).click();
-  await expect(page.getByRole('main', { name: 'Yazılış: Büyük M' })).toHaveAttribute('data-hamle-sayisi', '4');
+  await page.getByRole('button', { name: 'Büyük E', exact: true }).click();
+  await expect(page.getByRole('main', { name: 'Yazılış: Büyük E' })).toHaveAttribute('data-hamle-sayisi', '4');
   await geometriTemiz(page, 'yazılış gösterimi 1080×810');
 });
 
