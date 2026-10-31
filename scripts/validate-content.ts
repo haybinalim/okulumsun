@@ -47,6 +47,12 @@ import {
 import { turIcerikDosyasiniAyristir } from '../src/content/schema/turIcerik';
 import { hamleDosyasiniAyristir } from '../src/content/schema/turHamle';
 import { hamleVerisiniDenetle, teyitBekleyenler } from '../src/content/dersler/tur/hamleTablosu';
+import { gorselDiziniAyristir, type TurGorselDizini } from '../src/content/schema/turGorsel';
+import {
+  gorselDizinleriniDenetle,
+  gorselTeyitBekleyenler,
+  icerikGorselBaglariniDenetle,
+} from '../src/content/dersler/tur/gorselDenetimi';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel: string): unknown => JSON.parse(readFileSync(path.join(ROOT, rel), 'utf8'));
@@ -380,6 +386,53 @@ sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLE
   } catch (e) {
     hata(`${rel}: ${(e as Error).message}`);
   }
+}
+
+// ------------------------------------------------ Türkçe sözcük görselleri (Okuma Yazma Adım 68, §2.4.8, D-25)
+// Dizin şeması, her resimli sözcüğe tek görsel, öğretilmemiş harfli sözcüğe görsel yok, kimlik tekliği, SVG kaynak
+// kuralı (maske/metin/dış kaynak yok, palet, ≤ 6 KB). Teyit bekleyen görsel geliştirmede uyarı, `--yayin` ile hata.
+{
+  const kok = path.join(ROOT, 'ders-verisi/tur/gorseller');
+  const dizinler: TurGorselDizini[] = [];
+  const dosyalar = new Map<string, string>();
+  if (existsSync(kok)) {
+    for (const ad of readdirSync(kok).sort()) {
+      const rel = `ders-verisi/tur/gorseller/${ad}`;
+      if (/^grup-\d\.json$/.test(ad)) {
+        try {
+          const d = gorselDiziniAyristir(read(rel));
+          if (`grup-${d.grup}.json` !== ad) hata(`${rel}: grup alanı ${d.grup} dosya adıyla aynı değil.`);
+          dizinler.push(d);
+        } catch (e) {
+          hata(`${rel}: ${(e as Error).message}`);
+        }
+      } else if (ad.endsWith('.svg')) dosyalar.set(`gorseller/${ad}`, readFileSync(path.join(kok, ad), 'utf8'));
+      else hata(`${rel}: beklenmeyen dosya (yalnız grup-<n>.json ve .svg).`);
+    }
+  }
+  for (const i of gorselDizinleriniDenetle(dizinler, dosyalar)) hata(`Türkçe görsel: ${i.kural} ${i.oge}: ${i.mesaj}`);
+  const icerikKoku = path.join(ROOT, 'ders-verisi/tur/icerik');
+  if (existsSync(icerikKoku))
+    for (const ad of readdirSync(icerikKoku).filter((d) => d.endsWith('.json'))) {
+      try {
+        const d = turIcerikDosyasiniAyristir(read(`ders-verisi/tur/icerik/${ad}`));
+        for (const i of icerikGorselBaglariniDenetle(d.sozcukler, dizinler))
+          hata(`ders-verisi/tur/icerik/${ad}: ${i.kural} ${i.oge}: ${i.mesaj}`);
+      } catch {
+        // şema hatası yukarıdaki içerik döngüsünde raporlandı
+      }
+    }
+  const bekleyen = gorselTeyitBekleyenler(dizinler);
+  const toplam = dizinler.reduce((t, d) => t + d.gorseller.length, 0);
+  if (bekleyen.length > 0) {
+    const mesaj = `ders-verisi/tur/gorseller: ${bekleyen.length}/${toplam} görsel öğretmen teyidi bekliyor (teyit: bekliyor).`;
+    if (process.argv.includes('--yayin')) hata(`${mesaj} Yayın için iki öğretmen teyidi gerekir.`);
+    else sonuc.uyarilar.push(mesaj);
+  }
+  const bayt = [...dosyalar.values()].reduce((t, s) => t + Buffer.byteLength(s), 0);
+  sonuc.istatistik.push(
+    `Türkçe görseller: ${toplam} görsel · ${dizinler.map((d) => `grup ${d.grup}: ${d.gorseller.length}`).join(', ') || 'grup yok'} · ${(bayt / 1024).toFixed(1)} KB · teyitli ${toplam - bekleyen.length}`,
+  );
 }
 
 // -------------------------------------------------------------------- rapor

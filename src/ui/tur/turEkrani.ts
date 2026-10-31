@@ -15,6 +15,8 @@ export type TurEkrani =
   | { readonly ekran: 'yazilisSecimi'; readonly sekme?: number }
   | { readonly ekran: 'yazilis'; readonly anahtar: string; readonly sekme: number }
   | { readonly ekran: 'kagitlar' }
+  /** Resimli sözcük görselleri kataloğu (Adım 68): harf grubu ve gri (baskı) görünümü. */
+  | { readonly ekran: 'gorseller'; readonly grup: number; readonly gri: boolean }
   /** Kâğıt için glif seçimi: `harf` tek glif → önizleme; `destek` çoklu seçim (glif anahtarları, seçim sırası). */
   | {
       readonly ekran: 'kagitSecimi';

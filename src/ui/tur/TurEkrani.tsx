@@ -19,6 +19,7 @@ import { useHamleVerisi } from './useHamleVerisi';
 import { YazilisGlifi } from './YazilisGlifi';
 import { KagitMenusu, KagitOnizleme, KagitSecimi } from './TurKagitEkranlari';
 import { Baslik, ekranStili, SEKME_SAYISI } from './turOrtak';
+import { GorselKatalogu } from './TurGorselEkrani';
 
 export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; profil: DeviceProfile }) {
   const geri = () => {
@@ -36,6 +37,8 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
           <Giris />
         ) : ekran.ekran === 'kagitlar' ? (
           <KagitMenusu />
+        ) : ekran.ekran === 'gorseller' ? (
+          <GorselKatalogu grup={ekran.grup} gri={ekran.gri} />
         ) : ekran.ekran === 'kagit' ? (
           <KagitOnizleme istek={ekran.istek} />
         ) : (
@@ -73,6 +76,13 @@ function Giris() {
         </BigButton>
         <BigButton label="Kâğıtlar" size="primary" onPress={() => turEkraniAc({ ekran: 'kagitlar' })}>
           <span style={{ padding: '0 0.6em' }}>Kâğıtlar</span>
+        </BigButton>
+        <BigButton
+          label="Görseller"
+          size="primary"
+          onPress={() => turEkraniAc({ ekran: 'gorseller', grup: 1, gri: false })}
+        >
+          <span style={{ padding: '0 0.6em' }}>Görseller</span>
         </BigButton>
       </div>
     </main>
