@@ -68,11 +68,16 @@ test('yazılış gösterimi: seçim, adım kipi, kesikli, sol el, gezinme; geome
   await expect(glifDugmeleri).toHaveCount(10); // rakamlar
   await geometriTemiz(page, 'yazılış seçimi (rakamlar)');
 
-  // i / İ / ı / I dört ayrı düğme.
+  // i / İ / ı / I dört ayrı düğme. (BigButton soğuması: art arda tıklamalar arasında kısa bekleme; CI'da bir kez
+  // sekme 0 tıklaması düşmüştü, PR #120.)
+  await page.waitForTimeout(300);
   await sekmeler.nth(0).click();
+  await expect(sekmeler.nth(0)).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByRole('button', { name: 'Küçük i', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Büyük İ', exact: true })).toBeVisible();
+  await page.waitForTimeout(300);
   await sekmeler.nth(1).click();
+  await expect(sekmeler.nth(1)).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByRole('button', { name: 'Küçük ı', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Büyük I', exact: true })).toBeVisible();
 
