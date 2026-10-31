@@ -8,45 +8,11 @@
  */
 import { useEffect, useState } from 'react';
 import { HARF_GRUPLARI } from '../../content/dersler/tur/alfabe';
-import { TUR_VERI_KOKU, turVerisiniOku } from '../../content/dersler/tur/veriYukleyici';
+import { TUR_VERI_KOKU } from '../../content/dersler/tur/veriYukleyici';
+import { grupGorselleriniYukle, type GorselOgesi } from './turGorselVerisi';
 import { BigButton } from '../primitives/BigButton';
 import { turEkraniAc } from './turEkrani';
 import { Baslik, ekranStili } from './turOrtak';
-
-export interface GorselOgesi {
-  readonly id: string;
-  readonly dosya: string;
-  readonly sozcuk: string;
-}
-
-const DOSYA = /^gorseller\/[a-z][a-z0-9-]*\.svg$/;
-
-/** Dizini kabaca sınar (şema CI'da zod ile; çalışma anında zod yüklenmez) ve yalnız güvenli dosya yollarını alır. */
-export function gorselDiziniOgeleri(d: unknown): GorselOgesi[] {
-  const g = (d as { gorseller?: unknown } | null)?.gorseller;
-  if (!Array.isArray(g)) throw new Error('görsel dizini biçimi beklenen gibi değil.');
-  return g.filter(
-    (x: unknown): x is GorselOgesi =>
-      typeof x === 'object' &&
-      x !== null &&
-      typeof (x as GorselOgesi).id === 'string' &&
-      typeof (x as GorselOgesi).sozcuk === 'string' &&
-      typeof (x as GorselOgesi).dosya === 'string' &&
-      DOSYA.test((x as GorselOgesi).dosya),
-  );
-}
-
-const bellek = new Map<number, Promise<GorselOgesi[]>>();
-
-export function grupGorselleriniYukle(grup: number): Promise<GorselOgesi[]> {
-  let p = bellek.get(grup);
-  if (!p) {
-    p = turVerisiniOku(`gorseller/grup-${grup}.json`).then(gorselDiziniOgeleri);
-    p.catch(() => bellek.delete(grup));
-    bellek.set(grup, p);
-  }
-  return p;
-}
 
 type Durum =
   | { readonly durum: 'yukleniyor' }
@@ -68,28 +34,8 @@ export function GorselKatalogu({ grup, gri }: { grup: number; gri: boolean }) {
   const guncel = s.grup === grup ? s : ({ durum: 'yukleniyor' } as const);
   const secenekler = (g: number, giri: boolean) => turEkraniAc({ ekran: 'gorseller', grup: g, gri: giri });
   return (
-    <main aria-label="Görseller" style={{ ...ekranStili, justifyContent: 'flex-start' }}>
+    <main aria-label="Görseller" style={{ ...ekranStili, justifyContent: 'space-between' }}>
       <Baslik baslik="Görseller" alt="Resimli sözcükler. Sözcükler ve görseller öğretmen teyidi bekliyor." />
-      <div
-        role="group"
-        aria-label="Gruplar"
-        style={{ display: 'flex', gap: 'var(--size-gap-tight)', flexWrap: 'wrap', justifyContent: 'center' }}
-      >
-        {HARF_GRUPLARI.map((harfler, i) => (
-          <BigButton
-            key={i}
-            label={`${i + 1}. grup: ${harfler.join(' ')}`}
-            ariaPressed={grup === i + 1}
-            variant={grup === i + 1 ? 'accent' : 'solid'}
-            onPress={() => secenekler(i + 1, gri)}
-          >
-            <span aria-hidden="true">{i + 1}</span>
-          </BigButton>
-        ))}
-        <BigButton label="Siyah-beyaz" ariaPressed={gri} variant={gri ? 'accent' : 'solid'} onPress={() => secenekler(grup, !gri)}>
-          <span style={{ padding: '0 0.4em' }}>Siyah-beyaz</span>
-        </BigButton>
-      </div>
       {guncel.durum === 'hazir' ? (
         <ul
           aria-label={`${grup}. grup görselleri`}
@@ -116,6 +62,8 @@ export function GorselKatalogu({ grup, gri }: { grup: number; gri: boolean }) {
                 width={96}
                 height={96}
                 style={{
+                  display: 'block',
+                  margin: '0 auto',
                   width: 'calc(96px * var(--scale))',
                   height: 'calc(96px * var(--scale))',
                   filter: gri ? 'grayscale(1)' : undefined,
@@ -132,6 +80,26 @@ export function GorselKatalogu({ grup, gri }: { grup: number; gri: boolean }) {
           {guncel.durum === 'yukleniyor' ? 'Yükleniyor' : 'Bu grubun görselleri henüz yok.'}
         </p>
       )}
+      <div
+        role="group"
+        aria-label="Gruplar"
+        style={{ display: 'flex', gap: 'var(--size-gap-tight)', flexWrap: 'wrap', justifyContent: 'center' }}
+      >
+        {HARF_GRUPLARI.map((harfler, i) => (
+          <BigButton
+            key={i}
+            label={`${i + 1}. grup: ${harfler.join(' ')}`}
+            ariaPressed={grup === i + 1}
+            variant={grup === i + 1 ? 'accent' : 'solid'}
+            onPress={() => secenekler(i + 1, gri)}
+          >
+            <span aria-hidden="true">{i + 1}</span>
+          </BigButton>
+        ))}
+        <BigButton label="Siyah-beyaz" ariaPressed={gri} variant={gri ? 'accent' : 'solid'} onPress={() => secenekler(grup, !gri)}>
+          <span style={{ padding: '0 0.4em' }}>Siyah-beyaz</span>
+        </BigButton>
+      </div>
     </main>
   );
 }

@@ -7,7 +7,9 @@ KAPSAM
 `src/content/` altındaki metin ve veri dosyaları: beceri grafiği (skills.json),
 kazanım eşlemesi ve açıklamaları (kazanimlar.json), hata etiketi kataloğu
 (misconceptions.json), arayüz ve seslendirme metinleri (tr.json) ve bunlardan üretilen
-alıştırma içeriği. Bu içerik LICENSE dosyasındaki koşullarla aynı biçimde korunur:
+alıştırma içeriği; `ders-verisi/` altındaki ders verisi (Türkçe yazılış hamle verisi ve
+sözcük görselleri — bu depoda kodla çizilmiş özgün SVG'ler, `scripts/tur/gorsel-uret.tsx`).
+Bu içerik LICENSE dosyasındaki koşullarla aynı biçimde korunur:
 önceden yazılı izin olmadan kopyalanamaz, çoğaltılamaz, uyarlanamaz veya dağıtılamaz.
 
 KAPSAM DIŞI (kendi koşullarına tabidir)

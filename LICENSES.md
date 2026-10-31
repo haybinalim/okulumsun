@@ -74,6 +74,12 @@ Uygulamadaki Kaynaklar ekranı aynı listeyi çizer.
 > (`cocukUrunundeKullanim: kosullu`, ticari lansman öncesi avukat incelemesi). `audio:audit` CI'da
 > geçiş istisnası olmadan çalışır (K4).
 
+**Kendi çizimlerimiz.** Soru nesneleri ve materyaller (`src/ui/svg/`) ile Türkçe sözcük görselleri
+(`ders-verisi/tur/gorseller/`, Okuma Yazma Adım 68) bu depoda kodla yazılmış özgün SVG'lerdir: üçüncü taraf ikon
+seti, emoji, yapay zekâ görseli, metin ve `<mask>` yoktur (KG-104; `npm run validate` D-25 denetler). Üçüncü taraf
+varlık olmadıkları için yukarıdaki envanterde satırları yoktur; görsel envanteri (hangi sözcüğe hangi görsel, teyit
+durumu) `ders-verisi/tur/gorseller/grup-<n>.json` dizinleridir. İçerik lisansı: `CONTENT-LICENSE`.
+
 ## Müfredat kaynağı
 
 Matematik kazanım kodları MEB 2024 İlkokul Matematik Dersi Öğretim
