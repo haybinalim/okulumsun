@@ -1,9 +1,29 @@
 {
   "ders": "tur",
   "programSurumu": "tymm-turkce-2026-09-02",
-  "cekirdek": ["manifest.json", "hamleler.json"],
+  "cekirdek": [
+    "manifest.json",
+    "hamleler.json"
+  ],
   "gruplar": {
-    "1": [],
+    "1": [
+      "gorseller/grup-1.json",
+      "gorseller/anne.svg",
+      "gorseller/nane.svg",
+      "gorseller/at.svg",
+      "gorseller/et.svg",
+      "gorseller/anten.svg",
+      "gorseller/tente.svg",
+      "gorseller/in.svg",
+      "gorseller/nine.svg",
+      "gorseller/el.svg",
+      "gorseller/lale.svg",
+      "gorseller/aile.svg",
+      "gorseller/nal.svg",
+      "gorseller/tel.svg",
+      "gorseller/alet.svg",
+      "gorseller/atlet.svg"
+    ],
     "2": [],
     "3": [],
     "4": [],

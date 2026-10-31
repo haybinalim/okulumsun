@@ -16,6 +16,7 @@
     "boyut": "tsx scripts/boyut-butcesi.ts",
     "boyut:ders": "tsx scripts/ders-veri-butcesi.ts",
     "tur:hamle": "tsx scripts/tur/hamle-verisi.ts",
+    "tur:gorsel": "tsx --tsconfig scripts/tur/tsconfig.gorsel.json scripts/tur/gorsel-uret.tsx",
     "arsiv": "tsx scripts/calisma-kagidi-arsivi.ts",
     "okul-paketi": "tsx scripts/okul-paketi.ts",
     "uyum-matrisi": "tsx scripts/meb-uyum-matrisi.ts",

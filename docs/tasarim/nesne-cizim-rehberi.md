@@ -148,3 +148,23 @@ incorporated into the design of computer input devices.* SJWEH Suppl 2007;(3):26
   hedefin üst yarısı görünür, "arkasında"dan (arka duvar/sap hedefin önünde, hedef yukarıda) ayrışır.
 - Yeni nesne eklerken: `NESNE_SPRITELARI` + ses kliği (`nesne.*`) + `DOGAL_RENK` + `CIZIMLER` dalı; `Govde` ile temel/gölge/ışık/kontur,
   ışık sol üst, kontur 3,5; katalogda 64 ve 102 px, gri görünümde bak.
+
+## 6. Türkçe sözcük görselleri (Okuma Yazma Adım 68)
+
+Resimli sözcüklerin görselleri (`ders-verisi/tur/gorseller/<id>.svg`) **aynı stil ve aynı parçalarla** çizilir
+(`Govde`, `Parca`, `Zemin`, `nesneTonlari`), ama çalışma anında React bileşeni değil **statik SVG veri**dir (ADR-0016):
+`scripts/tur/gorsel-uret.tsx` çizimleri (`scripts/tur/gorsel/grup<n>.tsx`) sabit renklerle dosyaya yazar.
+
+- **Palet:** `src/content/dersler/tur/gorselPaleti.ts` — matematik nesnelerinin doğal ve parça renkleri (test aynılığı
+  denetler) + Türkçe için birkaç temel (ten, saç, toprak, taş, kumaş…). Her renk bir temelden ya da onun türetilmiş
+  gölge/ışık/kontur tonundandır; palet dışı renk D-25 hatasıdır.
+- **Kişiler** (anne, nine, aile): genel, sade büstler; gerçek kişi, marka, yazı, bayrak ya da dinî/kültürel simge yok.
+  Ten tek orta ton; kıyafetler nesne renklerinden.
+- **Açıklık:** tek nesne, sade arka plan; sözcüğü çağırmayan ayrıntı yok. Yalnız resimle karışıklıksız gösterilebilen
+  sözcükler resimlenir; eş anlamlı ya da resimle ayrışmayan adaylar dizinde `resimsiz` (gerekçeli, öğretmene sorulur).
+  Her görsel bir tanınırlık riski taşır (`dusuk/orta/yuksek`, çizenin tahmini); öğretmen teyit sayfası ve 3 çocukla
+  adlandırma denemesi (%80 altı yeniden çizilir) bunu ölçer.
+- **Teknik:** 100×100 viewBox, ≤ 6 KB, kimlikler `<id>-<n>` (aynı sayfada çok görsel çakışmaz), gölge hilalinin "her
+  yer" dikdörtgeni kutuya göre kısaltılır, özniteliksiz `<g>` atılır, sayılar 1 ondalık. Maske, metin, gradyan, filtre,
+  stil, dış kaynak yok. Gri baskı: her görselde koyu kontur (parlaklık ≤ 0,06); katalogda "Siyah-beyaz" ile denetlenir.
+- **Katalog:** Okuma Yazma (`?ders=tur`, yalnız bayraklı derleme) → Görseller: grup seçimi + siyah-beyaz görünüm.

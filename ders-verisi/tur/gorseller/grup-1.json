@@ -1,0 +1,222 @@
+{
+  "surum": 1,
+  "programSurumu": "tymm-turkce-2026-09-02",
+  "grup": 1,
+  "kaynak": "Özgün çizim: scripts/tur/gorsel-uret.tsx (kodla yazılmış SVG; üçüncü taraf/YZ/emoji yok, KG-104). Sözcükler: Okuma Yazma sözcük listesi taslağı (iki öğretmen teyidi bekliyor).",
+  "resimliSozcukler": [
+    "anne",
+    "nane",
+    "at",
+    "et",
+    "anten",
+    "tente",
+    "in",
+    "nine",
+    "el",
+    "lale",
+    "aile",
+    "nal",
+    "tel",
+    "alet",
+    "atlet"
+  ],
+  "gorseller": [
+    {
+      "id": "anne",
+      "dosya": "gorseller/anne.svg",
+      "sozcuk": "anne",
+      "taslakNo": 5,
+      "aciklama": "kucağında kundaklı bebek tutan yetişkin",
+      "risk": "orta",
+      "bayt": 4172,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "nane",
+      "dosya": "gorseller/nane.svg",
+      "sozcuk": "nane",
+      "taslakNo": 6,
+      "aciklama": "nane dalı: sap ve üç kat tırtıklı yaprak",
+      "risk": "orta",
+      "bayt": 5382,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "at",
+      "dosya": "gorseller/at.svg",
+      "sozcuk": "at",
+      "taslakNo": 11,
+      "aciklama": "yandan, ayakta duran at (yele ve kuyruk)",
+      "risk": "dusuk",
+      "bayt": 3975,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "et",
+      "dosya": "gorseller/et.svg",
+      "sozcuk": "et",
+      "taslakNo": 12,
+      "aciklama": "çiğ et dilimi (biftek): yağ kenarı ve kemik",
+      "risk": "orta",
+      "bayt": 2088,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "anten",
+      "dosya": "gorseller/anten.svg",
+      "sozcuk": "anten",
+      "taslakNo": 18,
+      "aciklama": "çatı üstünde televizyon anteni",
+      "risk": "yuksek",
+      "bayt": 2209,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "tente",
+      "dosya": "gorseller/tente.svg",
+      "sozcuk": "tente",
+      "taslakNo": 19,
+      "aciklama": "dükkân vitrininin üstünde çizgili, dalgalı kenarlı tente",
+      "risk": "yuksek",
+      "bayt": 2160,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "in",
+      "dosya": "gorseller/in.svg",
+      "sozcuk": "in",
+      "taslakNo": 20,
+      "aciklama": "tümsekte hayvan ini: karanlık oyuk ve içinde iki göz",
+      "risk": "yuksek",
+      "bayt": 1405,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "nine",
+      "dosya": "gorseller/nine.svg",
+      "sozcuk": "nine",
+      "taslakNo": 23,
+      "aciklama": "gözlüklü, beyaz saçı topuz yaşlı kadın (büst)",
+      "risk": "orta",
+      "bayt": 2817,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "el",
+      "dosya": "gorseller/el.svg",
+      "sozcuk": "el",
+      "taslakNo": 29,
+      "aciklama": "açık el, avuç içi önde, beş parmak",
+      "risk": "dusuk",
+      "bayt": 3920,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "lale",
+      "dosya": "gorseller/lale.svg",
+      "sozcuk": "lale",
+      "taslakNo": 33,
+      "aciklama": "saplı, iki yapraklı lale",
+      "risk": "orta",
+      "bayt": 1990,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "aile",
+      "dosya": "gorseller/aile.svg",
+      "sozcuk": "aile",
+      "taslakNo": 34,
+      "aciklama": "iki yetişkin ve iki çocuktan oluşan aile (büstler)",
+      "risk": "orta",
+      "bayt": 4893,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "nal",
+      "dosya": "gorseller/nal.svg",
+      "sozcuk": "nal",
+      "taslakNo": 36,
+      "aciklama": "çivi delikli at nalı",
+      "risk": "orta",
+      "bayt": 1069,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "tel",
+      "dosya": "gorseller/tel.svg",
+      "sozcuk": "tel",
+      "taslakNo": 37,
+      "aciklama": "kangal hâlinde bakır tel ve açık ucu",
+      "risk": "yuksek",
+      "bayt": 1360,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "alet",
+      "dosya": "gorseller/alet.svg",
+      "sozcuk": "alet",
+      "taslakNo": 39,
+      "aciklama": "alet kutusu: çekiç, tornavida ve İngiliz anahtarı",
+      "risk": "orta",
+      "bayt": 3467,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "atlet",
+      "dosya": "gorseller/atlet.svg",
+      "sozcuk": "atlet",
+      "taslakNo": 41,
+      "aciklama": "kolsuz beyaz atlet (iç giysisi)",
+      "risk": "orta",
+      "bayt": 1188,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    }
+  ],
+  "resimsiz": [
+    {
+      "sozcuk": "nene",
+      "taslakNo": 7,
+      "neden": "\"nine\" ile aynı resim (yaşlı kadın); iki sözcük tek resme düşer. Görsel \"nine\"de, \"nene\" resimsiz."
+    },
+    {
+      "sozcuk": "anneanne",
+      "taslakNo": 9,
+      "neden": "Akrabalık resimle gösterilemez; çizim \"nine\" ile karışır."
+    },
+    {
+      "sozcuk": "alan",
+      "taslakNo": 38,
+      "neden": "Soyut sözcük; oyun alanı çiziminde çocuk \"park\" ya da \"kaydırak\" der."
+    }
+  ]
+}

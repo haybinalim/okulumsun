@@ -74,7 +74,7 @@ geçersizdir.
 | D-23 | Çeldiriciler de öğretilmiş harflerden; karıştırılan çift çeldiricisi `diagnosticTag` taşır | K-OY-02; Türkçede c/ç, s/ş, g/ğ, o/ö, u/ü, ı/i, b/d, n/u |
 | D-24 | Tahtada üst %35'te etkileşim yok | PLAN §3 (mevcut geometri e2e) |
 
-## 5. Doğrulayıcı kural tablosu (D-01…D-24)
+## 5. Doğrulayıcı kural tablosu (D-01…D-25)
 
 Kod karşılığı Adım 62'de; "Otomatik" sütunu ✓ olanlar `npm run validate` içinde koşar ve ihlal CI'ı kırmızı yapar.
 
@@ -104,6 +104,7 @@ Kod karşılığı Adım 62'de; "Otomatik" sütunu ✓ olanlar `npm run validate
 | D-22 | Ekranda ve kâğıtta sözcük satır sonunda bölünmez | 13 | Adım 69 (e2e) | Hata |
 | D-23 | Çeldiriciler öğretilmiş harflerden | 02 | ✓ | Hata |
 | D-24 | Tahtada üst %35'te etkileşim yok | — | Mevcut e2e | Hata |
+| D-25 | Sözcük görselleri (Adım 68): her resimli sözcüğün tek görseli var; görsel yalnız sözcüğün bütün harfleri öğretilmiş grupta (öğretilmemiş harfli sözcüğe görsel yok); kimlik tek; SVG kendi çizimimiz — `<mask>`, metin, raster/dış kaynak, gradyan yok, renkler paletten, ≤ 6 KB, koyu kontur (gri baskı); içerikteki `gorselId` aynı sözcüğün görseli; teyit bekleyen görsel yayında hata | 02, 08, 09 | ✓ (`gorselDenetimi.ts`) | Hata (teyit: geliştirmede uyarı) |
 
 ## 6. Hece kuralı (hece ayırıcı)
 
