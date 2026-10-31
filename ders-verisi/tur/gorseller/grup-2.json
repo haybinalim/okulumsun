@@ -1,0 +1,648 @@
+{
+  "surum": 1,
+  "programSurumu": "tymm-turkce-2026-09-02",
+  "grup": 2,
+  "kaynak": "Özgün çizim: scripts/tur/gorsel-uret.tsx (kodla yazılmış SVG; üçüncü taraf/YZ/emoji yok, KG-104). Sözcükler: Okuma Yazma sözcük listesi taslağı (iki öğretmen teyidi bekliyor).",
+  "resimliSozcukler": [
+    "ot",
+    "nota",
+    "olta",
+    "ok",
+    "kale",
+    "kek",
+    "kol",
+    "etek",
+    "inek",
+    "kanat",
+    "kilit",
+    "tekne",
+    "tilki",
+    "un",
+    "kule",
+    "kutu",
+    "koltuk",
+    "kukla",
+    "kulak",
+    "okul",
+    "tutkal",
+    "kare",
+    "kar",
+    "nar",
+    "erik",
+    "kartal",
+    "terlik",
+    "tekerlek",
+    "kral",
+    "kurt",
+    "tren",
+    "arı",
+    "altın",
+    "tırnak",
+    "tırtıl",
+    "kırlent",
+    "elma",
+    "kamera",
+    "mum",
+    "ekmek",
+    "kalem",
+    "limon",
+    "mantar",
+    "marul",
+    "motor",
+    "orman",
+    "makarna"
+  ],
+  "gorseller": [
+    {
+      "id": "ot",
+      "dosya": "gorseller/ot.svg",
+      "sozcuk": "ot",
+      "taslakNo": 45,
+      "aciklama": "toprakta bir tutam yeşil ot",
+      "risk": "orta",
+      "bayt": 1760,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "nota",
+      "dosya": "gorseller/nota.svg",
+      "sozcuk": "nota",
+      "taslakNo": 46,
+      "aciklama": "iki sekizlik nota (müzik işareti)",
+      "risk": "dusuk",
+      "bayt": 2187,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "olta",
+      "dosya": "gorseller/olta.svg",
+      "sozcuk": "olta",
+      "taslakNo": 47,
+      "aciklama": "makaralı olta kamışı, misina ve iğne",
+      "risk": "orta",
+      "bayt": 1470,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "ok",
+      "dosya": "gorseller/ok.svg",
+      "sozcuk": "ok",
+      "taslakNo": 54,
+      "aciklama": "tüylü, sivri uçlu ok",
+      "risk": "dusuk",
+      "bayt": 1622,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "kale",
+      "dosya": "gorseller/kale.svg",
+      "sozcuk": "kale",
+      "taslakNo": 56,
+      "aciklama": "mazgallı iki kuleli taş kale ve kapısı",
+      "risk": "orta",
+      "bayt": 2800,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "kek",
+      "dosya": "gorseller/kek.svg",
+      "sozcuk": "kek",
+      "taslakNo": 60,
+      "aciklama": "ortası delik kalıp kek (üstü pudra şekerli)",
+      "risk": "orta",
+      "bayt": 2260,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "kol",
+      "dosya": "gorseller/kol.svg",
+      "sozcuk": "kol",
+      "taslakNo": 61,
+      "aciklama": "dirsekten bükülmüş, pazısı görünen kol",
+      "risk": "orta",
+      "bayt": 1844,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "etek",
+      "dosya": "gorseller/etek.svg",
+      "sozcuk": "etek",
+      "taslakNo": 63,
+      "aciklama": "kloş etek (bel bandı ve pliler)",
+      "risk": "orta",
+      "bayt": 1260,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "inek",
+      "dosya": "gorseller/inek.svg",
+      "sozcuk": "inek",
+      "taslakNo": 64,
+      "aciklama": "yandan, alacalı inek",
+      "risk": "dusuk",
+      "bayt": 3962,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "kanat",
+      "dosya": "gorseller/kanat.svg",
+      "sozcuk": "kanat",
+      "taslakNo": 65,
+      "aciklama": "açık kuş kanadı (tüyleri belirgin)",
+      "risk": "yuksek",
+      "bayt": 1234,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "kilit",
+      "dosya": "gorseller/kilit.svg",
+      "sozcuk": "kilit",
+      "taslakNo": 66,
+      "aciklama": "asma kilit (anahtar deliği)",
+      "risk": "dusuk",
+      "bayt": 1621,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "tekne",
+      "dosya": "gorseller/tekne.svg",
+      "sozcuk": "tekne",
+      "taslakNo": 67,
+      "aciklama": "yelkenli küçük tekne, dalga üstünde",
+      "risk": "dusuk",
+      "bayt": 1972,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "tilki",
+      "dosya": "gorseller/tilki.svg",
+      "sozcuk": "tilki",
+      "taslakNo": 68,
+      "aciklama": "oturan turuncu tilki, beyaz uçlu gür kuyruk",
+      "risk": "dusuk",
+      "bayt": 3677,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "un",
+      "dosya": "gorseller/un.svg",
+      "sozcuk": "un",
+      "taslakNo": 69,
+      "aciklama": "ağzı açık çuvalda un ve kepçe; önünde un yığını",
+      "risk": "yuksek",
+      "bayt": 2466,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "kule",
+      "dosya": "gorseller/kule.svg",
+      "sozcuk": "kule",
+      "taslakNo": 71,
+      "aciklama": "sivri çatılı, pencereli yüksek taş kule",
+      "risk": "orta",
+      "bayt": 2238,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "kutu",
+      "dosya": "gorseller/kutu.svg",
+      "sozcuk": "kutu",
+      "taslakNo": 72,
+      "aciklama": "kapağı açık karton kutu",
+      "risk": "dusuk",
+      "bayt": 2156,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "koltuk",
+      "dosya": "gorseller/koltuk.svg",
+      "sozcuk": "koltuk",
+      "taslakNo": 75,
+      "aciklama": "tek kişilik kollu koltuk",
+      "risk": "orta",
+      "bayt": 3096,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "kukla",
+      "dosya": "gorseller/kukla.svg",
+      "sozcuk": "kukla",
+      "taslakNo": 77,
+      "aciklama": "iplerle oynatılan tahta kukla ve tutacağı",
+      "risk": "orta",
+      "bayt": 2485,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "kulak",
+      "dosya": "gorseller/kulak.svg",
+      "sozcuk": "kulak",
+      "taslakNo": 78,
+      "aciklama": "insan kulağı (yandan)",
+      "risk": "dusuk",
+      "bayt": 1223,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "okul",
+      "dosya": "gorseller/okul.svg",
+      "sozcuk": "okul",
+      "taslakNo": 79,
+      "aciklama": "saatli ve zilli okul binası, merdivenli kapı",
+      "risk": "yuksek",
+      "bayt": 3997,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "tutkal",
+      "dosya": "gorseller/tutkal.svg",
+      "sozcuk": "tutkal",
+      "taslakNo": 80,
+      "aciklama": "sivri kapaklı beyaz yapıştırıcı şişesi ve damla",
+      "risk": "yuksek",
+      "bayt": 2814,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "kare",
+      "dosya": "gorseller/kare.svg",
+      "sozcuk": "kare",
+      "taslakNo": 82,
+      "aciklama": "mavi kare (geometrik şekil)",
+      "risk": "dusuk",
+      "bayt": 480,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "kar",
+      "dosya": "gorseller/kar.svg",
+      "sozcuk": "kar",
+      "taslakNo": 84,
+      "aciklama": "kar tanesi",
+      "risk": "yuksek",
+      "bayt": 2257,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "nar",
+      "dosya": "gorseller/nar.svg",
+      "sozcuk": "nar",
+      "taslakNo": 85,
+      "aciklama": "taçlı bütün nar ve yarım nar taneleri",
+      "risk": "orta",
+      "bayt": 2201,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "erik",
+      "dosya": "gorseller/erik.svg",
+      "sozcuk": "erik",
+      "taslakNo": 88,
+      "aciklama": "saplı, yapraklı mor erik",
+      "risk": "orta",
+      "bayt": 1546,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "kartal",
+      "dosya": "gorseller/kartal.svg",
+      "sozcuk": "kartal",
+      "taslakNo": 90,
+      "aciklama": "dalda tünemiş, beyaz başlı, kanca gagalı kartal",
+      "risk": "orta",
+      "bayt": 3556,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "terlik",
+      "dosya": "gorseller/terlik.svg",
+      "sozcuk": "terlik",
+      "taslakNo": 91,
+      "aciklama": "bir çift ev terliği (üstten)",
+      "risk": "orta",
+      "bayt": 2092,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "tekerlek",
+      "dosya": "gorseller/tekerlek.svg",
+      "sozcuk": "tekerlek",
+      "taslakNo": 92,
+      "aciklama": "jantlı lastik tekerlek",
+      "risk": "dusuk",
+      "bayt": 1835,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "kral",
+      "dosya": "gorseller/kral.svg",
+      "sozcuk": "kral",
+      "taslakNo": 94,
+      "aciklama": "taçlı ve pelerinli, sakallı masal kralı (büst)",
+      "risk": "orta",
+      "bayt": 2644,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "kurt",
+      "dosya": "gorseller/kurt.svg",
+      "sozcuk": "kurt",
+      "taslakNo": 95,
+      "aciklama": "aya doğru başını kaldırıp uluyan gri kurt",
+      "risk": "yuksek",
+      "bayt": 2970,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "tren",
+      "dosya": "gorseller/tren.svg",
+      "sozcuk": "tren",
+      "taslakNo": 97,
+      "aciklama": "bacalı lokomotif ve vagon, raylarda",
+      "risk": "dusuk",
+      "bayt": 3076,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "ari",
+      "dosya": "gorseller/ari.svg",
+      "sozcuk": "arı",
+      "taslakNo": 99,
+      "aciklama": "çizgili bal arısı, kanatlı",
+      "risk": "dusuk",
+      "bayt": 2552,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "altin",
+      "dosya": "gorseller/altin.svg",
+      "sozcuk": "altın",
+      "taslakNo": 101,
+      "aciklama": "üst üste altın külçeleri",
+      "risk": "orta",
+      "bayt": 1771,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "tirnak",
+      "dosya": "gorseller/tirnak.svg",
+      "sozcuk": "tırnak",
+      "taslakNo": 105,
+      "aciklama": "yakın plan parmak ucu ve tırnağı",
+      "risk": "yuksek",
+      "bayt": 1558,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "tirtil",
+      "dosya": "gorseller/tirtil.svg",
+      "sozcuk": "tırtıl",
+      "taslakNo": 106,
+      "aciklama": "boğumlu yeşil tırtıl, yaprak üstünde",
+      "risk": "orta",
+      "bayt": 3779,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "kirlent",
+      "dosya": "gorseller/kirlent.svg",
+      "sozcuk": "kırlent",
+      "taslakNo": 109,
+      "aciklama": "köşeleri püsküllü, desenli kare kırlent",
+      "risk": "yuksek",
+      "bayt": 1380,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "elma",
+      "dosya": "gorseller/elma.svg",
+      "sozcuk": "elma",
+      "taslakNo": 110,
+      "aciklama": "yapraklı kırmızı elma (matematik nesnesiyle aynı çizim)",
+      "risk": "dusuk",
+      "bayt": 1705,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "kamera",
+      "dosya": "gorseller/kamera.svg",
+      "sozcuk": "kamera",
+      "taslakNo": 111,
+      "aciklama": "büyük mercekli kamera",
+      "risk": "orta",
+      "bayt": 2523,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "mum",
+      "dosya": "gorseller/mum.svg",
+      "sozcuk": "mum",
+      "taslakNo": 113,
+      "aciklama": "yanan mum, altlıkta",
+      "risk": "dusuk",
+      "bayt": 2153,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "ekmek",
+      "dosya": "gorseller/ekmek.svg",
+      "sozcuk": "ekmek",
+      "taslakNo": 114,
+      "aciklama": "çizikli somun ekmek",
+      "risk": "dusuk",
+      "bayt": 1111,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "kalem",
+      "dosya": "gorseller/kalem.svg",
+      "sozcuk": "kalem",
+      "taslakNo": 115,
+      "aciklama": "silgili kurşun kalem (matematik nesnesiyle aynı çizim)",
+      "risk": "dusuk",
+      "bayt": 2234,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "limon",
+      "dosya": "gorseller/limon.svg",
+      "sozcuk": "limon",
+      "taslakNo": 116,
+      "aciklama": "sarı limon ve dilimi",
+      "risk": "dusuk",
+      "bayt": 2196,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "mantar",
+      "dosya": "gorseller/mantar.svg",
+      "sozcuk": "mantar",
+      "taslakNo": 117,
+      "aciklama": "benekli şapkalı mantar",
+      "risk": "dusuk",
+      "bayt": 1402,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "marul",
+      "dosya": "gorseller/marul.svg",
+      "sozcuk": "marul",
+      "taslakNo": 118,
+      "aciklama": "uzun yapraklı baş marul",
+      "risk": "orta",
+      "bayt": 2727,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "motor",
+      "dosya": "gorseller/motor.svg",
+      "sozcuk": "motor",
+      "taslakNo": 121,
+      "aciklama": "yandan motosiklet",
+      "risk": "orta",
+      "bayt": 2551,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "orman",
+      "dosya": "gorseller/orman.svg",
+      "sozcuk": "orman",
+      "taslakNo": 123,
+      "aciklama": "sık ağaçlardan oluşan orman",
+      "risk": "orta",
+      "bayt": 5081,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    },
+    {
+      "id": "makarna",
+      "dosya": "gorseller/makarna.svg",
+      "sozcuk": "makarna",
+      "taslakNo": 125,
+      "aciklama": "tabakta spagetti makarna ve çatal",
+      "risk": "orta",
+      "bayt": 1849,
+      "teyit": {
+        "durum": "bekliyor"
+      }
+    }
+  ],
+  "resimsiz": [
+    {
+      "sozcuk": "oto",
+      "taslakNo": 49,
+      "neden": "Resimde çocuk \"araba\" der; \"oto\" ile \"araba\" tek resme düşer."
+    },
+    {
+      "sozcuk": "otel",
+      "taslakNo": 52,
+      "neden": "Yazısız bir otel binası apartman ya da evden ayırt edilemez (görselde metin yok)."
+    },
+    {
+      "sozcuk": "kakao",
+      "taslakNo": 57,
+      "neden": "Fincanda kahverengi içecek çay, kahve ya da sütlü içecekle karışır; kakao çekirdeği çocuğa tanıdık değil."
+    },
+    {
+      "sozcuk": "karne",
+      "taslakNo": 89,
+      "neden": "Karne ancak yazı ve notlarla tanınır; görselde metin yok."
+    },
+    {
+      "sozcuk": "tatlı",
+      "taslakNo": 104,
+      "neden": "Üst kavram (sıfat); resimde çocuk \"pasta\" ya da \"kek\" der, \"kek\" görseliyle çakışır."
+    }
+  ]
+}
