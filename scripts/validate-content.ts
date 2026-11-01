@@ -50,6 +50,7 @@ import { hamleVerisiniDenetle, teyitBekleyenler } from '../src/content/dersler/t
 import { gorselDiziniAyristir, type TurGorselDizini } from '../src/content/schema/turGorsel';
 import { klipManifestiMetni, KLIP_MANIFESTI_YOLU, type TurKlipManifesti } from './tur/klip-manifesti';
 import { klipMetniGecerliMi } from '../src/content/dersler/tur/sablonlar/klipler';
+import { veliKartiAyristir } from '../src/content/dersler/tur/veliKarti';
 import {
   gorselDizinleriniDenetle,
   gorselTeyitBekleyenler,
@@ -390,6 +391,24 @@ sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLE
     }
     const toplam = d.glifler.reduce((t, g) => t + g.hamleler.length, 0);
     sonuc.istatistik.push(`Türkçe hamle verisi: ${d.glifler.length} glif · ${toplam} hamle · teyitli ${d.glifler.length - bekleyen.length}`);
+  } catch (e) {
+    hata(`${rel}: ${(e as Error).message}`);
+  }
+}
+
+// ------------------------------------------------ Türkçe veli kartı (Okuma Yazma Adım 71, §2.4.11 madde 6)
+// Katı ayrıştırıcı (çalışma anındakiyle aynı): altı madde birer kez, program sürümü. Öğretmen onayı bekleyen kart
+// geliştirmede uyarı, `--yayin` ile hata (Adım 71 kabulü: veli kartı metni öğretmen onaylı).
+{
+  const rel = 'ders-verisi/tur/veli-karti.json';
+  try {
+    const k = veliKartiAyristir(read(rel));
+    if (k.teyit.durum !== 'onaylandi') {
+      const mesaj = `${rel}: veli kartı metni öğretmen onayı bekliyor (teyit: bekliyor).`;
+      if (process.argv.includes('--yayin')) hata(`${mesaj} Yayın için öğretmen onayı gerekir.`);
+      else sonuc.uyarilar.push(mesaj);
+    }
+    sonuc.istatistik.push(`Türkçe veli kartı: ${k.maddeler.length} madde · ${k.teyit.durum}`);
   } catch (e) {
     hata(`${rel}: ${(e as Error).message}`);
   }

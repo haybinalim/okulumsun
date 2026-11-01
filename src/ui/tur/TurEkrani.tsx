@@ -25,14 +25,22 @@ import { EtkinlikSecimi } from './TurEtkinlikSecimi';
 import { IzlemeEkrani } from './IzlemeEkrani';
 import { GununAkisi, HarfDuzenleme, OgretmenGiris } from './TurOgretmen';
 import { SesPlani, SetAkisi, SetHazirla } from './TurPlanSet';
+import { EvAcilisi, TurEveGonder, TurKaynaklar } from './TurEv';
+import { evKipiMi } from './sinifAyariDepo';
+import { sikDugme } from './ogretmenOrtak';
 
 export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; profil: DeviceProfile }) {
+  // Eve link cihazı (veli/çocuk): ev açılışı köktür; set ekranlarının Geri ve Ana menüsü ona döner, öğretmen
+  // ekranlarına ve uygulamanın ana ekranına yol yoktur. Ev açılışında gezinme düğmesi çizilmez.
+  const evKodu = evKipiMi() ? (new URLSearchParams(window.location.search).get('ev') ?? '') : null;
+  const evDon = () => turEkraniAc({ ekran: 'ev', kod: evKodu ?? '' });
   const geri = () => {
     if (ekran.ekran === 'yazilis') turEkraniAc(ekran.geri ?? { ekran: 'yazilisSecimi', sekme: ekran.sekme });
     else if (ekran.ekran === 'izleme')
       turEkraniAc({ ekran: 'yazilis', anahtar: ekran.anahtar, sekme: ekran.sekme, ...(ekran.geri ? { geri: ekran.geri } : {}) });
     else if (ekran.ekran === 'kagit') turEkraniAc(ekran.geri);
     else if (ekran.ekran === 'set') turEkraniAc(ekran.geri);
+    else if (ekran.ekran === 'eveGonder') turEkraniAc({ ekran: 'setHazirla' });
     else if (ekran.ekran === 'kagitSecimi') turEkraniAc({ ekran: 'kagitlar' });
     else if (ekran.ekran === 'etkinlik') turEkraniAc(ekran.geri ?? { ekran: 'etkinlikler' });
     else if (ekran.ekran === 'giris') turEkraniKapat();
@@ -40,7 +48,15 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
   };
   return (
     <div data-tur-ekrani={ekran.ekran} style={{ height: '100%', display: 'flex', flexDirection: 'row' }}>
-      <GezinmeCubugu onGeri={geri} onAnaMenu={turEkraniKapat} yon="dikey" hizala={profil === 'board' ? 'son' : 'bas'} />
+      <GezinmeCubugu
+        {...(evKodu === null
+          ? { onGeri: geri, onAnaMenu: turEkraniKapat }
+          : ekran.ekran === 'ev'
+            ? {}
+            : { onGeri: evDon, onAnaMenu: evDon })}
+        yon="dikey"
+        hizala={profil === 'board' ? 'son' : 'bas'}
+      />
       <div style={{ flex: '1 1 auto', minWidth: 0, minHeight: 0, position: 'relative' }}>
         {ekran.ekran === 'giris' ? (
           <OgretmenGiris />
@@ -51,7 +67,19 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
         ) : ekran.ekran === 'sesPlani' ? (
           <SesPlani />
         ) : ekran.ekran === 'setHazirla' ? (
-          <SetHazirla />
+          <SetHazirla
+            ekAraclar={(duzey, tohum) => (
+              <BigButton label="Eve gönder" data-yetiskin="" style={sikDugme} onPress={() => turEkraniAc({ ekran: 'eveGonder', duzey, tohum })}>
+                <span>Eve gönder</span>
+              </BigButton>
+            )}
+          />
+        ) : ekran.ekran === 'eveGonder' ? (
+          <TurEveGonder duzey={ekran.duzey} tohum={ekran.tohum} />
+        ) : ekran.ekran === 'ev' ? (
+          <EvAcilisi kod={ekran.kod} />
+        ) : ekran.ekran === 'kaynaklar' ? (
+          <TurKaynaklar />
         ) : ekran.ekran === 'set' ? (
           <SetAkisi adimlar={ekran.adimlar} sira={ekran.sira} geri={ekran.geri} />
         ) : ekran.ekran === 'kagitlar' ? (

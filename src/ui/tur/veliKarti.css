@@ -1,0 +1,30 @@
+/*
+ * Veli kartı baskısı (Okuma Yazma Adım 71). "Veli kartını yazdır" yalnız kartı basar: baskı kopyası `#root` dışında
+ * (`#tur-veli-baski`), ekranda gizli. A4, 15 mm kenar, Andika (yetişkin yüzü). Yalnız bayraklı derlemede yüklenir.
+ */
+.vk-baski {
+  display: none;
+}
+
+@media print {
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+    background: #fff !important;
+    margin: 0 !important;
+  }
+  body > #root {
+    display: none !important;
+  }
+  .vk-baski {
+    display: block !important;
+    padding: 15mm;
+    color: #000;
+    font-size: 13pt;
+  }
+  .vk-baski article {
+    font-size: 13pt !important;
+    max-width: none !important;
+  }
+}

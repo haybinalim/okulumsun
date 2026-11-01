@@ -23,6 +23,12 @@ export type TurEkrani =
   | { readonly ekran: 'sesPlani' }
   /** Set hazırla (Türkçe; Adım 71, §2.4.11 madde 5). */
   | { readonly ekran: 'setHazirla' }
+  /** Eve gönder (öğretmen; Adım 71 aşama 3): set → eve link + QR + veli kartı. */
+  | { readonly ekran: 'eveGonder'; readonly duzey: 'destek' | 'sinif' | 'zengin'; readonly tohum: number }
+  /** Eve link açılışı (veli/çocuk): `?ders=tur&ev=<set kodu>&tur=<küme>`; kod TurEkrani'nda çözülür. Öğretmen ekranına yol yok. */
+  | { readonly ekran: 'ev'; readonly kod: string }
+  /** Kaynaklar (Okuma Yazma): program, TemelYazi, özgün içerik, ses kaynağı. */
+  | { readonly ekran: 'kaynaklar' }
   /** Set akışı: adımlar sırayla (çocuk yüzeyi); `geri` seti açan ekran. */
   | { readonly ekran: 'set'; readonly adimlar: readonly SetAdimi[]; readonly sira: number; readonly geri: TurEkrani }
   | { readonly ekran: 'yazilisSecimi'; readonly sekme?: number }
@@ -94,9 +100,18 @@ export function useTurEkrani(): TurEkrani | null {
 export function turAcilisEkrani(arama: string): TurEkrani | null {
   const p = new URLSearchParams(arama);
   if (p.get('ders') !== 'tur') return null;
+  // Eve link (veli/çocuk cihazı): her şeyden önce gelir; set kodu ve küme TurEkrani'nda katı çözülür (bozuksa açıklama).
+  const ev = p.get('ev');
+  if (ev !== null) return { ekran: 'ev', kod: ev };
   // Öğretmen ekranları doğrudan (yer imi, e2e): `?ders=tur&ekran=akis`.
   const ogretmenEkrani = p.get('ekran');
-  if (ogretmenEkrani === 'akis' || ogretmenEkrani === 'harfler' || ogretmenEkrani === 'sesPlani' || ogretmenEkrani === 'setHazirla')
+  if (
+    ogretmenEkrani === 'akis' ||
+    ogretmenEkrani === 'harfler' ||
+    ogretmenEkrani === 'sesPlani' ||
+    ogretmenEkrani === 'setHazirla' ||
+    ogretmenEkrani === 'kaynaklar'
+  )
     return { ekran: ogretmenEkrani };
   const izle = p.get('izle');
   if (izle !== null) return /^(kucuk|buyuk|rakam):.$/u.test(izle) ? { ekran: 'izleme', anahtar: izle, sekme: 0 } : { ekran: 'giris' };

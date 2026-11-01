@@ -5,7 +5,8 @@
     "manifest.json",
     "hamleler.json",
     "icerik/sozcukler.json",
-    "ses/klipler.json"
+    "ses/klipler.json",
+    "veli-karti.json"
   ],
   "gruplar": {
     "1": [
