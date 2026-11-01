@@ -23,7 +23,7 @@ const manifest = new Map(
 );
 const UNLU = /[aeıioöuüâîû]/i;
 
-export const SABLONLAR = ['T-02', 'T-03'] as const;
+export const SABLONLAR = ['T-02', 'T-03', 'T-04', 'T-05'] as const;
 const OKUMA_HEDEFLI = new Set(['T-03', 'T-04', 'T-05', 'T-06']);
 
 const gorunumler = (proje: string) =>

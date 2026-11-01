@@ -74,7 +74,7 @@ export function turAcilisEkrani(arama: string): TurEkrani | null {
   const sablon = p.get('etkinlik');
   if (sablon === 'liste') return { ekran: 'etkinlikler' };
   // Yalnız tip içe aktarılır: bu modül `App.tsx`'ten okunur, üretim paketine çalışma anı kodu sızmasın.
-  if (sablon && /^T-0[23]$/.test(sablon)) {
+  if (sablon && /^T-0[2-5]$/.test(sablon)) {
     const z = Number(p.get('zorluk') ?? '1');
     const t = Number(p.get('tohum') ?? '1');
     return {
