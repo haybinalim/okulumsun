@@ -12,11 +12,17 @@ import type { TurSablonKodu, TurZorluk } from '../../content/dersler/tur/sablonl
  */
 
 export type TurEkrani =
+  /** Öğretmen ana ekranı (Adım 71): ders seçimi, bugünkü ses, araçlar. */
   | { readonly ekran: 'giris' }
+  /** Öğretilen harfler — gelişmiş küme düzenleme (Adım 71, §2.4.11 madde 2). */
+  | { readonly ekran: 'harfler' }
+  /** Günün akışı (Adım 71, §2.4.11 madde 3): basamaklar, sıra öğretmence değişir. */
+  | { readonly ekran: 'akis' }
   | { readonly ekran: 'yazilisSecimi'; readonly sekme?: number }
-  | { readonly ekran: 'yazilis'; readonly anahtar: string; readonly sekme: number }
+  /** `geri`: gösterimi açan ekran (ör. günün akışı); yoksa harf seçimi. */
+  | { readonly ekran: 'yazilis'; readonly anahtar: string; readonly sekme: number; readonly geri?: TurEkrani }
   /** Parmakla izleme (Adım 70, M-4): çizim yalnız bu ekranın belleğinde, ekran değişince silinir. */
-  | { readonly ekran: 'izleme'; readonly anahtar: string; readonly sekme: number }
+  | { readonly ekran: 'izleme'; readonly anahtar: string; readonly sekme: number; readonly geri?: TurEkrani }
   | { readonly ekran: 'kagitlar' }
   /** Resimli sözcük görselleri kataloğu (Adım 68): harf grubu ve gri (baskı) görünümü. */
   | { readonly ekran: 'gorseller'; readonly grup: number; readonly gri: boolean }
@@ -30,7 +36,14 @@ export type TurEkrani =
   /** Etkinlik seçimi (Adım 69): öğretilen küme seçici, şablon ve zorluk (öğretmen). */
   | { readonly ekran: 'etkinlikler' }
   /** Bir etkinlik sorusu (çocuk yüzeyi). Küme `turKume` modülünden (adreste `?tur=`). */
-  | { readonly ekran: 'etkinlik'; readonly sablon: TurSablonKodu; readonly zorluk: TurZorluk; readonly tohum: number }
+  | {
+      readonly ekran: 'etkinlik';
+      readonly sablon: TurSablonKodu;
+      readonly zorluk: TurZorluk;
+      readonly tohum: number;
+      /** Etkinliği açan ekran (ör. günün akışı); yoksa etkinlik seçimi. */
+      readonly geri?: TurEkrani;
+    }
   /** Kâğıt önizlemesi + Yazdır; `geri` önizlemeyi açan ekran. */
   | { readonly ekran: 'kagit'; readonly istek: TurKagitIstegi; readonly geri: TurEkrani };
 
@@ -74,6 +87,9 @@ export function useTurEkrani(): TurEkrani | null {
 export function turAcilisEkrani(arama: string): TurEkrani | null {
   const p = new URLSearchParams(arama);
   if (p.get('ders') !== 'tur') return null;
+  // Öğretmen ekranları doğrudan (yer imi, e2e): `?ders=tur&ekran=akis`.
+  const ogretmenEkrani = p.get('ekran');
+  if (ogretmenEkrani === 'akis' || ogretmenEkrani === 'harfler') return { ekran: ogretmenEkrani };
   const izle = p.get('izle');
   if (izle !== null) return /^(kucuk|buyuk|rakam):.$/u.test(izle) ? { ekran: 'izleme', anahtar: izle, sekme: 0 } : { ekran: 'giris' };
   const sablon = p.get('etkinlik');

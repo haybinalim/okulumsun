@@ -69,7 +69,7 @@ describe('üretim paketi korunur', () => {
           .filter((s) => /ui\/tur\//.test(s) && !/^\s*(\/\/|\*)/.test(s))
           .map((s) => [path.relative(KOK, f), s.trim()] as const),
       );
-    expect(bulunan.map(([d]) => d)).toEqual(['src/App.tsx', 'src/App.tsx', 'src/main.tsx']);
+    expect(bulunan.map(([d]) => d)).toEqual(['src/App.tsx', 'src/App.tsx', 'src/App.tsx', 'src/main.tsx']);
     const satirlar = bulunan.map(([, s]) => s);
     // Adım 65: Türkçe kâğıt görünümü (`?arsiv=tur-…`) main.tsx'te bayrak sabitine bağlı dalda, tembel.
     const main = oku('src/main.tsx');
@@ -81,7 +81,12 @@ describe('üretim paketi korunur', () => {
     expect(satirlar[1]).toBe(
       "const TurEkrani = import.meta.env.VITE_DERS_TUR === '1' ? lazy(() => import('./ui/tur/TurEkrani')) : null;",
     );
+    // Adım 71: tahta ana ekranındaki ders seçimi de tembel ve bayrak sabitine bağlı; dalı bütünüyle bayrak koşullu.
+    expect(satirlar[2]).toBe(
+      "import.meta.env.VITE_DERS_TUR === '1' ? lazy(() => import('./ui/tur/TurOgretmen').then((m) => ({ default: m.AnaEkranDersSecimi }))) : null;",
+    );
     const app = oku('src/App.tsx');
+    expect(app).toMatch(/if \(import\.meta\.env\.VITE_DERS_TUR === '1' && TurDersSecimi && ekran === 'anaEkran' && mod === 'tahta'\) \{/);
     expect(app).toContain(
       "const useTurEkraniBayrakli = import.meta.env.VITE_DERS_TUR === '1' ? useTurEkrani : () => null;",
     );

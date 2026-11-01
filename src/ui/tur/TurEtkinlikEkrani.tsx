@@ -26,7 +26,7 @@ import {
   type TurZorluk,
 } from '../../content/dersler/tur/sablonlar/turSoru';
 import { geriBildirimKlibi } from '../../content/dersler/tur/sablonlar/klipler';
-import { turEkraniAc } from './turEkrani';
+import { turEkraniAc, type TurEkrani } from './turEkrani';
 import { useTurKume } from './turKume';
 import { useTurHavuzu } from './useTurHavuzu';
 import { turKlipleriniIste } from './turSes';
@@ -35,7 +35,21 @@ import { kartDuzeni, type KartDuzeni } from './etkinlikDuzeni';
 import { ekranStili } from './turOrtak';
 import { TUR_VERI_KOKU } from '../../content/dersler/tur/veriYukleyici';
 
-export function TurEtkinlikEkrani({ sablon, zorluk, tohum }: { sablon: TurSablonKodu; zorluk: TurZorluk; tohum: number }) {
+export function TurEtkinlikEkrani({
+  sablon,
+  zorluk,
+  tohum,
+  geri,
+  onSonraki,
+}: {
+  sablon: TurSablonKodu;
+  zorluk: TurZorluk;
+  tohum: number;
+  /** Etkinliği açan ekran (günün akışı, set); yoksa etkinlik seçimi. */
+  geri?: TurEkrani;
+  /** Verilirse "Sonraki" bunu çağırır (set akışı); yoksa aynı şablonun sonraki tohumu. */
+  onSonraki?: () => void;
+}) {
   const h = useTurHavuzu();
   const kume = useTurKume();
   const havuz = h.durum === 'hazir' ? h.havuz : null;
@@ -60,8 +74,8 @@ export function TurEtkinlikEkrani({ sablon, zorluk, tohum }: { sablon: TurSablon
         <p data-yetiskin="" role="status" style={{ fontSize: 'var(--text-adult)', textAlign: 'center' }}>
           {sonuc.hata} Öğretilen harfleri genişletin ya da başka bir etkinlik seçin.
         </p>
-        <BigButton label="Etkinlik seçimi" data-yetiskin="" onPress={() => turEkraniAc({ ekran: 'etkinlikler' })}>
-          <span style={{ padding: '0 0.6em' }}>Etkinlik seçimi</span>
+        <BigButton label={geri ? 'Geri dön' : 'Etkinlik seçimi'} data-yetiskin="" onPress={() => turEkraniAc(geri ?? { ekran: 'etkinlikler' })}>
+          <span style={{ padding: '0 0.6em' }}>{geri ? 'Geri dön' : 'Etkinlik seçimi'}</span>
         </BigButton>
       </main>
     );
@@ -69,7 +83,7 @@ export function TurEtkinlikEkrani({ sablon, zorluk, tohum }: { sablon: TurSablon
     <EtkinlikGovdesi
       key={sonuc.soru.itemId}
       soru={sonuc.soru}
-      onSonraki={() => turEkraniAc({ ekran: 'etkinlik', sablon, zorluk, tohum: tohum + 1 })}
+      onSonraki={onSonraki ?? (() => turEkraniAc({ ekran: 'etkinlik', sablon, zorluk, tohum: tohum + 1, ...(geri ? { geri } : {}) }))}
     />
   );
 }

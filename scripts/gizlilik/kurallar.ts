@@ -2,7 +2,7 @@
  * K9 gizlilik statik taraması — SAF kurallar (plan v2 Adım 24, §5.5).
  * Betik (`scripts/gizlilik-tarama.ts`) dosyaları okur; burada yalnız metin → bulgu.
  */
-import { IZINLI_LOCALSTORAGE_ANAHTARLARI } from '../../src/persistence/depolamaIzinListesi.ts';
+import { BAYRAKLI_IZINLI_ANAHTARLAR, IZINLI_LOCALSTORAGE_ANAHTARLARI } from '../../src/persistence/depolamaIzinListesi.ts';
 
 export interface Bulgu {
   readonly dosya: string;
@@ -21,6 +21,12 @@ interface Kural {
 
 const izinliAnahtarDeseni = new RegExp(
   `localStorage\\.setItem\\(\\s*(CIHAZ_PROFILI_ANAHTARI|${IZINLI_LOCALSTORAGE_ANAHTARLARI.map((a) => `['"\`]${a.replace(/\./g, '\\.')}['"\`]`).join('|')})\\s*,`,
+);
+
+/** K-7 (ADR-0002 Ek 1): bayraklı Okuma Yazma sınıf ayarı YALNIZ kendi depolama modülünde yazılır. */
+export const TUR_SINIF_AYARI_DOSYASI = 'src/ui/tur/sinifAyariDepo.ts';
+const bayrakliAnahtarDeseni = new RegExp(
+  `localStorage\\.setItem\\(\\s*(DERS_TUR_SINIF_ANAHTARI|${BAYRAKLI_IZINLI_ANAHTARLAR.map((a) => `['"\`]${a.anahtar.replace(/\./g, '\\.')}['"\`]`).join('|')})\\s*,`,
 );
 
 export const KURALLAR: readonly Kural[] = [
@@ -50,7 +56,7 @@ export const KURALLAR: readonly Kural[] = [
   {
     ad: 'localStorage.setItem yalnız izin listesindeki anahtarla',
     desen: /\blocalStorage\.setItem\s*\(/,
-    izin: (_d, s) => izinliAnahtarDeseni.test(s),
+    izin: (d, s) => izinliAnahtarDeseni.test(s) || (d === TUR_SINIF_AYARI_DOSYASI && bayrakliAnahtarDeseni.test(s)),
     yalnizSrc: true,
   },
   {

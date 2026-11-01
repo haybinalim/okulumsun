@@ -69,9 +69,10 @@ describe('TemelYazi harfleri (KG-96)', () => {
 
   it('App her ekran sarmalayıcısına data-yazi koyar', () => {
     const app = readFileSync('src/App.tsx', 'utf8');
-    // KG-103: 25 ekran dalı (Adım 64: bayraklı Türkçe ekranı dahil) tek kabuktan (`kabuk`) çizilir; data-yazi o kabukta bir kez.
+    // KG-103: 26 ekran dalı (Adım 64: bayraklı Türkçe ekranı, Adım 71: bayraklı ana ekran + ders seçimi dahil) tek
+    // kabuktan (`kabuk`) çizilir; data-yazi o kabukta bir kez.
     expect(app.match(/data-yazi=\{yazi\}/g)?.length).toBe(1);
-    expect(app.match(/return kabuk\(/g)?.length).toBe(25);
+    expect(app.match(/return kabuk\(/g)?.length).toBe(26);
   });
 });
 
