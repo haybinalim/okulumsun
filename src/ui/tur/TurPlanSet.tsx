@@ -57,7 +57,7 @@ export function SesPlani({ gun = bugun() }: { gun?: string }) {
       <div style={{ display: 'flex', gap: '0.6em', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center', fontSize: 'var(--text-adult)' }}>
         <span>
           Bugünkü ses: <strong data-glif={ses}>{ses}</strong>
-          {oneri && oneri !== ses ? ` · plana göre: ${oneri}` : ''}
+          {oneri && oneri !== ses ? `, plana göre: ${oneri}` : ''}
         </span>
         {oneri && oneri !== ses && (
           <BigButton label={`Bu haftayı uygula: ${oneri}`} data-yetiskin="" variant="accent" style={sikDugme} onPress={() => turKumeYaz(resmiKume(oneri, false))}>
@@ -82,7 +82,7 @@ export function SesPlani({ gun = bugun() }: { gun?: string }) {
       >
         {gorunen.map((h) => {
           const bu = buHafta?.pazartesi === h.pazartesi;
-          const ozet = h.tur === 'bagimsiz' ? `${haftaAraligi(h.pazartesi).split(' – ')[0].split('–')[0]} ve sonrası` : haftaAraligi(h.pazartesi);
+          const ozet = h.tur === 'bagimsiz' ? `${haftaAraligi(h.pazartesi).split(/ ?\u2013/)[0]} ve sonrası` : haftaAraligi(h.pazartesi);
           return (
             <li
               key={h.pazartesi}
@@ -105,8 +105,8 @@ export function SesPlani({ gun = bugun() }: { gun?: string }) {
               <span style={{ flex: '0 0 8.5em' }}>{ozet}</span>
               <span style={{ flex: '0 0 3.5em', fontWeight: 700, letterSpacing: '0.15em' }}>{h.yeniSesler.join(' ')}</span>
               <span style={{ flex: '1 1 auto', minWidth: 0 }}>
-                {[h.grup ? `${h.grup}. grup` : TUR_ADI[h.tur], h.not].filter(Boolean).join(' · ')}
-                {bu ? ' · bu hafta' : ''}
+                {[h.grup ? `${h.grup}. grup` : TUR_ADI[h.tur], h.not].filter(Boolean).join(', ')}
+                {bu ? ', bu hafta' : ''}
               </span>
             </li>
           );
