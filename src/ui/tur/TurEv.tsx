@@ -65,7 +65,7 @@ export function VeliKartiGovdesi({ kucuk = false }: { kucuk?: boolean }) {
     >
       <h2 style={{ margin: '0 0 0.3em', fontSize: '1.15em' }}>{k.baslik}</h2>
       {k.teyit.durum === 'bekliyor' && (
-        <p data-teyit-bekliyor="" style={{ margin: '0 0 0.4em', padding: '0.2em 0.5em', border: '2px dashed currentColor', borderRadius: 8, display: 'inline-block' }}>
+        <p data-teyit-bekliyor="" style={{ margin: '0 0 0.4em', padding: '0.2em 0.5em', border: '2px dashed currentColor', borderRadius: 8, display: 'inline-flex' }}>
           Taslak: öğretmen onayı bekliyor
         </p>
       )}
