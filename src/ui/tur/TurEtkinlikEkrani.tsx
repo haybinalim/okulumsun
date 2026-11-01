@@ -12,7 +12,7 @@
  * sorusunda öğretmen sözcükleri "Öğretmen: sözcükler" altında görür ve kendisi söyler. Hiçbir şey saklanmaz, süre
  * ölçülmez (D-13).
  */
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react';
 import { BigButton } from '../primitives/BigButton';
 import { turSoruUret } from '../../content/dersler/tur/sablonlar';
 import {
@@ -26,38 +26,44 @@ import { turEkraniAc } from './turEkrani';
 import { useTurKume } from './turKume';
 import { useTurHavuzu } from './useTurHavuzu';
 import { turKlipleriniIste } from './turSes';
+import { E2E_KANCASI_ACIK } from '../../dev/e2eKanca';
 import { kartDuzeni, type KartDuzeni } from './etkinlikDuzeni';
 import { ekranStili } from './turOrtak';
 
 export function TurEtkinlikEkrani({ sablon, zorluk, tohum }: { sablon: TurSablonKodu; zorluk: TurZorluk; tohum: number }) {
   const h = useTurHavuzu();
   const kume = useTurKume();
-  if (h.durum !== 'hazir')
+  const havuz = h.durum === 'hazir' ? h.havuz : null;
+  const sonuc = useMemo((): { soru: TurSoru } | { hata: string } | null => {
+    if (!havuz) return null;
+    try {
+      return { soru: turSoruUret(sablon, { havuz, kume, zorluk, tohum }) };
+    } catch (e) {
+      if (e instanceof TurUretimHatasi) return { hata: e.message };
+      throw e;
+    }
+  }, [havuz, kume, sablon, zorluk, tohum]);
+  if (h.durum !== 'hazir' || !sonuc)
     return (
       <main aria-label="Etkinlik" aria-busy={h.durum === 'yukleniyor'} style={{ ...ekranStili, justifyContent: 'center' }}>
-        <p data-yetiskin="">{h.durum === 'yukleniyor' ? 'Yükleniyor' : `Sözcük havuzu açılamadı: ${h.mesaj}`}</p>
+        <p data-yetiskin="">{h.durum === 'hata' ? `Sözcük havuzu açılamadı: ${h.mesaj}` : 'Yükleniyor'}</p>
       </main>
     );
-  let soru: TurSoru;
-  try {
-    soru = turSoruUret(sablon, { havuz: h.havuz, kume, zorluk, tohum });
-  } catch (e) {
-    if (!(e instanceof TurUretimHatasi)) throw e;
+  if ('hata' in sonuc)
     return (
       <main aria-label="Etkinlik kurulamadı" data-etkinlik-kurulamadi={sablon} style={{ ...ekranStili, justifyContent: 'center' }}>
         <p data-yetiskin="" role="status" style={{ fontSize: 'var(--text-adult)', textAlign: 'center' }}>
-          {e.message} Öğretilen harfleri genişletin ya da başka bir etkinlik seçin.
+          {sonuc.hata} Öğretilen harfleri genişletin ya da başka bir etkinlik seçin.
         </p>
         <BigButton label="Etkinlik seçimi" data-yetiskin="" onPress={() => turEkraniAc({ ekran: 'etkinlikler' })}>
           <span style={{ padding: '0 0.6em' }}>Etkinlik seçimi</span>
         </BigButton>
       </main>
     );
-  }
   return (
     <EtkinlikGovdesi
-      key={soru.itemId}
-      soru={soru}
+      key={sonuc.soru.itemId}
+      soru={sonuc.soru}
       onSonraki={() => turEkraniAc({ ekran: 'etkinlik', sablon, zorluk, tohum: tohum + 1 })}
     />
   );
@@ -86,11 +92,11 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
 
   const iste = (klipler: readonly string[]) => setSesYok(!turKlipleriniIste(klipler));
   const soruSesi = () => iste([soru.yonerge, ...soru.soruKlipleri]);
+  // Açılışta bir kez (soru `useMemo` ile sabit; soru değişince bileşen `key` ile yeniden kurulur).
   useEffect(() => {
-    soruSesi();
+    setSesYok(!turKlipleriniIste([soru.yonerge, ...soru.soruKlipleri]));
     return () => window.clearTimeout(zamanlayici.current);
-    // Soru değişince bileşen yeniden kurulur (`key`): yalnız açılışta.
-  }, []);
+  }, [soru]);
 
   const dogruOldu = () => {
     setDurum('dogru');
@@ -131,7 +137,8 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
   const duzen = useKartDuzeni(alt, soru);
   const yerlestir = soru.kind === 'yerlestir';
   const yuvalar = yerlestir ? soru.dogruDizi.map((_, i) => (yerlesim[i] === undefined ? null : soru.kartlar[yerlesim[i]].metin)) : [];
-  const cevap = import.meta.env.DEV
+  // Yalnız geliştirme / e2e kancalı test derlemesinde: testin cevabı bulması için (üretimde atılır).
+  const cevap = E2E_KANCASI_ACIK
     ? soru.kind === 'secim'
       ? soru.kartlar[soru.dogru].id
       : soru.dogruDizi.join('|')
