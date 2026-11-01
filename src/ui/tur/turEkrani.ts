@@ -15,6 +15,8 @@ export type TurEkrani =
   | { readonly ekran: 'giris' }
   | { readonly ekran: 'yazilisSecimi'; readonly sekme?: number }
   | { readonly ekran: 'yazilis'; readonly anahtar: string; readonly sekme: number }
+  /** Parmakla izleme (Adım 70, M-4): çizim yalnız bu ekranın belleğinde, ekran değişince silinir. */
+  | { readonly ekran: 'izleme'; readonly anahtar: string; readonly sekme: number }
   | { readonly ekran: 'kagitlar' }
   /** Resimli sözcük görselleri kataloğu (Adım 68): harf grubu ve gri (baskı) görünümü. */
   | { readonly ekran: 'gorseller'; readonly grup: number; readonly gri: boolean }
@@ -66,11 +68,14 @@ export function useTurEkrani(): TurEkrani | null {
 
 /**
  * Açılış adresi: `?ders=tur` Türkçe girişini açar (yalnız bayraklı derlemede okunur). Etkinlik doğrudan da açılır:
- * `?ders=tur&etkinlik=T-04&zorluk=3&tohum=1` (öğretmen bağlantısı ve e2e; küme `&tur=<kod>`).
+ * `?ders=tur&etkinlik=T-04&zorluk=3&tohum=1` (öğretmen bağlantısı ve e2e; küme `&tur=<kod>`); parmakla izleme
+ * `?ders=tur&izle=kucuk:a`.
  */
 export function turAcilisEkrani(arama: string): TurEkrani | null {
   const p = new URLSearchParams(arama);
   if (p.get('ders') !== 'tur') return null;
+  const izle = p.get('izle');
+  if (izle !== null) return /^(kucuk|buyuk|rakam):.$/u.test(izle) ? { ekran: 'izleme', anahtar: izle, sekme: 0 } : { ekran: 'giris' };
   const sablon = p.get('etkinlik');
   if (sablon === 'liste') return { ekran: 'etkinlikler' };
   // Yalnız tip içe aktarılır: bu modül `App.tsx`'ten okunur, üretim paketine çalışma anı kodu sızmasın.
