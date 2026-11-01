@@ -13,7 +13,7 @@ import { hash32 } from '../../../../exercises/rng';
 import type { TurTaniEtiketi } from './celdiriciler';
 import type { TurKlipKimligi } from './klipler';
 
-export const TUR_SABLON_KODLARI = ['T-02', 'T-03', 'T-04', 'T-05'] as const;
+export const TUR_SABLON_KODLARI = ['T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07'] as const;
 export type TurSablonKodu = (typeof TUR_SABLON_KODLARI)[number];
 
 export type TurZorluk = 1 | 2 | 3 | 4 | 5;
