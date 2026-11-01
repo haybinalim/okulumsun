@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react';
 import type { TurKagitIstegi } from './kagit/turKagidi';
 import type { TurSablonKodu, TurZorluk } from '../../content/dersler/tur/sablonlar/turSoru';
+import type { SetAdimi } from '../../content/dersler/tur/turSet';
 
 /**
  * Türkçe (Okuma Yazma) ekran durumu — YALNIZ `VITE_DERS_TUR=1` derlemesinde kullanılır (Adım 64, ADR-0016).
@@ -18,6 +19,12 @@ export type TurEkrani =
   | { readonly ekran: 'harfler' }
   /** Günün akışı (Adım 71, §2.4.11 madde 3): basamaklar, sıra öğretmence değişir. */
   | { readonly ekran: 'akis' }
+  /** Haftalık ses planı (Adım 71, §2.4.11 madde 4): yalnız öneri. */
+  | { readonly ekran: 'sesPlani' }
+  /** Set hazırla (Türkçe; Adım 71, §2.4.11 madde 5). */
+  | { readonly ekran: 'setHazirla' }
+  /** Set akışı: adımlar sırayla (çocuk yüzeyi); `geri` seti açan ekran. */
+  | { readonly ekran: 'set'; readonly adimlar: readonly SetAdimi[]; readonly sira: number; readonly geri: TurEkrani }
   | { readonly ekran: 'yazilisSecimi'; readonly sekme?: number }
   /** `geri`: gösterimi açan ekran (ör. günün akışı); yoksa harf seçimi. */
   | { readonly ekran: 'yazilis'; readonly anahtar: string; readonly sekme: number; readonly geri?: TurEkrani }
@@ -89,7 +96,8 @@ export function turAcilisEkrani(arama: string): TurEkrani | null {
   if (p.get('ders') !== 'tur') return null;
   // Öğretmen ekranları doğrudan (yer imi, e2e): `?ders=tur&ekran=akis`.
   const ogretmenEkrani = p.get('ekran');
-  if (ogretmenEkrani === 'akis' || ogretmenEkrani === 'harfler') return { ekran: ogretmenEkrani };
+  if (ogretmenEkrani === 'akis' || ogretmenEkrani === 'harfler' || ogretmenEkrani === 'sesPlani' || ogretmenEkrani === 'setHazirla')
+    return { ekran: ogretmenEkrani };
   const izle = p.get('izle');
   if (izle !== null) return /^(kucuk|buyuk|rakam):.$/u.test(izle) ? { ekran: 'izleme', anahtar: izle, sekme: 0 } : { ekran: 'giris' };
   const sablon = p.get('etkinlik');

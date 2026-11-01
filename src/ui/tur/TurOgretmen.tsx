@@ -159,6 +159,8 @@ export function OgretmenGiris({ ekAraclar }: { ekAraclar?: ReactNode }) {
         style={{ display: 'flex', gap: 'var(--size-gap-tight)', flexWrap: 'wrap', justifyContent: 'center', maxWidth: '100%' }}
       >
         <Arac ad="Günün akışı" onPress={() => turEkraniAc({ ekran: 'akis' })} vurgu />
+        <Arac ad="Haftalık ses planı" onPress={() => turEkraniAc({ ekran: 'sesPlani' })} />
+        <Arac ad="Set hazırla" onPress={() => turEkraniAc({ ekran: 'setHazirla' })} />
         {ekAraclar}
         <Arac ad="Etkinlikler" onPress={() => turEkraniAc({ ekran: 'etkinlikler' })} />
         <Arac ad="Harf ve rakam yazılışı" onPress={() => turEkraniAc({ ekran: 'yazilisSecimi' })} />
