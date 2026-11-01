@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import type { TurKagitIstegi } from './kagit/turKagidi';
+import type { TurSablonKodu, TurZorluk } from '../../content/dersler/tur/sablonlar/turSoru';
 
 /**
  * Türkçe (Okuma Yazma) ekran durumu — YALNIZ `VITE_DERS_TUR=1` derlemesinde kullanılır (Adım 64, ADR-0016).
@@ -24,6 +25,10 @@ export type TurEkrani =
       readonly sekme?: number;
       readonly secim?: readonly string[];
     }
+  /** Etkinlik seçimi (Adım 69): öğretilen küme seçici, şablon ve zorluk (öğretmen). */
+  | { readonly ekran: 'etkinlikler' }
+  /** Bir etkinlik sorusu (çocuk yüzeyi). Küme `turKume` modülünden (adreste `?tur=`). */
+  | { readonly ekran: 'etkinlik'; readonly sablon: TurSablonKodu; readonly zorluk: TurZorluk; readonly tohum: number }
   /** Kâğıt önizlemesi + Yazdır; `geri` önizlemeyi açan ekran. */
   | { readonly ekran: 'kagit'; readonly istek: TurKagitIstegi; readonly geri: TurEkrani };
 
@@ -59,7 +64,25 @@ export function useTurEkrani(): TurEkrani | null {
   return useSyncExternalStore(turEkraniAbone, turEkraniOku, turEkraniOku);
 }
 
-/** Açılış adresi: `?ders=tur` Türkçe girişini açar (yalnız bayraklı derlemede okunur). */
+/**
+ * Açılış adresi: `?ders=tur` Türkçe girişini açar (yalnız bayraklı derlemede okunur). Etkinlik doğrudan da açılır:
+ * `?ders=tur&etkinlik=T-04&zorluk=3&tohum=1` (öğretmen bağlantısı ve e2e; küme `&tur=<kod>`).
+ */
 export function turAcilisEkrani(arama: string): TurEkrani | null {
-  return new URLSearchParams(arama).get('ders') === 'tur' ? { ekran: 'giris' } : null;
+  const p = new URLSearchParams(arama);
+  if (p.get('ders') !== 'tur') return null;
+  const sablon = p.get('etkinlik');
+  if (sablon === 'liste') return { ekran: 'etkinlikler' };
+  // Yalnız tip içe aktarılır: bu modül `App.tsx`'ten okunur, üretim paketine çalışma anı kodu sızmasın.
+  if (sablon && /^T-0[23]$/.test(sablon)) {
+    const z = Number(p.get('zorluk') ?? '1');
+    const t = Number(p.get('tohum') ?? '1');
+    return {
+      ekran: 'etkinlik',
+      sablon: sablon as TurSablonKodu,
+      zorluk: (Number.isInteger(z) && z >= 1 && z <= 5 ? z : 1) as TurZorluk,
+      tohum: Number.isInteger(t) && t >= 0 ? t : 1,
+    };
+  }
+  return { ekran: 'giris' };
 }

@@ -48,6 +48,8 @@ import { turIcerikDosyasiniAyristir } from '../src/content/schema/turIcerik';
 import { hamleDosyasiniAyristir } from '../src/content/schema/turHamle';
 import { hamleVerisiniDenetle, teyitBekleyenler } from '../src/content/dersler/tur/hamleTablosu';
 import { gorselDiziniAyristir, type TurGorselDizini } from '../src/content/schema/turGorsel';
+import { klipManifestiMetni, KLIP_MANIFESTI_YOLU, type TurKlipManifesti } from './tur/klip-manifesti';
+import { klipMetniGecerliMi } from '../src/content/dersler/tur/sablonlar/klipler';
 import {
   gorselDizinleriniDenetle,
   gorselTeyitBekleyenler,
@@ -332,16 +334,12 @@ sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLE
 // `--yayin` ile öğretmen teyidi (D-14) eksikliği hata olur (Adım 73 yayın kapısı).
 {
   const yayin = process.argv.includes('--yayin');
-  const turKok = path.join(ROOT, 'src/content/dersler/tur');
-  const kod = readdirSync(turKok)
-    .filter((d) => d.endsWith('.ts'))
-    .map((d) => ({ yol: `src/content/dersler/tur/${d}`, icerik: readFileSync(path.join(turKok, d), 'utf8') }))
-    // Türkçe arayüz paketi (Adım 64) aynı D-13 taramasına girer.
-    .concat(
-      readdirSync(path.join(ROOT, 'src/ui/tur'))
-        .filter((d) => /\.tsx?$/.test(d))
-        .map((d) => ({ yol: `src/ui/tur/${d}`, icerik: readFileSync(path.join(ROOT, 'src/ui/tur', d), 'utf8') })),
-    );
+  // Türkçe içerik kodu ve arayüz paketi (Adım 64), alt klasörleriyle (şablonlar Adım 69, kâğıt Adım 65), D-13 taramasına girer.
+  const kod = ['src/content/dersler/tur', 'src/ui/tur'].flatMap((kok) =>
+    (readdirSync(path.join(ROOT, kok), { recursive: true }) as string[])
+      .filter((d) => /\.tsx?$/.test(d))
+      .map((d) => ({ yol: `${kok}/${d.split(path.sep).join('/')}`, icerik: readFileSync(path.join(ROOT, kok, d), 'utf8') })),
+  );
   const turIhlalleri = [...harfEnvanteriniDenetle(), ...turKodunuTara(kod)];
   const icerikKoku = path.join(ROOT, 'ders-verisi/tur/icerik');
   const dosyalar = existsSync(icerikKoku)
@@ -365,6 +363,15 @@ sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLE
     }
   }
   for (const h of turIhlalleri) hata(`Türkçe: ${h.kural} ${h.oge}: ${h.mesaj}`);
+  // Dosya düzeyi öğretmen teyidi (Adım 69 sözcük havuzu): geliştirmede uyarı, yayında hata.
+  for (const ad of dosyalar) {
+    const ham = read(`ders-verisi/tur/icerik/${ad}`) as { teyit?: { durum?: string } };
+    if (ham.teyit?.durum === 'bekliyor') {
+      const mesaj = `ders-verisi/tur/icerik/${ad}: öğretmen teyidi bekliyor (teyit: bekliyor).`;
+      if (yayin) hata(`${mesaj} Yayın için iki öğretmen teyidi gerekir.`);
+      else sonuc.uyarilar.push(mesaj);
+    }
+  }
   sonuc.istatistik.push(`Türkçe içerik (K-OY): ${dosyalar.length} dosya · ${oge} öğe${yayin ? ' (yayın kipi)' : ''}`);
 }
 
@@ -433,6 +440,32 @@ sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLE
   sonuc.istatistik.push(
     `Türkçe görseller: ${toplam} görsel · ${dizinler.map((d) => `grup ${d.grup}: ${d.gorseller.length}`).join(', ') || 'grup yok'} · ${(bayt / 1024).toFixed(1)} KB · teyitli ${toplam - bekleyen.length}`,
   );
+}
+
+// ------------------------------------------------ Türkçe ses klibi manifesti (Okuma Yazma Adım 69; D-11, D-21)
+// Manifest şablonlarla eş olmalı (`npm run tur:klip`); her klip metni ünlü taşır (tek ünsüz klibi yok). Ses dosyası
+// yokken (`durum: eksik`, Adım 67) geliştirmede uyarı, `--yayin` ile hata.
+{
+  const rel = KLIP_MANIFESTI_YOLU;
+  try {
+    const beklenen = klipManifestiMetni(read('ders-verisi/tur/icerik/sozcukler.json'));
+    const mevcut = readFileSync(path.join(ROOT, rel), 'utf8');
+    if (mevcut !== beklenen) hata(`${rel}: şablonlarla eş değil — \`npm run tur:klip\` çalıştırın.`);
+    const m = JSON.parse(mevcut) as TurKlipManifesti;
+    for (const k of m.klipler) {
+      if (!klipMetniGecerliMi(k.metin)) hata(`${rel}: D-11 ${k.anahtar}: klip tek başına ünsüz ("${k.metin}").`);
+      if (/^tur\.harf\./.test(k.anahtar)) hata(`${rel}: D-11 ${k.anahtar}: harf klibi olamaz.`);
+    }
+    const eksik = m.klipler.filter((k) => k.durum !== 'var').length;
+    if (eksik > 0) {
+      const mesaj = `${rel}: ${eksik}/${m.klipler.length} klibin ses dosyası yok (Adım 67).`;
+      if (process.argv.includes('--yayin')) hata(`${mesaj} D-21: yayında her klibin sesi olmalı.`);
+      else sonuc.uyarilar.push(mesaj);
+    }
+    sonuc.istatistik.push(`Türkçe klip manifesti: ${m.klipler.length} klip · sesli ${m.klipler.length - eksik}`);
+  } catch (e) {
+    hata(`${rel}: ${(e as Error).message}`);
+  }
 }
 
 // -------------------------------------------------------------------- rapor

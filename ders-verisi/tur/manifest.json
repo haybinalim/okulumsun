@@ -3,7 +3,9 @@
   "programSurumu": "tymm-turkce-2026-09-02",
   "cekirdek": [
     "manifest.json",
-    "hamleler.json"
+    "hamleler.json",
+    "icerik/sozcukler.json",
+    "ses/klipler.json"
   ],
   "gruplar": {
     "1": [

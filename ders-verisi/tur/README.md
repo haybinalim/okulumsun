@@ -17,8 +17,17 @@ manifesti. `public/` altında değildir; yalnız `VITE_DERS_TUR=1` derlemesinde 
   (`scripts/tur/gorsel-uret.tsx`) üretir ve `manifest.json` → `gruplar` listesini günceller (grup açılınca önbelleğe
   alınacak dosyalar). Sözcük listesi iki öğretmen teyidini beklediği için her görsel `teyit: bekliyor`; yalnız sözcük
   ve görsel kimliği depoya girer, taslak liste girmez. Denetim: D-25 (`npm run validate`).
+- `icerik/sozcukler.json` (Adım 69): şablonların sözcük havuzu — 1.–2. grup sözcük listesi taslağının 125 sözcüğü
+  (kimlik, metin, giriş harfi, varsa görsel kimliği). Görsel ve hamle verisindeki gibi teyit gelmeden depoya girdi:
+  dosya `teyit: { durum: "bekliyor" }` taşır, hiçbir sözcükte `anlamTeyidi` yok; `npm run validate -- --yayin` hem
+  dosya teyidini hem D-14'ü (iki öğretmen) hata sayar. Hece listesi depoya girmez: şablonlar heceyi sözcükten
+  heceler (bağlamsız hece yok, D-05).
+- `ses/klipler.json` (Adım 69): şablonların isteyebileceği bütün klip kimlikleri ve metinleri (yönerge, geri bildirim,
+  sözcük, sözcükten gelen hece). **Elle düzenlenmez:** `npm run tur:klip` üretir. Ses dosyası yok (Adım 67): her klip
+  `durum: "eksik"`, arayüz sessiz çalışır ve "Ses yok" gösterir; `--yayin` eksik klipte kırmızıdır. Tek ünsüz klibi yok (D-11).
 - Boyut: `npm run boyut:ders` (`docs/ders-veri-butcesi.json`; çekirdek ≤ 1 MB, grup başına ≤ 6 MB). Yayına kadar yalnız rapor.
 - Kurallar: [`docs/mufredat-kisitlari-turkce.md`](../../docs/mufredat-kisitlari-turkce.md). Doğrulama `npm run validate`.
-- İçerik özgündür (tüm hakları saklı). Öğretmen teyidi bekleyen sözcük/hece taslakları depoya girmez; proje çalışma
-  alanında kalır (hamle verisi istisnası yukarıda, `teyit: bekliyor` ile).
+- İçerik özgündür (tüm hakları saklı). Öğretmen teyidi bekleyen taslaklar (öğretmen formları, açık sorular, hece
+  tablosu) depoya girmez; proje çalışma alanında kalır. İstisnalar yukarıda, `teyit: bekliyor` ile: hamle verisi,
+  görseller ve şablon sözcük havuzu.
 - Sıklık listeleri ve TDK/MEB/TEGM içerikleri buraya konmaz.

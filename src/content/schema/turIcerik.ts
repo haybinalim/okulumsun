@@ -100,8 +100,15 @@ export const EtkinlikSema = z.strictObject({
   dogru: z.number().int().min(0),
 });
 
+/** Dosya düzeyinde öğretmen teyidi durumu (Adım 69 havuzu: `bekliyor`; `validate --yayin` bekleyende kırmızı). */
+export const IcerikTeyidiSema = z.strictObject({
+  durum: z.enum(['bekliyor', 'tamam']),
+  kaynak: z.string().min(1).optional(),
+});
+
 export const TurIcerikDosyasiSema = z.strictObject({
   programSurumu: z.literal(PROGRAM_SURUMU),
+  teyit: IcerikTeyidiSema.optional(),
   harfler: z.array(HarfSema).default([]),
   heceler: z.array(HeceSema).default([]),
   sozcukler: z.array(SozcukSema).default([]),

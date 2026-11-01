@@ -1,0 +1,696 @@
+{
+ "programSurumu": "tymm-turkce-2026-09-02",
+ "teyit": {
+  "durum": "bekliyor",
+  "kaynak": "Okuma Yazma sözcük listesi taslağı (1.–2. grup, 125 sözcük); iki öğretmen anlam teyidi (D-14, Adım 66) bekliyor."
+ },
+ "sozcukler": [
+  {
+   "id": "an",
+   "metin": "an",
+   "girisHarfi": "n"
+  },
+  {
+   "id": "ana",
+   "metin": "ana",
+   "girisHarfi": "n"
+  },
+  {
+   "id": "en",
+   "metin": "en",
+   "girisHarfi": "e"
+  },
+  {
+   "id": "ne",
+   "metin": "ne",
+   "girisHarfi": "e"
+  },
+  {
+   "id": "anne",
+   "metin": "anne",
+   "girisHarfi": "e",
+   "gorselId": "anne"
+  },
+  {
+   "id": "nane",
+   "metin": "nane",
+   "girisHarfi": "e",
+   "gorselId": "nane"
+  },
+  {
+   "id": "nene",
+   "metin": "nene",
+   "girisHarfi": "e"
+  },
+  {
+   "id": "annene",
+   "metin": "annene",
+   "girisHarfi": "e"
+  },
+  {
+   "id": "anneanne",
+   "metin": "anneanne",
+   "girisHarfi": "e"
+  },
+  {
+   "id": "annen",
+   "metin": "annen",
+   "girisHarfi": "e"
+  },
+  {
+   "id": "at",
+   "metin": "at",
+   "girisHarfi": "t",
+   "gorselId": "at"
+  },
+  {
+   "id": "et",
+   "metin": "et",
+   "girisHarfi": "t",
+   "gorselId": "et"
+  },
+  {
+   "id": "ata",
+   "metin": "ata",
+   "girisHarfi": "t"
+  },
+  {
+   "id": "tane",
+   "metin": "tane",
+   "girisHarfi": "t"
+  },
+  {
+   "id": "net",
+   "metin": "net",
+   "girisHarfi": "t"
+  },
+  {
+   "id": "tat",
+   "metin": "tat",
+   "girisHarfi": "t"
+  },
+  {
+   "id": "ten",
+   "metin": "ten",
+   "girisHarfi": "t"
+  },
+  {
+   "id": "anten",
+   "metin": "anten",
+   "girisHarfi": "t",
+   "gorselId": "anten"
+  },
+  {
+   "id": "tente",
+   "metin": "tente",
+   "girisHarfi": "t",
+   "gorselId": "tente"
+  },
+  {
+   "id": "in",
+   "metin": "in",
+   "girisHarfi": "i",
+   "gorselId": "in"
+  },
+  {
+   "id": "eti",
+   "metin": "eti",
+   "girisHarfi": "i"
+  },
+  {
+   "id": "etti",
+   "metin": "etti",
+   "girisHarfi": "i"
+  },
+  {
+   "id": "nine",
+   "metin": "nine",
+   "girisHarfi": "i",
+   "gorselId": "nine"
+  },
+  {
+   "id": "inan",
+   "metin": "inan",
+   "girisHarfi": "i"
+  },
+  {
+   "id": "inat",
+   "metin": "inat",
+   "girisHarfi": "i"
+  },
+  {
+   "id": "inen",
+   "metin": "inen",
+   "girisHarfi": "i"
+  },
+  {
+   "id": "ninni",
+   "metin": "ninni",
+   "girisHarfi": "i"
+  },
+  {
+   "id": "al",
+   "metin": "al",
+   "girisHarfi": "l"
+  },
+  {
+   "id": "el",
+   "metin": "el",
+   "girisHarfi": "l",
+   "gorselId": "el"
+  },
+  {
+   "id": "il",
+   "metin": "il",
+   "girisHarfi": "l"
+  },
+  {
+   "id": "elli",
+   "metin": "elli",
+   "girisHarfi": "l"
+  },
+  {
+   "id": "etli",
+   "metin": "etli",
+   "girisHarfi": "l"
+  },
+  {
+   "id": "lale",
+   "metin": "lale",
+   "girisHarfi": "l",
+   "gorselId": "lale"
+  },
+  {
+   "id": "aile",
+   "metin": "aile",
+   "girisHarfi": "l",
+   "gorselId": "aile"
+  },
+  {
+   "id": "alt",
+   "metin": "alt",
+   "girisHarfi": "l"
+  },
+  {
+   "id": "nal",
+   "metin": "nal",
+   "girisHarfi": "l",
+   "gorselId": "nal"
+  },
+  {
+   "id": "tel",
+   "metin": "tel",
+   "girisHarfi": "l",
+   "gorselId": "tel"
+  },
+  {
+   "id": "alan",
+   "metin": "alan",
+   "girisHarfi": "l"
+  },
+  {
+   "id": "alet",
+   "metin": "alet",
+   "girisHarfi": "l",
+   "gorselId": "alet"
+  },
+  {
+   "id": "anlat",
+   "metin": "anlat",
+   "girisHarfi": "l"
+  },
+  {
+   "id": "atlet",
+   "metin": "atlet",
+   "girisHarfi": "l",
+   "gorselId": "atlet"
+  },
+  {
+   "id": "tatil",
+   "metin": "tatil",
+   "girisHarfi": "l"
+  },
+  {
+   "id": "ol",
+   "metin": "ol",
+   "girisHarfi": "o"
+  },
+  {
+   "id": "on",
+   "metin": "on",
+   "girisHarfi": "o"
+  },
+  {
+   "id": "ot",
+   "metin": "ot",
+   "girisHarfi": "o",
+   "gorselId": "ot"
+  },
+  {
+   "id": "nota",
+   "metin": "nota",
+   "girisHarfi": "o",
+   "gorselId": "nota"
+  },
+  {
+   "id": "olta",
+   "metin": "olta",
+   "girisHarfi": "o",
+   "gorselId": "olta"
+  },
+  {
+   "id": "ona",
+   "metin": "ona",
+   "girisHarfi": "o"
+  },
+  {
+   "id": "oto",
+   "metin": "oto",
+   "girisHarfi": "o"
+  },
+  {
+   "id": "not",
+   "metin": "not",
+   "girisHarfi": "o"
+  },
+  {
+   "id": "ton",
+   "metin": "ton",
+   "girisHarfi": "o"
+  },
+  {
+   "id": "otel",
+   "metin": "otel",
+   "girisHarfi": "o"
+  },
+  {
+   "id": "ek",
+   "metin": "ek",
+   "girisHarfi": "k"
+  },
+  {
+   "id": "ok",
+   "metin": "ok",
+   "girisHarfi": "k",
+   "gorselId": "ok"
+  },
+  {
+   "id": "iki",
+   "metin": "iki",
+   "girisHarfi": "k"
+  },
+  {
+   "id": "kale",
+   "metin": "kale",
+   "girisHarfi": "k",
+   "gorselId": "kale"
+  },
+  {
+   "id": "kakao",
+   "metin": "kakao",
+   "girisHarfi": "k"
+  },
+  {
+   "id": "ilk",
+   "metin": "ilk",
+   "girisHarfi": "k"
+  },
+  {
+   "id": "kat",
+   "metin": "kat",
+   "girisHarfi": "k"
+  },
+  {
+   "id": "kek",
+   "metin": "kek",
+   "girisHarfi": "k",
+   "gorselId": "kek"
+  },
+  {
+   "id": "kol",
+   "metin": "kol",
+   "girisHarfi": "k",
+   "gorselId": "kol"
+  },
+  {
+   "id": "tek",
+   "metin": "tek",
+   "girisHarfi": "k"
+  },
+  {
+   "id": "etek",
+   "metin": "etek",
+   "girisHarfi": "k",
+   "gorselId": "etek"
+  },
+  {
+   "id": "inek",
+   "metin": "inek",
+   "girisHarfi": "k",
+   "gorselId": "inek"
+  },
+  {
+   "id": "kanat",
+   "metin": "kanat",
+   "girisHarfi": "k",
+   "gorselId": "kanat"
+  },
+  {
+   "id": "kilit",
+   "metin": "kilit",
+   "girisHarfi": "k",
+   "gorselId": "kilit"
+  },
+  {
+   "id": "tekne",
+   "metin": "tekne",
+   "girisHarfi": "k",
+   "gorselId": "tekne"
+  },
+  {
+   "id": "tilki",
+   "metin": "tilki",
+   "girisHarfi": "k",
+   "gorselId": "tilki"
+  },
+  {
+   "id": "un",
+   "metin": "un",
+   "girisHarfi": "u",
+   "gorselId": "un"
+  },
+  {
+   "id": "koku",
+   "metin": "koku",
+   "girisHarfi": "u"
+  },
+  {
+   "id": "kule",
+   "metin": "kule",
+   "girisHarfi": "u",
+   "gorselId": "kule"
+  },
+  {
+   "id": "kutu",
+   "metin": "kutu",
+   "girisHarfi": "u",
+   "gorselId": "kutu"
+  },
+  {
+   "id": "oku",
+   "metin": "oku",
+   "girisHarfi": "u"
+  },
+  {
+   "id": "tut",
+   "metin": "tut",
+   "girisHarfi": "u"
+  },
+  {
+   "id": "koltuk",
+   "metin": "koltuk",
+   "girisHarfi": "u",
+   "gorselId": "koltuk"
+  },
+  {
+   "id": "konuk",
+   "metin": "konuk",
+   "girisHarfi": "u"
+  },
+  {
+   "id": "kukla",
+   "metin": "kukla",
+   "girisHarfi": "u",
+   "gorselId": "kukla"
+  },
+  {
+   "id": "kulak",
+   "metin": "kulak",
+   "girisHarfi": "u",
+   "gorselId": "kulak"
+  },
+  {
+   "id": "okul",
+   "metin": "okul",
+   "girisHarfi": "u",
+   "gorselId": "okul"
+  },
+  {
+   "id": "tutkal",
+   "metin": "tutkal",
+   "girisHarfi": "u",
+   "gorselId": "tutkal"
+  },
+  {
+   "id": "unut",
+   "metin": "unut",
+   "girisHarfi": "u"
+  },
+  {
+   "id": "kare",
+   "metin": "kare",
+   "girisHarfi": "r",
+   "gorselId": "kare"
+  },
+  {
+   "id": "orta",
+   "metin": "orta",
+   "girisHarfi": "r"
+  },
+  {
+   "id": "kar",
+   "metin": "kar",
+   "girisHarfi": "r",
+   "gorselId": "kar"
+  },
+  {
+   "id": "nar",
+   "metin": "nar",
+   "girisHarfi": "r",
+   "gorselId": "nar"
+  },
+  {
+   "id": "tur",
+   "metin": "tur",
+   "girisHarfi": "r"
+  },
+  {
+   "id": "ekran",
+   "metin": "ekran",
+   "girisHarfi": "r"
+  },
+  {
+   "id": "erik",
+   "metin": "erik",
+   "girisHarfi": "r",
+   "gorselId": "erik"
+  },
+  {
+   "id": "karne",
+   "metin": "karne",
+   "girisHarfi": "r"
+  },
+  {
+   "id": "kartal",
+   "metin": "kartal",
+   "girisHarfi": "r",
+   "gorselId": "kartal"
+  },
+  {
+   "id": "terlik",
+   "metin": "terlik",
+   "girisHarfi": "r",
+   "gorselId": "terlik"
+  },
+  {
+   "id": "tekerlek",
+   "metin": "tekerlek",
+   "girisHarfi": "r",
+   "gorselId": "tekerlek"
+  },
+  {
+   "id": "kart",
+   "metin": "kart",
+   "girisHarfi": "r"
+  },
+  {
+   "id": "kral",
+   "metin": "kral",
+   "girisHarfi": "r",
+   "gorselId": "kral"
+  },
+  {
+   "id": "kurt",
+   "metin": "kurt",
+   "girisHarfi": "r",
+   "gorselId": "kurt"
+  },
+  {
+   "id": "renk",
+   "metin": "renk",
+   "girisHarfi": "r"
+  },
+  {
+   "id": "tren",
+   "metin": "tren",
+   "girisHarfi": "r",
+   "gorselId": "tren"
+  },
+  {
+   "id": "alti",
+   "metin": "altı",
+   "girisHarfi": "ı"
+  },
+  {
+   "id": "ari",
+   "metin": "arı",
+   "girisHarfi": "ı",
+   "gorselId": "ari"
+  },
+  {
+   "id": "akil",
+   "metin": "akıl",
+   "girisHarfi": "ı"
+  },
+  {
+   "id": "altin",
+   "metin": "altın",
+   "girisHarfi": "ı",
+   "gorselId": "altin"
+  },
+  {
+   "id": "kalin",
+   "metin": "kalın",
+   "girisHarfi": "ı"
+  },
+  {
+   "id": "kirik",
+   "metin": "kırık",
+   "girisHarfi": "ı"
+  },
+  {
+   "id": "tatli",
+   "metin": "tatlı",
+   "girisHarfi": "ı"
+  },
+  {
+   "id": "tirnak",
+   "metin": "tırnak",
+   "girisHarfi": "ı",
+   "gorselId": "tirnak"
+  },
+  {
+   "id": "tirtil",
+   "metin": "tırtıl",
+   "girisHarfi": "ı",
+   "gorselId": "tirtil"
+  },
+  {
+   "id": "ilik",
+   "metin": "ılık",
+   "girisHarfi": "ı"
+  },
+  {
+   "id": "kirk",
+   "metin": "kırk",
+   "girisHarfi": "ı"
+  },
+  {
+   "id": "kirlent",
+   "metin": "kırlent",
+   "girisHarfi": "ı",
+   "gorselId": "kirlent"
+  },
+  {
+   "id": "elma",
+   "metin": "elma",
+   "girisHarfi": "m",
+   "gorselId": "elma"
+  },
+  {
+   "id": "kamera",
+   "metin": "kamera",
+   "girisHarfi": "m",
+   "gorselId": "kamera"
+  },
+  {
+   "id": "mor",
+   "metin": "mor",
+   "girisHarfi": "m"
+  },
+  {
+   "id": "mum",
+   "metin": "mum",
+   "girisHarfi": "m",
+   "gorselId": "mum"
+  },
+  {
+   "id": "ekmek",
+   "metin": "ekmek",
+   "girisHarfi": "m",
+   "gorselId": "ekmek"
+  },
+  {
+   "id": "kalem",
+   "metin": "kalem",
+   "girisHarfi": "m",
+   "gorselId": "kalem"
+  },
+  {
+   "id": "limon",
+   "metin": "limon",
+   "girisHarfi": "m",
+   "gorselId": "limon"
+  },
+  {
+   "id": "mantar",
+   "metin": "mantar",
+   "girisHarfi": "m",
+   "gorselId": "mantar"
+  },
+  {
+   "id": "marul",
+   "metin": "marul",
+   "girisHarfi": "m",
+   "gorselId": "marul"
+  },
+  {
+   "id": "melek",
+   "metin": "melek",
+   "girisHarfi": "m"
+  },
+  {
+   "id": "minik",
+   "metin": "minik",
+   "girisHarfi": "m"
+  },
+  {
+   "id": "motor",
+   "metin": "motor",
+   "girisHarfi": "m",
+   "gorselId": "motor"
+  },
+  {
+   "id": "mutlu",
+   "metin": "mutlu",
+   "girisHarfi": "m"
+  },
+  {
+   "id": "orman",
+   "metin": "orman",
+   "girisHarfi": "m",
+   "gorselId": "orman"
+  },
+  {
+   "id": "tamam",
+   "metin": "tamam",
+   "girisHarfi": "m"
+  },
+  {
+   "id": "makarna",
+   "metin": "makarna",
+   "girisHarfi": "m",
+   "gorselId": "makarna"
+  }
+ ]
+}
