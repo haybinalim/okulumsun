@@ -17,7 +17,7 @@ import type { TurHamleGlifi } from '../../content/schema/turHamle';
 import { BigButton } from '../primitives/BigButton';
 import { SatirDizgesi } from './SatirDizgesi';
 import { YazilisGlifi } from './YazilisGlifi';
-import { cerceve, glifAdi, glifAnahtari, KALEM, KESIK_DIZISI, yolVerisi, yonOku, type Nokta } from './hamleCizim';
+import { cerceve, glifAdi, glifAnahtari, KALEM, KESIK_DIZISI, SATIR, yolVerisi, yonOku, type Nokta } from './hamleCizim';
 import { hamleyiDegerlendir, IZLEME_BASI, IZLEME_ESIKLERI, izlemeIlerle, type IzlemeDurumu } from './izleme';
 import { ekranStili } from './turOrtak';
 
@@ -29,6 +29,11 @@ const OK = '#1D4ED8';
 export function IzlemeEkrani({ glif, profil }: { glif: TurHamleGlifi; profil: DeviceProfile }) {
   const esik = IZLEME_ESIKLERI[profil === 'board' ? 'board' : 'tablet'];
   const c = cerceve(glif);
+  // İzleme alanı dikeyde glife sıkı kırpılır (satır dizgesi + kuyruk/nokta + numara payı): harf olabildiğince büyük.
+  const ys = glif.hamleler.flatMap((h) => h.noktalar.map((p) => p[1]));
+  const y0 = Math.min(SATIR.ust, ...ys) - 9;
+  const y1 = Math.max(SATIR.taban, ...ys) + 7;
+  const kutu = `0 ${y0} ${c.genislik} ${y1 - y0}`;
   const n = glif.hamleler.length;
   const [durum, setDurum] = useState<IzlemeDurumu>(IZLEME_BASI);
   // Çocuğun geçen çizimleri (hamle başına) ve şu anki çizim — yalnız bellek.
@@ -123,10 +128,21 @@ export function IzlemeEkrani({ glif, profil }: { glif: TurHamleGlifi; profil: De
             : `${durum.hamle + 1}. hamle / ${n}: ${aktif?.aciklama ?? ''}${tekrar ? '. Bir daha deneyelim.' : ''}`}
         </p>
       </section>
-      <section aria-label="İzleme alanı" style={{ flex: '1 1 auto', minHeight: 0, width: '100%', display: 'flex', justifyContent: 'center' }}>
+      <section
+        aria-label="İzleme alanı"
+        style={{
+          flex: '1 1 auto',
+          minHeight: 0,
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'stretch',
+          gap: 'var(--size-gap)',
+        }}
+      >
         <svg
           ref={svg}
-          viewBox={c.viewBox}
+          viewBox={kutu}
           preserveAspectRatio="xMidYMid meet"
           data-izleme-alani=""
           aria-label={`${ad} izleme alanı`}
@@ -138,7 +154,7 @@ export function IzlemeEkrani({ glif, profil }: { glif: TurHamleGlifi; profil: De
           style={{
             height: '100%',
             maxWidth: '100%',
-            aspectRatio: `${c.genislik} / 108`,
+            aspectRatio: `${c.genislik} / ${y1 - y0}`,
             display: 'block',
             touchAction: 'none',
             userSelect: 'none',
@@ -185,12 +201,18 @@ export function IzlemeEkrani({ glif, profil }: { glif: TurHamleGlifi; profil: De
             )}
           </g>
         </svg>
+        {/* Denetim alanın yanında (alttaki şerit dikey yer yemesin; harf büyük kalsın). */}
+        <div
+          className="alt-cubuk"
+          role="group"
+          aria-label="İzleme denetimleri"
+          style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', flex: '0 0 auto' }}
+        >
+          <BigButton label="Baştan" variant={bitti ? 'accent' : 'solid'} onPress={bastan}>
+            <span>Baştan</span>
+          </BigButton>
+        </div>
       </section>
-      <div className="alt-cubuk" role="group" aria-label="İzleme denetimleri" style={{ display: 'flex', gap: 'var(--size-gap-tight)', flex: '0 0 auto' }}>
-        <BigButton label="Baştan" variant={bitti ? 'accent' : 'solid'} onPress={bastan}>
-          <span>Baştan</span>
-        </BigButton>
-      </div>
     </main>
   );
 }

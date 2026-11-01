@@ -69,7 +69,8 @@ test('izleme: geometri, doğru/ters yön, üç deneme, puan ve ses yok', async (
     await expect(main).toHaveAttribute('data-izleme-hamle', '2');
     await expect(main).toHaveAttribute('data-cizim-sayisi', '1');
     // 2. hamle: üç kez uzaktan başla → gösterilir, geçilir, biter.
-    const uzak = dik.noktalar.map(([x, y]) => [x + 25, y] as [number, number]);
+    // Alanın içinde ama başlangıçtan 20 birim uzak (tahta eşiği 18).
+    const uzak = dik.noktalar.map(([x, y]) => [x - 20, y] as [number, number]);
     for (let i = 0; i < 3; i++) await ciz(page, uzak);
     await expect(main).toHaveAttribute('data-izleme-bitti', 'true');
     await expect(main).toHaveAttribute('data-izleme-biten', 'cizdi,gosterildi');
@@ -118,5 +119,6 @@ test('izleme: çizim yalnız bellekte — ekran değişince silinir, hiçbir şe
 test('bayraksız (üretim) sunucuda ?izle= hiçbir şey açmaz', async ({ page }, bilgi) => {
   test.skip(bilgi.project.name !== 'tablet', 'bir kez');
   await page.goto('http://localhost:5173/?ders=tur&izle=kucuk:a');
+  await page.waitForLoadState('networkidle');
   await expect(page.locator('[data-izleme-glif]')).toHaveCount(0);
 });
