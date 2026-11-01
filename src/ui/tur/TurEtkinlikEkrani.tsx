@@ -92,9 +92,14 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
 
   const iste = (klipler: readonly string[]) => setSesYok(!turKlipleriniIste(klipler));
   const soruSesi = () => iste([soru.yonerge, ...soru.soruKlipleri]);
-  // Açılışta bir kez (soru `useMemo` ile sabit; soru değişince bileşen `key` ile yeniden kurulur).
+  // Açılışta bir kez (soru `useMemo` ile sabit; soru değişince bileşen `key` ile yeniden kurulur). Geliştirmede
+  // StrictMode etkiyi iki kez çalıştırır; aynı soru için yönerge ikinci kez istenmesin diye ref ile korunur.
+  const duyurulan = useRef<TurSoru | null>(null);
   useEffect(() => {
-    setSesYok(!turKlipleriniIste([soru.yonerge, ...soru.soruKlipleri]));
+    if (duyurulan.current !== soru) {
+      duyurulan.current = soru;
+      setSesYok(!turKlipleriniIste([soru.yonerge, ...soru.soruKlipleri]));
+    }
     return () => window.clearTimeout(zamanlayici.current);
   }, [soru]);
 
