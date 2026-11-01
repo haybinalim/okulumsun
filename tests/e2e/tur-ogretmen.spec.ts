@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { TUR_URL } from '../../playwright.config';
 import { geometriTemiz, sesKilidiniAc } from './yardimci/akis';
+import { haftaBul, haftalikSesPlani, sonOnerilenSes } from '../../src/content/dersler/tur/sesPlani';
 import { BAYRAKLI_IZINLI_ANAHTARLAR, DERS_TUR_SINIF_ANAHTARI, IZINLI_ANAHTARLAR } from '../../src/persistence/depolamaIzinListesi';
 
 /**
@@ -141,6 +142,57 @@ test('günün akışı: sıra değişir ve sınıf ayarında kalır; basamaklar 
     await expect(liste).toHaveAttribute('data-akis-sirasi', '21345678');
     await page.getByRole('button', { name: 'Programdaki sıraya dön' }).click();
     await expect(liste).toHaveAttribute('data-akis-sirasi', '12345678');
+    await ctx.close();
+  }
+});
+
+test('haftalık ses planı: bu hafta işaretli, "Bu haftayı uygula" bugünkü sesi plana getirir; set hazırla 6 adım, Başlat → Geri', async ({ browser }, bilgi) => {
+  test.setTimeout(120_000);
+  // Sabit gün: 2 Kasım 2026 (pazartesi), ders yılının içinde.
+  const GUN = '2026-11-02';
+  const plan = haftalikSesPlani();
+  const hafta = haftaBul(plan, GUN)!;
+  const oneri = sonOnerilenSes(plan, hafta.pazartesi)!;
+  expect(oneri).toBeTruthy();
+  for (const g of gorunumler(bilgi.project.name)) {
+    const ctx = await browser.newContext({ baseURL: TUR_URL, viewport: { width: g.w, height: g.h }, hasTouch: true });
+    const page = await ctx.newPage();
+    await page.clock.setFixedTime(new Date(`${GUN}T10:00:00`));
+    await turGiris(page, g.cihaz, '&tur=1');
+    await page.getByRole('button', { name: 'Haftalık ses planı' }).click();
+    const ana = page.getByRole('main', { name: 'Haftalık ses planı' });
+    await expect(ana).toBeVisible();
+    const bu = page.locator('[data-bu-hafta]');
+    await expect(bu).toHaveCount(1);
+    await expect(bu).toHaveAttribute('data-hafta', hafta.pazartesi);
+    await expect(bu).toBeInViewport();
+    await geometriTemiz(page, `${g.ad} haftalık ses planı`);
+    // Öneri yalnız tek dokunuşla uygulanır; başka bir şey değişmez.
+    const uygula = page.getByRole('button', { name: `Bu haftayı uygula: ${oneri}` });
+    await expect(uygula).toBeVisible();
+    await uygula.click();
+    await expect(ana.locator('strong[data-glif]')).toHaveAttribute('data-glif', oneri);
+    await expect(uygula).toHaveCount(0);
+    await page.getByRole('button', { name: 'Geri' }).click();
+    await expect(page.locator('[data-bugunku-ses]')).toHaveAttribute('data-bugunku-ses', oneri);
+    // Set hazırla: 6 adım; düzey değişince set değişir; Başlat → 1/6, Geri set hazırla ekranına döner.
+    await page.getByRole('button', { name: 'Set hazırla' }).click();
+    const adimlar = page.getByRole('list', { name: 'Setteki etkinlikler' });
+    await expect(adimlar).toBeVisible();
+    const sinif = (await adimlar.getAttribute('data-set-adimlari'))!;
+    expect(sinif.split(',')).toHaveLength(6);
+    await geometriTemiz(page, `${g.ad} set hazırla`);
+    await page.getByRole('button', { name: 'Destek', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Destek', exact: true })).toHaveAttribute('aria-pressed', 'true');
+    await expect(adimlar).not.toHaveAttribute('data-set-adimlari', sinif);
+    await page.getByRole('button', { name: 'Seti başlat' }).click();
+    await expect(page.locator('[data-set-sira="1/6"]')).toBeVisible();
+    await geometriTemiz(page, `${g.ad} set adım 1`);
+    await page.waitForTimeout(400); // kalıcı Geri: BigButton çift dokunma soğuması
+    await page.getByRole('button', { name: 'Geri' }).click();
+    await expect(page.getByRole('main', { name: 'Set hazırla' })).toBeVisible();
+    const k = await anahtarlar(page);
+    expect([...k.yerel, ...k.oturum].filter((a) => !IZINLI.has(a))).toEqual([]);
     await ctx.close();
   }
 });
