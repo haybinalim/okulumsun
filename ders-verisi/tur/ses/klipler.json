@@ -1,0 +1,1232 @@
+{
+ "surum": 1,
+ "programSurumu": "tymm-turkce-2026-09-02",
+ "not": "Ses dosyaları Adım 67’de üretilecek (Puck, hız 0,9; TTS bu adımda yok). Tek ünsüz klibi yok (D-11).",
+ "klipler": [
+  {
+   "anahtar": "tur.geri.dogru",
+   "metin": "Aferin!",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.geri.tekrar",
+   "metin": "Bir daha deneyelim.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.al",
+   "metin": "al",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.alt",
+   "metin": "alt",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.an",
+   "metin": "an",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.at",
+   "metin": "at",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ek",
+   "metin": "ek",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.el",
+   "metin": "el",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.en",
+   "metin": "en",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.et",
+   "metin": "et",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.il",
+   "metin": "il",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ilk",
+   "metin": "ilk",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.in",
+   "metin": "in",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ka",
+   "metin": "ka",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.kal",
+   "metin": "kal",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.kar",
+   "metin": "kar",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.kart",
+   "metin": "kart",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.kat",
+   "metin": "kat",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.kek",
+   "metin": "kek",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ker",
+   "metin": "ker",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ki",
+   "metin": "ki",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ki2",
+   "metin": "kı",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ki2l",
+   "metin": "kıl",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ki2r",
+   "metin": "kır",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ki2rk",
+   "metin": "kırk",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ko",
+   "metin": "ko",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.kol",
+   "metin": "kol",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.kral",
+   "metin": "kral",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ku",
+   "metin": "ku",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.kuk",
+   "metin": "kuk",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.kul",
+   "metin": "kul",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.kurt",
+   "metin": "kurt",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.la",
+   "metin": "la",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.lak",
+   "metin": "lak",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.lan",
+   "metin": "lan",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.lat",
+   "metin": "lat",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.le",
+   "metin": "le",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.lek",
+   "metin": "lek",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.lem",
+   "metin": "lem",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.lent",
+   "metin": "lent",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.let",
+   "metin": "let",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.li",
+   "metin": "li",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.li2",
+   "metin": "lı",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.li2k",
+   "metin": "lık",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.li2n",
+   "metin": "lın",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.lik",
+   "metin": "lik",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.lit",
+   "metin": "lit",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.lu",
+   "metin": "lu",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ma",
+   "metin": "ma",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.mam",
+   "metin": "mam",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.man",
+   "metin": "man",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.me",
+   "metin": "me",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.mek",
+   "metin": "mek",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.mi",
+   "metin": "mi",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.mo",
+   "metin": "mo",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.mon",
+   "metin": "mon",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.mor",
+   "metin": "mor",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.mum",
+   "metin": "mum",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.mut",
+   "metin": "mut",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.na",
+   "metin": "na",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.nak",
+   "metin": "nak",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.nal",
+   "metin": "nal",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.nan",
+   "metin": "nan",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.nar",
+   "metin": "nar",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.nat",
+   "metin": "nat",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ne",
+   "metin": "ne",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.nek",
+   "metin": "nek",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.nen",
+   "metin": "nen",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.net",
+   "metin": "net",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ni",
+   "metin": "ni",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.nik",
+   "metin": "nik",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.nin",
+   "metin": "nin",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.no",
+   "metin": "no",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.not",
+   "metin": "not",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.nuk",
+   "metin": "nuk",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.nut",
+   "metin": "nut",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ok",
+   "metin": "ok",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ol",
+   "metin": "ol",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.on",
+   "metin": "on",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.or",
+   "metin": "or",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ot",
+   "metin": "ot",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ra",
+   "metin": "ra",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ran",
+   "metin": "ran",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.re",
+   "metin": "re",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.renk",
+   "metin": "renk",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ri2",
+   "metin": "rı",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ri2k",
+   "metin": "rık",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.rik",
+   "metin": "rik",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.rul",
+   "metin": "rul",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ta",
+   "metin": "ta",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.tal",
+   "metin": "tal",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.tar",
+   "metin": "tar",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.tat",
+   "metin": "tat",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.te",
+   "metin": "te",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.tek",
+   "metin": "tek",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.tel",
+   "metin": "tel",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ten",
+   "metin": "ten",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ter",
+   "metin": "ter",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ti",
+   "metin": "ti",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ti2",
+   "metin": "tı",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ti2l",
+   "metin": "tıl",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ti2n",
+   "metin": "tın",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ti2r",
+   "metin": "tır",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.til",
+   "metin": "til",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.to",
+   "metin": "to",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.ton",
+   "metin": "ton",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.tor",
+   "metin": "tor",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.tren",
+   "metin": "tren",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.tu",
+   "metin": "tu",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.tuk",
+   "metin": "tuk",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.tur",
+   "metin": "tur",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.tut",
+   "metin": "tut",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.hece.un",
+   "metin": "un",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.aile",
+   "metin": "aile",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.aki2l",
+   "metin": "akıl",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.al",
+   "metin": "al",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.alan",
+   "metin": "alan",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.alet",
+   "metin": "alet",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.alt",
+   "metin": "alt",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.alti2",
+   "metin": "altı",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.alti2n",
+   "metin": "altın",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.an",
+   "metin": "an",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ana",
+   "metin": "ana",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.anlat",
+   "metin": "anlat",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.anne",
+   "metin": "anne",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.anneanne",
+   "metin": "anneanne",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.annen",
+   "metin": "annen",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.annene",
+   "metin": "annene",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.anten",
+   "metin": "anten",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ari2",
+   "metin": "arı",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.at",
+   "metin": "at",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ata",
+   "metin": "ata",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.atlet",
+   "metin": "atlet",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ek",
+   "metin": "ek",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ekmek",
+   "metin": "ekmek",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ekran",
+   "metin": "ekran",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.el",
+   "metin": "el",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.elli",
+   "metin": "elli",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.elma",
+   "metin": "elma",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.en",
+   "metin": "en",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.erik",
+   "metin": "erik",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.et",
+   "metin": "et",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.etek",
+   "metin": "etek",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.eti",
+   "metin": "eti",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.etli",
+   "metin": "etli",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.etti",
+   "metin": "etti",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.i2li2k",
+   "metin": "ılık",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.iki",
+   "metin": "iki",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.il",
+   "metin": "il",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ilk",
+   "metin": "ilk",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.in",
+   "metin": "in",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.inan",
+   "metin": "inan",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.inat",
+   "metin": "inat",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.inek",
+   "metin": "inek",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.inen",
+   "metin": "inen",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kakao",
+   "metin": "kakao",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kale",
+   "metin": "kale",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kalem",
+   "metin": "kalem",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kali2n",
+   "metin": "kalın",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kamera",
+   "metin": "kamera",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kanat",
+   "metin": "kanat",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kar",
+   "metin": "kar",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kare",
+   "metin": "kare",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.karne",
+   "metin": "karne",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kart",
+   "metin": "kart",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kartal",
+   "metin": "kartal",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kat",
+   "metin": "kat",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kek",
+   "metin": "kek",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ki2ri2k",
+   "metin": "kırık",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ki2rk",
+   "metin": "kırk",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ki2rlent",
+   "metin": "kırlent",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kilit",
+   "metin": "kilit",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.koku",
+   "metin": "koku",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kol",
+   "metin": "kol",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.koltuk",
+   "metin": "koltuk",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.konuk",
+   "metin": "konuk",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kral",
+   "metin": "kral",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kukla",
+   "metin": "kukla",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kulak",
+   "metin": "kulak",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kule",
+   "metin": "kule",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kurt",
+   "metin": "kurt",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.kutu",
+   "metin": "kutu",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.lale",
+   "metin": "lale",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.limon",
+   "metin": "limon",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.makarna",
+   "metin": "makarna",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.mantar",
+   "metin": "mantar",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.marul",
+   "metin": "marul",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.melek",
+   "metin": "melek",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.minik",
+   "metin": "minik",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.mor",
+   "metin": "mor",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.motor",
+   "metin": "motor",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.mum",
+   "metin": "mum",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.mutlu",
+   "metin": "mutlu",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.nal",
+   "metin": "nal",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.nane",
+   "metin": "nane",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.nar",
+   "metin": "nar",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ne",
+   "metin": "ne",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.nene",
+   "metin": "nene",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.net",
+   "metin": "net",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.nine",
+   "metin": "nine",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ninni",
+   "metin": "ninni",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.not",
+   "metin": "not",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.nota",
+   "metin": "nota",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ok",
+   "metin": "ok",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.oku",
+   "metin": "oku",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.okul",
+   "metin": "okul",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ol",
+   "metin": "ol",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.olta",
+   "metin": "olta",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.on",
+   "metin": "on",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ona",
+   "metin": "ona",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.orman",
+   "metin": "orman",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.orta",
+   "metin": "orta",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ot",
+   "metin": "ot",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.otel",
+   "metin": "otel",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.oto",
+   "metin": "oto",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.renk",
+   "metin": "renk",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.tamam",
+   "metin": "tamam",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.tane",
+   "metin": "tane",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.tat",
+   "metin": "tat",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.tatil",
+   "metin": "tatil",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.tatli2",
+   "metin": "tatlı",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.tek",
+   "metin": "tek",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.tekerlek",
+   "metin": "tekerlek",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.tekne",
+   "metin": "tekne",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.tel",
+   "metin": "tel",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ten",
+   "metin": "ten",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.tente",
+   "metin": "tente",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.terlik",
+   "metin": "terlik",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ti2rnak",
+   "metin": "tırnak",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ti2rti2l",
+   "metin": "tırtıl",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.tilki",
+   "metin": "tilki",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.ton",
+   "metin": "ton",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.tren",
+   "metin": "tren",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.tur",
+   "metin": "tur",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.tut",
+   "metin": "tut",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.tutkal",
+   "metin": "tutkal",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.un",
+   "metin": "un",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.sozcuk.unut",
+   "metin": "unut",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t02",
+   "metin": "Dinle. Bu sözcüklerin hepsinde aynı ses var. O sesin harfini bul.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t03",
+   "metin": "Yukarıdaki harfin aynısını bul.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t04",
+   "metin": "Yukarıdaki heceyi harf kartlarıyla oluştur.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t05",
+   "metin": "Heceleri birleştir. Anlamlı bir sözcük oluştur.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t05-model",
+   "metin": "Yukarıdaki sözcüğü hece kartlarıyla oluştur.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t06",
+   "metin": "Sözcükte bir harf eksik. Eksik harfi bul.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t07",
+   "metin": "Dinle. Duyduğun sözcüğü harf kartlarıyla yaz.",
+   "durum": "eksik"
+  }
+ ]
+}

@@ -21,6 +21,7 @@ import {
   yalnizUnsuzMu,
 } from './alfabe';
 import { hecele, heceTuru } from './heceleme';
+import { TUR_TANI_ETIKETI_LISTESI } from './sablonlar/celdiriciler';
 import { dekodlanabilirMi, girisNoktasi, harfSirasi, resmiKume } from './ogretilenKume';
 import type { TurCumle, TurEtkinlik, TurHece, TurIcerikDosyasi, TurSozcuk } from '../../schema/turIcerik';
 
@@ -50,12 +51,8 @@ export interface DogrulamaSecenekleri {
  */
 export const UNLEM_SOZCUKLERI: ReadonlySet<string> = new Set(['ah', 'of', 'oh', 'ay', 'eyvah', 'aman', 'vay', 'hey']);
 
-/** Karıştırılan çiftlerin tanı etiketleri (D-23; plan §1.3 Z22). */
-export const TUR_TANI_ETIKETLERI: ReadonlySet<string> = new Set([
-  'TUR_NOKTALI_CIFT', // c/ç, s/ş, g/ğ, o/ö, u/ü, ı/i
-  'TUR_AYNA_CIFT', // b/d, n/u, m/n
-  'TUR_BENZER_SES', // p/b, t/d, k/g …
-]);
+/** Karıştırılan çiftlerin tanı etiketleri (D-23; plan §1.3 Z22). Kaynak: çeldirici kataloğu (Adım 69). */
+export const TUR_TANI_ETIKETLERI: ReadonlySet<string> = new Set(TUR_TANI_ETIKETI_LISTESI);
 
 const ICERIK_NOKTALAMA = new Set(['.', ',', '?', '!', "'", ' ']);
 const N_SIRASI = harfSirasi('n');

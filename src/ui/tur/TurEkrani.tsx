@@ -20,12 +20,15 @@ import { YazilisGlifi } from './YazilisGlifi';
 import { KagitMenusu, KagitOnizleme, KagitSecimi } from './TurKagitEkranlari';
 import { Baslik, ekranStili, SEKME_SAYISI } from './turOrtak';
 import { GorselKatalogu } from './TurGorselEkrani';
+import { TurEtkinlikEkrani } from './TurEtkinlikEkrani';
+import { EtkinlikSecimi } from './TurEtkinlikSecimi';
 
 export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; profil: DeviceProfile }) {
   const geri = () => {
     if (ekran.ekran === 'yazilis') turEkraniAc({ ekran: 'yazilisSecimi', sekme: ekran.sekme });
     else if (ekran.ekran === 'kagit') turEkraniAc(ekran.geri);
     else if (ekran.ekran === 'kagitSecimi') turEkraniAc({ ekran: 'kagitlar' });
+    else if (ekran.ekran === 'etkinlik') turEkraniAc({ ekran: 'etkinlikler' });
     else if (ekran.ekran === 'giris') turEkraniKapat();
     else turEkraniAc({ ekran: 'giris' });
   };
@@ -39,6 +42,10 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
           <KagitMenusu />
         ) : ekran.ekran === 'gorseller' ? (
           <GorselKatalogu grup={ekran.grup} gri={ekran.gri} />
+        ) : ekran.ekran === 'etkinlikler' ? (
+          <EtkinlikSecimi />
+        ) : ekran.ekran === 'etkinlik' ? (
+          <TurEtkinlikEkrani sablon={ekran.sablon} zorluk={ekran.zorluk} tohum={ekran.tohum} />
         ) : ekran.ekran === 'kagit' ? (
           <KagitOnizleme istek={ekran.istek} />
         ) : (
@@ -65,7 +72,7 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
 function Giris() {
   return (
     <main aria-label="Okuma Yazma" style={{ ...ekranStili, justifyContent: 'space-between' }}>
-      <Baslik baslik="Okuma Yazma" alt="Geliştirme önizlemesi. Yazılış verisi öğretmen teyidi bekliyor." />
+      <Baslik baslik="Okuma Yazma" alt="Geliştirme önizlemesi. Yazılış verisi ve sözcükler öğretmen teyidi bekliyor; ses henüz yok." />
       <div style={{ display: 'flex', gap: 'var(--size-gap)', flexWrap: 'wrap', justifyContent: 'center' }}>
         <BigButton
           label="Harf ve rakam yazılışı"
@@ -73,6 +80,9 @@ function Giris() {
           onPress={() => turEkraniAc({ ekran: 'yazilisSecimi' })}
         >
           <span style={{ padding: '0 0.6em' }}>Harf ve rakam yazılışı</span>
+        </BigButton>
+        <BigButton label="Etkinlikler" size="primary" onPress={() => turEkraniAc({ ekran: 'etkinlikler' })}>
+          <span style={{ padding: '0 0.6em' }}>Etkinlikler</span>
         </BigButton>
         <BigButton label="Kâğıtlar" size="primary" onPress={() => turEkraniAc({ ekran: 'kagitlar' })}>
           <span style={{ padding: '0 0.6em' }}>Kâğıtlar</span>
