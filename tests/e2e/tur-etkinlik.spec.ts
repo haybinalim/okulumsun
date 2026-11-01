@@ -34,7 +34,16 @@ const gorunumler = (proje: string) =>
       ] as const)
     : ([{ ad: 'tablet 1080×810', w: 1080, h: 810, cihaz: 'tablet' }] as const);
 
-const klipler = (page: Page) => page.evaluate(() => [...(window.__okulumsunE2E?.istenenKlipler ?? [])]);
+/**
+ * Türkçe klipleri (`tur.*`). Ses kilidini açan "Başla" uygulamanın karşılama klibini (`ui.hosgeldin`), tembel
+ * parça yüklenirken bekleme ekranı `ui.hazirlaniyor` ister; Türkçe ekranda bunlardan başka klip istenmemeli.
+ */
+const UYGULAMA_KLIPLERI = new Set(['ui.hosgeldin', 'ui.hazirlaniyor']);
+async function klipler(page: Page): Promise<string[]> {
+  const hepsi = await page.evaluate(() => [...(window.__okulumsunE2E?.istenenKlipler ?? [])]);
+  expect(hepsi.filter((k) => !k.startsWith('tur.') && !UYGULAMA_KLIPLERI.has(k)), 'Türkçe ekranda başka klip yok').toEqual([]);
+  return hepsi.filter((k) => k.startsWith('tur.'));
+}
 
 function klipleriDenetle(liste: readonly string[], baglam: string) {
   for (const k of liste) {
