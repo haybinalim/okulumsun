@@ -102,8 +102,8 @@ export function SesPlani({ gun = bugun() }: { gun?: string }) {
                 color: h.tur === 'tatil' ? 'var(--color-ink-soft, #6B6B6B)' : undefined,
               }}
             >
-              <span style={{ flex: '0 0 11em' }}>{h.tur === 'bagimsiz' ? ozet : ozet}</span>
-              <span style={{ flex: '0 0 5em', fontWeight: 700, letterSpacing: '0.15em' }}>{h.yeniSesler.join(' ')}</span>
+              <span style={{ flex: '0 0 8.5em' }}>{ozet}</span>
+              <span style={{ flex: '0 0 3.5em', fontWeight: 700, letterSpacing: '0.15em' }}>{h.yeniSesler.join(' ')}</span>
               <span style={{ flex: '1 1 auto', minWidth: 0 }}>
                 {[h.grup ? `${h.grup}. grup` : TUR_ADI[h.tur], h.not].filter(Boolean).join(' · ')}
                 {bu ? ' · bu hafta' : ''}
@@ -132,7 +132,7 @@ export function SetHazirla({ ekAraclar }: { ekAraclar?: (duzey: SetDuzeyi, tohum
   const ses = bugunkuSes(kume);
   return (
     <main data-yetiskin="" aria-label="Set hazırla" style={{ ...ekranStili, justifyContent: 'flex-start', gap: 'var(--size-gap-tight)' }}>
-      <Baslik baslik={`Set hazırla: ${ses}`} alt="Öğretilen harflerle 6 etkinlik. Düzeyi seçin; set hiçbir yerde saklanmaz." />
+      <Baslik baslik={`Set hazırla: ${ses}`} alt="Öğretilen harflerle 6 etkinlik. Set saklanmaz." />
       <div role="group" aria-label="Düzey" style={{ display: 'flex', gap: '0.4em', flexWrap: 'wrap', justifyContent: 'center' }}>
         {SET_DUZEYLERI.map((d) => (
           <BigButton
@@ -162,7 +162,7 @@ export function SetHazirla({ ekAraclar }: { ekAraclar?: (duzey: SetDuzeyi, tohum
           >
             {set.adimlar.map((a, i) => (
               <li key={i}>
-                {TUR_SABLONLARI[a.sablon].ad} <span style={{ color: 'var(--color-ink-soft, #6B6B6B)' }}>(zorluk {a.zorluk})</span>
+                {TUR_SABLONLARI[a.sablon].ad} <span style={{ color: 'var(--color-ink-soft, #6B6B6B)', fontSize: '0.8em', whiteSpace: 'nowrap' }}>(zorluk {a.zorluk})</span>
               </li>
             ))}
           </ol>
