@@ -72,7 +72,7 @@ async function coz(page: Page, sablon: string, baglam: string) {
     for (const parca of cevap.split('|')) {
       const kart = page.locator(`[data-kart][data-kart-metin="${parca}"]:not([data-kullanildi])`).first();
       await kart.click();
-      await expect(klipler(page), `${baglam}: kart sessiz (D-11)`).resolves.toEqual(ilk);
+      expect(await klipler(page), `${baglam}: kart sessiz (D-11)`).toEqual(ilk);
     }
     await page.getByRole('button', { name: 'Onayla', exact: true }).click();
   } else {
@@ -95,10 +95,12 @@ async function coz(page: Page, sablon: string, baglam: string) {
 }
 
 for (const sablon of SABLONLAR) {
-  test(`${sablon}: üç görünümde açılır, geometri temiz, ses kuralları (D-11, D-12), çözülür`, async ({ page }, bilgi) => {
-    test.setTimeout(120_000);
+  test(`${sablon}: üç görünümde açılır, geometri temiz, ses kuralları (D-11, D-12), çözülür`, async ({ browser }, bilgi) => {
+    test.setTimeout(150_000);
     for (const g of gorunumler(bilgi.project.name)) {
-      await page.setViewportSize({ width: g.w, height: g.h });
+      // Her görünüm kendi bağlamında (tahta profilinde tam ekran isteği pencere boyutlandırmayı engelleyebilir).
+      const ctx = await browser.newContext({ baseURL: TUR_URL, viewport: { width: g.w, height: g.h }, hasTouch: true });
+      const page = await ctx.newPage();
       for (const zorluk of [1, 3, 5]) {
         const baglam = `${sablon} z${zorluk} ${g.ad}`;
         await ac(page, sablon, zorluk, 1, g.cihaz);
@@ -111,10 +113,11 @@ for (const sablon of SABLONLAR) {
         klipleriDenetle(acilis, baglam);
         // ↻ aynı listeyi yeniden ister (D-12: okuma sorusunda yine yalnız yönerge).
         await page.getByRole('button', { name: 'Tekrar dinle', exact: true }).click();
-        await expect(klipler(page)).resolves.toEqual([...acilis, ...acilis]);
+        await expect.poll(() => klipler(page)).toEqual([...acilis, ...acilis]);
         await coz(page, sablon, baglam);
         await geometriTemiz(page, `${baglam} (doğru)`);
       }
+      await ctx.close();
     }
   });
 }
