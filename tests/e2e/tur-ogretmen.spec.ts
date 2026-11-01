@@ -123,6 +123,9 @@ test('günün akışı: sıra değişir ve sınıf ayarında kalır; basamaklar 
     await page.getByRole('button', { name: 'Yazılış gösterimi: Aç (l)' }).click();
     await expect(page.locator('[data-yazilis-glif="kucuk:l"]')).toBeVisible();
     await page.getByRole('button', { name: 'Parmakla izle' }).click();
+    // İzleme ekranı açılmadan basılan Geri gösterimi atlayıp akışa dönerdi (CI tablet yarışı).
+    await expect(page.locator('[data-izleme-glif="kucuk:l"]')).toBeVisible();
+    await page.waitForTimeout(400); // kalıcı Geri (GezinmeCubugu): BigButton çift dokunma soğuması
     await page.getByRole('button', { name: 'Geri' }).click();
     await expect(page.locator('[data-yazilis-glif="kucuk:l"]')).toBeVisible();
     await page.waitForTimeout(400); // aynı yerdeki Geri: BigButton çift dokunma soğuması
