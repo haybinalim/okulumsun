@@ -1,5 +1,5 @@
 /**
- * TÜRKÇE ŞABLON DALGASI 1 (görselsiz; Okuma Yazma planı Adım 69): T-02, T-03 (69a), T-04, T-05 (69b); T-06, T-07 69c'de. SAF kayıt.
+ * TÜRKÇE ŞABLON DALGASI 1 (görselsiz; Okuma Yazma planı Adım 69): T-02, T-03 (69a), T-04, T-05 (69b), T-06, T-07 (69c). SAF kayıt.
  *
  * Her şablon (havuz, öğretilen küme, zorluk, tohum) → soru üretir; aynı girdi aynı soruyu ve `itemId`'yi verir.
  * Kural denetimi (D-11, D-12, D-23 ve küme) `denetim.ts` ve CI doğrulayıcısı (`dogrulayici.ts`) ile yapılır.
@@ -8,6 +8,8 @@ import { uretT02 } from './t02SesinHarfi';
 import { uretT03 } from './t03HarfiAyirt';
 import { uretT04 } from './t04HeceKur';
 import { uretT05 } from './t05HeceBirlestir';
+import { uretT06 } from './t06EksikHarf';
+import { uretT07 } from './t07Dikte';
 import type { TurSablonKodu, TurSoru, TurUretimGirdisi } from './turSoru';
 
 export interface TurSablonTanimi {
@@ -24,6 +26,8 @@ export const TUR_SABLONLARI: Readonly<Record<TurSablonKodu, TurSablonTanimi>> = 
   'T-03': { kod: 'T-03', ad: 'Harfi ayırt et', meb: 'KB2.7', etkilesim: 'secim', uret: uretT03 },
   'T-04': { kod: 'T-04', ad: 'Hece kur', meb: 'T.O.1.1.a', etkilesim: 'yerlestir', uret: uretT04 },
   'T-05': { kod: 'T-05', ad: 'Heceleri birleştir', meb: 'T.O.1.1.b', etkilesim: 'yerlestir', uret: uretT05 },
+  'T-06': { kod: 'T-06', ad: 'Eksik harfi tamamla', meb: 'T.Y.1.2.b', etkilesim: 'yerlestir', uret: uretT06 },
+  'T-07': { kod: 'T-07', ad: 'Dikte', meb: 'T.Y.1.1.e', etkilesim: 'yerlestir', uret: uretT07 },
 };
 
 export function turSoruUret(sablon: TurSablonKodu, g: TurUretimGirdisi): TurSoru {

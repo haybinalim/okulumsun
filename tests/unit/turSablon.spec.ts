@@ -187,6 +187,37 @@ describe('Türkçe şablonlar — üretim (Adım 69)', () => {
     }
   });
 
+  it('T-06: boşluklu sözcük okunabilir; eksik harf tek doğru, hiçbir çeldirici bilinen sözcük kurmaz; ses yalnız cevaptan sonra', () => {
+    const t06 = URETILEN.filter((u) => u.soru.sablon === 'T-06');
+    expect(t06.length).toBeGreaterThan(100);
+    for (const { soru, kume } of t06) {
+      if (soru.kind !== 'yerlestir' || soru.uyaran.tur !== 'bosluklu') throw new Error('T-06 yerleştir + boşluklu');
+      const { once, sonra } = soru.uyaran;
+      expect(soru.dogruDizi).toHaveLength(1);
+      expect(once + soru.dogruDizi[0] + sonra).toBe(soru.hedefMetin);
+      expect(okunabilirSozcukler(havuz, kume).some((w) => w.metin === soru.hedefMetin), soru.itemId).toBe(true);
+      expect(soru.soruKlipleri).toEqual([]);
+      expect(soru.geriBildirim.at(-1)).toBe(sozcukKlibi(soru.hedefMetin));
+      expect(soru.kartlar.every((k) => k.tur === 'harf' && kume.has(k.metin)), soru.itemId).toBe(true);
+      for (const k of soru.kartlar)
+        if (k.metin !== soru.dogruDizi[0]) expect(bilinenSozcukMu(once + k.metin + sonra, havuz), `${soru.itemId} ${k.metin}`).toBe(false);
+    }
+  });
+
+  it('T-07: dikte — ses yalnız sözcük (tek ünsüz yok), kartlar sözcüğün harfleri + kümeden çeldirici, en çok 8 kart', () => {
+    const t07 = URETILEN.filter((u) => u.soru.sablon === 'T-07');
+    expect(t07.length).toBeGreaterThan(100);
+    for (const { soru, kume } of t07) {
+      if (soru.kind !== 'yerlestir' || soru.uyaran.tur !== 'ses') throw new Error('T-07 yerleştir + ses');
+      expect(soru.dogruDizi.join('')).toBe(soru.hedefMetin);
+      expect(soru.soruKlipleri).toEqual([sozcukKlibi(soru.hedefMetin)]);
+      expect(soru.geriBildirim.at(-1)).toBe(sozcukKlibi(soru.hedefMetin));
+      expect(soru.kartlar.length).toBeLessThanOrEqual(8);
+      expect(soru.kartlar.every((k) => k.tur === 'harf' && kume.has(k.metin)), soru.itemId).toBe(true);
+      expect(okunabilirSozcukler(havuz, kume).some((w) => w.metin === soru.hedefMetin), soru.itemId).toBe(true);
+    }
+  });
+
   it('kart sayısı en çok 8 (tahta 1080×810) ve kartların hiçbiri ses taşımaz (tipte ses alanı yok)', () => {
     for (const { soru } of URETILEN) {
       expect(soru.kartlar.length).toBeLessThanOrEqual(8);
