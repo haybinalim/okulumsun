@@ -18,6 +18,23 @@ export const IZINLI_ANAHTARLAR: readonly IzinliAnahtar[] = [
   { alan: 'localStorage', anahtar: CIHAZ_PROFILI_ANAHTARI, gerekce: 'cihaz profili ayarı (PLAN §3.1)', adr: '0002' },
 ];
 
+/**
+ * Okuma Yazma (YALNIZ `VITE_DERS_TUR=1` derlemesi) sınıf düzeyi ayarı — K-7, ADR-0002 Ek 1. Öğrenci verisi değildir:
+ * öğretmenin seçtiği öğretilen harf kümesi kodu ve günün akışı sırası. Üretim derlemesinde bu kodu yazan modül yoktur;
+ * bu yüzden üretim listesine (`IZINLI_ANAHTARLAR`, gizlilik sayfası) girmez, ayrı listededir.
+ */
+export const DERS_TUR_SINIF_ANAHTARI = 'okulumsun.tur.sinif';
+
+export const BAYRAKLI_IZINLI_ANAHTARLAR: readonly (IzinliAnahtar & { readonly bayrak: 'VITE_DERS_TUR' })[] = [
+  {
+    alan: 'localStorage',
+    anahtar: DERS_TUR_SINIF_ANAHTARI,
+    gerekce: 'Okuma Yazma sınıf düzeyi ayarı: öğretilen harfler ve günün akışı sırası (K-7; öğrenci verisi değil)',
+    adr: '0002',
+    bayrak: 'VITE_DERS_TUR',
+  },
+];
+
 export const IZINLI_LOCALSTORAGE_ANAHTARLARI: readonly string[] = IZINLI_ANAHTARLAR.filter(
   (a) => a.alan === 'localStorage',
 ).map((a) => a.anahtar);

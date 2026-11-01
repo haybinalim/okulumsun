@@ -8,8 +8,6 @@
  * teyidi bekler, Türkçe ses henüz yok (Adım 66, 67).
  */
 import { useState } from 'react';
-import { HARF_GRUPLARI, OGRETIM_SIRASI, trBuyuk } from '../../content/dersler/tur/alfabe';
-import { resmiKume } from '../../content/dersler/tur/ogretilenKume';
 import { TUR_SABLONLARI } from '../../content/dersler/tur/sablonlar';
 import {
   TUR_SABLON_KODLARI,
@@ -21,7 +19,8 @@ import {
 } from '../../content/dersler/tur/sablonlar/turSoru';
 import { BigButton } from '../primitives/BigButton';
 import { turEkraniAc } from './turEkrani';
-import { turKumeYaz, useTurKume } from './turKume';
+import { useTurKume } from './turKume';
+import { KumeDuzenleyici, kucukDugme } from './TurOgretmen';
 import { useTurHavuzu } from './useTurHavuzu';
 import { Baslik, ekranStili } from './turOrtak';
 
@@ -40,12 +39,6 @@ function kurulabilirMi(sablon: TurSablonKodu, havuz: readonly TurHavuzSozcugu[],
   return false;
 }
 
-const kucukDugme = {
-  minWidth: 'calc(var(--size-tap-min) * 0.8)',
-  minHeight: 'calc(var(--size-tap-min) * 0.8)',
-  padding: '0 0.3em',
-  fontSize: 'var(--text-adult)',
-} as const;
 
 export function EtkinlikSecimi() {
   const kume = useTurKume();
@@ -55,57 +48,10 @@ export function EtkinlikSecimi() {
     sonSecim = s;
     setSecim(s);
   };
-  const degistir = (glif: string, kucuk: string) => {
-    const yeni = new Set(kume);
-    if (yeni.has(glif)) {
-      yeni.delete(glif);
-      if (glif === kucuk) yeni.delete(trBuyuk(kucuk)); // küçüğü olmayan büyük kalmaz
-    } else {
-      yeni.add(glif);
-      yeni.add(kucuk);
-    }
-    if ([...yeni].length > 0) turKumeYaz(yeni);
-  };
-  const enYeni = [...OGRETIM_SIRASI].reverse().find((x) => kume.has(x)) ?? 'a';
   return (
     <main data-yetiskin="" aria-label="Etkinlikler" style={{ ...ekranStili, justifyContent: 'flex-start', overflowY: 'auto' }}>
       <Baslik baslik="Etkinlikler" alt="Öğretilen harfleri, etkinliği ve zorluğu seçin. Sözcükler öğretmen teyidi bekliyor; ses henüz yok." />
-      <section aria-label="Öğretilen harfler" style={{ display: 'flex', flexDirection: 'column', gap: '0.4em', alignItems: 'center' }}>
-        <label style={{ fontSize: 'var(--text-adult)' }}>
-          Bugünkü ses:{' '}
-          <select
-            aria-label="Bugünkü ses"
-            value={enYeni}
-            onChange={(e) => turKumeYaz(resmiKume(e.target.value, false))}
-            style={{ fontSize: 'var(--text-adult)', minHeight: 'calc(var(--size-tap-min) * 0.6)' }}
-          >
-            {OGRETIM_SIRASI.map((x) => (
-              <option key={x} value={x}>
-                {x}
-              </option>
-            ))}
-          </select>
-        </label>
-        {HARF_GRUPLARI.map((grup, gi) => (
-          <div key={gi} role="group" aria-label={`${gi + 1}. grup`} style={{ display: 'flex', gap: '0.25em', flexWrap: 'wrap', justifyContent: 'center' }}>
-            {grup.flatMap((x) =>
-              [x, trBuyuk(x)].map((glif) => (
-                <BigButton
-                  key={glif}
-                  label={`${glif} ${kume.has(glif) ? 'öğretildi' : 'öğretilmedi'}`}
-                  data-yetiskin=""
-                  ariaPressed={kume.has(glif)}
-                  variant={kume.has(glif) ? 'accent' : 'solid'}
-                  style={kucukDugme}
-                  onPress={() => degistir(glif, x)}
-                >
-                  <span data-glif={glif}>{glif}</span>
-                </BigButton>
-              )),
-            )}
-          </div>
-        ))}
-      </section>
+      <KumeDuzenleyici />
       <section aria-label="Etkinlik" role="group" style={{ display: 'flex', gap: '0.4em', flexWrap: 'wrap', justifyContent: 'center' }}>
         {TUR_SABLON_KODLARI.map((kod) => {
           const t = TUR_SABLONLARI[kod];

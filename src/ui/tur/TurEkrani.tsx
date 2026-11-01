@@ -23,14 +23,16 @@ import { GorselKatalogu } from './TurGorselEkrani';
 import { TurEtkinlikEkrani } from './TurEtkinlikEkrani';
 import { EtkinlikSecimi } from './TurEtkinlikSecimi';
 import { IzlemeEkrani } from './IzlemeEkrani';
+import { GununAkisi, HarfDuzenleme, OgretmenGiris } from './TurOgretmen';
 
 export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; profil: DeviceProfile }) {
   const geri = () => {
-    if (ekran.ekran === 'yazilis') turEkraniAc({ ekran: 'yazilisSecimi', sekme: ekran.sekme });
-    else if (ekran.ekran === 'izleme') turEkraniAc({ ekran: 'yazilis', anahtar: ekran.anahtar, sekme: ekran.sekme });
+    if (ekran.ekran === 'yazilis') turEkraniAc(ekran.geri ?? { ekran: 'yazilisSecimi', sekme: ekran.sekme });
+    else if (ekran.ekran === 'izleme')
+      turEkraniAc({ ekran: 'yazilis', anahtar: ekran.anahtar, sekme: ekran.sekme, ...(ekran.geri ? { geri: ekran.geri } : {}) });
     else if (ekran.ekran === 'kagit') turEkraniAc(ekran.geri);
     else if (ekran.ekran === 'kagitSecimi') turEkraniAc({ ekran: 'kagitlar' });
-    else if (ekran.ekran === 'etkinlik') turEkraniAc({ ekran: 'etkinlikler' });
+    else if (ekran.ekran === 'etkinlik') turEkraniAc(ekran.geri ?? { ekran: 'etkinlikler' });
     else if (ekran.ekran === 'giris') turEkraniKapat();
     else turEkraniAc({ ekran: 'giris' });
   };
@@ -39,7 +41,11 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
       <GezinmeCubugu onGeri={geri} onAnaMenu={turEkraniKapat} yon="dikey" hizala={profil === 'board' ? 'son' : 'bas'} />
       <div style={{ flex: '1 1 auto', minWidth: 0, minHeight: 0, position: 'relative' }}>
         {ekran.ekran === 'giris' ? (
-          <Giris />
+          <OgretmenGiris />
+        ) : ekran.ekran === 'harfler' ? (
+          <HarfDuzenleme />
+        ) : ekran.ekran === 'akis' ? (
+          <GununAkisi />
         ) : ekran.ekran === 'kagitlar' ? (
           <KagitMenusu />
         ) : ekran.ekran === 'gorseller' ? (
@@ -47,7 +53,7 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
         ) : ekran.ekran === 'etkinlikler' ? (
           <EtkinlikSecimi />
         ) : ekran.ekran === 'etkinlik' ? (
-          <TurEtkinlikEkrani sablon={ekran.sablon} zorluk={ekran.zorluk} tohum={ekran.tohum} />
+          <TurEtkinlikEkrani sablon={ekran.sablon} zorluk={ekran.zorluk} tohum={ekran.tohum} geri={ekran.geri} />
         ) : ekran.ekran === 'kagit' ? (
           <KagitOnizleme istek={ekran.istek} />
         ) : (
@@ -58,6 +64,7 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
                   key={ekran.anahtar}
                   glif={glifler.find((g) => glifAnahtari(g) === ekran.anahtar) ?? glifler[0]}
                   sekme={ekran.sekme}
+                  geri={ekran.geri}
                 />
               ) : ekran.ekran === 'izleme' ? (
                 <IzlemeEkrani
@@ -75,36 +82,6 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
         )}
       </div>
     </div>
-  );
-}
-
-function Giris() {
-  return (
-    <main aria-label="Okuma Yazma" style={{ ...ekranStili, justifyContent: 'space-between' }}>
-      <Baslik baslik="Okuma Yazma" alt="Geliştirme önizlemesi. Yazılış verisi ve sözcükler öğretmen teyidi bekliyor; ses henüz yok." />
-      <div style={{ display: 'flex', gap: 'var(--size-gap)', flexWrap: 'wrap', justifyContent: 'center' }}>
-        <BigButton
-          label="Harf ve rakam yazılışı"
-          size="primary"
-          onPress={() => turEkraniAc({ ekran: 'yazilisSecimi' })}
-        >
-          <span style={{ padding: '0 0.6em' }}>Harf ve rakam yazılışı</span>
-        </BigButton>
-        <BigButton label="Etkinlikler" size="primary" onPress={() => turEkraniAc({ ekran: 'etkinlikler' })}>
-          <span style={{ padding: '0 0.6em' }}>Etkinlikler</span>
-        </BigButton>
-        <BigButton label="Kâğıtlar" size="primary" onPress={() => turEkraniAc({ ekran: 'kagitlar' })}>
-          <span style={{ padding: '0 0.6em' }}>Kâğıtlar</span>
-        </BigButton>
-        <BigButton
-          label="Görseller"
-          size="primary"
-          onPress={() => turEkraniAc({ ekran: 'gorseller', grup: 1, gri: false })}
-        >
-          <span style={{ padding: '0 0.6em' }}>Görseller</span>
-        </BigButton>
-      </div>
-    </main>
   );
 }
 
@@ -190,7 +167,7 @@ function YazilisSecimi({ glifler, sekme }: { glifler: readonly TurHamleGlifi[]; 
   );
 }
 
-function YazilisGosterimi({ glif, sekme }: { glif: TurHamleGlifi; sekme: number }) {
+function YazilisGosterimi({ glif, sekme, geri }: { glif: TurHamleGlifi; sekme: number; geri?: TurEkraniDurumu }) {
   const hareketAzalt = useHareketAzalt();
   const n = glif.hamleler.length;
   // Azaltılmış harekette animasyon yok: adım kipi, ilk hamle tam çizili.
@@ -287,7 +264,7 @@ function YazilisGosterimi({ glif, sekme }: { glif: TurHamleGlifi; sekme: number 
         </BigButton>
         <BigButton
           label="Parmakla izle"
-          onPress={() => turEkraniAc({ ekran: 'izleme', anahtar: glifAnahtari(glif), sekme })}
+          onPress={() => turEkraniAc({ ekran: 'izleme', anahtar: glifAnahtari(glif), sekme, ...(geri ? { geri } : {}) })}
         >
           <span>İzle</span>
         </BigButton>
