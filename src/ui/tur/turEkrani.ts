@@ -87,6 +87,9 @@ export function useTurEkrani(): TurEkrani | null {
 export function turAcilisEkrani(arama: string): TurEkrani | null {
   const p = new URLSearchParams(arama);
   if (p.get('ders') !== 'tur') return null;
+  // Öğretmen ekranları doğrudan (yer imi, e2e): `?ders=tur&ekran=akis`.
+  const ogretmenEkrani = p.get('ekran');
+  if (ogretmenEkrani === 'akis' || ogretmenEkrani === 'harfler') return { ekran: ogretmenEkrani };
   const izle = p.get('izle');
   if (izle !== null) return /^(kucuk|buyuk|rakam):.$/u.test(izle) ? { ekran: 'izleme', anahtar: izle, sekme: 0 } : { ekran: 'giris' };
   const sablon = p.get('etkinlik');

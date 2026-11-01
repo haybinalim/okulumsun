@@ -34,8 +34,22 @@ export const kucukDugme: CSSProperties = {
   fontSize: 'var(--text-adult)',
 };
 
+/** Yetişkin listelerinde sık düğme: tahtada ~61 px, tablette en az 44 px. */
+export const sikDugme: CSSProperties = {
+  minWidth: 'max(44px, calc(var(--size-tap-min) * 0.6))',
+  minHeight: 'max(44px, calc(var(--size-tap-min) * 0.6))',
+  padding: '0 0.35em',
+  fontSize: 'var(--text-adult)',
+  whiteSpace: 'nowrap',
+  flexShrink: 0,
+};
+
+/** Harf düğmesi (öğretilen harfler): bir grubun 12 glifi 1080 px tahtada tek satıra sığar. */
+const harfDugmesi: CSSProperties = { ...sikDugme, minWidth: 'max(44px, calc(var(--size-tap-min) * 0.55))', padding: 0 };
+
 const aracDugmesi: CSSProperties = {
-  minHeight: 'calc(var(--size-tap-min) * 0.8)',
+  minHeight: 'max(44px, calc(var(--size-tap-min) * 0.8))',
+  whiteSpace: 'nowrap',
   padding: '0 0.7em',
   fontSize: 'var(--text-adult)',
 };
@@ -209,7 +223,7 @@ export function KumeDuzenleyici() {
             aria-label="Bugünkü ses"
             value={enYeni}
             onChange={(e) => turKumeYaz(resmiKume(e.target.value, false))}
-            style={{ fontSize: 'var(--text-adult)', minHeight: 'calc(var(--size-tap-min) * 0.6)' }}
+            style={{ fontSize: 'var(--text-adult)', minHeight: 'max(44px, calc(var(--size-tap-min) * 0.6))', minWidth: '3.2em' }}
           >
             {OGRETIM_SIRASI.map((x) => (
               <option key={x} value={x}>
@@ -221,7 +235,7 @@ export function KumeDuzenleyici() {
         <BigButton
           label="Büyük harflere geçtik"
           data-yetiskin=""
-          style={kucukDugme}
+          style={sikDugme}
           onPress={() => turKumeYaz(resmiKume(enYeni, true))}
         >
           <span>Büyük harflere geçtik</span>
@@ -231,7 +245,7 @@ export function KumeDuzenleyici() {
         </span>
       </div>
       {HARF_GRUPLARI.map((grup, gi) => (
-        <div key={gi} role="group" aria-label={`${gi + 1}. grup`} style={{ display: 'flex', gap: '0.25em', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <div key={gi} role="group" aria-label={`${gi + 1}. grup`} style={{ display: 'flex', gap: '0.2em', flexWrap: 'wrap', justifyContent: 'center' }}>
           {grup.flatMap((x) =>
             [x, trBuyuk(x)].map((glif) => (
               <BigButton
@@ -240,7 +254,7 @@ export function KumeDuzenleyici() {
                 data-yetiskin=""
                 ariaPressed={kume.has(glif)}
                 variant={kume.has(glif) ? 'accent' : 'solid'}
-                style={kucukDugme}
+                style={harfDugmesi}
                 onPress={() => degistir(glif, x)}
               >
                 <span data-glif={glif}>{glif}</span>
@@ -255,10 +269,10 @@ export function KumeDuzenleyici() {
 
 export function HarfDuzenleme() {
   return (
-    <main data-yetiskin="" aria-label="Öğretilen harfler" style={{ ...ekranStili, justifyContent: 'flex-start' }}>
+    <main data-yetiskin="" aria-label="Öğretilen harfler" style={{ ...ekranStili, justifyContent: 'flex-start', gap: 'var(--size-gap-tight)' }}>
       <Baslik
         baslik="Öğretilen harfler"
-        alt="Etkinlik ve setler yalnız bu harflerle kurulur. Seçim bu cihazda sınıf ayarı olarak kalır; öğrenci bilgisi yoktur."
+        alt="Etkinlikler yalnız bu harflerle kurulur. Seçim bu cihazda sınıf ayarıdır; öğrenci bilgisi yok."
       />
       <KumeDuzenleyici />
     </main>
@@ -283,7 +297,7 @@ function basamakEylemleri(b: AkisBasamagi, ses: string): { ad: string; ekran: Tu
   if (h.tur === 'yazilis') return [{ ad: `Aç (${ses})`, ekran: { ekran: 'yazilis', anahtar: `kucuk:${ses}`, sekme: 0, geri } }];
   if (h.tur === 'kagit')
     return h.kagitlar.map((k) => ({
-      ad: k === 'harf' ? `Kâğıt (${ses})` : k === 'dikte' ? 'Dikte sayfası' : 'Gözlem formu',
+      ad: k === 'harf' ? `Kâğıt (${ses})` : k === 'dikte' ? 'Dikte' : 'Gözlem',
       ekran: {
         ekran: 'kagit',
         istek: (k === 'harf' ? { tur: 'harf', bicim: 'kucuk', glif: ses } : k === 'dikte' ? { tur: 'dikte' } : { tur: 'gozlem' }) as TurKagitIstegi,
@@ -305,7 +319,7 @@ export function GununAkisi() {
   const programda = akisSirasiKodla(sira) === PROGRAM_SIRASI;
   return (
     <main data-yetiskin="" aria-label="Günün akışı" style={{ ...ekranStili, justifyContent: 'flex-start', gap: 'var(--size-gap-tight)' }}>
-      <Baslik baslik={`Günün akışı: ${ses}`} alt="Programın ses öğretimi basamakları. Sırayı oklarla değiştirebilirsiniz." />
+      <Baslik baslik={`Günün akışı: ${ses}`} alt="Programın basamakları; sırayı oklarla değiştirin." />
       <ol
         aria-label="Basamaklar"
         data-akis-sirasi={akisSirasiKodla(sira)}
@@ -317,14 +331,17 @@ export function GununAkisi() {
             <li
               key={b.kod}
               data-basamak={b.kod}
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5em', fontSize: 'var(--text-adult)', minWidth: 0 }}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.4em', fontSize: 'var(--text-adult)', minWidth: 0 }}
             >
               <span style={{ flex: '0 0 1.6em', textAlign: 'right' }}>{i + 1}.</span>
-              <span style={{ flex: '1 1 auto', minWidth: 0 }}>
+              <span
+                title={b.aciklama}
+                style={{ flex: '1 1 auto', minWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+              >
                 <strong>{b.ad}</strong> <span style={{ color: 'var(--color-ink-soft, #6B6B6B)' }}>· {b.aciklama}</span>
               </span>
               {b.hedef.tur === 'dalgaC' && (
-                <span data-dalga-c="" style={{ padding: '0.1em 0.5em', border: '2px dashed currentColor', borderRadius: 8 }}>
+                <span data-dalga-c="" style={{ padding: '0.1em 0.5em', border: '2px dashed currentColor', borderRadius: 8, whiteSpace: 'nowrap' }}>
                   Dalga C
                 </span>
               )}
@@ -333,7 +350,7 @@ export function GununAkisi() {
                   key={e.ad}
                   label={`${b.ad}: ${e.ad}`}
                   data-yetiskin=""
-                  style={{ ...kucukDugme, minHeight: 'calc(var(--size-tap-min) * 0.6)' }}
+                  style={sikDugme}
                   onPress={() => turEkraniAc(e.ekran)}
                 >
                   <span>{e.ad}</span>
@@ -344,7 +361,7 @@ export function GununAkisi() {
                 data-yetiskin=""
                 disabled={i === 0}
                 onBlockedPress={() => undefined}
-                style={{ ...kucukDugme, minWidth: 'calc(var(--size-tap-min) * 0.6)', minHeight: 'calc(var(--size-tap-min) * 0.6)' }}
+                style={sikDugme}
                 onPress={() => kaydet(basamakTasi(sira, i, -1))}
               >
                 <span aria-hidden="true">▲</span>
@@ -354,7 +371,7 @@ export function GununAkisi() {
                 data-yetiskin=""
                 disabled={i === sira.length - 1}
                 onBlockedPress={() => undefined}
-                style={{ ...kucukDugme, minWidth: 'calc(var(--size-tap-min) * 0.6)', minHeight: 'calc(var(--size-tap-min) * 0.6)' }}
+                style={sikDugme}
                 onPress={() => kaydet(basamakTasi(sira, i, 1))}
               >
                 <span aria-hidden="true">▼</span>
@@ -367,15 +384,12 @@ export function GununAkisi() {
         <BigButton
           label="Programdaki sıraya dön"
           data-yetiskin=""
-          style={kucukDugme}
+          style={sikDugme}
           onPress={() => kaydet(akisSirasiCoz(PROGRAM_SIRASI)!)}
         >
           <span>Programdaki sıraya dön</span>
         </BigButton>
       )}
-      <p style={{ margin: 0, fontSize: 'var(--text-adult)', color: 'var(--color-ink-soft, #6B6B6B)', textAlign: 'center' }}>
-        Etkinlikler yalnız öğretilen harflerle kurulur.
-      </p>
     </main>
   );
 }
