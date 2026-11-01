@@ -150,7 +150,7 @@ export function BugunkuSes() {
 /** Öğretmen ana ekranı (Okuma Yazma). */
 export function OgretmenGiris({ ekAraclar }: { ekAraclar?: ReactNode }) {
   return (
-    <main data-yetiskin="" aria-label="Okuma Yazma" style={{ ...ekranStili, justifyContent: 'space-between' }}>
+    <main data-yetiskin="" aria-label="Okuma Yazma" style={{ ...ekranStili, gap: 'var(--size-gap-tight)', justifyContent: 'space-between' }}>
       <Baslik baslik="Okuma Yazma" alt="Geliştirme önizlemesi. Yazılış verisi ve sözcükler öğretmen teyidi bekliyor; ses henüz yok." />
       <DersSecimi secili="tur" />
       <BugunkuSes />
@@ -159,6 +159,8 @@ export function OgretmenGiris({ ekAraclar }: { ekAraclar?: ReactNode }) {
         style={{ display: 'flex', gap: 'var(--size-gap-tight)', flexWrap: 'wrap', justifyContent: 'center', maxWidth: '100%' }}
       >
         <Arac ad="Günün akışı" onPress={() => turEkraniAc({ ekran: 'akis' })} vurgu />
+        <Arac ad="Haftalık ses planı" onPress={() => turEkraniAc({ ekran: 'sesPlani' })} />
+        <Arac ad="Set hazırla" onPress={() => turEkraniAc({ ekran: 'setHazirla' })} />
         {ekAraclar}
         <Arac ad="Etkinlikler" onPress={() => turEkraniAc({ ekran: 'etkinlikler' })} />
         <Arac ad="Harf ve rakam yazılışı" onPress={() => turEkraniAc({ ekran: 'yazilisSecimi' })} />
@@ -169,9 +171,12 @@ export function OgretmenGiris({ ekAraclar }: { ekAraclar?: ReactNode }) {
   );
 }
 
+/** Araç düğmeleri bir boy küçük: 8 araç tahta 1080×810'da da ekrana sığar (yetişkin yüzeyi, en az 44 px). */
+const aracListeDugmesi: CSSProperties = { ...aracDugmesi, minHeight: 'max(44px, calc(var(--size-tap-min) * 0.7))' };
+
 export function Arac({ ad, onPress, vurgu = false }: { ad: string; onPress: () => void; vurgu?: boolean }) {
   return (
-    <BigButton label={ad} data-yetiskin="" variant={vurgu ? 'accent' : 'solid'} style={aracDugmesi} onPress={onPress}>
+    <BigButton label={ad} data-yetiskin="" variant={vurgu ? 'accent' : 'solid'} style={aracListeDugmesi} onPress={onPress}>
       <span>{ad}</span>
     </BigButton>
   );

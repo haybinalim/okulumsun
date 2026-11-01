@@ -24,6 +24,7 @@ import { TurEtkinlikEkrani } from './TurEtkinlikEkrani';
 import { EtkinlikSecimi } from './TurEtkinlikSecimi';
 import { IzlemeEkrani } from './IzlemeEkrani';
 import { GununAkisi, HarfDuzenleme, OgretmenGiris } from './TurOgretmen';
+import { SesPlani, SetAkisi, SetHazirla } from './TurPlanSet';
 
 export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; profil: DeviceProfile }) {
   const geri = () => {
@@ -31,6 +32,7 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
     else if (ekran.ekran === 'izleme')
       turEkraniAc({ ekran: 'yazilis', anahtar: ekran.anahtar, sekme: ekran.sekme, ...(ekran.geri ? { geri: ekran.geri } : {}) });
     else if (ekran.ekran === 'kagit') turEkraniAc(ekran.geri);
+    else if (ekran.ekran === 'set') turEkraniAc(ekran.geri);
     else if (ekran.ekran === 'kagitSecimi') turEkraniAc({ ekran: 'kagitlar' });
     else if (ekran.ekran === 'etkinlik') turEkraniAc(ekran.geri ?? { ekran: 'etkinlikler' });
     else if (ekran.ekran === 'giris') turEkraniKapat();
@@ -46,6 +48,12 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
           <HarfDuzenleme />
         ) : ekran.ekran === 'akis' ? (
           <GununAkisi />
+        ) : ekran.ekran === 'sesPlani' ? (
+          <SesPlani />
+        ) : ekran.ekran === 'setHazirla' ? (
+          <SetHazirla />
+        ) : ekran.ekran === 'set' ? (
+          <SetAkisi adimlar={ekran.adimlar} sira={ekran.sira} geri={ekran.geri} />
         ) : ekran.ekran === 'kagitlar' ? (
           <KagitMenusu />
         ) : ekran.ekran === 'gorseller' ? (
