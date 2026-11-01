@@ -465,7 +465,7 @@ function SesYok({ soru }: { soru: TurSoru }) {
       <span style={{ background: 'var(--color-retry-soft)', borderRadius: '0.4em', padding: '0.1em 0.5em' }}>Ses yok</span>
       {soru.uyaran.tur === 'ses' && (
         <details data-yetiskin="" style={{ background: 'var(--color-surface)', borderRadius: '0.4em', padding: '0.1em 0.5em' }}>
-          <summary>Öğretmen: {(soru.dinlenen ?? soru.sozcukler).length > 1 ? 'sözcükler' : 'sözcük'}</summary>
+          <summary style={{ minHeight: 'max(44px, 1.6em)', display: 'flex', alignItems: 'center', cursor: 'pointer' }}>Öğretmen: {(soru.dinlenen ?? soru.sozcukler).length > 1 ? 'sözcükler' : 'sözcük'}</summary>
           <span data-ogretmen-sozcukleri="">{(soru.dinlenen ?? soru.sozcukler).join(', ')}</span>
         </details>
       )}

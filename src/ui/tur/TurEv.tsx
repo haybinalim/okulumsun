@@ -121,7 +121,7 @@ export function TurEveGonder({ duzey, tohum }: { duzey: SetDuzeyi; tohum: number
   };
   return (
     <main data-yetiskin="" aria-label="Eve gönder" style={{ ...ekranStili, flexDirection: 'row', alignItems: 'stretch', gap: 'var(--size-gap)' }}>
-      <section style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', gap: '0.5em', alignItems: 'center', justifyContent: 'center', maxWidth: '45%' }}>
+      <section style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', gap: '0.5em', alignItems: 'center', justifyContent: 'center', maxWidth: '50%' }}>
         <h1 style={{ margin: 0, fontSize: 'calc(var(--text-ui) * 1.1)' }}>Eve gönder</h1>
         <svg
           role="img"
@@ -129,7 +129,7 @@ export function TurEveGonder({ duzey, tohum }: { duzey: SetDuzeyi; tohum: number
           data-testid="tur-eve-qr"
           viewBox={`0 0 ${qr.boyut} ${qr.boyut}`}
           shapeRendering="crispEdges"
-          style={{ width: 'min(36vw, 46vh, 420px)', aspectRatio: '1', background: '#FFFFFF' }}
+          style={{ width: 'min(26vw, 28vh, 420px)', aspectRatio: '1', flexShrink: 0, background: '#FFFFFF' }}
         >
           <path d={qr.yol} fill="#000000" />
         </svg>
@@ -155,8 +155,11 @@ export function TurEveGonder({ duzey, tohum }: { duzey: SetDuzeyi; tohum: number
           {kopya === 'kopyalandi' ? 'Bağlantı kopyalandı.' : kopya === 'elle' ? 'Kopyalanamadı: bağlantı seçili, elle kopyalayın.' : ''}
         </p>
       </section>
-      <section data-veli-karti-baski="" style={{ flex: '1 1 auto', minWidth: 0, overflowY: 'auto', display: 'flex', alignItems: 'center' }}>
-        <VeliKartiGovdesi kucuk />
+      <section data-veli-karti-baski="" style={{ flex: '1 1 auto', minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+        {/* Kart kısa ise ortada, uzunsa üstten kayar (ortalama üstü kırpmasın). */}
+        <div style={{ margin: 'auto 0' }}>
+          <VeliKartiGovdesi kucuk />
+        </div>
       </section>
       <VeliKartiBaskisi />
     </main>
@@ -207,9 +210,11 @@ const TEMELYAZI = UCUNCU_TARAF_VARLIKLAR.find((v) => v.ad === 'TemelYazi');
 
 export function TurKaynaklar() {
   return (
-    <main data-yetiskin="" aria-label="Kaynaklar (Okuma Yazma)" style={{ ...ekranStili, alignItems: 'stretch', overflowY: 'auto' }}>
+    <main data-yetiskin="" aria-label="Kaynaklar (Okuma Yazma)" style={{ ...ekranStili, alignItems: 'stretch' }}>
       <Baslik baslik="Kaynaklar: Okuma Yazma" />
-      <div style={{ fontSize: 'var(--text-adult)', lineHeight: 1.45, maxWidth: '44em', margin: '0 auto' }}>
+      {/* Başlık sabit, metin kayar. */}
+      <div data-kaynaklar-govde="" style={{ flex: '1 1 auto', minHeight: 0, overflowY: 'auto' }}>
+        <div style={{ fontSize: 'var(--text-adult)', lineHeight: 1.45, maxWidth: '44em', margin: '0 auto' }}>
         <section aria-label="Program" data-kaynak="program">
           <h2 style={{ fontSize: '1.1em', margin: '0.4em 0 0.2em' }}>Öğretim programı</h2>
           <p style={{ margin: 0 }}>
@@ -223,8 +228,8 @@ export function TurKaynaklar() {
         <section aria-label="Yazı tipi" data-kaynak="temelyazi">
           <h2 style={{ fontSize: '1.1em', margin: '0.6em 0 0.2em' }}>Yazı tipi</h2>
           <p style={{ margin: 0 }}>
-            Çocuğa dönük yazılar ve kâğıtlar MEB TemelYazi (dik temel harf) ile yazılır
-            {TEMELYAZI ? ` (${TEMELYAZI.lisans}, ${TEMELYAZI.sahip})` : ''}. Yalnız gereken harf alt kümesi pakettedir; tam
+            Çocuğa dönük yazılar ve kâğıtlar MEB TemelYazi (dik temel harf) ile yazılır.
+            {TEMELYAZI ? ` Sahibi: ${TEMELYAZI.sahip}; lisans: ${TEMELYAZI.lisans}.` : ''} Yalnız gereken harf alt kümesi pakettedir; tam
             yazı tipi dağıtılmaz. Yazılış hamleleri (orta çizgi) uygulamanın kendi çizimidir.
           </p>
         </section>
@@ -243,6 +248,7 @@ export function TurKaynaklar() {
             üretildiğinde kaynağı burada yazacak; uygulama çalışırken hiçbir ses servisine bağlanmaz.
           </p>
         </section>
+        </div>
       </div>
     </main>
   );
