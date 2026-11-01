@@ -76,6 +76,8 @@ describe('görsel verisi', () => {
     // Adım 69: şablon sözcük havuzu ve klip manifesti çekirdekte.
     boyutlar.set('icerik/sozcukler.json', 1);
     boyutlar.set('ses/klipler.json', 1);
+    // Adım 71: veli kartı çekirdekte.
+    boyutlar.set('veli-karti.json', 1);
     const o = veriyiOlc(boyutlar, manifest);
     expect(o.listesiz).toEqual([]);
     expect(o.eksik).toEqual([]);

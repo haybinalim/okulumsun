@@ -27,6 +27,10 @@ manifesti. `public/` altında değildir; yalnız `VITE_DERS_TUR=1` derlemesinde 
 - `ses/klipler.json` (Adım 69): şablonların isteyebileceği bütün klip kimlikleri ve metinleri (yönerge, geri bildirim,
   sözcük, sözcükten gelen hece). **Elle düzenlenmez:** `npm run tur:klip` üretir. Ses dosyası yok (Adım 67): her klip
   `durum: "eksik"`, arayüz sessiz çalışır ve "Ses yok" gösterir; `--yayin` eksik klipte kırmızıdır. Tek ünsüz klibi yok (D-11).
+- `veli-karti.json` (Adım 71): eve link ekranında ve eve giden bağlantının açılışında veliye gösterilen kısa metin
+  (ses esaslı çalışma, harf adı yerine ses, ünsüzü tek başına söyletmeme, kalem tutuşu, sol el, kısa ve süresiz).
+  Katı ayrıştırıcı `src/content/dersler/tur/veliKarti.ts` (altı madde birer kez). Taslak: `teyit: { durum: "bekliyor" }`,
+  arayüz "Taslak: öğretmen onayı bekliyor" yazar; `npm run validate -- --yayin` onaysız kartı hata sayar.
 - Boyut: `npm run boyut:ders` (`docs/ders-veri-butcesi.json`; çekirdek ≤ 1 MB, grup başına ≤ 6 MB). Yayına kadar yalnız rapor.
 - Kurallar: [`docs/mufredat-kisitlari-turkce.md`](../../docs/mufredat-kisitlari-turkce.md). Doğrulama `npm run validate`.
 - İçerik özgündür (tüm hakları saklı). Öğretmen teyidi bekleyen taslaklar (öğretmen formları, açık sorular, hece

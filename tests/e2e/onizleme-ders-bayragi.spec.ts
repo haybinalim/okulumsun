@@ -22,3 +22,16 @@ test('üretim derlemesinde ?ders=tur Türkçe ekranı açmaz, tur/ verisi istenm
   expect(await page.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith('okulumsun.tur')))).toEqual([]);
   expect(turIstekleri).toEqual([]);
 });
+
+test('üretim derlemesinde Türkçe eve link (?ders=tur&ev=…) Türkçe ekranı açmaz, tur/ verisi istenmez', async ({ page }) => {
+  const turIstekleri: string[] = [];
+  page.on('request', (r) => {
+    if (/\/tur\//.test(new URL(r.url()).pathname)) turIstekleri.push(r.url());
+  });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('?ders=tur&ev=s3&tur=1kv');
+  await page.getByRole('button', { name: 'Başla' }).click();
+  await expect(page.getByRole('button', { name: 'Kendi başıma çalışacağım.' })).toBeVisible();
+  await expect(page.locator('[data-ev-acilisi]')).toHaveCount(0);
+  expect(turIstekleri).toEqual([]);
+});

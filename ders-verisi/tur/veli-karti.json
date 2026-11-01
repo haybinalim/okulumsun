@@ -1,0 +1,38 @@
+{
+  "programSurumu": "tymm-turkce-2026-09-02",
+  "teyit": { "durum": "bekliyor", "not": "Taslak metin; öğretmen onayı bekliyor (Adım 71 kabulü: veli kartı metni öğretmen onaylı)." },
+  "baslik": "Evde okuma yazmaya destek",
+  "maddeler": [
+    {
+      "kod": "ses",
+      "baslik": "Seslerle öğreniyoruz",
+      "metin": "Okuma yazmayı harflerin sesleriyle öğreniyoruz. Çocuğunuz önce sesi duyar ve hisseder, sonra harfini tanır ve yazar; hecelerden sözcüklere ulaşır."
+    },
+    {
+      "kod": "harf-adi",
+      "baslik": "Harfin adını değil, sesini kullanın",
+      "metin": "Harfleri \"be, ce, me\" gibi adlarıyla anmayın. Sesi sözcük içinde sorun: \"Anne sözcüğü hangi sesle başlıyor?\""
+    },
+    {
+      "kod": "unsuz",
+      "baslik": "Ünsüzü tek başına söyletmeyin",
+      "metin": "\"m\", \"t\" gibi sesleri tek başına söyletmek yerine hece ve sözcük içinde birlikte söyleyin: \"am, ma, anne\". Ünlüler (a, e, ı, i, o, ö, u, ü) tek başına söylenebilir."
+    },
+    {
+      "kod": "kalem",
+      "baslik": "Kalem tutuşu",
+      "metin": "Kalem baş ve işaret parmağıyla tutulur, orta parmak destekler; sıkmadan, ucundan sağ elde 1,5-2 cm, sol elde 2-2,5 cm yukarıdan. Kâğıt, yazan kolun açısına göre biraz eğik durur."
+    },
+    {
+      "kod": "sol-el",
+      "baslik": "Sol el",
+      "metin": "Sol elini kullanan çocuğu sağ ele zorlamayın; baskın eliyle yazsın."
+    },
+    {
+      "kod": "sure",
+      "baslik": "Kısa ve keyifli",
+      "metin": "Günde birkaç dakika yeterli. Hız ve süre önemli değil; önemli olan anlayarak öğrenmesi."
+    }
+  ],
+  "gizlilik": "Bu bağlantıda ad, sınıf, okul ya da cevap yoktur; uygulama hiçbir şey saklamaz ve göndermez."
+}

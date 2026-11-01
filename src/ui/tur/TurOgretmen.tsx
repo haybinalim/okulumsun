@@ -166,6 +166,7 @@ export function OgretmenGiris({ ekAraclar }: { ekAraclar?: ReactNode }) {
         <Arac ad="Harf ve rakam yazılışı" onPress={() => turEkraniAc({ ekran: 'yazilisSecimi' })} />
         <Arac ad="Kâğıtlar" onPress={() => turEkraniAc({ ekran: 'kagitlar' })} />
         <Arac ad="Görseller" onPress={() => turEkraniAc({ ekran: 'gorseller', grup: 1, gri: false })} />
+        <Arac ad="Kaynaklar" onPress={() => turEkraniAc({ ekran: 'kaynaklar' })} />
       </nav>
     </main>
   );
