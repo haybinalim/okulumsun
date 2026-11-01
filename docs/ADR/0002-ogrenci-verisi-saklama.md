@@ -42,3 +42,24 @@ Orta: kabul sonrası saklanan verinin silinmesi için göç ve veli bildirimi ge
 - [ ] Veli onay akışı maketi pilotta denendi (gözlem formu V1–V3).
 - [ ] Tahta modunda sıfır yazım e2e ile kanıtlı.
 - [ ] Kullanıcı onayı.
+
+## Ek 1 — Okuma Yazma sınıf düzeyi ayarı (K-7, 2026-11-01)
+
+- **Durum:** Kabul (Okuma Yazma Ana Plan v1 K-7; kullanıcı onayı 2026-10-30 "onaylıyorum başla"). Bu ek Seçenek A'yı
+  gevşetmez: öğrenci verisi her modda sıfır kalır.
+- **Ne:** Tek `localStorage` anahtarı `okulumsun.tur.sinif` (`DERS_TUR_SINIF_ANAHTARI`). Değer küçük, katı biçimli bir
+  JSON'dur: `{"v":1,"kume":"<öğretilen harf kümesi kodu>","akis":"<günün akışı sırası>"}`. Küme kodu, eve link ve öğretmen
+  bağlantısındaki `?tur=` koduyla aynıdır (base36 bit maskesi; ADR-0010 gibi). Ad, cevap, ilerleme, süre, "kaldığı harf"
+  veya cihaz kimliği yoktur; bozuk ya da fazladan alanlı değer yok sayılır.
+- **Neden:** Öğretmen iş yükü (plan Z19, R10): her derste "bugünkü ses"i ve akış sırasını yeniden seçmek zahmetli. Değer
+  sınıfın öğretim durumudur; bir çocuğa bağlanamaz (aynı tahtayı kullanan bütün sınıf için aynıdır).
+- **Sınırlar:**
+  - Yalnız `VITE_DERS_TUR=1` derlemesinde vardır. Üretim derlemesinde yazan kod yoktur; bu yüzden üretim izin listesine
+    (`IZINLI_ANAHTARLAR`, `/gizlilik` sayfası) girmez, ayrı `BAYRAKLI_IZINLI_ANAHTARLAR` listesindedir. Okuma Yazma genel
+    yayına çıkarken `/gizlilik` sayfasına eklenir.
+  - Yalnız öğretmen bir ayarı değiştirince yazılır; açılışta okunur. Adresteki `?tur=` önce gelir.
+  - Eve link (`?ev=`) ile açılan cihazda (veli/çocuk) ne okunur ne yazılır.
+  - `npm run gizlilik:tara` anahtarın yalnız `src/ui/tur/sinifAyariDepo.ts` içinde yazılmasına izin verir; e2e
+    (`tur-ogretmen.spec.ts`) tarayıcıda yalnız izinli anahtarların kaldığını ve değerin yalnız `v` + `kume` (+ `akis`)
+    taşıdığını denetler.
+- **Geri dönüş:** Anahtar silinince varsayılana (1. grup) dönülür; göç gerekmez.

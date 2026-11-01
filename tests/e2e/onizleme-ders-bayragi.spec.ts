@@ -15,5 +15,10 @@ test('üretim derlemesinde ?ders=tur Türkçe ekranı açmaz, tur/ verisi istenm
   await page.getByRole('button', { name: 'Başla' }).click();
   await expect(page.getByRole('button', { name: 'Kendi başıma çalışacağım.' })).toBeVisible();
   await expect(page.getByRole('main', { name: 'Okuma Yazma' })).toHaveCount(0);
+  // Adım 71: tahta ana ekranında ders seçimi (Matematik / Okuma Yazma) yalnız bayraklı derlemede.
+  await page.getByRole('button', { name: 'Tahtada birlikte çalışalım.' }).click();
+  await expect(page.getByRole('button', { name: 'Öğretmen' })).toBeVisible();
+  await expect(page.locator('[data-ders-secimi]')).toHaveCount(0);
+  expect(await page.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith('okulumsun.tur')))).toEqual([]);
   expect(turIstekleri).toEqual([]);
 });
