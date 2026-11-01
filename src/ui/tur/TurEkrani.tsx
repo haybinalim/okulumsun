@@ -22,10 +22,12 @@ import { Baslik, ekranStili, SEKME_SAYISI } from './turOrtak';
 import { GorselKatalogu } from './TurGorselEkrani';
 import { TurEtkinlikEkrani } from './TurEtkinlikEkrani';
 import { EtkinlikSecimi } from './TurEtkinlikSecimi';
+import { IzlemeEkrani } from './IzlemeEkrani';
 
 export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; profil: DeviceProfile }) {
   const geri = () => {
     if (ekran.ekran === 'yazilis') turEkraniAc({ ekran: 'yazilisSecimi', sekme: ekran.sekme });
+    else if (ekran.ekran === 'izleme') turEkraniAc({ ekran: 'yazilis', anahtar: ekran.anahtar, sekme: ekran.sekme });
     else if (ekran.ekran === 'kagit') turEkraniAc(ekran.geri);
     else if (ekran.ekran === 'kagitSecimi') turEkraniAc({ ekran: 'kagitlar' });
     else if (ekran.ekran === 'etkinlik') turEkraniAc({ ekran: 'etkinlikler' });
@@ -55,6 +57,13 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
                 <YazilisGosterimi
                   key={ekran.anahtar}
                   glif={glifler.find((g) => glifAnahtari(g) === ekran.anahtar) ?? glifler[0]}
+                  sekme={ekran.sekme}
+                />
+              ) : ekran.ekran === 'izleme' ? (
+                <IzlemeEkrani
+                  key={ekran.anahtar}
+                  glif={glifler.find((g) => glifAnahtari(g) === ekran.anahtar) ?? glifler[0]}
+                  profil={profil}
                 />
               ) : ekran.ekran === 'kagitSecimi' ? (
                 <KagitSecimi glifler={glifler} durum={ekran} />
@@ -181,7 +190,7 @@ function YazilisSecimi({ glifler, sekme }: { glifler: readonly TurHamleGlifi[]; 
   );
 }
 
-function YazilisGosterimi({ glif }: { glif: TurHamleGlifi }) {
+function YazilisGosterimi({ glif, sekme }: { glif: TurHamleGlifi; sekme: number }) {
   const hareketAzalt = useHareketAzalt();
   const n = glif.hamleler.length;
   // Azaltılmış harekette animasyon yok: adım kipi, ilk hamle tam çizili.
@@ -275,6 +284,12 @@ function YazilisGosterimi({ glif }: { glif: TurHamleGlifi }) {
           onPress={() => setKesikli((k) => !k)}
         >
           <span>Kesikli</span>
+        </BigButton>
+        <BigButton
+          label="Parmakla izle"
+          onPress={() => turEkraniAc({ ekran: 'izleme', anahtar: glifAnahtari(glif), sekme })}
+        >
+          <span>İzle</span>
         </BigButton>
       </div>
     </main>
