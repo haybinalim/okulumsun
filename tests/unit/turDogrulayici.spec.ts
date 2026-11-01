@@ -89,10 +89,14 @@ describe('tuzaklar — her kural kırmızı', () => {
     ).toHaveLength(1);
     expect(turKodunuTara([{ yol: 'src/content/dersler/tur/y.ts', icerik: 'const okumaHizi = 0;' }])).toHaveLength(1);
     const kok = path.resolve(__dirname, '../../src/content/dersler/tur');
-    const dosyalar = readdirSync(kok).map((d) => ({
-      yol: `src/content/dersler/tur/${d}`,
-      icerik: readFileSync(path.join(kok, d), 'utf8'),
-    }));
+    // Alt klasörler dahil (şablonlar, Adım 69).
+    const dosyalar = (readdirSync(kok, { recursive: true }) as string[])
+      .filter((d) => d.endsWith('.ts'))
+      .map((d) => ({
+        yol: `src/content/dersler/tur/${d}`,
+        icerik: readFileSync(path.join(kok, d), 'utf8'),
+      }));
+    expect(dosyalar.some((d) => d.yol.includes('sablonlar/'))).toBe(true);
     expect(turKodunuTara(dosyalar)).toEqual([]);
   });
 

@@ -421,7 +421,7 @@ function Uyaran({ soru, durum, yuvalar }: { soru: TurSoru; durum: Durum; yuvalar
           {Array.from({ length: u.adet }, (_, i) => (
             <svg key={i} viewBox="0 0 24 24" aria-hidden="true" style={{ height: '100%', aspectRatio: '1 / 1' }}>
               <path
-                d="M4 9 h4 l5 -4 v14 l-5 -4 h-4 Z M16 9 q2 3 0 6 M18.5 6.5 q4.5 5.5 0 11"
+                d="M4 9 H8 L13 5 V19 L8 15 H4 Z M16 9 Q18 12 16 15 M18.5 6.5 Q23 12 18.5 17.5"
                 fill="none"
                 stroke="var(--color-ink)"
                 strokeWidth={1.8}
@@ -509,8 +509,9 @@ function Yuva({ metin, adet = 1, hece = false, bosluklu = false }: { metin: stri
       style={
         bosluklu
           ? {
-              display: 'inline-grid',
-              placeItems: 'center',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               width: '0.8em',
               height: '1em',
               margin: '0 0.06em',
