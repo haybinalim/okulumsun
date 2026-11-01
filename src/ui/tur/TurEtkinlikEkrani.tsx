@@ -1,5 +1,5 @@
 /**
- * TÜRKÇE ETKİNLİK EKRANI (Okuma Yazma Adım 69: T-02…T-07, görselsiz) — YALNIZ `VITE_DERS_TUR=1` derlemesinde.
+ * TÜRKÇE ETKİNLİK EKRANI (Okuma Yazma Adım 69–70: T-01…T-08) — YALNIZ `VITE_DERS_TUR=1` derlemesinde.
  *
  * Çocuk yüzeyi (TemelYazi). İki bölge, akıllı tahta erişim kuralı (D-24, matematik `GameShell` ile aynı oran):
  *   · ÜST %35 — uyaran: model harf/hece/sözcük, boşluklu sözcük, dinleme simgeleri ve yerleştirme YUVALARI. Burada
@@ -11,6 +11,10 @@
  * klipleri istenir. Türkçe ses dosyaları henüz yok (Adım 67): ekran sessiz çalışır ve "Ses yok" gösterir; dinleme
  * sorusunda öğretmen sözcükleri "Öğretmen: sözcükler" altında görür ve kendisi söyler. Hiçbir şey saklanmaz, süre
  * ölçülmez (D-13).
+ *
+ * Görselli şablonlarda (T-01, T-08; Adım 70) kartlar sözcük görselleridir (`ders-verisi/tur/gorseller/`, aynı köken).
+ * Görsel kart da sessizdir ve cevaptan önce adı ne yazılır ne erişilebilir adına girer ("Resim 1"); doğru cevaptan
+ * sonra doğru resmin adı okunur (geri bildirim klibi) ve T-01'de resmin altında yazılır.
  */
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react';
 import { BigButton } from '../primitives/BigButton';
@@ -29,6 +33,7 @@ import { turKlipleriniIste } from './turSes';
 import { E2E_KANCASI_ACIK } from '../../dev/e2eKanca';
 import { kartDuzeni, type KartDuzeni } from './etkinlikDuzeni';
 import { ekranStili } from './turOrtak';
+import { TUR_VERI_KOKU } from '../../content/dersler/tur/veriYukleyici';
 
 export function TurEtkinlikEkrani({ sablon, zorluk, tohum }: { sablon: TurSablonKodu; zorluk: TurZorluk; tohum: number }) {
   const h = useTurHavuzu();
@@ -203,7 +208,10 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
               <Kart
                 key={k.id}
                 id={k.id}
+                sira={i}
                 metin={k.metin}
+                gorselId={k.gorselId}
+                altYazi={soru.sablon === 'T-01'}
                 hece={k.tur === 'hece'}
                 boy={duzen?.kart ?? 0}
                 kullanildi={yerlesim.includes(i)}
@@ -259,6 +267,7 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
 function useKartDuzeni(alan: RefObject<HTMLElement | null>, soru: TurSoru): KartDuzeni | null {
   const [duzen, setDuzen] = useState<KartDuzeni | null>(null);
   const hece = soru.kartlar.some((k) => k.tur === 'hece');
+  const gorsel = soru.kartlar.some((k) => k.tur === 'gorsel');
   const adet = soru.kartlar.length;
   useLayoutEffect(() => {
     const el = alan.current;
@@ -273,7 +282,8 @@ function useKartDuzeni(alan: RefObject<HTMLElement | null>, soru: TurSoru): Kart
           alanYukseklik: r.height,
           adet,
           enBoy: hece ? 1.6 : 1,
-          enBuyuk: px('--size-choice') * 0.75,
+          // Resim kartı harf kartından büyük: resim tanınır boyda kalsın.
+          enBuyuk: px('--size-choice') * (gorsel ? 1.15 : 0.75),
           tapMin: px('--size-tap-min'),
           aralik: px('--size-gap-tight'),
           kontrol: px('--size-control'),
@@ -284,13 +294,16 @@ function useKartDuzeni(alan: RefObject<HTMLElement | null>, soru: TurSoru): Kart
     const ro = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(olc);
     ro?.observe(el);
     return () => ro?.disconnect();
-  }, [alan, adet, hece]);
+  }, [alan, adet, hece, gorsel]);
   return duzen;
 }
 
 function Kart({
   id,
+  sira,
   metin,
+  gorselId,
+  altYazi,
   hece,
   boy,
   kullanildi,
@@ -299,7 +312,10 @@ function Kart({
   onPress,
 }: {
   id: string;
+  sira: number;
   metin: string;
+  gorselId?: string;
+  altYazi: boolean;
   hece: boolean;
   boy: number;
   kullanildi: boolean;
@@ -309,10 +325,13 @@ function Kart({
 }) {
   const genislik = Math.round(boy * (hece ? 1.6 : 1));
   const pasif = kullanildi || yanlis;
+  // Görsel kart: cevaptan önce adı yok (okuma/dinleme ele verilmez); doğru cevaptan sonra sözcük.
+  const ad = gorselId ? (dogru ? metin : `Resim ${sira + 1}`) : metin;
   return (
     <button
       type="button"
-      aria-label={metin}
+      aria-label={ad}
+      data-kart-gorsel={gorselId}
       aria-disabled={pasif || undefined}
       data-kart={id}
       data-kart-metin={metin}
@@ -337,9 +356,38 @@ function Kart({
         cursor: pasif ? 'default' : 'pointer',
         touchAction: 'manipulation',
         padding: 0,
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
-      {metin}
+      {gorselId ? (
+        <>
+          <img
+            src={`${TUR_VERI_KOKU}gorseller/${gorselId}.svg`}
+            alt=""
+            draggable={false}
+            style={{ width: '86%', height: '86%', pointerEvents: 'none', display: 'block' }}
+          />
+          {dogru && altYazi && (
+            <span
+              data-resim-adi=""
+              style={{
+                position: 'absolute',
+                left: 0,
+                right: 0,
+                bottom: '3%',
+                fontSize: Math.round(boy * 0.17),
+                background: 'var(--color-surface)',
+                lineHeight: 1.1,
+              }}
+            >
+              {metin}
+            </span>
+          )}
+        </>
+      ) : (
+        metin
+      )}
     </button>
   );
 }
@@ -403,8 +451,8 @@ function SesYok({ soru }: { soru: TurSoru }) {
       <span style={{ background: 'var(--color-retry-soft)', borderRadius: '0.4em', padding: '0.1em 0.5em' }}>Ses yok</span>
       {soru.uyaran.tur === 'ses' && (
         <details data-yetiskin="" style={{ background: 'var(--color-surface)', borderRadius: '0.4em', padding: '0.1em 0.5em' }}>
-          <summary>Öğretmen: {soru.sozcukler.length > 1 ? 'sözcükler' : 'sözcük'}</summary>
-          <span data-ogretmen-sozcukleri="">{soru.sozcukler.join(', ')}</span>
+          <summary>Öğretmen: {(soru.dinlenen ?? soru.sozcukler).length > 1 ? 'sözcükler' : 'sözcük'}</summary>
+          <span data-ogretmen-sozcukleri="">{(soru.dinlenen ?? soru.sozcukler).join(', ')}</span>
         </details>
       )}
     </div>

@@ -4,7 +4,7 @@
  * Öğretilen küme seçici (plan §2.4.5): "Bugünkü ses" resmî sırayla o harfe kadar küçük harfleri seçer; harf
  * düğmeleriyle küme elle değiştirilir (farklı sırayla ilerleyen sınıf, destek grubu). Büyük biçim küçüğü olmadan
  * seçilemez (K-OY-11). Küme öğretmen düzeyidir, öğrenci verisi değildir; yalnız bellekte ve adreste (`?tur=`).
- * Ardından şablon (T-02…T-07) ve zorluk (1–5); bu kümeyle kurulamayan şablon yanında yazar. Sözcük havuzu öğretmen
+ * Ardından şablon (T-01…T-08) ve zorluk (1–5); bu kümeyle kurulamayan şablon yanında yazar. Sözcük havuzu öğretmen
  * teyidi bekler, Türkçe ses henüz yok (Adım 66, 67).
  */
 import { useState } from 'react';
