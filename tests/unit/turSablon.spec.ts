@@ -17,7 +17,8 @@ import {
 import { turKlipManifesti, turSoruEtkinligi, turSoruIhlalleri } from '../../src/content/dersler/tur/sablonlar/denetim';
 import { karistirilanlar, KARISTIRILAN_CIFTLER } from '../../src/content/dersler/tur/sablonlar/celdiriciler';
 import { heceKlibi, klipParcasi, sozcukKlibi, TUR_YONERGELERI } from '../../src/content/dersler/tur/sablonlar/klipler';
-import { BELIRSIZLIK_SOZCUKLERI } from '../../src/content/dersler/tur/sablonlar/ortak';
+import { BELIRSIZLIK_SOZCUKLERI, bilinenSozcukMu, okunabilirSozcukler } from '../../src/content/dersler/tur/sablonlar/ortak';
+import { hecele, heceTuru } from '../../src/content/dersler/tur/heceleme';
 import { kumeKodla, kumeGecerliMi, resmiKume, dekodlanabilirMi } from '../../src/content/dersler/tur/ogretilenKume';
 import { OGRETIM_SIRASI, yalnizUnsuzMu } from '../../src/content/dersler/tur/alfabe';
 import { turIceriginiDogrula, TUR_TANI_ETIKETLERI } from '../../src/content/dersler/tur/dogrulayici';
@@ -139,6 +140,51 @@ describe('Türkçe şablonlar — üretim (Adım 69)', () => {
       if (soru.zorluk >= 3 && soru.kartlar.some((k) => k.diagnosticTag)) etiketli++;
     }
     expect(etiketli).toBeGreaterThan(50);
+  });
+
+  it('T-04: hece okunabilir bir sözcükten (D-05), kapalı → açık sırası zorlukla, hece klibi yalnız cevaptan sonra', () => {
+    const t04 = URETILEN.filter((u) => u.soru.sablon === 'T-04');
+    expect(t04.length).toBeGreaterThan(100);
+    for (const { soru, kume } of t04) {
+      if (soru.kind !== 'yerlestir' || soru.uyaran.tur !== 'yazi') throw new Error('T-04 yerleştir + model');
+      const hece = soru.uyaran.metin;
+      expect(soru.dogruDizi.join('')).toBe(hece);
+      const kaynak = okunabilirSozcukler(havuz, kume).find((w) => w.metin === soru.sozcukler[0]);
+      expect(kaynak && hecele(kaynak.metin).includes(hece), soru.itemId).toBe(true);
+      expect(soru.soruKlipleri).toEqual([]);
+      expect(soru.geriBildirim.at(-1)).toBe(heceKlibi(hece));
+      if (soru.zorluk === 3 && heceTuru(hece) !== 'acik') {
+        // açık hece yoksa iki harfliye düşülür: kümede gerçekten açık hece olmamalı
+        const acik = okunabilirSozcukler(havuz, kume).flatMap((w) => hecele(w.metin)).some((h) => h.length === 2 && heceTuru(h) === 'acik');
+        expect(acik, soru.itemId).toBe(false);
+      }
+    }
+    expect(t04.filter((u) => u.soru.zorluk <= 2).every((u) => u.soru.hedefMetin.length === 2)).toBe(true);
+  });
+
+  it('T-05: kartlar sözcüğün heceleri (+ okunabilir çeldirici hece), başka diziliş bilinen sözcük kurmaz', () => {
+    const t05 = URETILEN.filter((u) => u.soru.sablon === 'T-05');
+    expect(t05.length).toBeGreaterThan(100);
+    for (const { soru, kume } of t05) {
+      if (soru.kind !== 'yerlestir') throw new Error('T-05 yerleştir');
+      expect(soru.dogruDizi).toEqual(hecele(soru.hedefMetin));
+      expect(soru.kartlar.every((k) => k.tur === 'hece')).toBe(true);
+      const heceler = new Set(okunabilirSozcukler(havuz, kume).flatMap((w) => hecele(w.metin)));
+      for (const k of soru.kartlar) expect(heceler.has(k.metin), `${soru.itemId} ${k.metin}`).toBe(true);
+      expect(soru.uyaran.tur === 'yazi').toBe(soru.zorluk === 1);
+      // Tek doğru: n kartın her dizilişi
+      const n = soru.dogruDizi.length;
+      const metinler = soru.kartlar.map((k) => k.metin);
+      const yuru = (yol: number[]): void => {
+        if (yol.length === n) {
+          const w = yol.map((i) => metinler[i]).join('');
+          if (w !== soru.hedefMetin) expect(bilinenSozcukMu(w, havuz), `${soru.itemId}: ${w}`).toBe(false);
+          return;
+        }
+        metinler.forEach((_, i) => !yol.includes(i) && yuru([...yol, i]));
+      };
+      yuru([]);
+    }
   });
 
   it('kart sayısı en çok 8 (tahta 1080×810) ve kartların hiçbiri ses taşımaz (tipte ses alanı yok)', () => {
