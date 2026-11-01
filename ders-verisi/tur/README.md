@@ -18,7 +18,9 @@ manifesti. `public/` altında değildir; yalnız `VITE_DERS_TUR=1` derlemesinde 
   alınacak dosyalar). Sözcük listesi iki öğretmen teyidini beklediği için her görsel `teyit: bekliyor`; yalnız sözcük
   ve görsel kimliği depoya girer, taslak liste girmez. Denetim: D-25 (`npm run validate`).
 - `icerik/sozcukler.json` (Adım 69): şablonların sözcük havuzu — 1.–2. grup sözcük listesi taslağının 125 sözcüğü
-  (kimlik, metin, giriş harfi, varsa görsel kimliği). Görsel ve hamle verisindeki gibi teyit gelmeden depoya girdi:
+  (kimlik, metin, giriş harfi, varsa görsel kimliği). Görsel ve hamle verisindeki gibi teyit gelmeden depoya girdi
+  (kullanıcı kararı 1 Kasım 2026, KG-145: liste depoda `teyit: bekliyor` istisnasıyla kalır; geliştirme ve pilot
+  önizlemesi kullanır, **genel yayın iki öğretmen teyidine bağlıdır**):
   dosya `teyit: { durum: "bekliyor" }` taşır, hiçbir sözcükte `anlamTeyidi` yok; `npm run validate -- --yayin` hem
   dosya teyidini hem D-14'ü (iki öğretmen) hata sayar. Hece listesi depoya girmez: şablonlar heceyi sözcükten
   heceler (bağlamsız hece yok, D-05).

@@ -2,9 +2,10 @@ import { expect, test, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { TUR_URL } from '../../playwright.config';
 import { geometriTemiz, sesKilidiniAc } from './yardimci/akis';
+import { sozcukKlibi } from '../../src/content/dersler/tur/sablonlar/klipler';
 
 /**
- * Okuma Yazma Adım 69 — görselsiz şablonlar (T-02…T-07), YALNIZ bayraklı derlemede (`VITE_DERS_TUR=1`, port 5174).
+ * Okuma Yazma Adım 69–70 — şablonlar T-01…T-08 (T-01, T-08 görselli), YALNIZ bayraklı derlemede (`VITE_DERS_TUR=1`, port 5174).
  *
  * Her şablon üç görünümde (tahta 1920×1080, tahta 1080×810, tablet 1080×810) açılır ve çözülür:
  *  - geometri temiz (üst %35'te dokunma yok, hedefler ≥ tap-min) — yuvalar yalnız gösterir;
@@ -23,8 +24,8 @@ const manifest = new Map(
 );
 const UNLU = /[aeıioöuüâîû]/i;
 
-export const SABLONLAR = ['T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07'] as const;
-const OKUMA_HEDEFLI = new Set(['T-03', 'T-04', 'T-05', 'T-06']);
+export const SABLONLAR = ['T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07', 'T-08'] as const;
+const OKUMA_HEDEFLI = new Set(['T-03', 'T-04', 'T-05', 'T-06', 'T-08']);
 
 const gorunumler = (proje: string) =>
   proje === 'board'
@@ -150,4 +151,60 @@ test('etkinlik seçimi: öğretilen küme adreste (?tur=), kartlar yalnız öğr
   if (await basla.isVisible().catch(() => false)) await basla.click();
   await expect(page.locator('[data-etkinlik-kurulamadi="T-02"]')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Etkinlik seçimi' })).toBeVisible();
+});
+
+test('görselli şablonlar (T-01, T-08): resimler aynı kökenden yüklenir, cevaptan önce adsız ve sessiz; ad yalnız cevaptan sonra', async ({
+  page,
+}, bilgi) => {
+  test.setTimeout(90_000);
+  const cihaz = bilgi.project.name === 'board' ? 'board' : 'tablet';
+  const istekler: string[] = [];
+  page.on('request', (r) => istekler.push(r.url()));
+  for (const sablon of ['T-01', 'T-08'] as const)
+    for (const zorluk of [2, 5]) {
+      const baglam = `${sablon} z${zorluk}`;
+      await ac(page, sablon, zorluk, 3, cihaz);
+      const kartlar = page.locator('[data-kart]');
+      const n = await kartlar.count();
+      expect(n, baglam).toBeGreaterThanOrEqual(2);
+      const sozcukler = await kartlar.evaluateAll((l) => l.map((e) => e.getAttribute('data-kart-metin') ?? ''));
+      // Her kart bir görsel; görsel yüklendi (bozuk resim yok) ve SVG aynı kökenden.
+      await expect
+        .poll(() =>
+          page.locator('[data-kart] img').evaluateAll((l) => l.every((i) => (i as HTMLImageElement).complete && (i as HTMLImageElement).naturalWidth > 0)),
+        )
+        .toBe(true);
+      expect(await page.locator('[data-kart] img').count(), baglam).toBe(n);
+      // Cevaptan önce: erişilebilir ad "Resim N", ekranda resim adı yazmaz.
+      for (let i = 0; i < n; i++) await expect(kartlar.nth(i)).toHaveAttribute('aria-label', `Resim ${i + 1}`);
+      await expect(page.locator('[data-resim-adi]')).toHaveCount(0);
+      const ilk = await klipler(page);
+      for (const w of sozcukler) expect(ilk, `${baglam}: resim adı cevaptan önce istenmez`).not.toContain(sozcukKlibi(w));
+      if (sablon === 'T-08') {
+        // Okuma sorusu: yazılı sözcük üstte, yönerge onu söylemez (yalnız yönerge klibi).
+        expect(ilk, baglam).toEqual(['tur.yonerge.t08']);
+        const yazili = (await page.locator('[data-uyaran-metni="model"]').textContent()) ?? '';
+        expect(sozcukler, baglam).toContain(yazili);
+        await expect(page.locator('[data-ogretmen-sozcukleri]')).toHaveCount(0);
+      } else {
+        // Dinleme sorusu: ses yokken öğretmen yalnız MODEL sözcükleri okur; resim adları listede yok.
+        await page.locator('[data-ses-yok] summary').click();
+        const okunan = ((await page.locator('[data-ogretmen-sozcukleri]').textContent()) ?? '').split(', ');
+        expect(okunan.length, baglam).toBe(ilk.length - 1);
+        for (const w of okunan) expect(sozcukler, `${baglam}: "${w}" seçenek değil`).not.toContain(w);
+      }
+      const main = page.locator('main[data-tur-etkinlik]');
+      const cevap = (await main.getAttribute('data-cevap')) ?? '';
+      const dogruKart = page.locator(`[data-kart="${cevap}"]`);
+      const dogruSozcuk = (await dogruKart.getAttribute('data-kart-metin')) ?? '';
+      await dogruKart.click();
+      await expect(main).toHaveAttribute('data-durum', 'dogru');
+      await expect(dogruKart).toHaveAttribute('aria-label', dogruSozcuk);
+      if (sablon === 'T-01') await expect(dogruKart.locator('[data-resim-adi]')).toHaveText(dogruSozcuk);
+      const son = await klipler(page);
+      expect(son.slice(-2), `${baglam}: doğru resmin adı yalnız cevaptan sonra`).toEqual(['tur.geri.dogru', sozcukKlibi(dogruSozcuk)]);
+    }
+  const gorselIstekleri = istekler.filter((u) => u.includes('/gorseller/'));
+  expect(gorselIstekleri.length).toBeGreaterThan(0);
+  for (const u of istekler) expect(new URL(u).hostname, u).toMatch(/^(localhost|127\.0\.0\.1)$/);
 });
