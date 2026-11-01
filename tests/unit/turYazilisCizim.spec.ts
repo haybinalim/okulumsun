@@ -137,9 +137,17 @@ describe('Türkçe arayüz paketi kuralları (src/ui/tur)', () => {
   });
   it('depolama ve süre ölçümü yok (öğrenci verisi saklanmaz; D-13)', () => {
     for (const [f, s] of dosyalar) {
+      // K-7 (Adım 71, ADR-0002 Ek 1): sınıf düzeyi ayarın tek deposu; yalnız izinli bayraklı anahtar (aşağıda).
+      if (f.endsWith('sinifAyariDepo.ts')) continue;
       expect(s, f).not.toMatch(/localStorage|sessionStorage|indexedDB|document\.cookie/);
       expect(s, f).not.toMatch(/\b(Date\.now|performance\.now)\s*\(/);
     }
+  });
+  it('K-7: sınıf ayarı deposu yalnız DERS_TUR_SINIF_ANAHTARI ile localStorage kullanır, eve link cihazında yazmaz', () => {
+    const depo = dosyalar.find(([f]) => f.endsWith('sinifAyariDepo.ts'))![1];
+    expect(depo).not.toMatch(/sessionStorage|indexedDB|document\.cookie/);
+    for (const m of depo.matchAll(/localStorage\.(setItem|getItem|removeItem)\(([^,)]*)/g)) expect(m[2]).toBe('DERS_TUR_SINIF_ANAHTARI');
+    expect(depo).toMatch(/if \(evKipiMi\(\) \|\| typeof localStorage === 'undefined'\) return;\n\s*try \{\n\s*localStorage\.setItem/);
   });
   it('SVG maskesi ve kırmızı yok', () => {
     for (const [f, s] of dosyalar) {

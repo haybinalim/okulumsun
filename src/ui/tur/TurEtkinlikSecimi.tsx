@@ -20,7 +20,8 @@ import {
 import { BigButton } from '../primitives/BigButton';
 import { turEkraniAc } from './turEkrani';
 import { useTurKume } from './turKume';
-import { KumeDuzenleyici, kucukDugme } from './TurOgretmen';
+import { KumeDuzenleyici } from './TurOgretmen';
+import { kucukDugme } from './ogretmenOrtak';
 import { useTurHavuzu } from './useTurHavuzu';
 import { Baslik, ekranStili } from './turOrtak';
 

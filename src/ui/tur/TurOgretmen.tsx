@@ -26,23 +26,7 @@ import type { TurKagitIstegi } from './kagit/turKagidi';
 import { turKumeYaz, useTurKume } from './turKume';
 import { sinifAyariGuncelle, sinifAyariOku } from './sinifAyariDepo';
 import { Baslik, ekranStili } from './turOrtak';
-
-export const kucukDugme: CSSProperties = {
-  minWidth: 'calc(var(--size-tap-min) * 0.8)',
-  minHeight: 'calc(var(--size-tap-min) * 0.8)',
-  padding: '0 0.3em',
-  fontSize: 'var(--text-adult)',
-};
-
-/** Yetişkin listelerinde sık düğme: tahtada ~61 px, tablette en az 44 px. */
-export const sikDugme: CSSProperties = {
-  minWidth: 'max(44px, calc(var(--size-tap-min) * 0.6))',
-  minHeight: 'max(44px, calc(var(--size-tap-min) * 0.6))',
-  padding: '0 0.35em',
-  fontSize: 'var(--text-adult)',
-  whiteSpace: 'nowrap',
-  flexShrink: 0,
-};
+import { bugunkuSes, sikDugme } from './ogretmenOrtak';
 
 /** Harf düğmesi (öğretilen harfler): bir grubun 12 glifi 1080 px tahtada tek satıra sığar. */
 const harfDugmesi: CSSProperties = { ...sikDugme, minWidth: 'max(44px, calc(var(--size-tap-min) * 0.55))', padding: 0 };
@@ -53,11 +37,6 @@ const aracDugmesi: CSSProperties = {
   padding: '0 0.7em',
   fontSize: 'var(--text-adult)',
 };
-
-/** Kümedeki en yeni küçük harf (resmî sırada) = "bugünkü ses". */
-export function bugunkuSes(kume: ReadonlySet<string>): string {
-  return [...OGRETIM_SIRASI].reverse().find((x) => kume.has(x)) ?? 'a';
-}
 
 /** Ders seçimi (§2.4.11 madde 1). Matematik uygulamanın kendi ana ekranına döner. */
 export function DersSecimi({ secili }: { secili: 'mat' | 'tur' }) {
@@ -338,7 +317,7 @@ export function GununAkisi() {
                 title={b.aciklama}
                 style={{ flex: '1 1 auto', minWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
               >
-                <strong>{b.ad}</strong> <span style={{ color: 'var(--color-ink-soft, #6B6B6B)' }}>· {b.aciklama}</span>
+                <strong>{b.ad}:</strong> <span style={{ color: 'var(--color-ink-soft, #6B6B6B)' }}>{b.aciklama}</span>
               </span>
               {b.hedef.tur === 'dalgaC' && (
                 <span data-dalga-c="" style={{ padding: '0.1em 0.5em', border: '2px dashed currentColor', borderRadius: 8, whiteSpace: 'nowrap' }}>
