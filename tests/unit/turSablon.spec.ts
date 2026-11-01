@@ -1,5 +1,5 @@
 /**
- * Türkçe şablon dalgası 1 (Adım 69): deterministik itemId, D-11/D-12/D-23, öğretilen küme, klip manifesti,
+ * Türkçe şablonlar (Adım 69 dalga 1, Adım 70 görselli T-01/T-08): deterministik itemId, D-11/D-12/D-23, öğretilen küme, klip manifesti,
  * çeldirici kataloğu ve kart düzeni. Şablon listesi `TUR_SABLON_KODLARI`'ndan okunur: yeni şablon eklenince
  * aynı denetimler otomatik kapsar.
  */
@@ -91,7 +91,7 @@ describe('Türkçe şablonlar — üretim (Adım 69)', () => {
   it('bütün üretilen sorular şablon denetimini geçer (öğretmen kümesi, klip, tanı etiketi, kart sayısı)', () => {
     expect(URETILEN.length).toBeGreaterThan(500);
     const ihlaller = URETILEN.flatMap(({ soru, kume }) =>
-      turSoruIhlalleri(soru, kume, manifest).map((m) => `${soru.itemId} [${kumeKodla(kume)}]: ${m}`),
+      turSoruIhlalleri(soru, kume, manifest, havuz).map((m) => `${soru.itemId} [${kumeKodla(kume)}]: ${m}`),
     );
     expect(ihlaller).toEqual([]);
   });
@@ -102,7 +102,8 @@ describe('Türkçe şablonlar — üretim (Adım 69)', () => {
       programSurumu: PROGRAM_SURUMU,
       harfler: [],
       heceler: [],
-      sozcukler: [],
+      // Görsel seçenekler (T-01, T-08) içerikteki sözcüğe bağlanır (D-15): havuz sözcükleri görsel kimlikleriyle.
+      sozcukler: (havuzHam as { sozcukler: TurIcerikDosyasi['sozcukler'] }).sozcukler,
       cumleler: [],
       etkinlikler: [...tekil.values()],
     };
@@ -218,6 +219,70 @@ describe('Türkçe şablonlar — üretim (Adım 69)', () => {
     }
   });
 
+  it('T-01: ses yalnız model sözcükler (resim adları duyulmaz), seçenekler görselli ve okunabilir, tek doğru', () => {
+    const t01 = URETILEN.filter((u) => u.soru.sablon === 'T-01');
+    expect(t01.length).toBeGreaterThan(100);
+    for (const { soru, kume } of t01) {
+      if (soru.kind !== 'secim' || soru.uyaran.tur !== 'ses' || !soru.dinlenen) throw new Error('T-01 seçim + ses');
+      const model = soru.dinlenen;
+      expect(soru.soruKlipleri).toEqual(model.map(sozcukKlibi));
+      expect(soru.uyaran.adet).toBe(model.length);
+      const resimler = soru.kartlar.map((k) => k.metin);
+      // Resim adları cevaptan önce hiç istenmez; model sözcük seçenek olamaz.
+      for (const r of resimler) expect(soru.soruKlipleri, soru.itemId).not.toContain(sozcukKlibi(r));
+      expect(soru.geriBildirim).toEqual(['tur.geri.dogru', sozcukKlibi(soru.hedefMetin)]);
+      for (const k of soru.kartlar) {
+        expect(k.tur).toBe('gorsel');
+        const w = havuz.find((x) => x.metin === k.metin);
+        expect(w?.gorselId, k.metin).toBe(k.gorselId);
+        expect(dekodlanabilirMi(k.metin, kume)).toBe(true);
+      }
+      const dogru = soru.kartlar[soru.dogru].metin;
+      const ortak = [...model[0]].filter((c) => model.every((w) => w.includes(c)));
+      if (soru.zorluk <= 3) {
+        const h = model[0][0];
+        expect(model.every((w) => w[0] === h)).toBe(true);
+        expect(dogru[0], soru.itemId).toBe(h);
+        for (const r of resimler) if (r !== dogru) expect(r[0], soru.itemId).not.toBe(h);
+        if (soru.zorluk <= 2) for (const r of resimler) if (r !== dogru) expect(r.includes(h), soru.itemId).toBe(false);
+      } else {
+        expect(ortak.some((c) => dogru.includes(c)), soru.itemId).toBe(true);
+        for (const r of resimler) if (r !== dogru) expect(ortak.some((c) => r.includes(c)), `${soru.itemId} ${r}`).toBe(false);
+      }
+      expect(soru.kartlar).toHaveLength([2, 3, 3, 3, 4][soru.zorluk - 1]);
+    }
+  });
+
+  it('T-08: yazılı sözcük, soru sesi yok ve yönerge sözcüğü söylemez (D-12); sözcük yalnız geri bildirimde', () => {
+    const t08 = URETILEN.filter((u) => u.soru.sablon === 'T-08');
+    expect(t08.length).toBeGreaterThan(100);
+    for (const { soru, kume } of t08) {
+      if (soru.kind !== 'secim' || soru.uyaran.tur !== 'yazi') throw new Error('T-08 seçim + yazı');
+      expect(soru.uyaran.metin).toBe(soru.hedefMetin);
+      expect(soru.kartlar[soru.dogru].metin).toBe(soru.hedefMetin);
+      expect(soru.soruKlipleri).toEqual([]);
+      expect(soru.yonerge).toBe('tur.yonerge.t08');
+      expect(TUR_YONERGELERI.t08.toLocaleLowerCase('tr-TR').replace(/[.,!?]/g, '').split(' ')).not.toContain(soru.hedefMetin);
+      expect(soru.geriBildirim).toEqual(['tur.geri.dogru', sozcukKlibi(soru.hedefMetin)]);
+      for (const k of soru.kartlar) {
+        expect(k.tur).toBe('gorsel');
+        expect(havuz.find((x) => x.metin === k.metin)?.gorselId, k.metin).toBe(k.gorselId);
+        expect(dekodlanabilirMi(k.metin, kume)).toBe(true);
+      }
+      expect(new Set(soru.kartlar.map((k) => k.gorselId)).size).toBe(soru.kartlar.length);
+      if (soru.zorluk === 1)
+        for (const k of soru.kartlar) if (k.metin !== soru.hedefMetin) expect(k.metin[0] === soru.hedefMetin[0] && soru.kartlar.length > 2).toBe(false);
+    }
+  });
+
+  it('görselli şablonlar: görseli olmayan sözcük hiçbir zaman seçenek değil; resimsiz kümede açıklayıcı hata', () => {
+    const resimsiz = new Set(havuz.filter((w) => !w.gorselId).map((w) => w.metin));
+    for (const { soru } of URETILEN.filter((u) => u.soru.sablon === 'T-01' || u.soru.sablon === 'T-08'))
+      for (const k of soru.kartlar) expect(resimsiz.has(k.metin), k.metin).toBe(false);
+    for (const s of ['T-01', 'T-08'] as const)
+      expect(() => turSoruUret(s, { havuz, kume: resmiKume('n', false), zorluk: 1, tohum: 1 })).toThrow(TurUretimHatasi);
+  });
+
   it('kart sayısı en çok 8 (tahta 1080×810) ve kartların hiçbiri ses taşımaz (tipte ses alanı yok)', () => {
     for (const { soru } of URETILEN) {
       expect(soru.kartlar.length).toBeLessThanOrEqual(8);
@@ -273,6 +338,21 @@ describe('Türkçe şablonlar — kural tuzakları (doğrulayıcı kırmızı ol
     }
     const okumaSesli = { ...t03, soruKlipleri: [sozcukKlibi('kale')] };
     expect(turSoruIhlalleri(okumaSesli, kume, manifest).join(' ')).toContain('D-12');
+  });
+  it('görselli şablon tuzakları: T-08 soru sesi (D-12), görselsiz seçenek ve yanlış görsel (D-15)', () => {
+    const t08 = turSoruUret('T-08', { havuz, kume, zorluk: 3, tohum: 2 });
+    expect(turSoruIhlalleri({ ...t08, soruKlipleri: [sozcukKlibi(t08.hedefMetin)] }, kume, manifest).join(' ')).toContain('D-12');
+    const gorselsiz = { ...t08, kartlar: t08.kartlar.map((k, i) => (i === 0 ? { id: k.id, metin: k.metin, tur: 'harf' as const } : k)) };
+    expect(turSoruIhlalleri(gorselsiz, kume, manifest, havuz).join(' ')).toContain('D-15');
+    const yanlisGorsel = { ...t08, kartlar: t08.kartlar.map((k, i) => (i === 0 ? { ...k, gorselId: 'mum' === k.gorselId ? 'kek' : 'mum' } : k)) };
+    expect(turSoruIhlalleri(yanlisGorsel, kume, manifest, havuz).join(' ')).toContain('D-15');
+    // CI doğrulayıcısı: içerikte bağlı olmayan görsel ve T-08'de görsel olmayan seçenek.
+    const e = turSoruEtkinligi(t08, manifest);
+    const dosya8 = (x: typeof e): TurIcerikDosyasi => ({ ...dosya(x), sozcukler: (havuzHam as { sozcukler: TurIcerikDosyasi['sozcukler'] }).sozcukler });
+    expect(turIceriginiDogrula(dosya8(e)).hatalar).toEqual([]);
+    expect(turIceriginiDogrula(dosya8({ ...e, secenekler: [...e.secenekler, { tur: 'harf', metin: 'a', sesli: false }] })).hatalar.map((h) => h.kural)).toContain('D-15');
+    expect(turIceriginiDogrula(dosya8({ ...e, secenekler: [...e.secenekler, { tur: 'gorsel', gorselId: 'yok-boyle', sesli: false }] })).hatalar.map((h) => h.kural)).toContain('D-15');
+    expect(turIceriginiDogrula(dosya8({ ...e, yonerge: { anahtar: 'tur.yonerge.x', metin: `Bunu bul: ${t08.hedefMetin}` } })).hatalar.map((h) => h.kural)).toContain('D-12');
   });
 });
 
@@ -330,7 +410,7 @@ describe('Çeldirici kataloğu (D-23)', () => {
         for (const zorluk of TUR_ZORLUKLARI)
           try {
             const soru = TUR_SABLONLARI[s].uret({ havuz, kume, zorluk, tohum: i });
-            expect(turSoruIhlalleri(soru, kume, manifest)).toEqual([]);
+            expect(turSoruIhlalleri(soru, kume, manifest, havuz)).toEqual([]);
           } catch (e) {
             if (!(e instanceof TurUretimHatasi)) throw e;
           }
@@ -360,6 +440,8 @@ describe('Kart düzeni ve açılış adresi', () => {
     });
     expect(turAcilisEkrani('?ders=tur&etkinlik=liste')).toEqual({ ekran: 'etkinlikler' });
     expect(turAcilisEkrani('?ders=tur&etkinlik=T-99')).toEqual({ ekran: 'giris' });
+    expect(turAcilisEkrani('?ders=tur&etkinlik=T-01')).toMatchObject({ sablon: 'T-01' });
+    expect(turAcilisEkrani('?ders=tur&etkinlik=T-08&zorluk=5')).toMatchObject({ sablon: 'T-08', zorluk: 5 });
     expect(turAcilisEkrani('?ders=tur&etkinlik=T-02&zorluk=9')).toMatchObject({ zorluk: 1 });
   });
 });

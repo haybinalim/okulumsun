@@ -47,7 +47,8 @@ function klipMetni(anahtar: string, manifest: ReadonlyMap<string, string>): stri
   return manifest.get(anahtar) ?? '';
 }
 
-const OKUMA_HEDEFLI = new Set(['T-03', 'T-04', 'T-05', 'T-06']);
+const OKUMA_HEDEFLI = new Set(['T-03', 'T-04', 'T-05', 'T-06', 'T-08']);
+const GORSELLI = new Set(['T-01', 'T-08']);
 
 export function turSoruEtkinligi(s: TurSoru, manifest: ReadonlyMap<string, string>): TurEtkinlik {
   const uyaran: TurEtkinlik['uyaran'] =
@@ -58,18 +59,32 @@ export function turSoruEtkinligi(s: TurSoru, manifest: ReadonlyMap<string, strin
     girisHarfi: s.girisHarfi,
     uyaran,
     yonerge: { anahtar: s.yonerge, metin: klipMetni(s.yonerge, manifest) },
-    secenekler: s.kartlar.map((k) => ({
-      tur: k.tur === 'hece' ? 'hece' : 'harf',
-      metin: k.metin,
-      sesli: false,
-      ...(k.diagnosticTag ? { diagnosticTag: k.diagnosticTag } : {}),
-    })),
+    secenekler: s.kartlar.map((k) =>
+      k.tur === 'gorsel'
+        ? // Görsel seçenek sözcüğünü metin olarak taşımaz; doğrulayıcı görseli içerikteki sözcüğe bağlar (D-15).
+          { tur: 'gorsel' as const, gorselId: k.gorselId, sesli: false }
+        : {
+            tur: k.tur === 'hece' ? ('hece' as const) : ('harf' as const),
+            metin: k.metin,
+            sesli: false,
+            ...(k.diagnosticTag ? { diagnosticTag: k.diagnosticTag } : {}),
+          },
+    ),
     dogru:
       s.kind === 'secim' ? s.dogru : Math.max(0, s.kartlar.findIndex((k) => k.metin === s.dogruDizi[0])),
   };
 }
 
-export function turSoruIhlalleri(s: TurSoru, kume: ReadonlySet<string>, manifest: ReadonlyMap<string, string>): string[] {
+/**
+ * `havuz` verilirse görsel kartların resmi o sözcüğün görseli mi diye de bakılır (T-01, T-08: yalnız görseli olan
+ * ve harfleri öğretilmiş sözcükler; görseli olmayan sözcük seçenek olamaz).
+ */
+export function turSoruIhlalleri(
+  s: TurSoru,
+  kume: ReadonlySet<string>,
+  manifest: ReadonlyMap<string, string>,
+  havuz?: readonly TurHavuzSozcugu[],
+): string[] {
   const h: string[] = [];
   const metinler = [
     ...s.kartlar.map((k) => k.metin),
@@ -85,6 +100,16 @@ export function turSoruIhlalleri(s: TurSoru, kume: ReadonlySet<string>, manifest
     if (k.startsWith('tur.harf.')) h.push(`D-11: harf klibi istenemez: ${k}.`);
   }
   if (OKUMA_HEDEFLI.has(s.sablon) && s.soruKlipleri.length > 0) h.push('D-12: okuma hedefli soruda soru sesi yok.');
+  if (GORSELLI.has(s.sablon)) {
+    for (const k of s.kartlar) {
+      if (k.tur !== 'gorsel' || !k.gorselId) h.push(`D-15: ${s.sablon} seçeneği görsel olmalı ("${k.metin}").`);
+      else if (havuz && havuz.find((w) => w.metin === k.metin)?.gorselId !== k.gorselId)
+        h.push(`D-15: "${k.metin}" görseli havuzdaki sözcüğün görseli değil.`);
+    }
+    if (new Set(s.kartlar.map((k) => k.gorselId)).size !== s.kartlar.length) h.push('D-15: aynı görsel iki kez.');
+  } else if (s.kartlar.some((k) => k.tur === 'gorsel')) h.push(`${s.sablon}: görsel kart beklenmez.`);
+  if (s.dinlenen && s.soruKlipleri.join() !== s.dinlenen.map(sozcukKlibi).join())
+    h.push('dinlenen sözcükler soru klipleriyle aynı değil.');
   if (s.kartlar.length > TUR_EN_COK_KART) h.push(`kart sayısı ${s.kartlar.length} > ${TUR_EN_COK_KART}.`);
   if (new Set(s.kartlar.map((k) => k.id)).size !== s.kartlar.length) h.push('kart kimlikleri tekil değil.');
   for (const k of s.kartlar)

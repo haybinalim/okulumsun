@@ -1194,6 +1194,21 @@
    "durum": "eksik"
   },
   {
+   "anahtar": "tur.yonerge.t01-bas",
+   "metin": "Dinle. Bu sözcüklerin hepsi aynı sesle başlıyor. Aynı sesle başlayan resmi bul.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t01-bas1",
+   "metin": "Dinle. Bu sözcük hangi sesle başlıyor? Aynı sesle başlayan resmi bul.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t01-her",
+   "metin": "Dinle. Bu sözcüklerin hepsinde aynı ses var. Adında bu ses olan resmi bul.",
+   "durum": "eksik"
+  },
+  {
    "anahtar": "tur.yonerge.t02",
    "metin": "Dinle. Bu sözcüklerin hepsinde aynı ses var. O sesin harfini bul.",
    "durum": "eksik"
@@ -1226,6 +1241,11 @@
   {
    "anahtar": "tur.yonerge.t07",
    "metin": "Dinle. Duyduğun sözcüğü harf kartlarıyla yaz.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t08",
+   "metin": "Yukarıdaki sözcüğü içinden okuyup resmini bul.",
    "durum": "eksik"
   }
  ]

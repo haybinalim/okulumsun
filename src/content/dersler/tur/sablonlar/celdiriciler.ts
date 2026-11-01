@@ -5,8 +5,9 @@
  * (b/d, n/u, m/n). Şablonlar (T-02…T-07) çeldirici seçerken önce bu katalogdan, YALNIZ öğretilen kümedeki harflerden
  * alır (D-23) ve seçeneğe tanı etiketini (`diagnosticTag`) yazar. Etiket yalnız yanlış şıkta bulunur.
  *
- * `TUR_BENZER_BICIM` bu adımda eklendi (ajan önerisi, öğretmen teyidine açık): 1.–2. grupta noktalı ve ayna
- * çiftlerinin çoğu henüz öğretilmemişken dik temel yazıda biçimce yakın harfler (a/o, l/ı, i/l, n/r, n/m dışı).
+ * `TUR_BENZER_BICIM` Adım 69'da eklendi; kullanıcı kararıyla kalır (1 Kasım 2026, KG-145) ve öğretmen teyit formunda
+ * sorulur: 1.–2. grupta noktalı ve ayna çiftlerinin çoğu henüz öğretilmemişken dik temel yazıda biçimce yakın harfler
+ * (a/o, a/e, l/ı, i/l, n/r, h/n).
  */
 
 export const TUR_TANI_ETIKETI_LISTESI = [

@@ -34,7 +34,7 @@ export function heceKlibi(hece: string): TurKlipKimligi {
 }
 
 /**
- * Yönerge ve geri bildirim metinleri. Okuma hedefli öğede (T-03, T-04, T-05, T-06) yönerge hedef metni
+ * Yönerge ve geri bildirim metinleri. Okuma hedefli öğede (T-03, T-04, T-05, T-06, T-08) yönerge hedef metni
  * İÇERMEZ (D-12); bu metinler sabit olduğu için hiçbir sözcük veya hece taşımazlar.
  */
 export const TUR_YONERGELERI = {
@@ -45,6 +45,10 @@ export const TUR_YONERGELERI = {
   't05-model': 'Yukarıdaki sözcüğü hece kartlarıyla oluştur.',
   't06': 'Sözcükte bir harf eksik. Eksik harfi bul.',
   't07': 'Dinle. Duyduğun sözcüğü harf kartlarıyla yaz.',
+  't01-bas1': 'Dinle. Bu sözcük hangi sesle başlıyor? Aynı sesle başlayan resmi bul.',
+  't01-bas': 'Dinle. Bu sözcüklerin hepsi aynı sesle başlıyor. Aynı sesle başlayan resmi bul.',
+  't01-her': 'Dinle. Bu sözcüklerin hepsinde aynı ses var. Adında bu ses olan resmi bul.',
+  't08': 'Yukarıdaki sözcüğü içinden okuyup resmini bul.',
 } as const;
 
 export type TurYonergeAnahtari = keyof typeof TUR_YONERGELERI;

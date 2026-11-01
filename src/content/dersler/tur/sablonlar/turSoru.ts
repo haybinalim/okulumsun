@@ -13,7 +13,7 @@ import { hash32 } from '../../../../exercises/rng';
 import type { TurTaniEtiketi } from './celdiriciler';
 import type { TurKlipKimligi } from './klipler';
 
-export const TUR_SABLON_KODLARI = ['T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07'] as const;
+export const TUR_SABLON_KODLARI = ['T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07', 'T-08'] as const;
 export type TurSablonKodu = (typeof TUR_SABLON_KODLARI)[number];
 
 export type TurZorluk = 1 | 2 | 3 | 4 | 5;
@@ -32,11 +32,16 @@ export function turItemId(sablon: TurSablonKodu, zorluk: TurZorluk, tohum: numbe
   return `tur.${sablon}#${hash32(`${sablon}|${zorluk}|${tohum}|${kumeKodu}`).toString(36)}` as TurItemId;
 }
 
-/** Sessiz kart: harf, hece ya da (T-03'te) rakam simgesi. */
+/**
+ * Sessiz kart: harf, hece, (T-03'te) rakam simgesi ya da (T-01, T-08) resimli sözcüğün GÖRSELİ. Görsel kartta
+ * `metin` resmin sözcüğüdür (denetim ve geri bildirim için); arayüz cevaptan önce onu ne yazar ne seslendirir.
+ */
 export interface TurKart {
   readonly id: string;
   readonly metin: string;
-  readonly tur: 'harf' | 'hece' | 'simge';
+  readonly tur: 'harf' | 'hece' | 'simge' | 'gorsel';
+  /** Yalnız görsel kartta: `ders-verisi/tur/gorseller/<gorselId>.svg` (D-25). */
+  readonly gorselId?: string;
   /** Karıştırılan çift çeldiricisi (D-23); yalnız yanlış kartta. */
   readonly diagnosticTag?: TurTaniEtiketi;
 }
@@ -66,6 +71,11 @@ interface TurSoruTemeli {
   readonly hedefMetin: string;
   /** Soruda geçen sözcükler (doğrulayıcı ve klip manifesti için). */
   readonly sozcukler: readonly string[];
+  /**
+   * Dinleme sorusunda duyulan sözcükler (soru klipleri), `sozcukler`dan ayrıysa. T-01'de yalnız model sözcükler
+   * duyulur; seçenek resimlerinin adları değil. Ses dosyası yokken öğretmen bunları "Öğretmen: sözcükler"den okur.
+   */
+  readonly dinlenen?: readonly string[];
   readonly kartlar: readonly TurKart[];
 }
 
