@@ -6,7 +6,7 @@ import { kumeCoz, kumeKodla, resmiKume } from '../../src/content/dersler/tur/ogr
 import { setKoduCoz } from '../../src/content/dersler/tur/turSet';
 import { turAcilisEkrani } from '../../src/ui/tur/turEkrani';
 import { evKipiMi } from '../../src/ui/tur/sinifAyariDepo';
-import { PROGRAM_ADRESI, turEveLink } from '../../src/ui/tur/TurEv';
+import { PROGRAM_ADRESI, turEveLink } from '../../src/ui/tur/turEveLink';
 
 /** Okuma Yazma Adım 71 aşama 3 — eve link, veli kartı, Kaynaklar. */
 const ham = JSON.parse(readFileSync('ders-verisi/tur/veli-karti.json', 'utf8')) as Record<string, unknown>;

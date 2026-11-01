@@ -11,9 +11,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import './veliKarti.css';
-import { kumeCoz, kumeKodla } from '../../content/dersler/tur/ogretilenKume';
+import { kumeCoz } from '../../content/dersler/tur/ogretilenKume';
+import { PROGRAM_ADRESI, turEveLink } from './turEveLink';
 import { PROGRAM_SURUMU } from '../../content/dersler/tur/alfabe';
-import { setKodu, setKoduCoz, turSetiKur, DUZEY_ADI, type SetDuzeyi } from '../../content/dersler/tur/turSet';
+import { setKoduCoz, turSetiKur, DUZEY_ADI, type SetDuzeyi } from '../../content/dersler/tur/turSet';
 import { VELI_KARTI_DOSYASI, veliKartiAyristir, type VeliKarti } from '../../content/dersler/tur/veliKarti';
 import { turVerisiniOku } from '../../content/dersler/tur/veriYukleyici';
 import { TUR_SABLONLARI } from '../../content/dersler/tur/sablonlar';
@@ -26,9 +27,6 @@ import { useTurKume } from './turKume';
 import { useTurHavuzu } from './useTurHavuzu';
 import { Baslik, ekranStili } from './turOrtak';
 import { sikDugme } from './ogretmenOrtak';
-
-/** Program kaynağı (docs/mufredat-kisitlari-turkce.md). */
-export const PROGRAM_ADRESI = 'https://tymm.meb.gov.tr/assets/pdf/ilkokul-turkce-dersi_20260902_111433_940.pdf';
 
 let kartBellegi: Promise<VeliKarti> | null = null;
 function veliKartiniYukle(): Promise<VeliKarti> {
@@ -95,12 +93,6 @@ function VeliKartiBaskisi() {
     return () => el.remove();
   }, []);
   return kap ? createPortal(<VeliKartiGovdesi />, kap) : null;
-}
-
-export function turEveLink(kok: string, duzey: SetDuzeyi, tohum: number, kume: ReadonlySet<string>): string {
-  const u = new URL(kok);
-  u.search = new URLSearchParams({ ders: 'tur', ev: setKodu(duzey, tohum), tur: kumeKodla(kume) }).toString();
-  return u.toString();
 }
 
 export function TurEveGonder({ duzey, tohum }: { duzey: SetDuzeyi; tohum: number }) {
