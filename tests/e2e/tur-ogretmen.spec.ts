@@ -115,9 +115,16 @@ test('günün akışı: sıra değişir ve sınıf ayarında kalır; basamaklar 
     await page.getByRole('button', { name: 'Ses hissettirme: aşağı taşı' }).click();
     await expect(liste).toHaveAttribute('data-akis-sirasi', '21345678');
     expect(JSON.parse((await anahtarlar(page)).sinif ?? '{}')).toMatchObject({ v: 1, akis: '21345678' });
-    // T-01 → etkinlik; Geri akışa.
-    await page.getByRole('button', { name: 'Sesin geçtiği görseli seçme: Aç' }).click();
+    // T-01 → etkinlik; Geri akışa. Adım 79: aynı basamakta sesin yeri (T-18) ve eşleştirme (T-19); yazılışta T-09, T-20.
+    await page.getByRole('button', { name: 'Sesin geçtiği görseli seçme: T-01' }).click();
     await expect(page.locator('[data-tur-ekrani="etkinlik"]')).toBeVisible();
+    await page.getByRole('button', { name: 'Geri' }).click();
+    await expect(page.locator('[data-tur-ekrani="akis"]')).toBeVisible();
+    for (const [ad, kod] of [['Sesin geçtiği görseli seçme', 'T-18'], ['Yazılış gösterimi', 'T-09'], ['Hece ve sözcük', 'T-17'], ['Dikte', 'T-16']] as const)
+      await expect(page.getByRole('button', { name: `${ad}: ${kod}`, exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Yazılış gösterimi: T-20', exact: true }).click();
+    await expect(page.locator('main[data-tur-etkinlik="T-20"]')).toBeVisible();
+    await page.waitForTimeout(400);
     await page.getByRole('button', { name: 'Geri' }).click();
     await expect(page.locator('[data-tur-ekrani="akis"]')).toBeVisible();
     // Yazılış gösterimi bugünkü sesin küçük harfini açar; İzle → Geri → gösterim → Geri → akış.
