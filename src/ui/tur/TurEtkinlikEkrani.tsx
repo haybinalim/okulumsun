@@ -680,7 +680,8 @@ function Uyaran({
               data-yuva=""
               aria-hidden="true"
               style={{
-                display: 'inline-block',
+                // Esnek kutunun çocuğu: blok sayılır (genişlik/yükseklik uygulanır).
+                flex: 'none',
                 width: '0.7em',
                 height: '1em',
                 marginLeft: '0.08em',

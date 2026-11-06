@@ -138,7 +138,7 @@ describe('T-10 Cümleyi oku, resmini bul', () => {
       expect(s.uyaran).toEqual({ tur: 'yazi', metin: s.hedefMetin });
       const c = cumleler.find((x) => x.metin === s.hedefMetin)!;
       expect(s.kartlar[s.dogru].gorselId).toBe(c.gorselId);
-      const govde = trKucuk(s.hedefMetin).split(/[ ,.?!']+/);
+      const govde = trKucuk(s.hedefMetin).split(/[ ,.?!']+/).filter((w) => w.length > 0);
       s.kartlar.forEach((k, i) => {
         expect(k.tur).toBe('gorsel');
         expect(dekodlanabilirMi(k.metin, kume)).toBe(true);

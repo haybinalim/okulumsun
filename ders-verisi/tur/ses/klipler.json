@@ -1755,12 +1755,12 @@
   },
   {
    "anahtar": "tur.yonerge.t10",
-   "metin": "Yukarıdaki cümleyi içinden oku. Cümleye uyan resmi bul.",
+   "metin": "Yukarıdaki cümleyi içinden okuyup cümleye uyan resmi bul.",
    "durum": "eksik"
   },
   {
    "anahtar": "tur.yonerge.t11",
-   "metin": "Cümleyi içinden oku. Cümlenin sonuna hangi işaret gelir?",
+   "metin": "Cümleyi içinden okuyup sonuna gelen işareti bul.",
    "durum": "eksik"
   },
   {
