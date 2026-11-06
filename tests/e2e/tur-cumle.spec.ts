@@ -56,8 +56,10 @@ for (const sablon of CUMLE_SABLONLARI) {
         const model = page.locator('[data-uyaran-metni="model"]');
         await expect(model).toBeVisible();
         const satir = await model.evaluate((e) => {
+          // T-11: cümle metni ilk çocukta, yanında boş yuva kutusu (satır sayımına girmez).
+          const metin = e.hasAttribute('data-noktalama-yuvasi') ? e.firstElementChild! : e;
           const r = document.createRange();
-          r.selectNodeContents(e);
+          r.selectNodeContents(metin);
           return new Set([...r.getClientRects()].map((x) => Math.round(x.top))).size;
         });
         expect(satir, `${baglam}: tek satır`).toBe(1);
