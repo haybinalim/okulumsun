@@ -8,7 +8,7 @@
  *
  * Zorluk: z1 2 kart, en çok 3 sözcük, yanlışı cümle başı küçük · z2 2 kart, yanlışı cümle içinde büyük harf ·
  * z3 2 kart, özel adlı cümle öncelikli (yanlışı özel ad küçük) · z4 3 kart (cümle başı + bir başka yanlış) ·
- * z5 3 kart, özel adlı cümle öncelikli, iki ayrı yanlış türü. 3 kartta cümle en çok 20 karakter (tahtada sığar).
+ * z5 3 kart, özel adlı cümle öncelikli, iki ayrı yanlış türü. 3 kartta cümle en çok 15 karakter (1080×810 tahtada iki sütun parmak boyunda sığar; 20 karakterde taşıyordu).
  */
 import { createRng } from '../../../../../exercises/rng';
 import { trBuyuk, trKucuk } from '../../alfabe';
@@ -30,7 +30,7 @@ const AYAR: Readonly<Record<1 | 2 | 3 | 4 | 5, { kart: 2 | 3; max: number; terci
 };
 
 /** 3 kartlı soruda cümle en çok bu kadar karakter (tahta 1080×810'da üç cümle kartı sığsın). */
-export const T12_UC_KART_EN_COK = 20;
+export const T12_UC_KART_EN_COK = 15;
 
 const harfMi = (c: string) => trKucuk(c) !== trBuyuk(c);
 

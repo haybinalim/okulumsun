@@ -376,9 +376,10 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
 /** Kart en/boy oranı: hece 1,6; sözcük en uzun sözcüğe göre; öteki kartlar kare. */
 export function kartEnBoy(kartlar: readonly TurKart[]): number {
   if (kartlar.some((k) => k.tur === 'hece' || k.tur === 'konum')) return 1.6;
-  // Cümle kartı (T-12): en uzun cümleye göre geniş, tek satır (sözcük bölünmez, D-22).
+  // Cümle kartı (T-12): en uzun cümleye göre geniş, tek satır (sözcük bölünmez, D-22). Yazı boyu kartın 0,4'ü; TemelYazi'de
+  // harf başına ≈ 0,18 kart boyu → 0,2 + kenar payı 0,5 (3 kart 15 karaktere dek 1080×810 tahtada iki sütun sığar).
   const cumle = kartlar.filter((k) => k.tur === 'cumle');
-  if (cumle.length) return Math.max(2, 0.24 * Math.max(...cumle.map((k) => [...k.metin].length)) + 0.8);
+  if (cumle.length) return Math.max(2, 0.2 * Math.max(...cumle.map((k) => [...k.metin].length)) + 0.5);
   const sozcuk = kartlar.filter((k) => k.tur === 'sozcuk');
   if (sozcuk.length) return Math.max(1.3, 0.3 * Math.max(...sozcuk.map((k) => [...k.metin].length)) + 0.5);
   return 1;
