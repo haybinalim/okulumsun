@@ -148,8 +148,13 @@ test('M-3 koro / yankılayıcı okuma: tahtada sözcük sözcük vurgu, yankı k
     const sozcukSayisi = await page.locator('[data-koro-sozcuk]').count();
     expect(sozcukSayisi).toBeGreaterThanOrEqual(2);
     const sonraki = page.getByRole('button', { name: 'Sonraki sözcük', exact: true });
-    for (let i = 0; i < sozcukSayisi; i++) {
+    // BigButton aynı düğmeye 250 ms soğuma (MOTION.tapCooldown): öğretmen hızında dokunulur.
+    const dokun = async () => {
+      await page.waitForTimeout(300);
       await sonraki.click();
+    };
+    for (let i = 0; i < sozcukSayisi; i++) {
+      await dokun();
       await expect(main).toHaveAttribute('data-vurgu', String(i));
       await expect(page.locator('[data-vurgulu]')).toHaveAttribute('data-koro-sozcuk', String(i));
     }
@@ -157,9 +162,9 @@ test('M-3 koro / yankılayıcı okuma: tahtada sözcük sözcük vurgu, yankı k
     // Yankı: öğretmen okur → sınıf tekrar eder, vurgu baştan.
     await page.getByRole('button', { name: 'Kip: koro', exact: true }).click();
     await expect(main).toHaveAttribute('data-kip', 'yanki');
-    for (let i = 0; i < sozcukSayisi; i++) await sonraki.click();
+    for (let i = 0; i < sozcukSayisi; i++) await dokun();
     await expect(main).toHaveAttribute('data-asama', 'ogretmen');
-    await sonraki.click();
+    await dokun();
     await expect(main).toHaveAttribute('data-asama', 'sinif');
     await expect(main).toHaveAttribute('data-vurgu', '0');
     const once = await main.getAttribute('data-koro-okuma');
