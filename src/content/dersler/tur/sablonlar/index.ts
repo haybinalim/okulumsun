@@ -3,7 +3,7 @@
  *   Dalga 1, görselsiz (Adım 69): T-02, T-03 (69a), T-04, T-05 (69b), T-06, T-07 (69c).
  *   Dalga 2, görselli (Adım 70): T-01 Sesi duy resmi seç, T-08 Sözcüğü oku resmini bul (seçenekler sözcük görselleri).
  *   Çeşitlilik (Adım 79, kullanıcı isteği 2026-11-06): T-09 Harfi parçalardan kur, T-16 Hatalı sözcüğü bul,
- *   T-17 Hece say, T-18 Sesin yeri.
+ *   T-17 Hece say, T-18 Sesin yeri, T-19 Aynı sesle eşleştir, T-20 Harf avı.
  *
  * Her şablon (havuz, öğretilen küme, zorluk, tohum) → soru üretir; aynı girdi aynı soruyu ve `itemId`'yi verir.
  * Kural denetimi (D-11, D-12, D-23 ve küme) `denetim.ts` ve CI doğrulayıcısı (`dogrulayici.ts`) ile yapılır.
@@ -20,6 +20,8 @@ import { uretT09 } from './t09HarfParcalari';
 import { uretT16 } from './t16HataliSozcuk';
 import { uretT17 } from './t17HeceSay';
 import { uretT18 } from './t18SesinYeri';
+import { uretT19 } from './t19AyniSesEslestir';
+import { uretT20 } from './t20HarfAvi';
 import type { TurSablonKodu, TurSoru, TurUretimGirdisi } from './turSoru';
 
 /** Etkinlik kataloğundaki beceri kümesi (öğretmen ekranı). */
@@ -55,6 +57,8 @@ export const TUR_SABLONLARI: Readonly<Record<TurSablonKodu, TurSablonTanimi>> = 
   'T-16': { kod: 'T-16', ad: 'Hatalı sözcüğü bul', meb: 'T.Y.1.4.a', beceri: 'sozcuk', etkilesim: 'secim', uret: uretT16 },
   'T-17': { kod: 'T-17', ad: 'Hece say', meb: 'T.D.1.2.d', beceri: 'hece', etkilesim: 'secim', uret: uretT17 },
   'T-18': { kod: 'T-18', ad: 'Sesin yeri', meb: 'T.D.1.1.a', beceri: 'ses', etkilesim: 'secim', uret: uretT18 },
+  'T-19': { kod: 'T-19', ad: 'Aynı sesle eşleştir', meb: 'T.D.1.1.a', beceri: 'ses', etkilesim: 'eslestir', uret: uretT19 },
+  'T-20': { kod: 'T-20', ad: 'Harf avı', meb: 'KB2.7', beceri: 'harf', etkilesim: 'coklu', uret: uretT20 },
 };
 
 export function turSoruUret(sablon: TurSablonKodu, g: TurUretimGirdisi): TurSoru {

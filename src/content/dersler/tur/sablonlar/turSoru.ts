@@ -16,6 +16,7 @@ import type { TurHamleGlifi } from '../../../schema/turHamle';
 
 export const TUR_SABLON_KODLARI = [
   'T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07', 'T-08', 'T-09', 'T-16', 'T-17', 'T-18',
+  'T-19', 'T-20',
 ] as const; // prettier-ignore
 export type TurSablonKodu = (typeof TUR_SABLON_KODLARI)[number];
 
@@ -116,7 +117,22 @@ export interface TurYerlestirSorusu extends TurSoruTemeli {
   readonly sirasiz?: boolean;
 }
 
-export type TurSoru = TurSecimSorusu | TurYerlestirSorusu;
+/**
+ * Dokun-eşleştir (T-19): kartlar iki sıradır, ilk yarı üst sıra, ikinci yarı alt sıra. Çocuk bir karta, sonra öbür
+ * sıradaki eşine dokunur; `ciftler[i]` = [üst sıradaki kart, alt sıradaki kart]. Bütün çiftler bulununca doğru.
+ */
+export interface TurEslestirSorusu extends TurSoruTemeli {
+  readonly kind: 'eslestir';
+  readonly ciftler: readonly (readonly [number, number])[];
+}
+
+/** Çoklu seçim (T-20): hedefin hepsi işaretlenir, sonra Onayla; `dogrular` kart sırası, artan. */
+export interface TurCokluSorusu extends TurSoruTemeli {
+  readonly kind: 'coklu';
+  readonly dogrular: readonly number[];
+}
+
+export type TurSoru = TurSecimSorusu | TurYerlestirSorusu | TurEslestirSorusu | TurCokluSorusu;
 
 /** Sözcük havuzu öğesi (çalışma anında `ders-verisi/tur/icerik/sozcukler.json`'dan). */
 export interface TurHavuzSozcugu {

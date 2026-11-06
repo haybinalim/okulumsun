@@ -191,3 +191,52 @@ describe('T-18 Sesin yeri', () => {
     expect(sesYeri('anne', 'k')).toBeNull();
   });
 });
+
+describe('T-19 Aynı sesle eşleştir', () => {
+  const sorular = uret('T-19');
+
+  it('her zorlukta kurulur; tek doğru eşleşme (çiftin sesi yalnız kendi eşininkiyle aynı)', () => {
+    for (const z of TUR_ZORLUKLARI) expect(sorular.filter((u) => u.soru.zorluk === z).length, `z${z}`).toBeGreaterThan(60);
+    for (const { soru } of sorular) {
+      if (soru.kind !== 'eslestir') throw new Error('T-19 eşleştir');
+      const son = soru.zorluk === 5;
+      const ses = (i: number) => {
+        const k = soru.kartlar[i];
+        return k.tur === 'harf' ? k.metin : son ? k.metin[k.metin.length - 1] : k.metin[0];
+      };
+      expect(soru.ciftler.length).toBe({ 1: 2, 2: 3, 3: 3, 4: 4, 5: 4 }[soru.zorluk]);
+      for (const [a, b] of soru.ciftler) expect(ses(a), soru.itemId).toBe(ses(b));
+      expect(new Set(soru.ciftler.map(([a]) => ses(a))).size).toBe(soru.ciftler.length);
+      const yari = soru.kartlar.length / 2;
+      for (let i = 0; i < yari; i++) expect(soru.kartlar[i].tur).toBe('gorsel');
+      for (let i = yari; i < soru.kartlar.length; i++) expect(soru.kartlar[i].tur).toBe(soru.zorluk <= 2 ? 'harf' : 'gorsel');
+      expect(soru.soruKlipleri).toEqual([]);
+      expect(soru.geriBildirim[0]).toBe('tur.geri.dogru');
+    }
+  });
+});
+
+describe('T-20 Harf avı', () => {
+  const sorular = uret('T-20');
+
+  it('her zorlukta kurulur; doğrular hedefi taşıyan kartların tamamı; z4–5 heceler okunabilir sözcüklerden', () => {
+    for (const z of TUR_ZORLUKLARI) expect(sorular.filter((u) => u.soru.zorluk === z).length, `z${z}`).toBeGreaterThan(100);
+    for (const { soru, kume } of sorular) {
+      if (soru.kind !== 'coklu') throw new Error('T-20 çoklu');
+      const h = soru.hedefMetin;
+      expect(kume.has(h)).toBe(true);
+      expect(soru.dogrular).toEqual(soru.kartlar.flatMap((k, i) => (k.metin.includes(h) ? [i] : [])));
+      expect(soru.dogrular.length).toBeGreaterThanOrEqual(1);
+      expect(soru.dogrular.length).toBeLessThan(soru.kartlar.length);
+      expect(soru.kartlar.length).toBe({ 1: 4, 2: 6, 3: 8, 4: 6, 5: 8 }[soru.zorluk]);
+      for (const k of soru.kartlar) expect(k.tur).toBe(soru.zorluk >= 4 ? 'hece' : 'harf');
+      if (soru.zorluk >= 4) {
+        const heceler = new Set(okunabilirSozcukler(havuz, kume).flatMap((s) => hecele(s.metin)));
+        for (const k of soru.kartlar) expect(heceler.has(k.metin), k.metin).toBe(true);
+        expect(new Set(soru.kartlar.map((k) => k.metin)).size).toBe(soru.kartlar.length);
+      }
+      expect(soru.soruKlipleri).toEqual([]);
+      expect(soru.uyaran).toEqual({ tur: 'yazi', metin: h });
+    }
+  });
+});
