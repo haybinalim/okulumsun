@@ -18,7 +18,17 @@ export const TUR_SABLON_KODLARI = [
   'T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07', 'T-08', 'T-09', 'T-16', 'T-17', 'T-18',
   'T-19', 'T-20',
 ] as const; // prettier-ignore
-export type TurSablonKodu = (typeof TUR_SABLON_KODLARI)[number];
+
+/**
+ * Cümle şablonları (Adım 74): üreticileri ayrı tembel parçada (`cumle/turCumle.ts`, KG-156); cümle havuzu ister
+ * (`TurUretimGirdisi.cumleler`) ve 2. gruptan önce kurulmaz (D-08).
+ */
+export const TUR_CUMLE_SABLON_KODLARI = ['T-10', 'T-11'] as const;
+export type TurCumleSablonKodu = (typeof TUR_CUMLE_SABLON_KODLARI)[number];
+export type TurSablonKodu = (typeof TUR_SABLON_KODLARI)[number] | TurCumleSablonKodu;
+
+/** Katalog sırasıyla bütün şablonlar (sözcük düzeyi + cümle). */
+export const TUR_TUM_SABLON_KODLARI: readonly TurSablonKodu[] = [...TUR_SABLON_KODLARI, ...TUR_CUMLE_SABLON_KODLARI];
 
 export type TurZorluk = 1 | 2 | 3 | 4 | 5;
 
@@ -44,8 +54,11 @@ export interface TurKart {
   readonly id: string;
   /** Metin kartında gösterilen metin; `parca` kartında iç anahtar (glif + hamle sırası, ör. `a1`; gösterilmez). */
   readonly metin: string;
-  /** `sayi`: hece sayısı kartı (rakam + nokta; T-17); `konum`: sesin yeri kartı (başta/ortada/sonda; T-18). */
-  readonly tur: 'harf' | 'hece' | 'simge' | 'gorsel' | 'sozcuk' | 'parca' | 'sayi' | 'konum';
+  /**
+   * `sayi`: hece sayısı kartı (rakam + nokta; T-17); `konum`: sesin yeri kartı (başta/ortada/sonda; T-18);
+   * `noktalama`: bitiş işareti kartı (. ? !; T-11); `cumle`: yazılı cümle kartı (T-12).
+   */
+  readonly tur: 'harf' | 'hece' | 'simge' | 'gorsel' | 'sozcuk' | 'parca' | 'sayi' | 'konum' | 'noktalama' | 'cumle';
   /** Yalnız görsel kartta: `ders-verisi/tur/gorseller/<gorselId>.svg` (D-25). */
   readonly gorselId?: string;
   /** Yalnız `parca` kartında (T-09): hamlenin glifi, glif genişliği ve orta çizgi noktaları (hamle verisi birimi). */
@@ -88,6 +101,8 @@ interface TurSoruTemeli {
     | { readonly tur: 'resim'; readonly gorselId: string; readonly metin?: string; readonly harf?: string }
     /** T-09: model harf + parçaların yerleştiği çerçeve (glif genişliği, hamle verisi birimi). */
     | { readonly tur: 'parca'; readonly glif: string; readonly genislik: number }
+    /** T-11: bitiş işaretsiz cümle + sonunda boş yuva (dokunulmaz); doğru cevaptan sonra cümle işaretiyle. */
+    | { readonly tur: 'noktalama'; readonly metin: string }
     | { readonly tur: 'yok' };
   /** Doğru cevaptan SONRA okunacak klipler (bütün sözcük ya da hece; D-11). */
   readonly geriBildirim: readonly TurKlipKimligi[];

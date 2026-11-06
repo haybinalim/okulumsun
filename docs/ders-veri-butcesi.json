@@ -1,11 +1,16 @@
 {
-  "karar": "ADR-0016 (Okuma Yazma planı K-2, KG-133)",
+  "karar": "ADR-0016 (Okuma Yazma planı K-2, KG-133); ek parçalar KG-156 (Adım 74, kullanıcı teyidi bekliyor)",
   "zorunlu": false,
   "dersler": {
     "tur": {
       "cekirdekBayt": 1048576,
       "grupBayt": 6291456,
-      "kodBayt": 122880
+      "kodBayt": 122880,
+      "ekParcaBayt": 40960,
+      "ekParcalar": [
+        "turCumle",
+        "KoroOkuma"
+      ]
     }
   }
 }

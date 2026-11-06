@@ -20,6 +20,11 @@
  * çerçeve), T-16 sözcük kartları (genişlik en uzun sözcüğe göre; doğru cevaptan sonra doğru yazılış üstte), T-17
  * hece sayısı kartları (rakam + nokta), T-18 sesin yeri kartları (üç kutu, dolu kutu yer). Resim uyaranı (T-17, T-18)
  * dokunulmaz; adı soru sesidir, ses yokken öğretmen "Öğretmen: sözcük"ten okur; doğru cevaptan sonra altında yazılır.
+ *
+ * Adım 74: cümle şablonları (T-10, T-11, T-12) cümle parçasını ve cümle havuzunu bekler (`useCumleVerisi`, ayrı tembel
+ * JS, KG-156). T-10 üstte yazılı cümle (tek satır, sözcük bölünmez D-22) + resim kartları; T-11 bitiş işaretsiz cümle +
+ * boş yuva, kartlar . ? ! (sabit sıra; erişilebilir ad "Nokta", "Soru işareti", "Ünlem işareti"); doğru cevaptan sonra
+ * cümle işaretiyle üstte.
  */
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react';
 import { BigButton } from '../primitives/BigButton';
@@ -41,6 +46,8 @@ import { kartDuzeni, type KartDuzeni } from './etkinlikDuzeni';
 import { ekranStili } from './turOrtak';
 import { TUR_VERI_KOKU } from '../../content/dersler/tur/veriYukleyici';
 import { useHamleVerisi } from './useHamleVerisi';
+import { useCumleVerisi } from './useCumleVerisi';
+import { TUR_CUMLE_SABLON_KODLARI } from '../../content/dersler/tur/sablonlar/turSoru';
 import { KALEM, SATIR, yolVerisi } from './hamleCizim';
 import type { TurKart, TurParca } from '../../content/dersler/tur/sablonlar/turSoru';
 import { hecele } from '../../content/dersler/tur/heceleme';
@@ -68,16 +75,26 @@ export function TurEtkinlikEkrani({
   const hamleGerekli = sablon === 'T-09';
   const hv = useHamleVerisi(hamleGerekli);
   const hamleler = hv.durum === 'hazir' ? hv.veri.glifler : undefined;
-  const havuz = h.durum === 'hazir' && (!hamleGerekli || hamleler) ? h.havuz : null;
+  // Cümle parçası ve havuzu yalnız cümle şablonlarında (T-10, T-11, T-12) yüklenir.
+  const cumleGerekli = (TUR_CUMLE_SABLON_KODLARI as readonly string[]).includes(sablon);
+  const cv = useCumleVerisi(cumleGerekli);
+  const cumleler = cv.durum === 'hazir' ? cv.cumleler : undefined;
+  const havuz = h.durum === 'hazir' && (!hamleGerekli || hamleler) && (!cumleGerekli || cumleler) ? h.havuz : null;
   const sonuc = useMemo((): { soru: TurSoru } | { hata: string } | null => {
     if (!havuz) return null;
     try {
-      return { soru: turSoruUret(sablon, { havuz, kume, zorluk, tohum, hamleler }) };
+      return { soru: turSoruUret(sablon, { havuz, kume, zorluk, tohum, hamleler, cumleler }) };
     } catch (e) {
       if (e instanceof TurUretimHatasi) return { hata: e.message };
       throw e;
     }
-  }, [havuz, kume, sablon, zorluk, tohum, hamleler]);
+  }, [havuz, kume, sablon, zorluk, tohum, hamleler, cumleler]);
+  if (cv.durum === 'hata')
+    return (
+      <main aria-label="Etkinlik" style={{ ...ekranStili, justifyContent: 'center' }}>
+        <p data-yetiskin="">{`Cümle verisi açılamadı: ${cv.mesaj}`}</p>
+      </main>
+    );
   if (hamleGerekli && hv.durum === 'hata')
     return (
       <main aria-label="Etkinlik" style={{ ...ekranStili, justifyContent: 'center' }}>
@@ -112,7 +129,7 @@ export function TurEtkinlikEkrani({
             ekran: 'etkinlik',
             sablon,
             zorluk,
-            tohum: sonrakiTohum(sablon, { havuz: havuz!, kume, zorluk, tohum, hamleler }, sonuc.soru.hedefMetin),
+            tohum: sonrakiTohum(sablon, { havuz: havuz!, kume, zorluk, tohum, hamleler, cumleler }, sonuc.soru.hedefMetin),
             ...(geri ? { geri } : {}),
           }))
       }
@@ -359,6 +376,9 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
 /** Kart en/boy oranı: hece 1,6; sözcük en uzun sözcüğe göre; öteki kartlar kare. */
 export function kartEnBoy(kartlar: readonly TurKart[]): number {
   if (kartlar.some((k) => k.tur === 'hece' || k.tur === 'konum')) return 1.6;
+  // Cümle kartı (T-12): en uzun cümleye göre geniş, tek satır (sözcük bölünmez, D-22).
+  const cumle = kartlar.filter((k) => k.tur === 'cumle');
+  if (cumle.length) return Math.max(2, 0.24 * Math.max(...cumle.map((k) => [...k.metin].length)) + 0.8);
   const sozcuk = kartlar.filter((k) => k.tur === 'sozcuk');
   if (sozcuk.length) return Math.max(1.3, 0.3 * Math.max(...sozcuk.map((k) => [...k.metin].length)) + 0.5);
   return 1;
@@ -443,8 +463,10 @@ function Kart({
       ? `Parça ${sira + 1}`
       : kart.tur === 'konum'
         ? KONUM_ADI[metin]
-        : metin;
-  const yazi = kart.tur === 'sozcuk' ? 0.5 : kart.tur === 'hece' ? 0.5 : 0.62;
+        : kart.tur === 'noktalama'
+          ? (NOKTALAMA_ADI[metin] ?? metin)
+          : metin;
+  const yazi = kart.tur === 'cumle' ? 0.4 : kart.tur === 'sozcuk' ? 0.5 : kart.tur === 'hece' ? 0.5 : kart.tur === 'noktalama' ? 0.7 : 0.62;
   return (
     <button
       type="button"
@@ -635,6 +657,40 @@ function Uyaran({
         <Metin metin={u.metin} yukseklik={satir} stil={!yuvaVar ? vurgu : undefined} veri="model" />
       )}
       {u.tur === 'yok' && dogru && <Metin metin={soru.hedefMetin} yukseklik={60} stil={vurgu} veri="dogru-yazilis" />}
+      {u.tur === 'noktalama' &&
+        (dogru ? (
+          <Metin metin={soru.hedefMetin} yukseklik={60} stil={vurgu} veri="dogru-yazilis" />
+        ) : (
+          <div
+            data-uyaran-metni="model"
+            data-noktalama-yuvasi=""
+            style={{
+              height: '60cqh',
+              display: 'flex',
+              alignItems: 'center',
+              fontSize: `min(48cqh, calc(100cqw / ${([...u.metin].length + 2) * 0.75}))`,
+              lineHeight: 1,
+              whiteSpace: 'nowrap',
+              padding: '0 0.2em',
+            }}
+          >
+            <span>{u.metin}</span>
+            {/* Boş yuva: dokunulmaz (üst %35, D-24); kesikli çerçeve, renk tek ipucu değil. */}
+            <span
+              data-yuva=""
+              aria-hidden="true"
+              style={{
+                display: 'inline-block',
+                width: '0.7em',
+                height: '1em',
+                marginLeft: '0.08em',
+                boxSizing: 'border-box',
+                border: 'calc(3px * var(--scale)) dashed var(--color-ink-soft)',
+                borderRadius: 'calc(10px * var(--scale))',
+              }}
+            />
+          </div>
+        ))}
       {u.tur === 'resim' && (
         <div data-uyaran-resim={u.gorselId} style={{ display: 'flex', alignItems: 'center', gap: '6cqw', height: '94cqh' }}>
           <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2cqh' }}>
@@ -807,6 +863,8 @@ function ParcaCizimi({ parcalar, merkez, cizgiler = false }: { parcalar: readonl
 }
 
 const KONUM_ADI: Readonly<Record<string, string>> = { bas: 'Başta', orta: 'Ortada', son: 'Sonda' };
+/** Noktalama kartının erişilebilir adı (T-11; işaret görünür, ad yalnız ekran okuyucuya). */
+const NOKTALAMA_ADI: Readonly<Record<string, string>> = { '.': 'Nokta', '?': 'Soru işareti', '!': 'Ünlem işareti' };
 
 /** Sesin yeri: üç kutulu şerit; yerin kutusu dolu, ötekiler kesikli boş (renk tek ipucu değil). */
 function KonumSeridi({ yer }: { yer: string }) {

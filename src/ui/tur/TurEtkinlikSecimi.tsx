@@ -13,13 +13,15 @@ import { TUR_BECERILERI, TUR_SABLONLARI } from '../../content/dersler/tur/sablon
 import type { TurHamleGlifi } from '../../content/schema/turHamle';
 import { useHamleVerisi } from './useHamleVerisi';
 import {
-  TUR_SABLON_KODLARI,
+  TUR_TUM_SABLON_KODLARI,
   TUR_ZORLUKLARI,
   TurUretimHatasi,
+  type TurHavuzCumlesi,
   type TurHavuzSozcugu,
   type TurSablonKodu,
   type TurZorluk,
 } from '../../content/dersler/tur/sablonlar/turSoru';
+import { useCumleVerisi } from './useCumleVerisi';
 import { BigButton } from '../primitives/BigButton';
 import { turEkraniAc } from './turEkrani';
 import { useTurKume } from './turKume';
@@ -37,10 +39,11 @@ function kurulabilirMi(
   kume: ReadonlySet<string>,
   zorluk: TurZorluk,
   hamleler: readonly TurHamleGlifi[] | undefined,
+  cumleler: readonly TurHavuzCumlesi[] | undefined,
 ) {
   for (let tohum = 1; tohum <= 4; tohum++) {
     try {
-      TUR_SABLONLARI[sablon].uret({ havuz, kume, zorluk, tohum, hamleler });
+      TUR_SABLONLARI[sablon].uret({ havuz, kume, zorluk, tohum, hamleler, cumleler });
       return true;
     } catch (e) {
       if (!(e instanceof TurUretimHatasi)) throw e;
@@ -55,6 +58,9 @@ export function EtkinlikSecimi() {
   const h = useTurHavuzu();
   const hv = useHamleVerisi();
   const hamleler = hv.durum === 'hazir' ? hv.veri.glifler : undefined;
+  // Katalog cümle şablonlarının bu kümeyle kurulup kurulamadığını gösterir: cümle parçası burada yüklenir (Adım 74).
+  const cv = useCumleVerisi(true);
+  const cumleler = cv.durum === 'hazir' ? cv.cumleler : undefined;
   const [secim, setSecim] = useState(sonSecim);
   const sec = (s: typeof secim) => {
     sonSecim = s;
@@ -78,9 +84,13 @@ export function EtkinlikSecimi() {
               style={{ display: 'flex', gap: '0.4em', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}
             >
               <span style={{ fontSize: 'var(--text-adult)', minWidth: '7.5em', textAlign: 'right', color: 'var(--color-ink-soft, #6B6B6B)' }}>{b.ad}</span>
-              {TUR_SABLON_KODLARI.filter((kod) => TUR_SABLONLARI[kod].beceri === b.kod).map((kod) => {
+              {TUR_TUM_SABLON_KODLARI.filter((kod) => TUR_SABLONLARI[kod].beceri === b.kod).map((kod) => {
                 const t = TUR_SABLONLARI[kod];
-                const olmaz = h.durum === 'hazir' && hv.durum !== 'yukleniyor' && !kurulabilirMi(kod, h.havuz, kume, secim.zorluk, hamleler);
+                const olmaz =
+                  h.durum === 'hazir' &&
+                  hv.durum !== 'yukleniyor' &&
+                  cv.durum !== 'yukleniyor' &&
+                  !kurulabilirMi(kod, h.havuz, kume, secim.zorluk, hamleler, cumleler);
                 return (
                   <BigButton
                     key={kod}

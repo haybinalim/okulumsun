@@ -9,7 +9,7 @@ import { acikDersler, DERS_KODLARI, DERSLER } from '../../src/content/dersler';
 import { TUR_IMLECI, turDersiniKaydet } from '../../src/content/dersler/tur';
 import { turVeriYolu, turVerisiniOku, TUR_VERI_KOKU } from '../../src/content/dersler/tur/veriYukleyici';
 import { dersVerisiDosyalari } from '../../scripts/yayin/dersVerisi';
-import { butceyiDegerlendir, veriyiOlc, type DersVeriManifesti } from '../../scripts/ders-veri-butcesi';
+import { butceyiDegerlendir, kodOlc, veriyiOlc, type DersVeriManifesti } from '../../scripts/ders-veri-butcesi';
 
 const KOK = path.resolve(__dirname, '../..');
 const oku = (rel: string) => readFileSync(path.join(KOK, rel), 'utf8');
@@ -209,6 +209,32 @@ describe('ders verisi yayını ve bütçe', () => {
   it('bütçe dosyası K-2 tavanlarını taşır ve yayına kadar zorunlu değil', () => {
     const b = JSON.parse(oku('docs/ders-veri-butcesi.json'));
     expect(b.zorunlu).toBe(false);
-    expect(b.dersler.tur).toEqual({ cekirdekBayt: 1024 * 1024, grupBayt: 6 * 1024 * 1024, kodBayt: 120 * 1024 });
+    expect(b.dersler.tur).toEqual({
+      cekirdekBayt: 1024 * 1024,
+      grupBayt: 6 * 1024 * 1024,
+      kodBayt: 120 * 1024,
+      // KG-156: ek parçalar (yalnız gerektiğinde indirilir) ayrı tavanla; temel tavan değişmedi.
+      ekParcaBayt: 40 * 1024,
+      ekParcalar: ['turCumle', 'KoroOkuma'],
+    });
+  });
+
+  it('KG-156: Türkçe JS temel + ek parçalar olarak ölçülür; ek parça kendi tavanıyla', () => {
+    const k = kodOlc(
+      new Map([
+        ['index-a1.js', 1000],
+        ['TurEkrani-b2.js', 300],
+        ['turCumle-C3_d.js', 50],
+        ['KoroOkuma-x.js', 20],
+        ['turCumleX-y.js', 5],
+      ]),
+      900,
+      ['turCumle', 'KoroOkuma'],
+    );
+    expect(k).toEqual({ temel: 1375 - 900 - 70, ekler: { turCumle: 50, KoroOkuma: 20 } });
+    const o = veriyiOlc(new Map([['manifest.json', 1]]), manifest);
+    const b = { ...butce, ekParcaBayt: 40 };
+    expect(butceyiDegerlendir(o, k, b).asimlar.filter((a) => a.startsWith('Türkçe'))).toEqual(['Türkçe ek parça turCumle: 50 B > 40 B']);
+    expect(butceyiDegerlendir(o, { temel: 501, ekler: {} }, b).asimlar).toContain('Türkçe JS 501 B > 500 B');
   });
 });

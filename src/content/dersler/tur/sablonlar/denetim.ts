@@ -49,9 +49,9 @@ function klipMetni(anahtar: string, manifest: ReadonlyMap<string, string>): stri
   return manifest.get(anahtar) ?? '';
 }
 
-const OKUMA_HEDEFLI = new Set(['T-03', 'T-04', 'T-05', 'T-06', 'T-08', 'T-09', 'T-16', 'T-20']);
+const OKUMA_HEDEFLI = new Set(['T-03', 'T-04', 'T-05', 'T-06', 'T-08', 'T-09', 'T-10', 'T-11', 'T-12', 'T-16', 'T-20']);
 /** Seçenekleri yalnız sözcük görselleri olan şablonlar. */
-const GORSELLI = new Set(['T-01', 'T-08']);
+const GORSELLI = new Set(['T-01', 'T-08', 'T-10']);
 /** Görsel kart ile başka kartı karışık taşıyan şablonlar (T-19 z1–2 resim–harf). */
 const GORSEL_KARISIK = new Set(['T-19']);
 
@@ -61,7 +61,15 @@ export function turSoruEtkinligi(s: TurSoru, manifest: ReadonlyMap<string, strin
       ? { tur: 'ses' }
       : s.uyaran.tur === 'resim'
         ? { tur: 'gorsel', ...((s.uyaran.harf ?? s.uyaran.metin) ? { metin: s.uyaran.harf ?? s.uyaran.metin } : {}) }
-        : { tur: 'yazi', metin: s.uyaran.tur === 'yazi' ? s.uyaran.metin : s.uyaran.tur === 'parca' ? s.uyaran.glif : s.hedefMetin };
+        : {
+            tur: 'yazi',
+            metin:
+              s.uyaran.tur === 'yazi' || s.uyaran.tur === 'noktalama'
+                ? s.uyaran.metin
+                : s.uyaran.tur === 'parca'
+                  ? s.uyaran.glif
+                  : s.hedefMetin,
+          };
   return {
     id: s.itemId.replace('#', '.').replace(/[^a-z0-9.-]/gi, '-').toLowerCase(),
     sablon: s.sablon,
@@ -76,7 +84,14 @@ export function turSoruEtkinligi(s: TurSoru, manifest: ReadonlyMap<string, strin
           ? // Parça kartı: metni iç anahtardır; sessiz kart olarak denetlenir.
             { tur: 'harf' as const, sesli: false }
           : {
-            tur: k.tur === 'hece' ? ('hece' as const) : k.tur === 'sozcuk' ? ('sozcuk' as const) : ('harf' as const),
+            tur:
+              k.tur === 'hece'
+                ? ('hece' as const)
+                : k.tur === 'sozcuk' || k.tur === 'cumle'
+                  ? ('sozcuk' as const)
+                  : k.tur === 'noktalama'
+                    ? ('noktalama' as const)
+                    : ('harf' as const),
             metin: k.metin,
             sesli: false,
             ...(k.diagnosticTag ? { diagnosticTag: k.diagnosticTag } : {}),
@@ -108,7 +123,7 @@ export function turSoruIhlalleri(
     ...s.kartlar.map((k) => (METINSIZ_KARTLAR.has(k.tur) ? (k.parca?.glif ?? '') : k.metin)),
     ...s.sozcukler,
     s.hedefMetin,
-    ...(s.uyaran.tur === 'yazi'
+    ...(s.uyaran.tur === 'yazi' || s.uyaran.tur === 'noktalama'
       ? [s.uyaran.metin]
       : s.uyaran.tur === 'bosluklu'
         ? [s.uyaran.once, s.uyaran.sonra]
@@ -125,7 +140,7 @@ export function turSoruIhlalleri(
     else if (!klipMetniGecerliMi(klipMetni(k, manifest))) h.push(`D-11: klip tek başına ünsüz: ${k}.`);
     if (k.startsWith('tur.harf.')) h.push(`D-11: harf klibi istenemez: ${k}.`);
   }
-  if ((OKUMA_HEDEFLI.has(s.sablon) || s.uyaran.tur === 'yazi') && s.soruKlipleri.length > 0)
+  if ((OKUMA_HEDEFLI.has(s.sablon) || s.uyaran.tur === 'yazi' || s.uyaran.tur === 'noktalama') && s.soruKlipleri.length > 0)
     h.push('D-12: okuma hedefli soruda soru sesi yok.');
   for (const k of s.kartlar)
     if ((k.tur === 'parca') !== Boolean(k.parca) || (k.tur === 'parca' && !k.parca?.noktalar.length))
