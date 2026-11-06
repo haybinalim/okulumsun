@@ -27,6 +27,8 @@ export type TurEkrani =
   | { readonly ekran: 'eveGonder'; readonly duzey: 'destek' | 'sinif' | 'zengin'; readonly tohum: number }
   /** Eve link açılışı (veli/çocuk): `?ders=tur&ev=<set kodu>&tur=<küme>`; kod TurEkrani'nda çözülür. Öğretmen ekranına yol yok. */
   | { readonly ekran: 'ev'; readonly kod: string }
+  /** Koro / yankılayıcı okuma (M-3, Adım 74): tahta gösterimi; `geri` gösterimi açan ekran. */
+  | { readonly ekran: 'koro'; readonly geri?: TurEkrani }
   /** Kaynaklar (Okuma Yazma): program, TemelYazi, özgün içerik, ses kaynağı. */
   | { readonly ekran: 'kaynaklar' }
   /** Set akışı: adımlar sırayla (çocuk yüzeyi); `geri` seti açan ekran. */
@@ -110,7 +112,8 @@ export function turAcilisEkrani(arama: string): TurEkrani | null {
     ogretmenEkrani === 'harfler' ||
     ogretmenEkrani === 'sesPlani' ||
     ogretmenEkrani === 'setHazirla' ||
-    ogretmenEkrani === 'kaynaklar'
+    ogretmenEkrani === 'kaynaklar' ||
+    ogretmenEkrani === 'koro'
   )
     return { ekran: ogretmenEkrani };
   const izle = p.get('izle');
@@ -118,7 +121,7 @@ export function turAcilisEkrani(arama: string): TurEkrani | null {
   const sablon = p.get('etkinlik');
   if (sablon === 'liste') return { ekran: 'etkinlikler' };
   // Yalnız tip içe aktarılır: bu modül `App.tsx`'ten okunur, üretim paketine çalışma anı kodu sızmasın.
-  if (sablon && /^T-(0[1-9]|1[01]|1[6-9]|20)$/.test(sablon)) {
+  if (sablon && /^T-(0[1-9]|1[0-2]|1[6-9]|20)$/.test(sablon)) {
     const z = Number(p.get('zorluk') ?? '1');
     const t = Number(p.get('tohum') ?? '1');
     return {

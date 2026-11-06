@@ -190,3 +190,43 @@ describe('T-11 Noktalama işaretini seç', () => {
     expect(kumeKodla(resmiKume('j', true))).toMatch(/^[0-9a-z]+$/);
   });
 });
+
+describe('T-12 Büyük harf yerinde mi', () => {
+  const t12 = () => URETILEN.filter((u) => u.soru.sablon === 'T-12');
+  it('kartlar aynı cümlenin yazılışları; tek doğru (havuzdaki biçim); yanlışlar yalnız büyük/küçük harfte ayrışır', () => {
+    expect(t12().length).toBeGreaterThan(0);
+    for (const { soru, kume } of t12()) {
+      const s = soru as TurSecimSorusu;
+      expect(s.uyaran).toEqual({ tur: 'yok' });
+      expect(s.kartlar.every((k) => k.tur === 'cumle')).toBe(true);
+      expect(s.kartlar[s.dogru].metin).toBe(s.hedefMetin);
+      expect(new Set(s.kartlar.map((k) => k.metin)).size).toBe(s.kartlar.length);
+      for (const k of s.kartlar) {
+        expect(trKucuk(k.metin)).toBe(trKucuk(s.hedefMetin));
+        expect(dekodlanabilirMi(k.metin, kume), `${k.metin}: öğretilmemiş büyük harf yok`).toBe(true);
+      }
+      expect(s.kartlar.length).toBe(s.zorluk >= 4 ? 3 : 2);
+      if (s.zorluk >= 4) expect([...s.hedefMetin].length).toBeLessThanOrEqual(20);
+    }
+  });
+  it('z1 yanlışı cümle başı küçük; z3/z5 özel adlı cümlelerde özel ad küçük yazılışı', () => {
+    for (const { soru } of t12().filter((u) => u.soru.zorluk === 1)) {
+      const s = soru as TurSecimSorusu;
+      const yanlis = s.kartlar.find((_, i) => i !== s.dogru)!;
+      expect(yanlis.metin[0]).toBe(trKucuk(s.hedefMetin[0]));
+    }
+    const ozelli = t12().filter((u) => u.soru.zorluk === 3 && cumleler.find((c) => c.metin === u.soru.hedefMetin)!.ozelAdlar.length > 0);
+    expect(ozelli.length).toBeGreaterThan(0);
+    expect(ozelli.some((u) => u.soru.yonerge === 'tur.yonerge.t12-ozel')).toBe(true);
+  });
+  it('yanlisYazilislar: cümle içi büyük harf yalnız büyüğü öğretilmiş harfle', async () => {
+    const { yanlisYazilislar } = await import('../../src/content/dersler/tur/sablonlar/cumle/t12BuyukHarf');
+    const c = cumleler.find((x) => x.metin === "Emre İzmir'de oturur.")!;
+    const y = yanlisYazilislar(c, resmiKume('z', true));
+    expect(y.basKucuk).toEqual(["emre İzmir'de oturur."]);
+    expect(y.ozelKucuk).toEqual(["Emre izmir'de oturur."]);
+    expect(y.icBuyuk).toEqual(["Emre İzmir'de Oturur."]);
+    const k = new Set([...resmiKume('z', true)].filter((g) => g !== 'O'));
+    expect(yanlisYazilislar(c, k).icBuyuk).toEqual([]);
+  });
+});

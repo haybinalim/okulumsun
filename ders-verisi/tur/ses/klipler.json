@@ -1764,6 +1764,16 @@
    "durum": "eksik"
   },
   {
+   "anahtar": "tur.yonerge.t12",
+   "metin": "Doğru yazılmış cümleyi bul. Harflerin büyüklüğüne dikkat.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t12-ozel",
+   "metin": "Doğru yazılmış cümleyi bul. Cümle başına ve özel adlara dikkat.",
+   "durum": "eksik"
+  },
+  {
    "anahtar": "tur.yonerge.t16",
    "metin": "Yanlış yazılmış sözcüğü bul.",
    "durum": "eksik"

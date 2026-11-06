@@ -6,7 +6,7 @@
  * ekrana, Ana menü uygulamaya döner. Ses yok (tek başına ünsüz sesi hiç yok, K-OY-03; gösterimde değerlendirme ve
  * ses yok, §2.4.9). Hiçbir şey saklanmaz; süre ölçülmez (D-13). Tahtada etkileşim alt bölgede (D-24).
  */
-import { useState, type ReactNode } from 'react';
+import { lazy, Suspense, useState, type ReactNode } from 'react';
 import type { DeviceProfile } from '../../design/tokens';
 import { HARF_GRUPLARI } from '../../content/dersler/tur/alfabe';
 import { GezinmeCubugu } from '../gezinme/GezinmeCubugu';
@@ -28,6 +28,23 @@ import { SesPlani, SetAkisi, SetHazirla } from './TurPlanSet';
 import { EvAcilisi, TurEveGonder, TurKaynaklar } from './TurEv';
 import { evKipiMi } from './sinifAyariDepo';
 import { sikDugme } from './ogretmenOrtak';
+import { useTurKume } from './turKume';
+import { useCumleVerisi } from './useCumleVerisi';
+
+/** M-3 koro / yankılayıcı okuma: ayrı tembel parça (`KoroOkuma-*.js`, KG-156). */
+const KoroOkuma = lazy(() => import('./cumle/KoroOkuma'));
+
+/**
+ * Koro kabuğu: küme ve cümle verisi burada okunur, parçaya özellik olarak geçer (parça ortak modül içe aktarmaz).
+ * Parça küçüktür (≈4 KB); yüklenirken yedek çizilmez, veri yüklenirken parça kendi "Yükleniyor" ekranını gösterir.
+ */
+function KoroKabugu() {
+  return (
+    <Suspense fallback={null}>
+      <KoroOkuma kume={useTurKume()} cv={useCumleVerisi(true)} ekranStili={ekranStili} Baslik={Baslik} />
+    </Suspense>
+  );
+}
 
 export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; profil: DeviceProfile }) {
   // Eve link cihazı (veli/çocuk): ev açılışı köktür; set ekranlarının Geri ve Ana menüsü ona döner, öğretmen
@@ -43,6 +60,7 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
     else if (ekran.ekran === 'eveGonder') turEkraniAc({ ekran: 'setHazirla' });
     else if (ekran.ekran === 'kagitSecimi') turEkraniAc({ ekran: 'kagitlar' });
     else if (ekran.ekran === 'etkinlik') turEkraniAc(ekran.geri ?? { ekran: 'etkinlikler' });
+    else if (ekran.ekran === 'koro') turEkraniAc(ekran.geri ?? { ekran: 'giris' });
     else if (ekran.ekran === 'giris') turEkraniKapat();
     else turEkraniAc({ ekran: 'giris' });
   };
@@ -90,6 +108,8 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
           <EtkinlikSecimi />
         ) : ekran.ekran === 'etkinlik' ? (
           <TurEtkinlikEkrani sablon={ekran.sablon} zorluk={ekran.zorluk} tohum={ekran.tohum} geri={ekran.geri} />
+        ) : ekran.ekran === 'koro' ? (
+          <KoroKabugu />
         ) : ekran.ekran === 'kagit' ? (
           <KagitOnizleme istek={ekran.istek} />
         ) : (

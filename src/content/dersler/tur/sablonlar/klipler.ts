@@ -60,6 +60,8 @@ export const TUR_YONERGELERI = {
   't09': 'Yukarıdaki harfi parçalarla oluştur.',
   't10': 'Yukarıdaki cümleyi içinden okuyup cümleye uyan resmi bul.',
   't11': 'Cümleyi içinden okuyup sonuna gelen işareti bul.',
+  't12': 'Doğru yazılmış cümleyi bul. Harflerin büyüklüğüne dikkat.',
+  't12-ozel': 'Doğru yazılmış cümleyi bul. Cümle başına ve özel adlara dikkat.',
   't09-sira': 'Yukarıdaki harfi parçalarla oluştur. Parçaları yazılış sırasıyla seç.',
   't16': 'Yanlış yazılmış sözcüğü bul.',
   't17': 'Resmin adını söyle. Her hecede bir kez alkışla. Kaç hece var?',
