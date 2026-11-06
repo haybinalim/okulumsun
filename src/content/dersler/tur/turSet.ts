@@ -37,6 +37,9 @@ export interface SetAdimi {
   readonly tohum: number;
 }
 
+/** Setteki adım sayısı (Adım 79: 6 → 8). */
+export const SET_ADIM_SAYISI = 8;
+
 /** Düzey tarifleri: sırayla denenir (8 adım; ses → harf → hece → sözcük → yazma). */
 export const SET_TARIFLERI: Readonly<Record<SetDuzeyi, readonly Omit<SetAdimi, 'tohum'>[]>> = {
   destek: [

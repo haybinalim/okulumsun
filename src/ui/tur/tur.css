@@ -29,3 +29,36 @@
   opacity: 0;
   animation: tur-belir 0.25s ease-out both;
 }
+
+/*
+ * Etkinlik kartı geri bildirimi (Adım 79): doğru kart hafifçe büyüyüp yerine döner, yanlış kart hafifçe sallanır.
+ * Yalnız hareket azaltma kapalıyken sınıf verilir (useHareketAzalt); genel kural ayrıca animasyonu sıfırlar.
+ * Renk tek ipucu değil: doğru kartta işaret rozeti, yanlış kart soluklaşır.
+ */
+@keyframes tur-kart-dogru {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.05);
+  }
+}
+@keyframes tur-kart-yanlis {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  30% {
+    transform: translateX(-2.5%);
+  }
+  70% {
+    transform: translateX(2.5%);
+  }
+}
+.tur-kart-dogru {
+  animation: tur-kart-dogru 0.45s ease-out both;
+}
+.tur-kart-yanlis {
+  animation: tur-kart-yanlis 0.3s ease-in-out both;
+}

@@ -4,18 +4,18 @@
  *  · Haftalık ses planı: Şekil 1 süreleri + okul takvimi; tatil, hazırlık, hatırlatma ve "dönemin son haftası yeni ses
  *    yok" kuralı. Yalnız öneri: "Bu haftayı uygula" bugünkü sesi tek dokunuşla planın o haftasına getirir, başka hiçbir şey
  *    değişmez.
- *  · Set hazırla: öğretilen kümeyle 6 adımlık set, destek / sınıf / zenginleştirme düzeyi; Başlat → etkinlikler sırayla.
+ *  · Set hazırla: öğretilen kümeyle 8 adımlık set (Adım 79), destek / sınıf / zenginleştirme düzeyi; Başlat → etkinlikler sırayla.
  * Yetişkin yüzeyi (Andika); set akışındaki etkinlik ekranları çocuk yüzeyi (TemelYazi). Ses yok; hiçbir şey saklanmaz.
  */
 import { useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { resmiKume } from '../../content/dersler/tur/ogretilenKume';
 import { haftaAraligi, haftaBul, haftalikSesPlani, sonOnerilenSes, type SesHaftasi } from '../../content/dersler/tur/sesPlani';
-import { DUZEY_ACIKLAMASI, DUZEY_ADI, SET_DUZEYLERI, turSetiKur, type SetAdimi, type SetDuzeyi } from '../../content/dersler/tur/turSet';
+import { DUZEY_ACIKLAMASI, DUZEY_ADI, SET_ADIM_SAYISI, SET_DUZEYLERI, type SetAdimi, type SetDuzeyi } from '../../content/dersler/tur/turSet';
+import { useTurSeti } from './useTurSeti';
 import { TUR_SABLONLARI } from '../../content/dersler/tur/sablonlar';
 import { BigButton } from '../primitives/BigButton';
 import { turEkraniAc, type TurEkrani } from './turEkrani';
 import { turKumeYaz, useTurKume } from './turKume';
-import { useTurHavuzu } from './useTurHavuzu';
 import { Baslik, ekranStili } from './turOrtak';
 import { bugunkuSes, sikDugme } from './ogretmenOrtak';
 import { TurEtkinlikEkrani } from './TurEtkinlikEkrani';
@@ -121,10 +121,10 @@ let sonTohum = 1;
 
 export function SetHazirla({ ekAraclar }: { ekAraclar?: (duzey: SetDuzeyi, tohum: number) => ReactNode }) {
   const kume = useTurKume();
-  const h = useTurHavuzu();
   const [duzey, setDuzey] = useState(sonDuzey);
   const [tohum, setTohum] = useState(sonTohum);
-  const set = useMemo(() => (h.durum === 'hazir' ? turSetiKur({ havuz: h.havuz, kume, duzey, tohum }) : null), [h, kume, duzey, tohum]);
+  const sd = useTurSeti(duzey, tohum);
+  const set = sd.durum === 'hazir' ? sd.set : null;
   const sec = (d: SetDuzeyi) => {
     sonDuzey = d;
     setDuzey(d);
@@ -132,7 +132,7 @@ export function SetHazirla({ ekAraclar }: { ekAraclar?: (duzey: SetDuzeyi, tohum
   const ses = bugunkuSes(kume);
   return (
     <main data-yetiskin="" aria-label="Set hazırla" style={{ ...ekranStili, justifyContent: 'flex-start', gap: 'var(--size-gap-tight)' }}>
-      <Baslik baslik={`Set hazırla: ${ses}`} alt="Öğretilen harflerle 6 etkinlik. Set saklanmaz." />
+      <Baslik baslik={`Set hazırla: ${ses}`} alt={`Öğretilen harflerle ${SET_ADIM_SAYISI} etkinlik. Set saklanmaz.`} />
       <div role="group" aria-label="Düzey" style={{ display: 'flex', gap: '0.4em', flexWrap: 'wrap', justifyContent: 'center' }}>
         {SET_DUZEYLERI.map((d) => (
           <BigButton
@@ -151,7 +151,7 @@ export function SetHazirla({ ekAraclar }: { ekAraclar?: (duzey: SetDuzeyi, tohum
       <p style={{ margin: 0, fontSize: 'var(--text-adult)', textAlign: 'center' }}>{DUZEY_ACIKLAMASI[duzey]}</p>
       {!set ? (
         <p data-yetiskin="" style={{ fontSize: 'var(--text-adult)' }}>
-          {h.durum === 'hata' ? `Sözcük havuzu açılamadı: ${h.mesaj}` : 'Yükleniyor'}
+          {sd.durum === 'hata' ? `Sözcük havuzu açılamadı: ${sd.mesaj}` : 'Yükleniyor'}
         </p>
       ) : (
         <>

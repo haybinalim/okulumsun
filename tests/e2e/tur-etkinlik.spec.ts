@@ -117,6 +117,9 @@ async function coz(page: Page, sablon: string, baglam: string) {
     expect(sonra.slice(ilk.length), `${baglam}: yanlış kart`).toEqual(['tur.geri.tekrar']);
     await page.waitForTimeout(300); // BigButton soğuması değil, ayrı kart; görsel durum otursun
     await page.locator(`[data-kart="${cevap}"]`).click();
+    // Adım 79: doğru kartta işaret rozeti (renk tek ipucu değil).
+    await expect(page.locator(`[data-kart="${cevap}"]`)).toHaveAttribute('data-rozet', 'tik');
+    await expect(page.locator(`[data-kart="${cevap}"]`)).toHaveAttribute('data-dogru', 'true');
   }
   await expect(main).toHaveAttribute('data-durum', 'dogru');
   await expect(page.getByRole('button', { name: 'Sonraki', exact: true })).toBeVisible();
@@ -170,6 +173,12 @@ test('etkinlik seçimi: öğretilen küme adreste (?tur=), kartlar yalnız öğr
   for (const g of ['a', 'n', 'e', 't'])
     await expect(page.getByRole('button', { name: `${g} öğretildi`, exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'i öğretilmedi', exact: true })).toBeVisible();
+  // Adım 79: katalog beceriye göre gruplu; 14 şablonun hepsi bir grupta.
+  await expect(page.locator('[data-katalog] section[data-beceri]')).toHaveCount(5);
+  await expect(page.locator('[data-katalog] section[data-beceri] button')).toHaveCount(14);
+  for (const [beceri, kod] of [['ses', 'T-18'], ['harf', 'T-20'], ['hece', 'T-17'], ['sozcuk', 'T-16'], ['yazma', 'T-09']] as const)
+    await expect(page.locator(`section[data-beceri="${beceri}"]`).getByRole('button', { name: new RegExp(`^${kod} `) })).toBeVisible();
+  await geometriTemiz(page, 'etkinlik kataloğu tablet');
   await page.getByRole('button', { name: /^T-03 / }).click();
   await page.getByRole('button', { name: 'Zorluk 5', exact: true }).click();
   await page.getByRole('button', { name: 'Başlat', exact: true }).click();
@@ -240,4 +249,32 @@ test('görselli şablonlar (T-01, T-08): resimler aynı kökenden yüklenir, cev
   const gorselIstekleri = istekler.filter((u) => u.includes('/gorseller/'));
   expect(gorselIstekleri.length).toBeGreaterThan(0);
   for (const u of istekler) expect(new URL(u).hostname, u).toMatch(/^(localhost|127\.0\.0\.1)$/);
+});
+
+test('Adım 79: yumuşak geri bildirim hareketi yalnız hareket azaltma kapalıyken; yanlış kart sallanır, doğru kart büyüyüp döner', async ({ browser }, bilgi) => {
+  test.skip(bilgi.project.name !== 'tablet', 'bir kez');
+  test.setTimeout(90_000);
+  for (const reducedMotion of ['no-preference', 'reduce'] as const) {
+    const ctx = await browser.newContext({ baseURL: TUR_URL, viewport: { width: 1080, height: 810 }, hasTouch: true, reducedMotion });
+    const page = await ctx.newPage();
+    await ac(page, 'T-03', 1, 1, 'tablet');
+    const main = page.locator('main[data-tur-etkinlik]');
+    const cevap = (await main.getAttribute('data-cevap')) ?? '';
+    const yanlis = page.locator('[data-kart]').and(page.locator(`:not([data-kart="${cevap}"])`)).first();
+    await yanlis.click();
+    await expect(yanlis).toHaveAttribute('data-yanlis', 'true');
+    const dogru = page.locator(`[data-kart="${cevap}"]`);
+    await page.waitForTimeout(300);
+    await dogru.click();
+    await expect(main).toHaveAttribute('data-durum', 'dogru');
+    if (reducedMotion === 'reduce') {
+      await expect(yanlis).not.toHaveClass(/tur-kart-yanlis/);
+      await expect(dogru).not.toHaveClass(/tur-kart-dogru/);
+    } else {
+      await expect(yanlis).toHaveClass(/tur-kart-yanlis/);
+      await expect(dogru).toHaveClass(/tur-kart-dogru/);
+    }
+    await expect(dogru).toHaveAttribute('data-rozet', 'tik');
+    await ctx.close();
+  }
 });
