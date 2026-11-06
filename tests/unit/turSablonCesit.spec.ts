@@ -8,7 +8,9 @@ import { describe, expect, it } from 'vitest';
 import { havuzuAyristir } from '../../src/content/dersler/tur/sablonlar/havuz';
 import { TUR_ZORLUKLARI, TurUretimHatasi, turSoruUret, type TurSoru, type TurSablonKodu } from '../../src/content/dersler/tur/sablonlar';
 import { karistirilanlar } from '../../src/content/dersler/tur/sablonlar/celdiriciler';
-import { bilinenSozcukMu, okunabilirSozcukler } from '../../src/content/dersler/tur/sablonlar/ortak';
+import { bilinenSozcukMu, enYeniHarf, kumeHarfleri, okunabilirSozcukler } from '../../src/content/dersler/tur/sablonlar/ortak';
+import { sesYeri } from '../../src/content/dersler/tur/sablonlar/t18SesinYeri';
+import { hecele } from '../../src/content/dersler/tur/heceleme';
 import { parcaBenzerMi } from '../../src/content/dersler/tur/sablonlar/t09HarfParcalari';
 import { sozcukKlibi } from '../../src/content/dersler/tur/sablonlar/klipler';
 import { resmiKume } from '../../src/content/dersler/tur/ogretilenKume';
@@ -114,5 +116,78 @@ describe('T-16 Hatalı yazılmış sözcüğü bul', () => {
       expect(soru.soruKlipleri).toEqual([]);
       expect(soru.geriBildirim).toEqual(['tur.geri.dogru', sozcukKlibi(soru.hedefMetin)]);
     }
+  });
+});
+
+describe('T-17 Hece say', () => {
+  const sorular = uret('T-17');
+
+  it('her zorlukta kurulur; cevap sözcüğün hece sayısı, kartlar 1…n sıralı', () => {
+    for (const z of TUR_ZORLUKLARI) expect(sorular.filter((u) => u.soru.zorluk === z).length, `z${z}`).toBeGreaterThan(100);
+    for (const { soru } of sorular) {
+      if (soru.kind !== 'secim') throw new Error('T-17 seçim');
+      const n = hecele(soru.hedefMetin).length;
+      expect(soru.kartlar.map((k) => k.metin)).toEqual(Array.from({ length: soru.kartlar.length }, (_, i) => String(i + 1)));
+      expect(soru.kartlar.length).toBe({ 1: 2, 2: 3, 3: 3, 4: 4, 5: 4 }[soru.zorluk]);
+      expect(soru.kartlar[soru.dogru].metin).toBe(String(n));
+      if (soru.zorluk === 5) expect(n).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it('z1–3 resimli (görseli olan sözcük, adı soru sesi); z4–5 yalnız yazı, soru sesi yok (D-12)', () => {
+    for (const { soru } of sorular) {
+      const w = havuz.find((s) => s.metin === soru.hedefMetin)!;
+      if (soru.zorluk <= 3) {
+        expect(soru.uyaran).toEqual({ tur: 'resim', gorselId: w.gorselId, ...(soru.zorluk <= 2 ? { metin: w.metin } : {}) });
+        expect(soru.soruKlipleri).toEqual([sozcukKlibi(w.metin)]);
+        expect(soru.dinlenen).toEqual([w.metin]);
+      } else {
+        expect(soru.uyaran).toEqual({ tur: 'yazi', metin: w.metin });
+        expect(soru.soruKlipleri).toEqual([]);
+      }
+    }
+  });
+
+  it('cevaplar çeşitli: z4’te birden çok hece sayısı çıkar', () => {
+    const z4 = new Set(sorular.filter((u) => u.soru.zorluk === 4).map((u) => hecele(u.soru.hedefMetin).length));
+    expect(z4.size).toBeGreaterThanOrEqual(3);
+  });
+});
+
+describe('T-18 Sesin yeri', () => {
+  const sorular = uret('T-18');
+
+  it('her zorlukta kurulur; hedef harf sözcükte tam bir kez, cevap onun yeri', () => {
+    for (const z of TUR_ZORLUKLARI) expect(sorular.filter((u) => u.soru.zorluk === z).length, `z${z}`).toBeGreaterThan(100);
+    for (const { soru, kume } of sorular) {
+      if (soru.kind !== 'secim' || soru.uyaran.tur !== 'resim') throw new Error('T-18 biçimi');
+      const h = soru.uyaran.harf!;
+      expect(kume.has(h)).toBe(true);
+      expect([...soru.hedefMetin].filter((c) => c === h)).toHaveLength(1);
+      const yer = sesYeri(soru.hedefMetin, h);
+      expect(soru.kartlar[soru.dogru].metin).toBe(yer);
+      expect(soru.kartlar.map((k) => k.metin)).toEqual(soru.zorluk === 1 ? ['bas', 'son'] : ['bas', 'orta', 'son']);
+      if (soru.zorluk <= 2) expect(yer).not.toBe('orta');
+      if (soru.zorluk === 4) expect(yer).not.toBe('bas');
+      expect(havuz.find((s) => s.metin === soru.hedefMetin)?.gorselId).toBe(soru.uyaran.gorselId);
+      expect(soru.soruKlipleri).toEqual([sozcukKlibi(soru.hedefMetin)]);
+    }
+  });
+
+  it('bugünkü ses öncelikli (z1–4); her yer cevap olarak çıkar (z3)', () => {
+    const z3 = sorular.filter((u) => u.soru.zorluk === 3);
+    expect(new Set(z3.map((u) => (u.soru.kind === 'secim' ? u.soru.kartlar[u.soru.dogru].metin : ''))).size).toBe(3);
+    const bugun = sorular.filter(
+      (u) => u.soru.zorluk <= 4 && u.soru.uyaran.tur === 'resim' && u.soru.uyaran.harf === enYeniHarf(kumeHarfleri(u.kume)),
+    ).length;
+    expect(bugun / sorular.filter((u) => u.soru.zorluk <= 4).length).toBeGreaterThan(0.4);
+  });
+
+  it('sesYeri: tekrar eden harf belirsizdir', () => {
+    expect(sesYeri('kalem', 'k')).toBe('bas');
+    expect(sesYeri('kalem', 'l')).toBe('orta');
+    expect(sesYeri('kalem', 'm')).toBe('son');
+    expect(sesYeri('anne', 'n')).toBeNull();
+    expect(sesYeri('anne', 'k')).toBeNull();
   });
 });

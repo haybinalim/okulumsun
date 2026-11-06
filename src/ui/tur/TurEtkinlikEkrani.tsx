@@ -17,7 +17,9 @@
  * sonra doğru resmin adı okunur (geri bildirim klibi) ve T-01'de resmin altında yazılır.
  *
  * Adım 79: T-09 parça kartları (hamle orta çizgisi, kendi glif çerçevesinde; üstte model harf + parçaların oturduğu
- * çerçeve), T-16 sözcük kartları (genişlik en uzun sözcüğe göre; doğru cevaptan sonra doğru yazılış üstte).
+ * çerçeve), T-16 sözcük kartları (genişlik en uzun sözcüğe göre; doğru cevaptan sonra doğru yazılış üstte), T-17
+ * hece sayısı kartları (rakam + nokta), T-18 sesin yeri kartları (üç kutu, dolu kutu yer). Resim uyaranı (T-17, T-18)
+ * dokunulmaz; adı soru sesidir, ses yokken öğretmen "Öğretmen: sözcük"ten okur; doğru cevaptan sonra altında yazılır.
  */
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react';
 import { BigButton } from '../primitives/BigButton';
@@ -40,6 +42,7 @@ import { TUR_VERI_KOKU } from '../../content/dersler/tur/veriYukleyici';
 import { useHamleVerisi } from './useHamleVerisi';
 import { KALEM, SATIR, yolVerisi } from './hamleCizim';
 import type { TurKart, TurParca } from '../../content/dersler/tur/sablonlar/turSoru';
+import { hecele } from '../../content/dersler/tur/heceleme';
 
 export function TurEtkinlikEkrani({
   sablon,
@@ -299,7 +302,7 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
 /** Alt bölüm ölçülür; kart boyu ve satır sayısı `kartDuzeni` ile (ilk ölçüme dek kartlar gizli). */
 /** Kart en/boy oranı: hece 1,6; sözcük en uzun sözcüğe göre; öteki kartlar kare. */
 export function kartEnBoy(kartlar: readonly TurKart[]): number {
-  if (kartlar.some((k) => k.tur === 'hece')) return 1.6;
+  if (kartlar.some((k) => k.tur === 'hece' || k.tur === 'konum')) return 1.6;
   const sozcuk = kartlar.filter((k) => k.tur === 'sozcuk');
   if (sozcuk.length) return Math.max(1.3, 0.3 * Math.max(...sozcuk.map((k) => [...k.metin].length)) + 0.5);
   return 1;
@@ -366,7 +369,15 @@ function Kart({
   const pasif = kullanildi || yanlis;
   // Görsel kart: cevaptan önce adı yok (okuma/dinleme ele verilmez); doğru cevaptan sonra sözcük. Parça kartı
   // harfi ele vermez ("Parça N").
-  const ad = gorselId ? (dogru ? metin : `Resim ${sira + 1}`) : kart.parca ? `Parça ${sira + 1}` : metin;
+  const ad = gorselId
+    ? dogru
+      ? metin
+      : `Resim ${sira + 1}`
+    : kart.parca
+      ? `Parça ${sira + 1}`
+      : kart.tur === 'konum'
+        ? KONUM_ADI[metin]
+        : metin;
   const yazi = kart.tur === 'sozcuk' ? 0.5 : kart.tur === 'hece' ? 0.5 : 0.62;
   return (
     <button
@@ -428,6 +439,13 @@ function Kart({
         </>
       ) : kart.parca ? (
         <ParcaCizimi parcalar={[kart.parca]} merkez={kart.parca.genislik / 2} />
+      ) : kart.tur === 'konum' ? (
+        <KonumSeridi yer={metin} />
+      ) : kart.tur === 'sayi' ? (
+        <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.08em', fontSize: Math.round(boy * 0.46) }}>
+          {metin}
+          <Noktalar adet={Number(metin)} />
+        </span>
       ) : (
         metin
       )}
@@ -492,7 +510,7 @@ function SesYok({ soru }: { soru: TurSoru }) {
       }}
     >
       <span style={{ background: 'var(--color-retry-soft)', borderRadius: '0.4em', padding: '0.1em 0.5em' }}>Ses yok</span>
-      {soru.uyaran.tur === 'ses' && (
+      {soru.soruKlipleri.length > 0 && (
         <details data-yetiskin="" style={{ background: 'var(--color-surface)', borderRadius: '0.4em', padding: '0.1em 0.5em' }}>
           <summary style={{ minHeight: 'max(44px, 1.6em)', display: 'flex', alignItems: 'center', cursor: 'pointer' }}>Öğretmen: {(soru.dinlenen ?? soru.sozcukler).length > 1 ? 'sözcükler' : 'sözcük'}</summary>
           <span data-ogretmen-sozcukleri="">{(soru.dinlenen ?? soru.sozcukler).join(', ')}</span>
@@ -542,6 +560,27 @@ function Uyaran({
         <Metin metin={u.metin} yukseklik={satir} stil={!yuvaVar ? vurgu : undefined} veri="model" />
       )}
       {u.tur === 'yok' && dogru && <Metin metin={soru.hedefMetin} yukseklik={60} stil={vurgu} veri="dogru-yazilis" />}
+      {u.tur === 'resim' && (
+        <div data-uyaran-resim={u.gorselId} style={{ display: 'flex', alignItems: 'center', gap: '6cqw', height: '94cqh' }}>
+          <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2cqh' }}>
+            <img
+              src={`${TUR_VERI_KOKU}gorseller/${u.gorselId}.svg`}
+              alt=""
+              draggable={false}
+              style={{ flex: '1 1 0', minHeight: 0, aspectRatio: '1 / 1', pointerEvents: 'none', display: 'block' }}
+            />
+            {(u.metin || dogru) && (
+              <Metin
+                metin={dogru && soru.sablon === 'T-17' ? hecele(soru.hedefMetin).join(' ') : soru.hedefMetin}
+                yukseklik={26}
+                stil={dogru ? vurgu : undefined}
+                veri={dogru ? 'dogru-yazilis' : 'resim-adi'}
+              />
+            )}
+          </div>
+          {u.harf && <Metin metin={u.harf} yukseklik={70} veri="model" />}
+        </div>
+      )}
       {u.tur === 'parca' && (
         <div style={{ display: 'flex', alignItems: 'center', gap: '6cqw', height: '84cqh' }}>
           <Metin metin={u.glif} yukseklik={84} veri="model" />
@@ -687,6 +726,41 @@ function ParcaCizimi({ parcalar, merkez, cizgiler = false }: { parcalar: readonl
           strokeLinecap="round"
           strokeLinejoin="round"
         />
+      ))}
+    </svg>
+  );
+}
+
+const KONUM_ADI: Readonly<Record<string, string>> = { bas: 'Başta', orta: 'Ortada', son: 'Sonda' };
+
+/** Sesin yeri: üç kutulu şerit; yerin kutusu dolu, ötekiler kesikli boş (renk tek ipucu değil). */
+function KonumSeridi({ yer }: { yer: string }) {
+  return (
+    <svg viewBox="0 0 96 40" aria-hidden="true" style={{ width: '82%', height: '62%', display: 'block', pointerEvents: 'none' }}>
+      {['bas', 'orta', 'son'].map((y, i) => (
+        <rect
+          key={y}
+          x={3 + i * 31}
+          y={5}
+          width={28}
+          height={30}
+          rx={5}
+          fill={y === yer ? 'var(--color-ink)' : 'none'}
+          stroke={y === yer ? 'var(--color-ink)' : 'var(--color-ink-soft)'}
+          strokeWidth={2.5}
+          strokeDasharray={y === yer ? undefined : '4 3'}
+        />
+      ))}
+    </svg>
+  );
+}
+
+/** Rakamın altında o kadar nokta (alkış sayısı); en çok 4. */
+function Noktalar({ adet }: { adet: number }) {
+  return (
+    <svg viewBox={`0 0 ${adet * 10} 10`} aria-hidden="true" style={{ height: '0.32em', display: 'block' }}>
+      {Array.from({ length: adet }, (_, i) => (
+        <circle key={i} cx={5 + i * 10} cy={5} r={3.6} fill="var(--color-ink)" />
       ))}
     </svg>
   );

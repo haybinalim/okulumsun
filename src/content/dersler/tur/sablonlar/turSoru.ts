@@ -15,7 +15,7 @@ import type { TurKlipKimligi } from './klipler';
 import type { TurHamleGlifi } from '../../../schema/turHamle';
 
 export const TUR_SABLON_KODLARI = [
-  'T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07', 'T-08', 'T-09', 'T-16',
+  'T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07', 'T-08', 'T-09', 'T-16', 'T-17', 'T-18',
 ] as const; // prettier-ignore
 export type TurSablonKodu = (typeof TUR_SABLON_KODLARI)[number];
 
@@ -43,7 +43,8 @@ export interface TurKart {
   readonly id: string;
   /** Metin kartında gösterilen metin; `parca` kartında iç anahtar (glif + hamle sırası, ör. `a1`; gösterilmez). */
   readonly metin: string;
-  readonly tur: 'harf' | 'hece' | 'simge' | 'gorsel' | 'sozcuk' | 'parca';
+  /** `sayi`: hece sayısı kartı (rakam + nokta; T-17); `konum`: sesin yeri kartı (başta/ortada/sonda; T-18). */
+  readonly tur: 'harf' | 'hece' | 'simge' | 'gorsel' | 'sozcuk' | 'parca' | 'sayi' | 'konum';
   /** Yalnız görsel kartta: `ders-verisi/tur/gorseller/<gorselId>.svg` (D-25). */
   readonly gorselId?: string;
   /** Yalnız `parca` kartında (T-09): hamlenin glifi, glif genişliği ve orta çizgi noktaları (hamle verisi birimi). */
@@ -59,7 +60,7 @@ export interface TurParca {
 }
 
 /** Metni gösterilmeyen kart türleri (metin iç anahtardır; öğretilen küme denetimi metne bakmaz). */
-export const METINSIZ_KARTLAR: ReadonlySet<TurKart['tur']> = new Set(['parca']);
+export const METINSIZ_KARTLAR: ReadonlySet<TurKart['tur']> = new Set(['parca', 'konum', 'sayi']);
 
 interface TurSoruTemeli {
   readonly itemId: TurItemId;
@@ -79,6 +80,11 @@ interface TurSoruTemeli {
     | { readonly tur: 'ses'; readonly adet: number }
     | { readonly tur: 'yazi'; readonly metin: string }
     | { readonly tur: 'bosluklu'; readonly once: string; readonly sonra: string }
+    /**
+     * Sözcük görseli (dokunulmaz): `metin` resmin altında yazılı sözcük (T-17 z1–2), `harf` yanında hedef harf (T-18).
+     * Resmin adı ses dosyası ya da öğretmen tarafından söylenir (`soruKlipleri`, `dinlenen`).
+     */
+    | { readonly tur: 'resim'; readonly gorselId: string; readonly metin?: string; readonly harf?: string }
     /** T-09: model harf + parçaların yerleştiği çerçeve (glif genişliği, hamle verisi birimi). */
     | { readonly tur: 'parca'; readonly glif: string; readonly genislik: number }
     | { readonly tur: 'yok' };
