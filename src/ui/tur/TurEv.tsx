@@ -14,7 +14,8 @@ import './veliKarti.css';
 import { kumeCoz } from '../../content/dersler/tur/ogretilenKume';
 import { PROGRAM_ADRESI, turEveLink } from './turEveLink';
 import { PROGRAM_SURUMU } from '../../content/dersler/tur/alfabe';
-import { setKoduCoz, turSetiKur, DUZEY_ADI, type SetDuzeyi } from '../../content/dersler/tur/turSet';
+import { setKoduCoz, DUZEY_ADI, type SetDuzeyi } from '../../content/dersler/tur/turSet';
+import { useTurSeti } from './useTurSeti';
 import { VELI_KARTI_DOSYASI, veliKartiAyristir, type VeliKarti } from '../../content/dersler/tur/veliKarti';
 import { turVerisiniOku } from '../../content/dersler/tur/veriYukleyici';
 import { TUR_SABLONLARI } from '../../content/dersler/tur/sablonlar';
@@ -24,7 +25,6 @@ import { UCUNCU_TARAF_VARLIKLAR } from '../../content/ucuncuTarafVarliklar';
 import { BigButton } from '../primitives/BigButton';
 import { turEkraniAc } from './turEkrani';
 import { useTurKume } from './turKume';
-import { useTurHavuzu } from './useTurHavuzu';
 import { Baslik, ekranStili } from './turOrtak';
 import { sikDugme } from './ogretmenOrtak';
 
@@ -167,9 +167,8 @@ export function EvAcilisi({ kod }: { kod: string }) {
 }
 
 function EvSeti({ duzey, tohum, kod }: { duzey: SetDuzeyi; tohum: number; kod: string }) {
-  const kume = useTurKume();
-  const h = useTurHavuzu();
-  const set = useMemo(() => (h.durum === 'hazir' ? turSetiKur({ havuz: h.havuz, kume, duzey, tohum }) : null), [h, kume, duzey, tohum]);
+  const sd = useTurSeti(duzey, tohum);
+  const set = sd.durum === 'hazir' ? sd.set : null;
   return (
     <main aria-label="Evde okuma yazma" data-ev-acilisi="" style={{ ...ekranStili, justifyContent: 'space-between' }}>
       <div data-yetiskin="" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4em', minHeight: 0, overflowY: 'auto', width: '100%' }}>

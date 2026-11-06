@@ -25,6 +25,13 @@ describe('günün akışı (§2.4.11 madde 3)', () => {
       'dalgaC', 'etkinlik', 'ogretmen', 'yazilis', 'kagit', 'etkinlik', 'etkinlik', 'kagit',
     ]); // prettier-ignore
   });
+  it('Adım 79: yeni etkinlikler günün akışından açılır (sesin yeri, eşleştirme, parçalardan kur, harf avı, hece say, hatalı sözcük)', () => {
+    const acilan = AKIS_BASAMAKLARI.flatMap((b) =>
+      b.hedef.tur === 'etkinlik' ? b.hedef.sablonlar : b.hedef.tur === 'yazilis' ? (b.hedef.ekSablonlar ?? []) : [],
+    );
+    for (const k of ['T-01', 'T-04', 'T-05', 'T-07', 'T-09', 'T-16', 'T-17', 'T-18', 'T-19', 'T-20']) expect(acilan).toContain(k);
+    expect(new Set(acilan).size).toBe(acilan.length);
+  });
   it('sıra çözücü katı: her basamak tam bir kez', () => {
     expect(akisSirasiCoz('21345678')?.map((b) => b.kod).join('')).toBe('21345678');
     for (const kotu of ['1234567', '123456789', '11345678', '1234567a', '', 12345678, null]) expect(akisSirasiCoz(kotu)).toBeNull();

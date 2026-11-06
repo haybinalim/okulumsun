@@ -24,6 +24,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react';
 import { BigButton } from '../primitives/BigButton';
 import { turSoruUret } from '../../content/dersler/tur/sablonlar';
+import { sonrakiTohum } from '../../content/dersler/tur/sonrakiTohum';
 import {
   TurUretimHatasi,
   type TurSablonKodu,
@@ -43,6 +44,8 @@ import { useHamleVerisi } from './useHamleVerisi';
 import { KALEM, SATIR, yolVerisi } from './hamleCizim';
 import type { TurKart, TurParca } from '../../content/dersler/tur/sablonlar/turSoru';
 import { hecele } from '../../content/dersler/tur/heceleme';
+import { useHareketAzalt } from '../../design/useHareketAzalt';
+import './tur.css';
 
 export function TurEtkinlikEkrani({
   sablon,
@@ -102,7 +105,17 @@ export function TurEtkinlikEkrani({
     <EtkinlikGovdesi
       key={sonuc.soru.itemId}
       soru={sonuc.soru}
-      onSonraki={onSonraki ?? (() => turEkraniAc({ ekran: 'etkinlik', sablon, zorluk, tohum: tohum + 1, ...(geri ? { geri } : {}) }))}
+      onSonraki={
+        onSonraki ??
+        (() =>
+          turEkraniAc({
+            ekran: 'etkinlik',
+            sablon,
+            zorluk,
+            tohum: sonrakiTohum(sablon, { havuz: havuz!, kume, zorluk, tohum, hamleler }, sonuc.soru.hedefMetin),
+            ...(geri ? { geri } : {}),
+          }))
+      }
     />
   );
 }
@@ -122,6 +135,7 @@ const ust: CSSProperties = {
 };
 
 function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => void }) {
+  const hareketAzalt = useHareketAzalt();
   const [durum, setDurum] = useState<Durum>('bos');
   const [yanlislar, setYanlislar] = useState<ReadonlySet<number>>(new Set());
   /** Yerleştirmede konan kartlar (sırayla); çoklu seçimde işaretli kartlar; eşleştirmede bulunan çiftler (düz). */
@@ -300,6 +314,7 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
                 rozet={ciftNo(i) ?? (soru.kind === 'coklu' && yerlesim.includes(i) ? 'tik' : undefined)}
                 yanlis={yanlislar.has(i)}
                 dogru={durum === 'dogru' && soru.kind === 'secim' && i === soru.dogru}
+                hareket={!hareketAzalt}
                 onPress={() => kartaDokun(i)}
               />
             ))}
@@ -397,6 +412,7 @@ function Kart({
   rozet,
   yanlis,
   dogru,
+  hareket,
   onPress,
 }: {
   kart: TurKart;
@@ -410,6 +426,8 @@ function Kart({
   kullanildi: boolean;
   yanlis: boolean;
   dogru: boolean;
+  /** Yumuşak geri bildirim hareketi (doğru: hafif büyüme, yanlış: hafif sallanma); hareket azaltmada verilmez. */
+  hareket: boolean;
   onPress: () => void;
 }) {
   const { id, metin, gorselId } = kart;
@@ -438,7 +456,9 @@ function Kart({
       data-kart-metin={metin}
       data-kullanildi={kullanildi || undefined}
       data-yanlis={yanlis || undefined}
-      data-rozet={rozet}
+      data-dogru={dogru || undefined}
+      data-rozet={rozet ?? (dogru ? 'tik' : undefined)}
+      className={hareket ? (dogru ? 'tur-kart-dogru' : yanlis ? 'tur-kart-yanlis' : undefined) : undefined}
       onClick={onPress}
       style={{
         width: genislik,
@@ -465,7 +485,8 @@ function Kart({
         overflow: 'hidden',
       }}
     >
-      {rozet && <Rozet metin={rozet} boy={boy} />}
+      {/* Doğru kartta işaret rozeti (renk tek ipucu değil). */}
+      {(rozet ?? (dogru ? 'tik' : undefined)) && <Rozet metin={rozet ?? 'tik'} boy={boy} />}
       {gorselId ? (
         <>
           <img

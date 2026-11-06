@@ -9,12 +9,16 @@
 
 export type AkisBasamakKodu = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8';
 
+/** Günün akışından açılan etkinlikler (Adım 79'da sesin yeri, eşleştirme, hece sayma, hatalı sözcük, harf avı eklendi). */
+export type AkisSablonu = 'T-01' | 'T-04' | 'T-05' | 'T-07' | 'T-09' | 'T-16' | 'T-17' | 'T-18' | 'T-19' | 'T-20';
+
 /** Basamağın açtığı ekran türü (ekran durumu kullanıcı arayüzünde kurulur; burada yalnız tür). */
 export type AkisHedefi =
   | { readonly tur: 'dalgaC' }
   | { readonly tur: 'ogretmen' }
-  | { readonly tur: 'etkinlik'; readonly sablonlar: readonly ('T-01' | 'T-04' | 'T-05' | 'T-07')[] }
-  | { readonly tur: 'yazilis' }
+  | { readonly tur: 'etkinlik'; readonly sablonlar: readonly AkisSablonu[] }
+  /** Yazılış gösterimi; `ekSablonlar` aynı basamakta açılabilen etkinlikler (Adım 79: harfi parçalardan kur, harf avı). */
+  | { readonly tur: 'yazilis'; readonly ekSablonlar?: readonly AkisSablonu[] }
   | { readonly tur: 'kagit'; readonly kagitlar: readonly ('harf' | 'dikte' | 'gozlem')[] };
 
 export interface AkisBasamagi {
@@ -26,17 +30,27 @@ export interface AkisBasamagi {
 
 export const AKIS_BASAMAKLARI: readonly AkisBasamagi[] = [
   { kod: '1', ad: 'Ses hissettirme', aciklama: 'Tekerleme ve koro (M-2)', hedef: { tur: 'dalgaC' } },
-  { kod: '2', ad: 'Sesin geçtiği görseli seçme', aciklama: 'T-01', hedef: { tur: 'etkinlik', sablonlar: ['T-01'] } },
+  {
+    kod: '2',
+    ad: 'Sesin geçtiği görseli seçme',
+    aciklama: 'T-01; sesin yeri T-18, aynı sesle eşleştir T-19',
+    hedef: { tur: 'etkinlik', sablonlar: ['T-01', 'T-18', 'T-19'] },
+  },
   { kod: '3', ad: 'Örnekleme', aciklama: 'Öğretmen ve sınıf birlikte; uygulama gerekmez', hedef: { tur: 'ogretmen' } },
-  { kod: '4', ad: 'Yazılış gösterimi', aciklama: 'Bugünkü sesin harfi, hamle hamle (M-1)', hedef: { tur: 'yazilis' } },
+  {
+    kod: '4',
+    ad: 'Yazılış gösterimi',
+    aciklama: 'Bugünkü sesin harfi, hamle hamle (M-1); harfi parçalardan kur T-09, harf avı T-20',
+    hedef: { tur: 'yazilis', ekSablonlar: ['T-09', 'T-20'] },
+  },
   { kod: '5', ad: 'Kesikli harf kâğıdı', aciklama: 'İzle, birleştir, bağımsız yaz', hedef: { tur: 'kagit', kagitlar: ['harf'] } },
   {
     kod: '6',
     ad: 'Hece ve sözcük',
-    aciklama: 'T-04 hece kur, T-05 heceleri birleştir',
-    hedef: { tur: 'etkinlik', sablonlar: ['T-04', 'T-05'] },
+    aciklama: 'T-04 hece kur, T-05 heceleri birleştir, T-17 hece say',
+    hedef: { tur: 'etkinlik', sablonlar: ['T-04', 'T-05', 'T-17'] },
   },
-  { kod: '7', ad: 'Dikte', aciklama: 'T-07', hedef: { tur: 'etkinlik', sablonlar: ['T-07'] } },
+  { kod: '7', ad: 'Dikte', aciklama: 'T-07; hatalı sözcüğü bul T-16', hedef: { tur: 'etkinlik', sablonlar: ['T-07', 'T-16'] } },
   {
     kod: '8',
     ad: 'Kâğıt ve gözlem formu',

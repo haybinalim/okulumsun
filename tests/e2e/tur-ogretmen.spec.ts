@@ -115,9 +115,16 @@ test('günün akışı: sıra değişir ve sınıf ayarında kalır; basamaklar 
     await page.getByRole('button', { name: 'Ses hissettirme: aşağı taşı' }).click();
     await expect(liste).toHaveAttribute('data-akis-sirasi', '21345678');
     expect(JSON.parse((await anahtarlar(page)).sinif ?? '{}')).toMatchObject({ v: 1, akis: '21345678' });
-    // T-01 → etkinlik; Geri akışa.
-    await page.getByRole('button', { name: 'Sesin geçtiği görseli seçme: Aç' }).click();
+    // T-01 → etkinlik; Geri akışa. Adım 79: aynı basamakta sesin yeri (T-18) ve eşleştirme (T-19); yazılışta T-09, T-20.
+    await page.getByRole('button', { name: 'Sesin geçtiği görseli seçme: T-01' }).click();
     await expect(page.locator('[data-tur-ekrani="etkinlik"]')).toBeVisible();
+    await page.getByRole('button', { name: 'Geri' }).click();
+    await expect(page.locator('[data-tur-ekrani="akis"]')).toBeVisible();
+    for (const [ad, kod] of [['Sesin geçtiği görseli seçme', 'T-18'], ['Yazılış gösterimi', 'T-09'], ['Hece ve sözcük', 'T-17'], ['Dikte', 'T-16']] as const)
+      await expect(page.getByRole('button', { name: `${ad}: ${kod}`, exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Yazılış gösterimi: T-20', exact: true }).click();
+    await expect(page.locator('main[data-tur-etkinlik="T-20"]')).toBeVisible();
+    await page.waitForTimeout(400);
     await page.getByRole('button', { name: 'Geri' }).click();
     await expect(page.locator('[data-tur-ekrani="akis"]')).toBeVisible();
     // Yazılış gösterimi bugünkü sesin küçük harfini açar; İzle → Geri → gösterim → Geri → akış.
@@ -146,7 +153,7 @@ test('günün akışı: sıra değişir ve sınıf ayarında kalır; basamaklar 
   }
 });
 
-test('haftalık ses planı: bu hafta işaretli, "Bu haftayı uygula" bugünkü sesi plana getirir; set hazırla 6 adım, Başlat → Geri', async ({ browser }, bilgi) => {
+test('haftalık ses planı: bu hafta işaretli, "Bu haftayı uygula" bugünkü sesi plana getirir; set hazırla 8 adım, Başlat → Geri', async ({ browser }, bilgi) => {
   test.setTimeout(120_000);
   // Sabit gün: 2 Kasım 2026 (pazartesi), ders yılının içinde.
   const GUN = '2026-11-02';
@@ -175,18 +182,20 @@ test('haftalık ses planı: bu hafta işaretli, "Bu haftayı uygula" bugünkü s
     await expect(uygula).toHaveCount(0);
     await page.getByRole('button', { name: 'Geri' }).click();
     await expect(page.locator('[data-bugunku-ses]')).toHaveAttribute('data-bugunku-ses', oneri);
-    // Set hazırla: 6 adım; düzey değişince set değişir; Başlat → 1/6, Geri set hazırla ekranına döner.
+    // Set hazırla: 8 adım (Adım 79; kurulamayan atlanır); düzey değişince set değişir; Başlat → 1/N, Geri set hazırla ekranına döner.
     await page.getByRole('button', { name: 'Set hazırla' }).click();
     const adimlar = page.getByRole('list', { name: 'Setteki etkinlikler' });
     await expect(adimlar).toBeVisible();
     const sinif = (await adimlar.getAttribute('data-set-adimlari'))!;
-    expect(sinif.split(',')).toHaveLength(6);
+    expect(sinif.split(',').length).toBeGreaterThanOrEqual(6);
+    expect(sinif.split(',').length).toBeLessThanOrEqual(8);
     await geometriTemiz(page, `${g.ad} set hazırla`);
     await page.getByRole('button', { name: 'Destek', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Destek', exact: true })).toHaveAttribute('aria-pressed', 'true');
     await expect(adimlar).not.toHaveAttribute('data-set-adimlari', sinif);
+    const destek = (await adimlar.getAttribute('data-set-adimlari'))!.split(',').length;
     await page.getByRole('button', { name: 'Seti başlat' }).click();
-    await expect(page.locator('[data-set-sira="1/6"]')).toBeVisible();
+    await expect(page.locator(`[data-set-sira="1/${destek}"]`)).toBeVisible();
     await geometriTemiz(page, `${g.ad} set adım 1`);
     await page.waitForTimeout(400); // kalıcı Geri: BigButton çift dokunma soğuması
     await page.getByRole('button', { name: 'Geri' }).click();
