@@ -44,9 +44,11 @@ export type HamleVerisiDurumu =
   | { readonly durum: 'hazir'; readonly veri: TurHamleDosyasi }
   | { readonly durum: 'hata'; readonly mesaj: string };
 
-export function useHamleVerisi(): HamleVerisiDurumu {
+/** `etkin` yanlışsa hiçbir şey okunmaz (ör. hamle verisi istemeyen etkinlik ekranı). */
+export function useHamleVerisi(etkin = true): HamleVerisiDurumu {
   const [s, setS] = useState<HamleVerisiDurumu>({ durum: 'yukleniyor' });
   useEffect(() => {
+    if (!etkin) return;
     let iptal = false;
     hamleVerisiniYukle().then(
       (veri) => !iptal && setS({ durum: 'hazir', veri }),
@@ -55,6 +57,6 @@ export function useHamleVerisi(): HamleVerisiDurumu {
     return () => {
       iptal = true;
     };
-  }, []);
+  }, [etkin]);
   return s;
 }

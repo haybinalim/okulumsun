@@ -12,8 +12,11 @@
 import { hash32 } from '../../../../exercises/rng';
 import type { TurTaniEtiketi } from './celdiriciler';
 import type { TurKlipKimligi } from './klipler';
+import type { TurHamleGlifi } from '../../../schema/turHamle';
 
-export const TUR_SABLON_KODLARI = ['T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07', 'T-08'] as const;
+export const TUR_SABLON_KODLARI = [
+  'T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07', 'T-08', 'T-09', 'T-16',
+] as const; // prettier-ignore
 export type TurSablonKodu = (typeof TUR_SABLON_KODLARI)[number];
 
 export type TurZorluk = 1 | 2 | 3 | 4 | 5;
@@ -38,13 +41,25 @@ export function turItemId(sablon: TurSablonKodu, zorluk: TurZorluk, tohum: numbe
  */
 export interface TurKart {
   readonly id: string;
+  /** Metin kartında gösterilen metin; `parca` kartında iç anahtar (glif + hamle sırası, ör. `a1`; gösterilmez). */
   readonly metin: string;
-  readonly tur: 'harf' | 'hece' | 'simge' | 'gorsel';
+  readonly tur: 'harf' | 'hece' | 'simge' | 'gorsel' | 'sozcuk' | 'parca';
   /** Yalnız görsel kartta: `ders-verisi/tur/gorseller/<gorselId>.svg` (D-25). */
   readonly gorselId?: string;
+  /** Yalnız `parca` kartında (T-09): hamlenin glifi, glif genişliği ve orta çizgi noktaları (hamle verisi birimi). */
+  readonly parca?: TurParca;
   /** Karıştırılan çift çeldiricisi (D-23); yalnız yanlış kartta. */
   readonly diagnosticTag?: TurTaniEtiketi;
 }
+
+export interface TurParca {
+  readonly glif: string;
+  readonly genislik: number;
+  readonly noktalar: readonly (readonly [number, number])[];
+}
+
+/** Metni gösterilmeyen kart türleri (metin iç anahtardır; öğretilen küme denetimi metne bakmaz). */
+export const METINSIZ_KARTLAR: ReadonlySet<TurKart['tur']> = new Set(['parca']);
 
 interface TurSoruTemeli {
   readonly itemId: TurItemId;
@@ -64,6 +79,8 @@ interface TurSoruTemeli {
     | { readonly tur: 'ses'; readonly adet: number }
     | { readonly tur: 'yazi'; readonly metin: string }
     | { readonly tur: 'bosluklu'; readonly once: string; readonly sonra: string }
+    /** T-09: model harf + parçaların yerleştiği çerçeve (glif genişliği, hamle verisi birimi). */
+    | { readonly tur: 'parca'; readonly glif: string; readonly genislik: number }
     | { readonly tur: 'yok' };
   /** Doğru cevaptan SONRA okunacak klipler (bütün sözcük ya da hece; D-11). */
   readonly geriBildirim: readonly TurKlipKimligi[];
@@ -89,6 +106,8 @@ export interface TurSecimSorusu extends TurSoruTemeli {
 export interface TurYerlestirSorusu extends TurSoruTemeli {
   readonly kind: 'yerlestir';
   readonly dogruDizi: readonly string[];
+  /** Sıra önemsiz (T-09 z1–2: parçalar doğru, yazılış sırası henüz istenmez). */
+  readonly sirasiz?: boolean;
 }
 
 export type TurSoru = TurSecimSorusu | TurYerlestirSorusu;
@@ -107,6 +126,8 @@ export interface TurUretimGirdisi {
   readonly kume: ReadonlySet<string>;
   readonly zorluk: TurZorluk;
   readonly tohum: number;
+  /** Hamle verisi (`ders-verisi/tur/hamleler.json`); yalnız T-09 ister, yoksa T-09 kurulamaz. */
+  readonly hamleler?: readonly TurHamleGlifi[];
 }
 
 /** Bu kümeyle şablon kurulamıyorsa (yeterli harf/sözcük yok) fırlatılır; arayüz öğretmene açıklar. */

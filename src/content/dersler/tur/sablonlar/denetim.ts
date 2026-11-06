@@ -23,7 +23,7 @@ import {
   type TurYonergeAnahtari,
 } from './klipler';
 import { TUR_TANI_ETIKETI_LISTESI } from './celdiriciler';
-import { TUR_EN_COK_KART, type TurHavuzSozcugu, type TurSoru } from './turSoru';
+import { METINSIZ_KARTLAR, TUR_EN_COK_KART, type TurHavuzSozcugu, type TurSoru } from './turSoru';
 
 export interface TurKlip {
   readonly anahtar: string;
@@ -47,12 +47,15 @@ function klipMetni(anahtar: string, manifest: ReadonlyMap<string, string>): stri
   return manifest.get(anahtar) ?? '';
 }
 
-const OKUMA_HEDEFLI = new Set(['T-03', 'T-04', 'T-05', 'T-06', 'T-08']);
+const OKUMA_HEDEFLI = new Set(['T-03', 'T-04', 'T-05', 'T-06', 'T-08', 'T-09', 'T-16']);
+/** Seçenekleri yalnız sözcük görselleri olan şablonlar. */
 const GORSELLI = new Set(['T-01', 'T-08']);
 
 export function turSoruEtkinligi(s: TurSoru, manifest: ReadonlyMap<string, string>): TurEtkinlik {
   const uyaran: TurEtkinlik['uyaran'] =
-    s.uyaran.tur === 'ses' ? { tur: 'ses' } : { tur: 'yazi', metin: s.uyaran.tur === 'yazi' ? s.uyaran.metin : s.hedefMetin };
+    s.uyaran.tur === 'ses'
+      ? { tur: 'ses' }
+      : { tur: 'yazi', metin: s.uyaran.tur === 'yazi' ? s.uyaran.metin : s.uyaran.tur === 'parca' ? s.uyaran.glif : s.hedefMetin };
   return {
     id: s.itemId.replace('#', '.').replace(/[^a-z0-9.-]/gi, '-').toLowerCase(),
     sablon: s.sablon,
@@ -63,8 +66,11 @@ export function turSoruEtkinligi(s: TurSoru, manifest: ReadonlyMap<string, strin
       k.tur === 'gorsel'
         ? // Görsel seçenek sözcüğünü metin olarak taşımaz; doğrulayıcı görseli içerikteki sözcüğe bağlar (D-15).
           { tur: 'gorsel' as const, gorselId: k.gorselId, sesli: false }
-        : {
-            tur: k.tur === 'hece' ? ('hece' as const) : ('harf' as const),
+        : METINSIZ_KARTLAR.has(k.tur)
+          ? // Parça kartı: metni iç anahtardır; sessiz kart olarak denetlenir.
+            { tur: 'harf' as const, sesli: false }
+          : {
+            tur: k.tur === 'hece' ? ('hece' as const) : k.tur === 'sozcuk' ? ('sozcuk' as const) : ('harf' as const),
             metin: k.metin,
             sesli: false,
             ...(k.diagnosticTag ? { diagnosticTag: k.diagnosticTag } : {}),
@@ -87,10 +93,16 @@ export function turSoruIhlalleri(
 ): string[] {
   const h: string[] = [];
   const metinler = [
-    ...s.kartlar.map((k) => k.metin),
+    ...s.kartlar.map((k) => (METINSIZ_KARTLAR.has(k.tur) ? (k.parca?.glif ?? '') : k.metin)),
     ...s.sozcukler,
     s.hedefMetin,
-    ...(s.uyaran.tur === 'yazi' ? [s.uyaran.metin] : s.uyaran.tur === 'bosluklu' ? [s.uyaran.once, s.uyaran.sonra] : []),
+    ...(s.uyaran.tur === 'yazi'
+      ? [s.uyaran.metin]
+      : s.uyaran.tur === 'bosluklu'
+        ? [s.uyaran.once, s.uyaran.sonra]
+        : s.uyaran.tur === 'parca'
+          ? [s.uyaran.glif]
+          : []),
   ];
   for (const m of metinler) if (!dekodlanabilirMi(m, kume)) h.push(`D-23/küme: "${m}" öğretilen kümede olmayan harf içeriyor.`);
   const istenen = [s.yonerge, ...s.soruKlipleri, ...s.geriBildirim];
@@ -99,7 +111,13 @@ export function turSoruIhlalleri(
     else if (!klipMetniGecerliMi(klipMetni(k, manifest))) h.push(`D-11: klip tek başına ünsüz: ${k}.`);
     if (k.startsWith('tur.harf.')) h.push(`D-11: harf klibi istenemez: ${k}.`);
   }
-  if (OKUMA_HEDEFLI.has(s.sablon) && s.soruKlipleri.length > 0) h.push('D-12: okuma hedefli soruda soru sesi yok.');
+  if ((OKUMA_HEDEFLI.has(s.sablon) || s.uyaran.tur === 'yazi') && s.soruKlipleri.length > 0)
+    h.push('D-12: okuma hedefli soruda soru sesi yok.');
+  for (const k of s.kartlar)
+    if ((k.tur === 'parca') !== Boolean(k.parca) || (k.tur === 'parca' && !k.parca?.noktalar.length))
+      h.push(`parça kartı biçimi bozuk ("${k.metin}").`);
+  if (s.sablon === 'T-09' && (s.kartlar.some((k) => k.tur !== 'parca') || s.uyaran.tur !== 'parca'))
+    h.push('T-09: kartlar hamle parçası, uyaran model harf olmalı.');
   if (GORSELLI.has(s.sablon)) {
     for (const k of s.kartlar) {
       if (k.tur !== 'gorsel' || !k.gorselId) h.push(`D-15: ${s.sablon} seçeneği görsel olmalı ("${k.metin}").`);

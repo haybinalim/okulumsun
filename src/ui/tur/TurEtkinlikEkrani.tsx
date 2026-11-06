@@ -15,6 +15,9 @@
  * Görselli şablonlarda (T-01, T-08; Adım 70) kartlar sözcük görselleridir (`ders-verisi/tur/gorseller/`, aynı köken).
  * Görsel kart da sessizdir ve cevaptan önce adı ne yazılır ne erişilebilir adına girer ("Resim 1"); doğru cevaptan
  * sonra doğru resmin adı okunur (geri bildirim klibi) ve T-01'de resmin altında yazılır.
+ *
+ * Adım 79: T-09 parça kartları (hamle orta çizgisi, kendi glif çerçevesinde; üstte model harf + parçaların oturduğu
+ * çerçeve), T-16 sözcük kartları (genişlik en uzun sözcüğe göre; doğru cevaptan sonra doğru yazılış üstte).
  */
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react';
 import { BigButton } from '../primitives/BigButton';
@@ -34,6 +37,9 @@ import { E2E_KANCASI_ACIK } from '../../dev/e2eKanca';
 import { kartDuzeni, type KartDuzeni } from './etkinlikDuzeni';
 import { ekranStili } from './turOrtak';
 import { TUR_VERI_KOKU } from '../../content/dersler/tur/veriYukleyici';
+import { useHamleVerisi } from './useHamleVerisi';
+import { KALEM, SATIR, yolVerisi } from './hamleCizim';
+import type { TurKart, TurParca } from '../../content/dersler/tur/sablonlar/turSoru';
 
 export function TurEtkinlikEkrani({
   sablon,
@@ -52,16 +58,26 @@ export function TurEtkinlikEkrani({
 }) {
   const h = useTurHavuzu();
   const kume = useTurKume();
-  const havuz = h.durum === 'hazir' ? h.havuz : null;
+  // Hamle verisi yalnız T-09 (harfi parçalardan kur) için okunur.
+  const hamleGerekli = sablon === 'T-09';
+  const hv = useHamleVerisi(hamleGerekli);
+  const hamleler = hv.durum === 'hazir' ? hv.veri.glifler : undefined;
+  const havuz = h.durum === 'hazir' && (!hamleGerekli || hamleler) ? h.havuz : null;
   const sonuc = useMemo((): { soru: TurSoru } | { hata: string } | null => {
     if (!havuz) return null;
     try {
-      return { soru: turSoruUret(sablon, { havuz, kume, zorluk, tohum }) };
+      return { soru: turSoruUret(sablon, { havuz, kume, zorluk, tohum, hamleler }) };
     } catch (e) {
       if (e instanceof TurUretimHatasi) return { hata: e.message };
       throw e;
     }
-  }, [havuz, kume, sablon, zorluk, tohum]);
+  }, [havuz, kume, sablon, zorluk, tohum, hamleler]);
+  if (hamleGerekli && hv.durum === 'hata')
+    return (
+      <main aria-label="Etkinlik" style={{ ...ekranStili, justifyContent: 'center' }}>
+        <p data-yetiskin="">{`Harf yazılış verisi açılamadı: ${hv.mesaj}`}</p>
+      </main>
+    );
   if (h.durum !== 'hazir' || !sonuc)
     return (
       <main aria-label="Etkinlik" aria-busy={h.durum === 'yukleniyor'} style={{ ...ekranStili, justifyContent: 'center' }}>
@@ -144,7 +160,10 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
 
   const onayla = () => {
     if (soru.kind !== 'yerlestir' || durum !== 'bos' || yerlesim.length < soru.dogruDizi.length) return;
-    const dogru = yerlesim.every((k, i) => soru.kartlar[k].metin === soru.dogruDizi[i]);
+    const konan = yerlesim.map((k) => soru.kartlar[k].metin);
+    const dogru = soru.sirasiz
+      ? [...konan].sort().join('|') === [...soru.dogruDizi].sort().join('|')
+      : konan.every((m, i) => m === soru.dogruDizi[i]);
     if (dogru) {
       dogruOldu();
       return;
@@ -161,6 +180,7 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
   const duzen = useKartDuzeni(alt, soru);
   const yerlestir = soru.kind === 'yerlestir';
   const yuvalar = yerlestir ? soru.dogruDizi.map((_, i) => (yerlesim[i] === undefined ? null : soru.kartlar[yerlesim[i]].metin)) : [];
+  const konanParcalar = yerlesim.map((k) => soru.kartlar[k].parca).filter((p): p is TurParca => Boolean(p));
   // Yalnız geliştirme / e2e kancalı test derlemesinde: testin cevabı bulması için (üretimde atılır).
   const cevap = E2E_KANCASI_ACIK
     ? soru.kind === 'secim'
@@ -172,6 +192,7 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
     <main
       aria-label={`Etkinlik ${soru.sablon}`}
       data-tur-etkinlik={soru.sablon}
+      data-tur-kind={soru.kind}
       data-zorluk={soru.zorluk}
       data-item-id={soru.itemId}
       data-durum={durum}
@@ -189,7 +210,7 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
     >
       <section aria-label="Soru" data-uyaran={soru.uyaran.tur} style={ust}>
         {sesYok && <SesYok soru={soru} />}
-        <Uyaran soru={soru} durum={durum} yuvalar={yuvalar} />
+        <Uyaran soru={soru} durum={durum} yuvalar={yuvalar} parcalar={konanParcalar} />
       </section>
       <section
         ref={alt}
@@ -221,12 +242,10 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
             {soru.kartlar.map((k, i) => (
               <Kart
                 key={k.id}
-                id={k.id}
+                kart={k}
                 sira={i}
-                metin={k.metin}
-                gorselId={k.gorselId}
                 altYazi={soru.sablon === 'T-01'}
-                hece={k.tur === 'hece'}
+                enBoy={duzen?.enBoy ?? 1}
                 boy={duzen?.kart ?? 0}
                 kullanildi={yerlesim.includes(i)}
                 yanlis={yanlislar.has(i)}
@@ -278,9 +297,17 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
 }
 
 /** Alt bölüm ölçülür; kart boyu ve satır sayısı `kartDuzeni` ile (ilk ölçüme dek kartlar gizli). */
-function useKartDuzeni(alan: RefObject<HTMLElement | null>, soru: TurSoru): KartDuzeni | null {
-  const [duzen, setDuzen] = useState<KartDuzeni | null>(null);
-  const hece = soru.kartlar.some((k) => k.tur === 'hece');
+/** Kart en/boy oranı: hece 1,6; sözcük en uzun sözcüğe göre; öteki kartlar kare. */
+export function kartEnBoy(kartlar: readonly TurKart[]): number {
+  if (kartlar.some((k) => k.tur === 'hece')) return 1.6;
+  const sozcuk = kartlar.filter((k) => k.tur === 'sozcuk');
+  if (sozcuk.length) return Math.max(1.3, 0.3 * Math.max(...sozcuk.map((k) => [...k.metin].length)) + 0.5);
+  return 1;
+}
+
+function useKartDuzeni(alan: RefObject<HTMLElement | null>, soru: TurSoru): (KartDuzeni & { enBoy: number }) | null {
+  const [duzen, setDuzen] = useState<(KartDuzeni & { enBoy: number }) | null>(null);
+  const enBoy = kartEnBoy(soru.kartlar);
   const gorsel = soru.kartlar.some((k) => k.tur === 'gorsel');
   const adet = soru.kartlar.length;
   useLayoutEffect(() => {
@@ -290,57 +317,57 @@ function useKartDuzeni(alan: RefObject<HTMLElement | null>, soru: TurSoru): Kart
       const r = el.getBoundingClientRect();
       const cs = getComputedStyle(document.documentElement);
       const px = (ad: string) => parseFloat(cs.getPropertyValue(ad)) || 0;
-      setDuzen(
-        kartDuzeni({
+      setDuzen({
+        enBoy,
+        ...kartDuzeni({
           alanGenislik: r.width,
           alanYukseklik: r.height,
           adet,
-          enBoy: hece ? 1.6 : 1,
+          enBoy,
           // Resim kartı harf kartından büyük: resim tanınır boyda kalsın.
           enBuyuk: px('--size-choice') * (gorsel ? 1.15 : 0.75),
           tapMin: px('--size-tap-min'),
           aralik: px('--size-gap-tight'),
           kontrol: px('--size-control'),
         }),
-      );
+      });
     };
     olc();
     const ro = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(olc);
     ro?.observe(el);
     return () => ro?.disconnect();
-  }, [alan, adet, hece, gorsel]);
+  }, [alan, adet, enBoy, gorsel]);
   return duzen;
 }
 
 function Kart({
-  id,
+  kart,
   sira,
-  metin,
-  gorselId,
   altYazi,
-  hece,
+  enBoy,
   boy,
   kullanildi,
   yanlis,
   dogru,
   onPress,
 }: {
-  id: string;
+  kart: TurKart;
   sira: number;
-  metin: string;
-  gorselId?: string;
   altYazi: boolean;
-  hece: boolean;
+  enBoy: number;
   boy: number;
   kullanildi: boolean;
   yanlis: boolean;
   dogru: boolean;
   onPress: () => void;
 }) {
-  const genislik = Math.round(boy * (hece ? 1.6 : 1));
+  const { id, metin, gorselId } = kart;
+  const genislik = Math.round(boy * enBoy);
   const pasif = kullanildi || yanlis;
-  // Görsel kart: cevaptan önce adı yok (okuma/dinleme ele verilmez); doğru cevaptan sonra sözcük.
-  const ad = gorselId ? (dogru ? metin : `Resim ${sira + 1}`) : metin;
+  // Görsel kart: cevaptan önce adı yok (okuma/dinleme ele verilmez); doğru cevaptan sonra sözcük. Parça kartı
+  // harfi ele vermez ("Parça N").
+  const ad = gorselId ? (dogru ? metin : `Resim ${sira + 1}`) : kart.parca ? `Parça ${sira + 1}` : metin;
+  const yazi = kart.tur === 'sozcuk' ? 0.5 : kart.tur === 'hece' ? 0.5 : 0.62;
   return (
     <button
       type="button"
@@ -363,7 +390,7 @@ function Kart({
         boxShadow: `0 calc(4px * var(--scale)) 0 ${dogru ? 'var(--color-correct)' : 'var(--color-border)'}`,
         color: 'var(--color-ink)',
         fontFamily: 'inherit',
-        fontSize: Math.round(boy * (hece ? 0.5 : 0.62)),
+        fontSize: Math.round(boy * yazi),
         lineHeight: 1,
         whiteSpace: 'nowrap',
         opacity: pasif ? 0.35 : 1,
@@ -399,6 +426,8 @@ function Kart({
             </span>
           )}
         </>
+      ) : kart.parca ? (
+        <ParcaCizimi parcalar={[kart.parca]} merkez={kart.parca.genislik / 2} />
       ) : (
         metin
       )}
@@ -473,10 +502,20 @@ function SesYok({ soru }: { soru: TurSoru }) {
   );
 }
 
-function Uyaran({ soru, durum, yuvalar }: { soru: TurSoru; durum: Durum; yuvalar: readonly (string | null)[] }) {
+function Uyaran({
+  soru,
+  durum,
+  yuvalar,
+  parcalar,
+}: {
+  soru: TurSoru;
+  durum: Durum;
+  yuvalar: readonly (string | null)[];
+  parcalar: readonly TurParca[];
+}) {
   const dogru = durum === 'dogru';
   const u = soru.uyaran;
-  const yuvaVar = soru.kind === 'yerlestir' && u.tur !== 'bosluklu';
+  const yuvaVar = soru.kind === 'yerlestir' && u.tur !== 'bosluklu' && u.tur !== 'parca';
   const satir = yuvaVar && u.tur === 'yazi' ? 42 : 66; // cqh
   const vurgu: CSSProperties = dogru
     ? { background: 'var(--color-correct-soft)', boxShadow: '0 0 0 calc(4px * var(--scale)) var(--color-correct)' }
@@ -501,6 +540,26 @@ function Uyaran({ soru, durum, yuvalar }: { soru: TurSoru; durum: Durum; yuvalar
       )}
       {u.tur === 'yazi' && (
         <Metin metin={u.metin} yukseklik={satir} stil={!yuvaVar ? vurgu : undefined} veri="model" />
+      )}
+      {u.tur === 'yok' && dogru && <Metin metin={soru.hedefMetin} yukseklik={60} stil={vurgu} veri="dogru-yazilis" />}
+      {u.tur === 'parca' && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6cqw', height: '84cqh' }}>
+          <Metin metin={u.glif} yukseklik={84} veri="model" />
+          <div
+            data-parca-tuval={parcalar.length}
+            style={{
+              height: '100%',
+              aspectRatio: '1 / 1',
+              boxSizing: 'border-box',
+              border: 'calc(3px * var(--scale)) dashed var(--color-ink-soft)',
+              borderRadius: 'calc(14px * var(--scale))',
+              background: 'var(--color-surface)',
+              ...vurgu,
+            }}
+          >
+            <ParcaCizimi parcalar={parcalar} merkez={u.genislik / 2} cizgiler />
+          </div>
+        </div>
       )}
       {u.tur === 'bosluklu' && (
         <div
@@ -603,5 +662,32 @@ function Yuva({ metin, adet = 1, hece = false, bosluklu = false }: { metin: stri
     >
       {metin ?? ''}
     </span>
+  );
+}
+
+/**
+ * Hamle parçaları, `merkez` (glif genişliğinin yarısı) çevresinde kare çerçevede (hamle verisi birimi; satır 20–100).
+ * Başka genişlikteki glifin parçası ortası hizalanarak çizilir. `cizgiler`: kılavuz ve taban çizgisi (ince, kesikli).
+ */
+function ParcaCizimi({ parcalar, merkez, cizgiler = false }: { parcalar: readonly TurParca[]; merkez: number; cizgiler?: boolean }) {
+  const x0 = merkez - 44;
+  return (
+    <svg viewBox={`${x0} 14 88 88`} aria-hidden="true" style={{ width: '100%', height: '100%', display: 'block', pointerEvents: 'none' }}>
+      {cizgiler &&
+        [SATIR.kilavuz, SATIR.taban].map((y) => (
+          <line key={y} x1={x0 + 4} x2={x0 + 84} y1={y} y2={y} stroke="var(--color-border)" strokeWidth={1} strokeDasharray="3 3" />
+        ))}
+      {parcalar.map((p, i) => (
+        <path
+          key={i}
+          d={yolVerisi(p.noktalar, merkez - p.genislik / 2)}
+          fill="none"
+          stroke="var(--color-ink)"
+          strokeWidth={KALEM}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      ))}
+    </svg>
   );
 }

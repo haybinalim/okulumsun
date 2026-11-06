@@ -28,9 +28,12 @@ import { klipManifestiMetni } from '../../scripts/tur/klip-manifesti';
 import { kartDuzeni } from '../../src/ui/tur/etkinlikDuzeni';
 import { turAcilisEkrani } from '../../src/ui/tur/turEkrani';
 import { createRng } from '../../src/exercises/rng';
+import type { TurHamleGlifi } from '../../src/content/schema/turHamle';
 
 const havuzHam = JSON.parse(readFileSync('ders-verisi/tur/icerik/sozcukler.json', 'utf8')) as unknown;
 const havuz = havuzuAyristir(havuzHam);
+/** Hamle verisi (T-09 ister). */
+const hamleler = (JSON.parse(readFileSync('ders-verisi/tur/hamleler.json', 'utf8')) as { glifler: TurHamleGlifi[] }).glifler;
 const manifest = new Map(turKlipManifesti(havuz).map((k) => [k.anahtar, k.metin]));
 
 /** 1.–2. grup resmî kümeleri (her harf, küçük) + birkaç öğretmen kümesi (farklı sıra, destek grubu, büyük harfli). */
@@ -50,7 +53,7 @@ function hepsi(): { soru: TurSoru; kume: Set<string> }[] {
       for (const zorluk of TUR_ZORLUKLARI)
         for (const tohum of TOHUMLAR) {
           try {
-            out.push({ soru: turSoruUret(s, { havuz, kume, zorluk, tohum }), kume });
+            out.push({ soru: turSoruUret(s, { havuz, hamleler, kume, zorluk, tohum }), kume });
           } catch (e) {
             if (!(e instanceof TurUretimHatasi)) throw e;
           }
@@ -77,11 +80,11 @@ describe('Türkçe şablonlar — üretim (Adım 69)', () => {
     const kume = resmiKume('m', false);
     for (const s of TUR_SABLON_KODLARI)
       for (const zorluk of TUR_ZORLUKLARI) {
-        const a = turSoruUret(s, { havuz, kume, zorluk, tohum: 7 });
-        const b = turSoruUret(s, { havuz, kume: new Set(kume), zorluk, tohum: 7 });
+        const a = turSoruUret(s, { havuz, hamleler, kume, zorluk, tohum: 7 });
+        const b = turSoruUret(s, { havuz, hamleler, kume: new Set(kume), zorluk, tohum: 7 });
         expect(b).toEqual(a);
         expect(a.itemId).toMatch(new RegExp(`^tur\\.${s}#[0-9a-z]+$`));
-        const c = turSoruUret(s, { havuz, kume: resmiKume('r', false), zorluk, tohum: 7 });
+        const c = turSoruUret(s, { havuz, hamleler, kume: resmiKume('r', false), zorluk, tohum: 7 });
         expect(c.itemId).not.toBe(a.itemId);
       }
     const ids = new Set(URETILEN.filter((u) => u.kume === KUMELER[11]).map((u) => u.soru.itemId));
@@ -280,7 +283,7 @@ describe('Türkçe şablonlar — üretim (Adım 69)', () => {
     for (const { soru } of URETILEN.filter((u) => u.soru.sablon === 'T-01' || u.soru.sablon === 'T-08'))
       for (const k of soru.kartlar) expect(resimsiz.has(k.metin), k.metin).toBe(false);
     for (const s of ['T-01', 'T-08'] as const)
-      expect(() => turSoruUret(s, { havuz, kume: resmiKume('n', false), zorluk: 1, tohum: 1 })).toThrow(TurUretimHatasi);
+      expect(() => turSoruUret(s, { havuz, hamleler, kume: resmiKume('n', false), zorluk: 1, tohum: 1 })).toThrow(TurUretimHatasi);
   });
 
   it('kart sayısı en çok 8 (tahta 1080×810) ve kartların hiçbiri ses taşımaz (tipte ses alanı yok)', () => {
@@ -409,7 +412,7 @@ describe('Çeldirici kataloğu (D-23)', () => {
       for (const s of TUR_SABLON_KODLARI)
         for (const zorluk of TUR_ZORLUKLARI)
           try {
-            const soru = TUR_SABLONLARI[s].uret({ havuz, kume, zorluk, tohum: i });
+            const soru = TUR_SABLONLARI[s].uret({ havuz, hamleler, kume, zorluk, tohum: i });
             expect(turSoruIhlalleri(soru, kume, manifest, havuz)).toEqual([]);
           } catch (e) {
             if (!(e instanceof TurUretimHatasi)) throw e;
