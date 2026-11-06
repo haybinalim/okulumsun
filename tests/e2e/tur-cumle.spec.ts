@@ -14,6 +14,8 @@ test.use({ baseURL: TUR_URL });
 
 /** 5. grup dahil bütün harfler, büyükleriyle. */
 const HEPSI = kumeKodla(resmiKume('j', true));
+/** Cümle parçası: üretim derlemesinde `assets/turCumle-*.js`, geliştirme sunucusunda (CI) kaynak modül. */
+const CUMLE_PARCASI = /\/assets\/turCumle-[^/]+\.js$|\/sablonlar\/cumle\/turCumle\.ts(\?|$)/;
 const manifest = new Set(
   (JSON.parse(readFileSync('ders-verisi/tur/ses/klipler.json', 'utf8')) as { klipler: { anahtar: string }[] }).klipler.map((k) => k.anahtar),
 );
@@ -41,7 +43,7 @@ for (const sablon of CUMLE_SABLONLARI) {
       const page = await ctx.newPage();
       const parcalar: string[] = [];
       page.on('request', (r) => {
-        if (/\/assets\/turCumle-[^/]+\.js$/.test(r.url())) parcalar.push(r.url());
+        if (CUMLE_PARCASI.test(r.url())) parcalar.push(r.url());
       });
       for (const zorluk of [1, 3, 5]) {
         const baglam = `${sablon} z${zorluk} ${g.ad}`;
@@ -88,7 +90,7 @@ test('cümle parçası sözcük etkinliğinde indirilmez; 1. grupta cümle etkin
   test.skip(bilgi.project.name !== 'tablet', 'bir kez');
   const parcalar: string[] = [];
   page.on('request', (r) => {
-    if (/\/assets\/turCumle-[^/]+\.js$/.test(r.url())) parcalar.push(r.url());
+    if (CUMLE_PARCASI.test(r.url())) parcalar.push(r.url());
   });
   await sesKilidiniAc(page, `/?ders=tur&etkinlik=T-08&zorluk=1&tohum=1&device=tablet&tur=${HEPSI}`);
   await expect(page.locator('main[data-tur-etkinlik="T-08"]')).toBeVisible();
