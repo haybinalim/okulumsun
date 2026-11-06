@@ -72,6 +72,17 @@ export const CumleSema = z.strictObject({
   /** Hedef görsel (cümlenin İÇİNDE değil — rebus yok, D-07). */
   gorselId: Kimlik.optional(),
   klip: KlipSema.optional(),
+  /**
+   * Cümle havuzu etiketleri (Adım 74, `ders-verisi/tur/icerik/cumleler.json`). Doğrulayıcı hesaplananla karşılaştırır:
+   * `grup` = `girisHarfi`nin grubu, `harfler` = cümlenin küçük harfleri öğretim sırasıyla, `noktalama` = bitiş işareti,
+   * `tur` bitiş işaretinin türü (. bildirme, ? soru, ! ünlem).
+   */
+  grup: z.number().int().min(1).max(5).optional(),
+  harfler: z.string().optional(),
+  tur: z.enum(['bildirme', 'soru', 'unlem']).optional(),
+  noktalama: z.enum(['.', '?', '!']).optional(),
+  /** Öğe düzeyinde öğretmen teyidi (KG-155: havuz teyit beklenmeden kuruldu; `validate --yayin` bekleyende kırmızı). */
+  teyit: z.enum(['bekliyor', 'tamam']).optional(),
 });
 
 export const SABLON_KODLARI = [

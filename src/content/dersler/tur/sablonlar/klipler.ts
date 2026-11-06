@@ -5,14 +5,14 @@
  * verir (`tur.sozcuk.kale`, `tur.hece.ta`, `tur.yonerge.t02`). Türkçe özel harfler kimlikte ASCII'ye iki
  * karakterle açılır (ç→c2, ğ→g2, ı→i2, ö→o2, ş→s2, ü→u2): "kır" ile "kir" çakışmaz.
  *
- * Klip türleri: sözcük, hece (yalnız sözcükten gelen), yönerge, geri bildirim. TEK ÜNSÜZ KLİBİ YOKTUR
+ * Klip türleri: sözcük, hece (yalnız sözcükten gelen), cümle (Adım 74), yönerge, geri bildirim. TEK ÜNSÜZ KLİBİ YOKTUR
  * (K-OY-03, D-11): harf kimliği üretilemez; `klipMetniGecerliMi` her klibin en az bir ünlü taşıdığını sınar.
  * Ses dosyaları Adım 67'de üretilir; o güne dek manifest (`ders-verisi/tur/ses/klipler.json`) her klibi
  * `durum: "eksik"` taşır ve arayüz sessiz çalışır ("ses yok").
  */
 import { yalnizUnsuzMu } from '../alfabe';
 
-export type TurKlipKimligi = `tur.${'sozcuk' | 'hece' | 'yonerge' | 'geri'}.${string}`;
+export type TurKlipKimligi = `tur.${'sozcuk' | 'hece' | 'cumle' | 'yonerge' | 'geri'}.${string}`;
 
 const ASCII: Readonly<Record<string, string>> = { ç: 'c2', ğ: 'g2', ı: 'i2', ö: 'o2', ş: 's2', ü: 'u2' };
 
@@ -25,6 +25,14 @@ export function klipParcasi(metin: string): string {
 
 export function sozcukKlibi(sozcuk: string): TurKlipKimligi {
   return `tur.sozcuk.${klipParcasi(sozcuk)}`;
+}
+
+/**
+ * Cümle klibi (Adım 74): kimlik cümle havuzundaki `id`den (`c2.01` → `tur.cumle.c201`); metin cümlenin kendisi,
+ * tonlamasıyla (bildirme, soru, ünlem). Yalnız cevaptan sonra ya da M-3 model okumada istenir.
+ */
+export function cumleKlibi(cumleId: string): TurKlipKimligi {
+  return `tur.cumle.${klipParcasi(cumleId.replace(/[.-]/g, ''))}`;
 }
 
 /** Hece klibi; hece tek ünsüz olamaz (D-11). */

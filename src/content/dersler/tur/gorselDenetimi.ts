@@ -135,3 +135,27 @@ export function icerikGorselBaglariniDenetle(
   }
   return sonuc;
 }
+
+/**
+ * Cümle havuzu (Adım 74): `gorselId` bir görsel dizinindedir ve görselin sözcüğü cümlenin bir sözcüğünün gövdesidir
+ * ("Tilki ormanda uyur." → tilki; "Ellerimi yıkarım." → el). Görsel cümlenin içinde değil, hedef alanındadır (D-07).
+ */
+export function cumleGorselBaglariniDenetle(
+  cumleler: readonly { readonly id: string; readonly metin: string; readonly gorselId?: string }[],
+  dizinler: readonly TurGorselDizini[],
+): GorselIhlali[] {
+  const gorseller = new Map(dizinler.flatMap((d) => d.gorseller.map((g) => [g.id, g] as const)));
+  const sonuc: GorselIhlali[] = [];
+  for (const c of cumleler) {
+    if (!c.gorselId) continue;
+    const g = gorseller.get(c.gorselId);
+    const sozcukler = c.metin
+      .toLocaleLowerCase('tr-TR')
+      .split(/[ ,.?!]+/)
+      .map((w) => w.split("'")[0]);
+    if (!g) sonuc.push({ kural: 'D-25', oge: c.id, mesaj: `görsel yok: ${c.gorselId}` });
+    else if (!sozcukler.some((w) => w.startsWith(g.sozcuk)))
+      sonuc.push({ kural: 'D-25', oge: c.id, mesaj: `${c.gorselId} "${g.sozcuk}" görseli, cümlede bu sözcük yok` });
+  }
+  return sonuc;
+}
