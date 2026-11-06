@@ -5,7 +5,7 @@ import { geometriTemiz, sesKilidiniAc } from './yardimci/akis';
 import { sozcukKlibi } from '../../src/content/dersler/tur/sablonlar/klipler';
 
 /**
- * Okuma Yazma Adım 69–70 — şablonlar T-01…T-08 (T-01, T-08 görselli), YALNIZ bayraklı derlemede (`VITE_DERS_TUR=1`, port 5174).
+ * Okuma Yazma Adım 69–70, 79 — şablonlar T-01…T-09, T-16 (T-01, T-08 görselli), YALNIZ bayraklı derlemede (`VITE_DERS_TUR=1`, port 5174).
  *
  * Her şablon üç görünümde (tahta 1920×1080, tahta 1080×810, tablet 1080×810) açılır ve çözülür:
  *  - geometri temiz (üst %35'te dokunma yok, hedefler ≥ tap-min) — yuvalar yalnız gösterir;
@@ -24,8 +24,8 @@ const manifest = new Map(
 );
 const UNLU = /[aeıioöuüâîû]/i;
 
-export const SABLONLAR = ['T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07', 'T-08'] as const;
-const OKUMA_HEDEFLI = new Set(['T-03', 'T-04', 'T-05', 'T-06', 'T-08']);
+export const SABLONLAR = ['T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07', 'T-08', 'T-09', 'T-16'] as const;
+const OKUMA_HEDEFLI = new Set(['T-03', 'T-04', 'T-05', 'T-06', 'T-08', 'T-09', 'T-16']);
 
 const gorunumler = (proje: string) =>
   proje === 'board'
@@ -68,12 +68,14 @@ async function coz(page: Page, sablon: string, baglam: string) {
   const cevap = (await main.getAttribute('data-cevap')) ?? '';
   const kartlar = page.locator('[data-kart]');
   const ilk = await klipler(page);
-  if (await main.locator('[data-yuvalar], [data-sozcuk-bosluklu]').count()) {
+  if ((await main.getAttribute('data-tur-kind')) === 'yerlestir') {
     // Yerleştir: cevaptaki metinleri sırayla kullanılmamış kartlardan seç.
-    for (const parca of cevap.split('|')) {
+    for (const [i, parca] of cevap.split('|').entries()) {
       const kart = page.locator(`[data-kart][data-kart-metin="${parca}"]:not([data-kullanildi])`).first();
       await kart.click();
       expect(await klipler(page), `${baglam}: kart sessiz (D-11)`).toEqual(ilk);
+      // T-09: seçilen parça üstteki harf çerçevesine oturur.
+      if (sablon === 'T-09') await expect(page.locator('[data-parca-tuval]')).toHaveAttribute('data-parca-tuval', String(i + 1));
     }
     await page.getByRole('button', { name: 'Onayla', exact: true }).click();
   } else {
@@ -88,11 +90,12 @@ async function coz(page: Page, sablon: string, baglam: string) {
   }
   await expect(main).toHaveAttribute('data-durum', 'dogru');
   await expect(page.getByRole('button', { name: 'Sonraki', exact: true })).toBeVisible();
+  // T-16: doğru cevaptan sonra sözcüğün doğru yazılışı üstte görünür.
+  if (sablon === 'T-16') await expect(page.locator('[data-uyaran-metni="dogru-yazilis"]')).toBeVisible();
   const son = await klipler(page);
   expect(son.slice(-1)[0], `${baglam}: geri bildirim istendi`).toMatch(/^tur\.(sozcuk|hece|geri)\./);
   expect(son, `${baglam}: geri bildirimde övgü`).toContain('tur.geri.dogru');
   klipleriDenetle(son, baglam);
-  void sablon;
 }
 
 for (const sablon of SABLONLAR) {
