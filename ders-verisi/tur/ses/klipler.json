@@ -1754,6 +1754,16 @@
    "durum": "eksik"
   },
   {
+   "anahtar": "tur.yonerge.t10",
+   "metin": "Yukarıdaki cümleyi içinden okuyup cümleye uyan resmi bul.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t11",
+   "metin": "Cümleyi içinden okuyup sonuna gelen işareti bul.",
+   "durum": "eksik"
+  },
+  {
    "anahtar": "tur.yonerge.t16",
    "metin": "Yanlış yazılmış sözcüğü bul.",
    "durum": "eksik"

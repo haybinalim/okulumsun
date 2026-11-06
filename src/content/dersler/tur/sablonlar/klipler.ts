@@ -42,7 +42,7 @@ export function heceKlibi(hece: string): TurKlipKimligi {
 }
 
 /**
- * Yönerge ve geri bildirim metinleri. Okuma hedefli öğede (T-03, T-04, T-05, T-06, T-08, T-09, T-16) yönerge hedef metni
+ * Yönerge ve geri bildirim metinleri. Okuma hedefli öğede (T-03, T-04, T-05, T-06, T-08, T-09, T-10, T-11, T-12, T-16) yönerge hedef metni
  * İÇERMEZ (D-12); bu metinler sabit olduğu için hiçbir sözcük veya hece taşımazlar.
  */
 export const TUR_YONERGELERI = {
@@ -58,6 +58,8 @@ export const TUR_YONERGELERI = {
   't01-her': 'Dinle. Bu sözcüklerin hepsinde aynı ses var. Adında bu ses olan resmi bul.',
   't08': 'Yukarıdaki sözcüğü içinden okuyup resmini bul.',
   't09': 'Yukarıdaki harfi parçalarla oluştur.',
+  't10': 'Yukarıdaki cümleyi içinden okuyup cümleye uyan resmi bul.',
+  't11': 'Cümleyi içinden okuyup sonuna gelen işareti bul.',
   't09-sira': 'Yukarıdaki harfi parçalarla oluştur. Parçaları yazılış sırasıyla seç.',
   't16': 'Yanlış yazılmış sözcüğü bul.',
   't17': 'Resmin adını söyle. Her hecede bir kez alkışla. Kaç hece var?',
