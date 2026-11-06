@@ -17,6 +17,7 @@ import {
   PROGRAM_SURUMU,
   trBuyuk,
   trKucuk,
+  UNLEM_GIRIS_HARFI,
   unluMu,
   yalnizUnsuzMu,
 } from './alfabe';
@@ -139,8 +140,6 @@ function noktalamaDenetle(c: TurCumle, grup: number, hatalar: Ihlal[]): void {
     if (s.includes("'") && !ozel.has(s.split("'")[0])) h(`kesme işareti yalnız özel ad + ek ("${s}").`);
 }
 
-/** Ünlem cümlesinin giriş harfi en erken 5. grubun ilk harfidir (D-09: ünlem son harf grubunda). */
-export const UNLEM_GIRIS_HARFI = HARF_GRUPLARI[4][0];
 const TUR_NOKTALAMA = { '.': 'bildirme', '?': 'soru', '!': 'unlem' } as const;
 
 /**
@@ -152,8 +151,7 @@ function cumleEtiketleriniDenetle(c: TurCumle, hatalar: Ihlal[]): void {
   const g = girisNoktasi(c.metin);
   if (!g) return;
   const son = c.metin.at(-1) ?? '';
-  const beklenenGiris =
-    son === '!' && g.grup < 5 ? UNLEM_GIRIS_HARFI : g.harf;
+  const beklenenGiris = son === '!' && g.grup < 5 ? UNLEM_GIRIS_HARFI : g.harf;
   if (c.girisHarfi !== beklenenGiris) h(`girisHarfi '${c.girisHarfi}', hesaplanan '${beklenenGiris}'.`);
   if (c.grup !== harfGrubu(c.girisHarfi)) h(`grup ${c.grup}, giriş harfinin grubu ${harfGrubu(c.girisHarfi)}.`);
   const harfler = OGRETIM_SIRASI.filter((x) => trKucuk(c.metin).includes(x)).join('');

@@ -26,6 +26,9 @@ export const HARF_GRUPLARI: readonly (readonly Harf[])[] = [
   ['p', 'h', 'v', 'ğ', 'f', 'j'],
 ];
 
+/** Ünlem işareti son harf grubunda (D-09, K-OY-12): ünlem cümlesinin giriş harfi en erken 5. grubun ilk harfidir. */
+export const UNLEM_GIRIS_HARFI: Harf = 'p';
+
 /** Öğretim sırasıyla 29 harf. */
 export const OGRETIM_SIRASI: readonly Harf[] = HARF_GRUPLARI.flat();
 
