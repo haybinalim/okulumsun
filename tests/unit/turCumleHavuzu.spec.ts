@@ -31,7 +31,10 @@ describe('Cümle havuzu (Adım 74a)', () => {
   it('grup başına sayılar: 1. grupta cümle yok (D-08), 2.–5. grupta 15–25', () => {
     const sayi = [1, 2, 3, 4, 5].map((g) => dosya.cumleler.filter((c) => c.grup === g).length);
     expect(sayi[0]).toBe(0);
-    for (const n of sayi.slice(1)) expect(n).toBeGreaterThanOrEqual(15), expect(n).toBeLessThanOrEqual(25);
+    for (const n of sayi.slice(1)) {
+      expect(n).toBeGreaterThanOrEqual(15);
+      expect(n).toBeLessThanOrEqual(25);
+    }
   });
 
   it('noktalama izin tablosu: ? 2. gruptan, ! yalnız 5. grupta ve ünlem sözcüğüyle (D-09)', () => {
