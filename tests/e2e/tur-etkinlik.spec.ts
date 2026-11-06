@@ -257,8 +257,14 @@ test('Adım 79: yumuşak geri bildirim hareketi yalnız hareket azaltma kapalıy
   for (const reducedMotion of ['no-preference', 'reduce'] as const) {
     const ctx = await browser.newContext({ baseURL: TUR_URL, viewport: { width: 1080, height: 810 }, hasTouch: true, reducedMotion });
     const page = await ctx.newPage();
-    await ac(page, 'T-03', 1, 1, 'tablet');
-    const main = page.locator('main[data-tur-etkinlik]');
+    // `ac`/`sesKilidiniAc` hareket azaltmayı zorlar; burada bağlamın ayarı etkinlik ekranı açılmadan geri yüklenir.
+    await page.goto('/?ders=tur&etkinlik=T-03&zorluk=1&tohum=1&device=tablet');
+    await expect(page.getByRole('button', { name: 'Başla' })).toBeVisible();
+    await page.emulateMedia({ reducedMotion });
+    await page.getByRole('button', { name: 'Başla' }).click();
+    const main = page.locator('main[data-tur-etkinlik="T-03"]');
+    await expect(main).toBeVisible();
+    await expect(page.locator('[data-kartlar][data-satir]')).toBeVisible();
     const cevap = (await main.getAttribute('data-cevap')) ?? '';
     const yanlis = page.locator('[data-kart]').and(page.locator(`:not([data-kart="${cevap}"])`)).first();
     await yanlis.click();
