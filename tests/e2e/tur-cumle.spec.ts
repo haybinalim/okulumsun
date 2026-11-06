@@ -16,6 +16,8 @@ test.use({ baseURL: TUR_URL });
 const HEPSI = kumeKodla(resmiKume('j', true));
 /** Cümle parçası: üretim derlemesinde `assets/turCumle-*.js`, geliştirme sunucusunda (CI) kaynak modül. */
 const CUMLE_PARCASI = /\/assets\/turCumle-[^/]+\.js$|\/sablonlar\/cumle\/turCumle\.ts(\?|$)/;
+/** Koro okuma parçası: üretim derlemesinde `assets/KoroOkuma-*.js`, geliştirme sunucusunda kaynak modül. */
+const KORO_PARCASI = /\/assets\/KoroOkuma-[^/]+\.js$|\/ui\/tur\/cumle\/KoroOkuma\.tsx(\?|$)/;
 const manifest = new Set(
   (JSON.parse(readFileSync('ders-verisi/tur/ses/klipler.json', 'utf8')) as { klipler: { anahtar: string }[] }).klipler.map((k) => k.anahtar),
 );
@@ -137,7 +139,7 @@ test('M-3 koro / yankılayıcı okuma: tahtada sözcük sözcük vurgu, yankı k
     const page = await ctx.newPage();
     const parcalar: string[] = [];
     page.on('request', (r) => {
-      if (/\/assets\/KoroOkuma-[^/]+\.js$/.test(r.url())) parcalar.push(r.url());
+      if (KORO_PARCASI.test(r.url())) parcalar.push(r.url());
     });
     await sesKilidiniAc(page, `/?ders=tur&ekran=koro&device=${g.cihaz}&tur=${HEPSI}`);
     const main = page.locator('main[data-koro-okuma]');
