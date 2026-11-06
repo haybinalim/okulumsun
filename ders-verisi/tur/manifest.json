@@ -5,6 +5,7 @@
     "manifest.json",
     "hamleler.json",
     "icerik/sozcukler.json",
+    "icerik/cumleler.json",
     "ses/klipler.json",
     "veli-karti.json"
   ],

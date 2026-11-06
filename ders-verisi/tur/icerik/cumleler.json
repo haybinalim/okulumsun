@@ -1,0 +1,1106 @@
+{
+ "programSurumu": "tymm-turkce-2026-09-02",
+ "teyit": {
+  "durum": "bekliyor",
+  "kaynak": "Okuma Yazma cümle havuzu (Adım 74, 2.–5. grup); kullanıcı kararıyla öğretmen onayı beklenmeden kuruldu (KG-155). İki öğretmen anlam teyidi yayından önce zorunlu."
+ },
+ "cumleler": [
+  {
+   "id": "c2.01",
+   "metin": "Annem elma alır.",
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "anelrım",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "elma",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.02",
+   "metin": "Tren kalktı.",
+   "girisHarfi": "ı",
+   "grup": 2,
+   "harfler": "anetlkrı",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "tren",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.03",
+   "metin": "Kar erir.",
+   "girisHarfi": "r",
+   "grup": 2,
+   "harfler": "aeikr",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "kar",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.04",
+   "metin": "Nar tatlı.",
+   "girisHarfi": "ı",
+   "grup": 2,
+   "harfler": "antlrı",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "nar",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.05",
+   "metin": "Kurt ulur.",
+   "girisHarfi": "r",
+   "grup": 2,
+   "harfler": "tlkur",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "kurt",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.06",
+   "metin": "İnek otlar.",
+   "girisHarfi": "r",
+   "grup": 2,
+   "harfler": "anetilokr",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "inek",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.07",
+   "metin": "At otlar.",
+   "girisHarfi": "r",
+   "grup": 2,
+   "harfler": "atlor",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "at",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.08",
+   "metin": "Mum erir.",
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "eiurm",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "mum",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.09",
+   "metin": "Tekne ilerler.",
+   "girisHarfi": "r",
+   "grup": 2,
+   "harfler": "netilkr",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "tekne",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.10",
+   "metin": "Ali ekmek alır.",
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "aeilkrım",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "ozelAdlar": [
+    "Ali"
+   ],
+   "gorselId": "ekmek",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.11",
+   "metin": "Nil kalem alır.",
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "aneilkrım",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "ozelAdlar": [
+    "Nil"
+   ],
+   "gorselId": "kalem",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.12",
+   "metin": "Kemal motoru onarır.",
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "anetlokurım",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "ozelAdlar": [
+    "Kemal"
+   ],
+   "gorselId": "motor",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.13",
+   "metin": "Kek tatlı.",
+   "girisHarfi": "ı",
+   "grup": 2,
+   "harfler": "aetlkı",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "kek",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.14",
+   "metin": "Nane kokulu.",
+   "girisHarfi": "u",
+   "grup": 2,
+   "harfler": "aneloku",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "nane",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.15",
+   "metin": "Kerem nota okur.",
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "anetokurm",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "ozelAdlar": [
+    "Kerem"
+   ],
+   "gorselId": "nota",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.16",
+   "metin": "O ne?",
+   "girisHarfi": "o",
+   "grup": 2,
+   "harfler": "neo",
+   "tur": "soru",
+   "noktalama": "?",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.17",
+   "metin": "Kim kalem alır?",
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "aeilkrım",
+   "tur": "soru",
+   "noktalama": "?",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.18",
+   "metin": "Annen ne alır?",
+   "girisHarfi": "ı",
+   "grup": 2,
+   "harfler": "anelrı",
+   "tur": "soru",
+   "noktalama": "?",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.19",
+   "metin": "Tren kalktı mı?",
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "anetlkrım",
+   "tur": "soru",
+   "noktalama": "?",
+   "gorselId": "tren",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.20",
+   "metin": "Kar erir mi?",
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "aeikrm",
+   "tur": "soru",
+   "noktalama": "?",
+   "gorselId": "kar",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.21",
+   "metin": "Elma mı armut mu?",
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "aetlurım",
+   "tur": "soru",
+   "noktalama": "?",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.22",
+   "metin": "İnek mi at mı?",
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "anetikım",
+   "tur": "soru",
+   "noktalama": "?",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.23",
+   "metin": "Okul tatil mi?",
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "atilokum",
+   "tur": "soru",
+   "noktalama": "?",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c2.24",
+   "metin": "Kek tatlı mı?",
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "aetlkım",
+   "tur": "soru",
+   "noktalama": "?",
+   "gorselId": "kek",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.01",
+   "metin": "Tilki ormanda uyur.",
+   "girisHarfi": "d",
+   "grup": 3,
+   "harfler": "antilokurmyd",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "tilki",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.02",
+   "metin": "Ninem yün örer.",
+   "girisHarfi": "y",
+   "grup": 3,
+   "harfler": "neirmüöy",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "nine",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.03",
+   "metin": "Limon sarı.",
+   "girisHarfi": "s",
+   "grup": 3,
+   "harfler": "anilorıms",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "limon",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.04",
+   "metin": "Ekmek taze.",
+   "girisHarfi": "z",
+   "grup": 3,
+   "harfler": "aetkmz",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "ekmek",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.05",
+   "metin": "Dedem olta atar.",
+   "girisHarfi": "d",
+   "grup": 3,
+   "harfler": "aetlormd",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "olta",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.06",
+   "metin": "Kule yüksek.",
+   "girisHarfi": "y",
+   "grup": 3,
+   "harfler": "elkuüsy",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "kule",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.07",
+   "metin": "Tekerlek döner.",
+   "girisHarfi": "d",
+   "grup": 3,
+   "harfler": "netlkröd",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "tekerlek",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.08",
+   "metin": "Erikler dalda.",
+   "girisHarfi": "d",
+   "grup": 3,
+   "harfler": "aeilkrd",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "erik",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.09",
+   "metin": "Kral sarayda oturur.",
+   "girisHarfi": "d",
+   "grup": 3,
+   "harfler": "atlokursyd",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "kral",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.10",
+   "metin": "Ellerimi yıkarım.",
+   "girisHarfi": "y",
+   "grup": 3,
+   "harfler": "aeilkrımy",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "el",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.11",
+   "metin": "Tırnaklarımı keserim.",
+   "girisHarfi": "s",
+   "grup": 3,
+   "harfler": "anetilkrıms",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "tirnak",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.12",
+   "metin": "Ali Ankara'da oturur.",
+   "girisHarfi": "d",
+   "grup": 3,
+   "harfler": "antilokurd",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "ozelAdlar": [
+    "Ali",
+    "Ankara"
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.13",
+   "metin": "Deniz okula yürür.",
+   "girisHarfi": "z",
+   "grup": 3,
+   "harfler": "aneilokurüydz",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "ozelAdlar": [
+    "Deniz"
+   ],
+   "gorselId": "okul",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.14",
+   "metin": "Kedim süt ister.",
+   "girisHarfi": "d",
+   "grup": 3,
+   "harfler": "etikrmüsd",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.15",
+   "metin": "Emre İzmir'de oturur.",
+   "girisHarfi": "z",
+   "grup": 3,
+   "harfler": "etiourmdz",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "ozelAdlar": [
+    "Emre",
+    "İzmir"
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.16",
+   "metin": "Annem kalemimi arıyor.",
+   "girisHarfi": "y",
+   "grup": 3,
+   "harfler": "aneilokrımy",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "kalem",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.17",
+   "metin": "Lale saksıda.",
+   "girisHarfi": "d",
+   "grup": 3,
+   "harfler": "aelkısd",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "lale",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.18",
+   "metin": "Kulak sesi duyar.",
+   "girisHarfi": "d",
+   "grup": 3,
+   "harfler": "aeilkursyd",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "kulak",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.19",
+   "metin": "Tren istasyonda durur.",
+   "girisHarfi": "d",
+   "grup": 3,
+   "harfler": "anetioursyd",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "tren",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.20",
+   "metin": "Kedi nerede?",
+   "girisHarfi": "d",
+   "grup": 3,
+   "harfler": "neikrd",
+   "tur": "soru",
+   "noktalama": "?",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.21",
+   "metin": "Kim süt ister?",
+   "girisHarfi": "s",
+   "grup": 3,
+   "harfler": "etikrmüs",
+   "tur": "soru",
+   "noktalama": "?",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.22",
+   "metin": "Tilki nerede uyur?",
+   "girisHarfi": "d",
+   "grup": 3,
+   "harfler": "netilkuryd",
+   "tur": "soru",
+   "noktalama": "?",
+   "gorselId": "tilki",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.23",
+   "metin": "Okul uzak mı?",
+   "girisHarfi": "z",
+   "grup": 3,
+   "harfler": "alokuımz",
+   "tur": "soru",
+   "noktalama": "?",
+   "gorselId": "okul",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.24",
+   "metin": "Kule yüksek mi?",
+   "girisHarfi": "y",
+   "grup": 3,
+   "harfler": "eilkumüsy",
+   "tur": "soru",
+   "noktalama": "?",
+   "gorselId": "kule",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c3.25",
+   "metin": "Ne zaman uyuruz?",
+   "girisHarfi": "z",
+   "grup": 3,
+   "harfler": "aneurmyz",
+   "tur": "soru",
+   "noktalama": "?",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.01",
+   "metin": "Kartal gökte uçar.",
+   "girisHarfi": "g",
+   "grup": 4,
+   "harfler": "aetlkuröçg",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "kartal",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.02",
+   "metin": "Makarna sıcak.",
+   "girisHarfi": "c",
+   "grup": 4,
+   "harfler": "ankrımsc",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "makarna",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.03",
+   "metin": "Koltuk yumuşak.",
+   "girisHarfi": "ş",
+   "grup": 4,
+   "harfler": "atlokumyş",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "koltuk",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.04",
+   "metin": "Marul yeşil.",
+   "girisHarfi": "ş",
+   "grup": 4,
+   "harfler": "aeilurmyş",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "marul",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.05",
+   "metin": "Kukla gösterisi başladı.",
+   "girisHarfi": "ş",
+   "grup": 4,
+   "harfler": "aetilkurısödbgş",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "kukla",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.06",
+   "metin": "Okulumuz büyük.",
+   "girisHarfi": "b",
+   "grup": 4,
+   "harfler": "lokumüyzb",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "okul",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.07",
+   "metin": "Orman çok yeşil.",
+   "girisHarfi": "ş",
+   "grup": 4,
+   "harfler": "aneilokrmyçş",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "orman",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.08",
+   "metin": "Babam çay içer.",
+   "girisHarfi": "b",
+   "grup": 4,
+   "harfler": "aeirmyçb",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.09",
+   "metin": "Kedi süt içer.",
+   "girisHarfi": "ç",
+   "grup": 4,
+   "harfler": "etikrüsdç",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.10",
+   "metin": "Bugün çok güzel.",
+   "girisHarfi": "g",
+   "grup": 4,
+   "harfler": "nelokuüzçbg",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.11",
+   "metin": "Ekmek sıcacık.",
+   "girisHarfi": "c",
+   "grup": 4,
+   "harfler": "aekımsc",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "ekmek",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.12",
+   "metin": "Tren çok uzun.",
+   "girisHarfi": "ç",
+   "grup": 4,
+   "harfler": "netokurzç",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "tren",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.13",
+   "metin": "Ninem bize masal anlattı.",
+   "girisHarfi": "b",
+   "grup": 4,
+   "harfler": "anetilımszb",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "nine",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.14",
+   "metin": "Kale çok eski.",
+   "girisHarfi": "ç",
+   "grup": 4,
+   "harfler": "aeiloksç",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "kale",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.15",
+   "metin": "Ablam etek giydi.",
+   "girisHarfi": "g",
+   "grup": 4,
+   "harfler": "aetilkmydbg",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "etek",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.16",
+   "metin": "Ablam çorba içti.",
+   "girisHarfi": "b",
+   "grup": 4,
+   "harfler": "atilormçb",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.17",
+   "metin": "Can Bursa'da oturur.",
+   "girisHarfi": "c",
+   "grup": 4,
+   "harfler": "antoursdbc",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "ozelAdlar": [
+    "Can",
+    "Bursa"
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.18",
+   "metin": "Ece bize geldi.",
+   "girisHarfi": "c",
+   "grup": 4,
+   "harfler": "eildzbgc",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "ozelAdlar": [
+    "Ece"
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.19",
+   "metin": "Burak gülümsedi.",
+   "girisHarfi": "g",
+   "grup": 4,
+   "harfler": "aeilkurmüsdbg",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "ozelAdlar": [
+    "Burak"
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.20",
+   "metin": "Bu ne?",
+   "girisHarfi": "b",
+   "grup": 4,
+   "harfler": "neub",
+   "tur": "soru",
+   "noktalama": "?",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.21",
+   "metin": "Saat kaç?",
+   "girisHarfi": "ç",
+   "grup": 4,
+   "harfler": "atksç",
+   "tur": "soru",
+   "noktalama": "?",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.22",
+   "metin": "Çay sıcak mı?",
+   "girisHarfi": "c",
+   "grup": 4,
+   "harfler": "akımsyçc",
+   "tur": "soru",
+   "noktalama": "?",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.23",
+   "metin": "Kartal nerede uçar?",
+   "girisHarfi": "ç",
+   "grup": 4,
+   "harfler": "anetlkurdç",
+   "tur": "soru",
+   "noktalama": "?",
+   "gorselId": "kartal",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.24",
+   "metin": "Bugün okula gidecek misin?",
+   "girisHarfi": "c",
+   "grup": 4,
+   "harfler": "aneilokumüsdbgc",
+   "tur": "soru",
+   "noktalama": "?",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c4.25",
+   "metin": "Can nereye gitti?",
+   "girisHarfi": "c",
+   "grup": 4,
+   "harfler": "anetirygc",
+   "tur": "soru",
+   "noktalama": "?",
+   "ozelAdlar": [
+    "Can"
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.01",
+   "metin": "Arı çiçeğe konar.",
+   "girisHarfi": "ğ",
+   "grup": 5,
+   "harfler": "aneiokrıçğ",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "ari",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.02",
+   "metin": "Tırtıl yavaş ilerler.",
+   "girisHarfi": "v",
+   "grup": 5,
+   "harfler": "aetilrıyşv",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "tirtil",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.03",
+   "metin": "Ormanda mantar var.",
+   "girisHarfi": "v",
+   "grup": 5,
+   "harfler": "antormdv",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "mantar",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.04",
+   "metin": "Terlik kapının önünde.",
+   "girisHarfi": "p",
+   "grup": 5,
+   "harfler": "anetilkrıüödp",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "terlik",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.05",
+   "metin": "Ailemi çok severim.",
+   "girisHarfi": "v",
+   "grup": 5,
+   "harfler": "aeilokrmsçv",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "aile",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.06",
+   "metin": "Tutkal yapışkan.",
+   "girisHarfi": "p",
+   "grup": 5,
+   "harfler": "antlkuıyşp",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "tutkal",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.07",
+   "metin": "Kar yağıyor.",
+   "girisHarfi": "ğ",
+   "grup": 5,
+   "harfler": "aokrıyğ",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "kar",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.08",
+   "metin": "Hava çok güzel.",
+   "girisHarfi": "v",
+   "grup": 5,
+   "harfler": "aeloküzçghv",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.09",
+   "metin": "Pazar günü parka gittik.",
+   "girisHarfi": "p",
+   "grup": 5,
+   "harfler": "antikrüzgp",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.10",
+   "metin": "Pijamamı giydim.",
+   "girisHarfi": "j",
+   "grup": 5,
+   "harfler": "aiımydgpj",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.11",
+   "metin": "Kutunun kapağı açık.",
+   "girisHarfi": "ğ",
+   "grup": 5,
+   "harfler": "antkuıçpğ",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "gorselId": "kutu",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.12",
+   "metin": "Havuzda yüzdük.",
+   "girisHarfi": "v",
+   "grup": 5,
+   "harfler": "akuüydzhv",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.13",
+   "metin": "Babam peynir aldı.",
+   "girisHarfi": "p",
+   "grup": 5,
+   "harfler": "aneilrımydbp",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.14",
+   "metin": "Elif Hatay'a gitti.",
+   "girisHarfi": "f",
+   "grup": 5,
+   "harfler": "aetilyghf",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "ozelAdlar": [
+    "Elif",
+    "Hatay"
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.15",
+   "metin": "Defne Van'da oturur.",
+   "girisHarfi": "f",
+   "grup": 5,
+   "harfler": "anetourdvf",
+   "tur": "bildirme",
+   "noktalama": ".",
+   "ozelAdlar": [
+    "Defne",
+    "Van"
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.16",
+   "metin": "Hava soğuk mu?",
+   "girisHarfi": "ğ",
+   "grup": 5,
+   "harfler": "aokumshvğ",
+   "tur": "soru",
+   "noktalama": "?",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.17",
+   "metin": "Fil nerede yaşar?",
+   "girisHarfi": "f",
+   "grup": 5,
+   "harfler": "aneilrydşf",
+   "tur": "soru",
+   "noktalama": "?",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.18",
+   "metin": "Elif okula gitti mi?",
+   "girisHarfi": "f",
+   "grup": 5,
+   "harfler": "aetilokumgf",
+   "tur": "soru",
+   "noktalama": "?",
+   "ozelAdlar": [
+    "Elif"
+   ],
+   "gorselId": "okul",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.19",
+   "metin": "Ah, elim acıdı!",
+   "girisHarfi": "h",
+   "grup": 5,
+   "harfler": "aeilımdch",
+   "tur": "unlem",
+   "noktalama": "!",
+   "gorselId": "el",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.20",
+   "metin": "Of, çok sıcak!",
+   "girisHarfi": "f",
+   "grup": 5,
+   "harfler": "aokısçcf",
+   "tur": "unlem",
+   "noktalama": "!",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.21",
+   "metin": "Eyvah, süt döküldü!",
+   "girisHarfi": "v",
+   "grup": 5,
+   "harfler": "aetlküsöydhv",
+   "tur": "unlem",
+   "noktalama": "!",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.22",
+   "metin": "Aman, kalem kırıldı!",
+   "girisHarfi": "p",
+   "grup": 5,
+   "harfler": "anelkrımd",
+   "tur": "unlem",
+   "noktalama": "!",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.23",
+   "metin": "Vay, ne güzel!",
+   "girisHarfi": "v",
+   "grup": 5,
+   "harfler": "anelüyzgv",
+   "tur": "unlem",
+   "noktalama": "!",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.24",
+   "metin": "Oh, ne güzel bir gün!",
+   "girisHarfi": "h",
+   "grup": 5,
+   "harfler": "neilorüzbgh",
+   "tur": "unlem",
+   "noktalama": "!",
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "c5.25",
+   "metin": "Ay, ayağım acıdı!",
+   "girisHarfi": "ğ",
+   "grup": 5,
+   "harfler": "aımydcğ",
+   "tur": "unlem",
+   "noktalama": "!",
+   "teyit": "bekliyor"
+  }
+ ]
+}

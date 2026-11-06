@@ -55,6 +55,7 @@ import {
   gorselDizinleriniDenetle,
   gorselTeyitBekleyenler,
   icerikGorselBaglariniDenetle,
+  cumleGorselBaglariniDenetle,
 } from '../src/content/dersler/tur/gorselDenetimi';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -444,6 +445,9 @@ sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLE
         const d = turIcerikDosyasiniAyristir(read(`ders-verisi/tur/icerik/${ad}`));
         for (const i of icerikGorselBaglariniDenetle(d.sozcukler, dizinler))
           hata(`ders-verisi/tur/icerik/${ad}: ${i.kural} ${i.oge}: ${i.mesaj}`);
+        // Cümle havuzu (Adım 74): hedef görsel var ve sözcüğü cümlede geçer (rebus yok, D-07; D-25).
+        for (const i of cumleGorselBaglariniDenetle(d.cumleler, dizinler))
+          hata(`ders-verisi/tur/icerik/${ad}: ${i.kural} ${i.oge}: ${i.mesaj}`);
       } catch {
         // şema hatası yukarıdaki içerik döngüsünde raporlandı
       }
@@ -467,7 +471,7 @@ sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLE
 {
   const rel = KLIP_MANIFESTI_YOLU;
   try {
-    const beklenen = klipManifestiMetni(read('ders-verisi/tur/icerik/sozcukler.json'));
+    const beklenen = klipManifestiMetni(read('ders-verisi/tur/icerik/sozcukler.json'), read('ders-verisi/tur/icerik/cumleler.json'));
     const mevcut = readFileSync(path.join(ROOT, rel), 'utf8');
     if (mevcut !== beklenen) hata(`${rel}: şablonlarla eş değil — \`npm run tur:klip\` çalıştırın.`);
     const m = JSON.parse(mevcut) as TurKlipManifesti;

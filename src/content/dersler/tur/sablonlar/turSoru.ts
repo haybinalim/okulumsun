@@ -142,6 +142,22 @@ export interface TurHavuzSozcugu {
   readonly gorselId?: string;
 }
 
+/**
+ * Cümle havuzu öğesi (Adım 74; çalışma anında `ders-verisi/tur/icerik/cumleler.json`'dan). Cümle en az 2. gruptadır
+ * (D-08); büyük harf yalnız cümle başında ve `ozelAdlar`da (D-10); ünlem cümlesi 5. grupta (D-09).
+ */
+export interface TurHavuzCumlesi {
+  readonly id: string;
+  readonly metin: string;
+  readonly girisHarfi: string;
+  readonly grup: number;
+  readonly tur: 'bildirme' | 'soru' | 'unlem';
+  readonly noktalama: '.' | '?' | '!';
+  readonly ozelAdlar: readonly string[];
+  /** Hedef görsel (T-10); sözcüğü cümlede geçer. */
+  readonly gorselId?: string;
+}
+
 export interface TurUretimGirdisi {
   readonly havuz: readonly TurHavuzSozcugu[];
   /** Öğretmenin seçtiği öğretilen glif kümesi (öğrenci verisi değil). */
@@ -150,6 +166,8 @@ export interface TurUretimGirdisi {
   readonly tohum: number;
   /** Hamle verisi (`ders-verisi/tur/hamleler.json`); yalnız T-09 ister, yoksa T-09 kurulamaz. */
   readonly hamleler?: readonly TurHamleGlifi[];
+  /** Cümle havuzu (`ders-verisi/tur/icerik/cumleler.json`); yalnız cümle şablonları (T-10, T-11, T-12) ister. */
+  readonly cumleler?: readonly TurHavuzCumlesi[];
 }
 
 /** Bu kümeyle şablon kurulamıyorsa (yeterli harf/sözcük yok) fırlatılır; arayüz öğretmene açıklar. */

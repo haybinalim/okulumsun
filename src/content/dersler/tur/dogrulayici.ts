@@ -4,7 +4,7 @@
  * ayrıştırılmış dosyadır). `npm run validate` ders verisini bununla denetler; ihlal CI'ı kırmızı yapar.
  *
  * Kapsanan otomatik kurallar: D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10, D-11, D-12, D-13,
- * D-14, D-15, D-20, D-23. Kâğıt/yerleşim/ses dosyası kuralları (D-17, D-18, D-19, D-21, D-22, D-24) kendi
+ * D-14, D-15, D-20, D-23, D-26 (cümle havuzu etiketleri, Adım 74). Kâğıt/yerleşim/ses dosyası kuralları (D-17, D-18, D-19, D-21, D-22, D-24) kendi
  * adımlarında; D-16 insan denetimidir.
  */
 import {
@@ -17,6 +17,7 @@ import {
   PROGRAM_SURUMU,
   trBuyuk,
   trKucuk,
+  UNLEM_GIRIS_HARFI,
   unluMu,
   yalnizUnsuzMu,
 } from './alfabe';
@@ -27,7 +28,7 @@ import type { TurCumle, TurEtkinlik, TurHece, TurIcerikDosyasi, TurSozcuk } from
 
 export type KuralKodu =
   | 'D-01' | 'D-02' | 'D-03' | 'D-04' | 'D-05' | 'D-06' | 'D-07' | 'D-08' | 'D-09' | 'D-10'
-  | 'D-11' | 'D-12' | 'D-13' | 'D-14' | 'D-15' | 'D-20' | 'D-23'; // prettier-ignore
+  | 'D-11' | 'D-12' | 'D-13' | 'D-14' | 'D-15' | 'D-20' | 'D-23' | 'D-26'; // prettier-ignore
 
 export interface Ihlal {
   readonly kural: KuralKodu;
@@ -137,6 +138,30 @@ function noktalamaDenetle(c: TurCumle, grup: number, hatalar: Ihlal[]): void {
   const ozel = new Set(c.ozelAdlar);
   for (const s of sozcukleri(c.metin))
     if (s.includes("'") && !ozel.has(s.split("'")[0])) h(`kesme işareti yalnız özel ad + ek ("${s}").`);
+}
+
+const TUR_NOKTALAMA = { '.': 'bildirme', '?': 'soru', '!': 'unlem' } as const;
+
+/**
+ * Cümle havuzu etiketleri (D-26, Adım 74): `grup`, `harfler`, `tur`, `noktalama` hesaplananla aynı; 2–5 sözcük; giriş
+ * harfi cümlenin hesaplanan giriş noktasıdır (ünlem cümlesinde en erken 5. grup); özel adlar cümlede geçer.
+ */
+function cumleEtiketleriniDenetle(c: TurCumle, hatalar: Ihlal[]): void {
+  const h = (mesaj: string) => hatalar.push({ kural: 'D-26', oge: c.id, mesaj: `"${c.metin}": ${mesaj}` });
+  const g = girisNoktasi(c.metin);
+  if (!g) return;
+  const son = c.metin.at(-1) ?? '';
+  const beklenenGiris = son === '!' && g.grup < 5 ? UNLEM_GIRIS_HARFI : g.harf;
+  if (c.girisHarfi !== beklenenGiris) h(`girisHarfi '${c.girisHarfi}', hesaplanan '${beklenenGiris}'.`);
+  if (c.grup !== harfGrubu(c.girisHarfi)) h(`grup ${c.grup}, giriş harfinin grubu ${harfGrubu(c.girisHarfi)}.`);
+  const harfler = OGRETIM_SIRASI.filter((x) => trKucuk(c.metin).includes(x)).join('');
+  if (c.harfler !== harfler) h(`harfler "${c.harfler}", hesaplanan "${harfler}".`);
+  if (c.noktalama !== son) h(`noktalama "${c.noktalama}", bitiş işareti "${son}".`);
+  if (c.tur !== TUR_NOKTALAMA[son as keyof typeof TUR_NOKTALAMA]) h(`tür "${c.tur}" bitiş işaretiyle uyuşmuyor.`);
+  const n = sozcukleri(c.metin).length;
+  if (n < 2 || n > 5) h(`${n} sözcük; havuz cümlesi 2–5 sözcük.`);
+  const govdeler = new Set(sozcukleri(c.metin).map((x) => x.split("'")[0]));
+  for (const o of c.ozelAdlar) if (!govdeler.has(o)) h(`özel ad "${o}" cümlede yok.`);
 }
 
 function heceleriDenetle(
@@ -328,6 +353,21 @@ export function turIceriginiDogrula(d: TurIcerikDosyasi, secenekler: DogrulamaSe
       s.hatalar.push({ kural: 'D-08', oge: c.id, mesaj: 'cümle ve metin 2. harf grubundan itibaren.' });
     buyukHarfDenetle(c.id, c.metin, new Set(c.ozelAdlar), true, s.hatalar);
     noktalamaDenetle(c, grup, s.hatalar);
+  }
+
+  let cumleTeyitsiz = 0;
+  for (const c of d.cumleler) {
+    if (c.grup === undefined && c.harfler === undefined && c.tur === undefined && c.noktalama === undefined) continue;
+    cumleEtiketleriniDenetle(c, s.hatalar);
+    if (c.teyit !== 'tamam') cumleTeyitsiz++;
+  }
+  if (cumleTeyitsiz > 0) {
+    const ihlal: Ihlal = {
+      kural: 'D-14',
+      oge: 'cumleler',
+      mesaj: `${cumleTeyitsiz} cümlede öğretmen teyidi yok (KG-155; yayından önce iki öğretmen teyidi zorunlu).`,
+    };
+    (secenekler.yayin ? s.hatalar : s.uyarilar).push(ihlal);
   }
 
   for (const e of d.etkinlikler) etkinligiDenetle(e, gorselSozcukleri, s);

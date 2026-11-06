@@ -4,6 +4,501 @@
  "not": "Ses dosyaları Adım 67’de üretilecek (Puck, hız 0,9; TTS bu adımda yok). Tek ünsüz klibi yok (D-11).",
  "klipler": [
   {
+   "anahtar": "tur.cumle.c201",
+   "metin": "Annem elma alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c202",
+   "metin": "Tren kalktı.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c203",
+   "metin": "Kar erir.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c204",
+   "metin": "Nar tatlı.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c205",
+   "metin": "Kurt ulur.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c206",
+   "metin": "İnek otlar.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c207",
+   "metin": "At otlar.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c208",
+   "metin": "Mum erir.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c209",
+   "metin": "Tekne ilerler.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c210",
+   "metin": "Ali ekmek alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c211",
+   "metin": "Nil kalem alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c212",
+   "metin": "Kemal motoru onarır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c213",
+   "metin": "Kek tatlı.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c214",
+   "metin": "Nane kokulu.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c215",
+   "metin": "Kerem nota okur.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c216",
+   "metin": "O ne?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c217",
+   "metin": "Kim kalem alır?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c218",
+   "metin": "Annen ne alır?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c219",
+   "metin": "Tren kalktı mı?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c220",
+   "metin": "Kar erir mi?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c221",
+   "metin": "Elma mı armut mu?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c222",
+   "metin": "İnek mi at mı?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c223",
+   "metin": "Okul tatil mi?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c224",
+   "metin": "Kek tatlı mı?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c301",
+   "metin": "Tilki ormanda uyur.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c302",
+   "metin": "Ninem yün örer.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c303",
+   "metin": "Limon sarı.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c304",
+   "metin": "Ekmek taze.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c305",
+   "metin": "Dedem olta atar.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c306",
+   "metin": "Kule yüksek.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c307",
+   "metin": "Tekerlek döner.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c308",
+   "metin": "Erikler dalda.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c309",
+   "metin": "Kral sarayda oturur.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c310",
+   "metin": "Ellerimi yıkarım.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c311",
+   "metin": "Tırnaklarımı keserim.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c312",
+   "metin": "Ali Ankara'da oturur.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c313",
+   "metin": "Deniz okula yürür.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c314",
+   "metin": "Kedim süt ister.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c315",
+   "metin": "Emre İzmir'de oturur.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c316",
+   "metin": "Annem kalemimi arıyor.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c317",
+   "metin": "Lale saksıda.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c318",
+   "metin": "Kulak sesi duyar.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c319",
+   "metin": "Tren istasyonda durur.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c320",
+   "metin": "Kedi nerede?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c321",
+   "metin": "Kim süt ister?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c322",
+   "metin": "Tilki nerede uyur?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c323",
+   "metin": "Okul uzak mı?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c324",
+   "metin": "Kule yüksek mi?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c325",
+   "metin": "Ne zaman uyuruz?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c401",
+   "metin": "Kartal gökte uçar.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c402",
+   "metin": "Makarna sıcak.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c403",
+   "metin": "Koltuk yumuşak.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c404",
+   "metin": "Marul yeşil.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c405",
+   "metin": "Kukla gösterisi başladı.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c406",
+   "metin": "Okulumuz büyük.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c407",
+   "metin": "Orman çok yeşil.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c408",
+   "metin": "Babam çay içer.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c409",
+   "metin": "Kedi süt içer.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c410",
+   "metin": "Bugün çok güzel.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c411",
+   "metin": "Ekmek sıcacık.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c412",
+   "metin": "Tren çok uzun.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c413",
+   "metin": "Ninem bize masal anlattı.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c414",
+   "metin": "Kale çok eski.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c415",
+   "metin": "Ablam etek giydi.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c416",
+   "metin": "Ablam çorba içti.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c417",
+   "metin": "Can Bursa'da oturur.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c418",
+   "metin": "Ece bize geldi.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c419",
+   "metin": "Burak gülümsedi.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c420",
+   "metin": "Bu ne?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c421",
+   "metin": "Saat kaç?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c422",
+   "metin": "Çay sıcak mı?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c423",
+   "metin": "Kartal nerede uçar?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c424",
+   "metin": "Bugün okula gidecek misin?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c425",
+   "metin": "Can nereye gitti?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c501",
+   "metin": "Arı çiçeğe konar.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c502",
+   "metin": "Tırtıl yavaş ilerler.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c503",
+   "metin": "Ormanda mantar var.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c504",
+   "metin": "Terlik kapının önünde.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c505",
+   "metin": "Ailemi çok severim.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c506",
+   "metin": "Tutkal yapışkan.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c507",
+   "metin": "Kar yağıyor.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c508",
+   "metin": "Hava çok güzel.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c509",
+   "metin": "Pazar günü parka gittik.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c510",
+   "metin": "Pijamamı giydim.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c511",
+   "metin": "Kutunun kapağı açık.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c512",
+   "metin": "Havuzda yüzdük.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c513",
+   "metin": "Babam peynir aldı.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c514",
+   "metin": "Elif Hatay'a gitti.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c515",
+   "metin": "Defne Van'da oturur.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c516",
+   "metin": "Hava soğuk mu?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c517",
+   "metin": "Fil nerede yaşar?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c518",
+   "metin": "Elif okula gitti mi?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c519",
+   "metin": "Ah, elim acıdı!",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c520",
+   "metin": "Of, çok sıcak!",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c521",
+   "metin": "Eyvah, süt döküldü!",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c522",
+   "metin": "Aman, kalem kırıldı!",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c523",
+   "metin": "Vay, ne güzel!",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c524",
+   "metin": "Oh, ne güzel bir gün!",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.c525",
+   "metin": "Ay, ayağım acıdı!",
+   "durum": "eksik"
+  },
+  {
    "anahtar": "tur.geri.dogru",
    "metin": "Aferin!",
    "durum": "eksik"

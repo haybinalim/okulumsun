@@ -13,6 +13,7 @@ import { dekodlanabilirMi } from '../ogretilenKume';
 import { hecele } from '../heceleme';
 import type { TurEtkinlik } from '../../../schema/turIcerik';
 import {
+  cumleKlibi,
   geriBildirimKlibi,
   heceKlibi,
   klipMetniGecerliMi,
@@ -23,15 +24,15 @@ import {
   type TurYonergeAnahtari,
 } from './klipler';
 import { TUR_TANI_ETIKETI_LISTESI } from './celdiriciler';
-import { METINSIZ_KARTLAR, TUR_EN_COK_KART, type TurHavuzSozcugu, type TurSoru } from './turSoru';
+import { METINSIZ_KARTLAR, TUR_EN_COK_KART, type TurHavuzCumlesi, type TurHavuzSozcugu, type TurSoru } from './turSoru';
 
 export interface TurKlip {
   readonly anahtar: string;
   readonly metin: string;
 }
 
-/** Şablonların isteyebileceği bütün klipler, kimliğe göre sıralı. */
-export function turKlipManifesti(havuz: readonly TurHavuzSozcugu[]): TurKlip[] {
+/** Şablonların isteyebileceği bütün klipler, kimliğe göre sıralı (cümle havuzu verilirse cümle klipleri de, Adım 74). */
+export function turKlipManifesti(havuz: readonly TurHavuzSozcugu[], cumleler: readonly TurHavuzCumlesi[] = []): TurKlip[] {
   const m = new Map<string, string>();
   for (const [k, metin] of Object.entries(TUR_YONERGELERI)) m.set(yonergeKlibi(k as TurYonergeAnahtari), metin);
   for (const [k, metin] of Object.entries(TUR_GERI_BILDIRIMLERI))
@@ -40,6 +41,7 @@ export function turKlipManifesti(havuz: readonly TurHavuzSozcugu[]): TurKlip[] {
     m.set(sozcukKlibi(s.metin), s.metin);
     for (const h of hecele(s.metin)) if ([...h].length >= 2) m.set(heceKlibi(h), h);
   }
+  for (const c of cumleler) m.set(cumleKlibi(c.id), c.metin);
   return [...m.entries()].map(([anahtar, metin]) => ({ anahtar, metin })).sort((a, b) => (a.anahtar < b.anahtar ? -1 : 1));
 }
 
