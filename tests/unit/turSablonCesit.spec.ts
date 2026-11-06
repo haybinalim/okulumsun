@@ -1,0 +1,118 @@
+/**
+ * Türkçe etkinlik çeşitliliği (Adım 79, kullanıcı isteği 2026-11-06): şablona özgü kurallar. Ortak kurallar
+ * (determinizm, D-11/D-12/D-23, klip manifesti, kart sayısı, doğrulayıcı) `turSablon.spec.ts`'te bütün
+ * `TUR_SABLON_KODLARI` için koşar; burada yeni şablonların kendi tek-doğru ve zorluk kuralları sınanır.
+ */
+import { readFileSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
+import { havuzuAyristir } from '../../src/content/dersler/tur/sablonlar/havuz';
+import { TUR_ZORLUKLARI, TurUretimHatasi, turSoruUret, type TurSoru, type TurSablonKodu } from '../../src/content/dersler/tur/sablonlar';
+import { karistirilanlar } from '../../src/content/dersler/tur/sablonlar/celdiriciler';
+import { bilinenSozcukMu, okunabilirSozcukler } from '../../src/content/dersler/tur/sablonlar/ortak';
+import { parcaBenzerMi } from '../../src/content/dersler/tur/sablonlar/t09HarfParcalari';
+import { sozcukKlibi } from '../../src/content/dersler/tur/sablonlar/klipler';
+import { resmiKume } from '../../src/content/dersler/tur/ogretilenKume';
+import { OGRETIM_SIRASI } from '../../src/content/dersler/tur/alfabe';
+import type { TurHamleGlifi } from '../../src/content/schema/turHamle';
+
+const havuz = havuzuAyristir(JSON.parse(readFileSync('ders-verisi/tur/icerik/sozcukler.json', 'utf8')) as unknown);
+const hamleler = (JSON.parse(readFileSync('ders-verisi/tur/hamleler.json', 'utf8')) as { glifler: TurHamleGlifi[] }).glifler;
+const KUMELER: Set<string>[] = [
+  ...OGRETIM_SIRASI.slice(0, 12).flatMap((h) => [resmiKume(h, false), resmiKume(h, true)]),
+  new Set(['a', 'e', 'l', 'k', 'o', 'm']),
+];
+
+function uret(sablon: TurSablonKodu): { soru: TurSoru; kume: Set<string> }[] {
+  const out: { soru: TurSoru; kume: Set<string> }[] = [];
+  for (const kume of KUMELER)
+    for (const zorluk of TUR_ZORLUKLARI)
+      for (let tohum = 1; tohum <= 8; tohum++)
+        try {
+          out.push({ soru: turSoruUret(sablon, { havuz, hamleler, kume, zorluk, tohum }), kume });
+        } catch (e) {
+          if (!(e instanceof TurUretimHatasi)) throw e;
+        }
+  return out;
+}
+
+describe('T-09 Harfi parçalardan kur', () => {
+  const sorular = uret('T-09');
+  const glif = new Map(hamleler.map((g) => [g.glif, g]));
+
+  it('her zorlukta kurulur; hamle verisi yoksa açıklayıcı hata', () => {
+    for (const z of TUR_ZORLUKLARI) expect(sorular.filter((u) => u.soru.zorluk === z).length, `z${z}`).toBeGreaterThan(100);
+    expect(() => turSoruUret('T-09', { havuz, kume: resmiKume('t', false), zorluk: 1, tohum: 1 })).toThrow(TurUretimHatasi);
+  });
+
+  it('cevap hedef glifin bütün hamleleri, yazılış sırasıyla; kartlar sessiz parça, ses yok (D-12)', () => {
+    for (const { soru, kume } of sorular) {
+      if (soru.kind !== 'yerlestir' || soru.uyaran.tur !== 'parca') throw new Error('T-09 biçimi');
+      const g = glif.get(soru.uyaran.glif)!;
+      expect(kume.has(g.glif)).toBe(true);
+      expect(g.bicim).not.toBe('rakam');
+      expect(soru.dogruDizi).toEqual(g.hamleler.map((h) => `${g.glif}${h.sira}`));
+      expect(soru.soruKlipleri).toEqual([]);
+      expect(soru.geriBildirim).toEqual(['tur.geri.dogru']);
+      expect(soru.sirasiz ?? false).toBe(soru.zorluk <= 2);
+      for (const k of soru.kartlar) {
+        expect(k.tur).toBe('parca');
+        expect(kume.has(k.parca!.glif), `${k.metin} öğretilmiş glif`).toBe(true);
+      }
+      const enCok = { 1: 2, 2: 2, 3: 3, 4: 4, 5: 4 }[soru.zorluk];
+      expect(g.hamleler.length).toBeGreaterThanOrEqual(2);
+      expect(g.hamleler.length).toBeLessThanOrEqual(enCok);
+    }
+  });
+
+  it('tek doğru: çeldirici parça hedefin hiçbir parçasına benzemez; z1 çeldiricisiz, z5 en çok 3 çeldirici', () => {
+    for (const { soru } of sorular) {
+      if (soru.kind !== 'yerlestir') continue;
+      const cevap = new Set(soru.dogruDizi);
+      const hedef = soru.kartlar.filter((k) => cevap.has(k.metin));
+      const celd = soru.kartlar.filter((k) => !cevap.has(k.metin));
+      expect(celd.length).toBeLessThanOrEqual({ 1: 0, 2: 1, 3: 1, 4: 2, 5: 3 }[soru.zorluk]);
+      for (const c of celd) for (const h of hedef) expect(parcaBenzerMi(c.parca!, h.parca!), `${soru.itemId} ${c.metin}~${h.metin}`).toBe(false);
+    }
+  });
+
+  it('benzerlik ölçüsü: aynı hamle ve ters yönü benzer; i noktası ile l çizgisi benzemez', () => {
+    const i = glif.get('i')!;
+    const l = glif.get('l')!;
+    const p = (g: TurHamleGlifi, n: number) => ({ noktalar: g.hamleler[n].noktalar, genislik: g.genislik });
+    expect(parcaBenzerMi(p(i, 0), p(i, 0))).toBe(true);
+    expect(parcaBenzerMi(p(i, 0), { ...p(i, 0), noktalar: [...i.hamleler[0].noktalar].reverse() })).toBe(true);
+    expect(parcaBenzerMi(p(i, 1), p(l, 0))).toBe(false);
+  });
+});
+
+describe('T-16 Hatalı yazılmış sözcüğü bul', () => {
+  const sorular = uret('T-16');
+
+  it('her zorlukta kurulur', () => {
+    for (const z of TUR_ZORLUKLARI) expect(sorular.filter((u) => u.soru.zorluk === z).length, `z${z}`).toBeGreaterThan(100);
+  });
+
+  it('tek hatalı kart: bilinen sözcük değil, hedeften tek harfi karıştırılan çiftiyle farklı; ötekiler okunabilir sözcük', () => {
+    for (const { soru, kume } of sorular) {
+      if (soru.kind !== 'secim') throw new Error('T-16 seçim');
+      const okunur = new Set(okunabilirSozcukler(havuz, kume).map((s) => s.metin));
+      const hatali = soru.kartlar[soru.dogru].metin;
+      expect(bilinenSozcukMu(hatali, havuz), hatali).toBe(false);
+      const a = [...soru.hedefMetin];
+      const b = [...hatali];
+      expect(b.length).toBe(a.length);
+      const fark = a.map((c, i) => (c === b[i] ? -1 : i)).filter((i) => i >= 0);
+      expect(fark, `${soru.hedefMetin} → ${hatali}`).toHaveLength(1);
+      const [i] = fark;
+      expect(karistirilanlar(a[i], kume).map((k) => k.harf)).toContain(b[i]);
+      if (soru.zorluk === 5) expect(i).toBeGreaterThan(0);
+      for (const k of soru.kartlar) {
+        expect(k.tur).toBe('sozcuk');
+        if (k.metin !== hatali) expect(okunur.has(k.metin), k.metin).toBe(true);
+      }
+      expect(soru.kartlar.length).toBe({ 1: 2, 2: 3, 3: 3, 4: 4, 5: 4 }[soru.zorluk]);
+      expect(soru.soruKlipleri).toEqual([]);
+      expect(soru.geriBildirim).toEqual(['tur.geri.dogru', sozcukKlibi(soru.hedefMetin)]);
+    }
+  });
+});

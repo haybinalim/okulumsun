@@ -1247,6 +1247,21 @@
    "anahtar": "tur.yonerge.t08",
    "metin": "Yukarıdaki sözcüğü içinden okuyup resmini bul.",
    "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t09",
+   "metin": "Yukarıdaki harfi parçalarla oluştur.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t09-sira",
+   "metin": "Yukarıdaki harfi parçalarla oluştur. Parçaları yazılış sırasıyla seç.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t16",
+   "metin": "Yanlış yazılmış sözcüğü bul.",
+   "durum": "eksik"
   }
  ]
 }
