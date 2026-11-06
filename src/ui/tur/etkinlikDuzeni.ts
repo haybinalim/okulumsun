@@ -19,6 +19,8 @@ export interface KartDuzeniGirdisi {
   readonly aralik: number;
   /** `--size-control` (alt çubuk düğmesi). */
   readonly kontrol: number;
+  /** Sabit satır sayısı (eşleştirme: üst sıra / alt sıra, Adım 79); yoksa en iyisi aranır. */
+  readonly satir?: number;
 }
 
 export interface KartDuzeni {
@@ -33,7 +35,7 @@ export interface KartDuzeni {
 function enIyi(g: KartDuzeniGirdisi, cubuk: number): Omit<KartDuzeni, 'cubuk'> {
   const { alanGenislik: W, alanYukseklik: H, adet, enBoy, enBuyuk, aralik: a } = g;
   let best = { kart: 0, satir: 1, sutun: adet };
-  for (let satir = 1; satir <= adet; satir++) {
+  for (let satir = g.satir ?? 1; satir <= (g.satir ?? adet); satir++) {
     const sutun = Math.ceil(adet / satir);
     const w = (W - (sutun - 1) * a) / sutun / enBoy;
     const h = (H - cubuk - a - (satir - 1) * a) / satir;

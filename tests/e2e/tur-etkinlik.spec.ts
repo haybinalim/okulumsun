@@ -5,7 +5,7 @@ import { geometriTemiz, sesKilidiniAc } from './yardimci/akis';
 import { sozcukKlibi } from '../../src/content/dersler/tur/sablonlar/klipler';
 
 /**
- * Okuma Yazma Adım 69–70, 79 — şablonlar T-01…T-09, T-16…T-18 (T-01, T-08 görselli; T-17, T-18 resim uyaranlı), YALNIZ bayraklı derlemede (`VITE_DERS_TUR=1`, port 5174).
+ * Okuma Yazma Adım 69–70, 79 — şablonlar T-01…T-09, T-16…T-20 (T-01, T-08, T-19 görselli; T-17, T-18 resim uyaranlı; T-19 eşleştirme, T-20 çoklu seçim), YALNIZ bayraklı derlemede (`VITE_DERS_TUR=1`, port 5174).
  *
  * Her şablon üç görünümde (tahta 1920×1080, tahta 1080×810, tablet 1080×810) açılır ve çözülür:
  *  - geometri temiz (üst %35'te dokunma yok, hedefler ≥ tap-min) — yuvalar yalnız gösterir;
@@ -24,8 +24,8 @@ const manifest = new Map(
 );
 const UNLU = /[aeıioöuüâîû]/i;
 
-export const SABLONLAR = ['T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07', 'T-08', 'T-09', 'T-16', 'T-17', 'T-18'] as const;
-const OKUMA_HEDEFLI = new Set(['T-03', 'T-04', 'T-05', 'T-06', 'T-08', 'T-09', 'T-16']);
+export const SABLONLAR = ['T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07', 'T-08', 'T-09', 'T-16', 'T-17', 'T-18', 'T-19', 'T-20'] as const;
+const OKUMA_HEDEFLI = new Set(['T-03', 'T-04', 'T-05', 'T-06', 'T-08', 'T-09', 'T-16', 'T-20']);
 
 const gorunumler = (proje: string) =>
   proje === 'board'
@@ -68,7 +68,37 @@ async function coz(page: Page, sablon: string, baglam: string) {
   const cevap = (await main.getAttribute('data-cevap')) ?? '';
   const kartlar = page.locator('[data-kart]');
   const ilk = await klipler(page);
-  if ((await main.getAttribute('data-tur-kind')) === 'yerlestir') {
+  const tur = await main.getAttribute('data-tur-kind');
+  if (tur === 'eslestir') {
+    // Eşleştir: önce yanlış bir eş (yalnız "Bir daha deneyelim."), sonra bütün çiftler; dokunuşlar sessiz.
+    const ciftler = cevap.split('|').map((c) => c.split('-'));
+    await page.locator(`[data-kart="${ciftler[0][0]}"]`).click();
+    await expect(page.locator(`[data-kart="${ciftler[0][0]}"]`)).toHaveAttribute('aria-pressed', 'true');
+    await page.locator(`[data-kart="${ciftler[1][1]}"]`).click();
+    await expect.poll(() => klipler(page)).toEqual([...ilk, 'tur.geri.tekrar']);
+    await page.waitForTimeout(900);
+    for (const [i, [a, b]] of ciftler.entries()) {
+      await page.locator(`[data-kart="${a}"]`).click();
+      await page.locator(`[data-kart="${b}"]`).click();
+      if (i < ciftler.length - 1) {
+        await expect(page.locator(`[data-kart="${b}"]`)).toHaveAttribute('data-rozet', String(i + 1));
+        expect(await klipler(page), `${baglam}: kart sessiz (D-11)`).toEqual([...ilk, 'tur.geri.tekrar']);
+      }
+    }
+  } else if (tur === 'coklu') {
+    // Çoklu seçim: önce yanlış bir kart işaretlenip kaldırılır (sessiz), sonra hedeflerin hepsi + Onayla.
+    const dogrular = cevap.split('|');
+    const yanlis = page.locator('[data-kart]').and(page.locator(dogrular.map((d) => `:not([data-kart="${d}"])`).join(''))).first();
+    if (await yanlis.count()) {
+      await yanlis.click();
+      await expect(yanlis).toHaveAttribute('data-rozet', 'tik');
+      await yanlis.click();
+      await expect(yanlis).not.toHaveAttribute('data-rozet', 'tik');
+    }
+    for (const d of dogrular) await page.locator(`[data-kart="${d}"]`).click();
+    expect(await klipler(page), `${baglam}: kart sessiz (D-11)`).toEqual(ilk);
+    await page.getByRole('button', { name: 'Onayla', exact: true }).click();
+  } else if (tur === 'yerlestir') {
     // Yerleştir: cevaptaki metinleri sırayla kullanılmamış kartlardan seç.
     for (const [i, parca] of cevap.split('|').entries()) {
       const kart = page.locator(`[data-kart][data-kart-metin="${parca}"]:not([data-kullanildi])`).first();

@@ -47,9 +47,11 @@ function klipMetni(anahtar: string, manifest: ReadonlyMap<string, string>): stri
   return manifest.get(anahtar) ?? '';
 }
 
-const OKUMA_HEDEFLI = new Set(['T-03', 'T-04', 'T-05', 'T-06', 'T-08', 'T-09', 'T-16']);
+const OKUMA_HEDEFLI = new Set(['T-03', 'T-04', 'T-05', 'T-06', 'T-08', 'T-09', 'T-16', 'T-20']);
 /** Seçenekleri yalnız sözcük görselleri olan şablonlar. */
 const GORSELLI = new Set(['T-01', 'T-08']);
+/** Görsel kart ile başka kartı karışık taşıyan şablonlar (T-19 z1–2 resim–harf). */
+const GORSEL_KARISIK = new Set(['T-19']);
 
 export function turSoruEtkinligi(s: TurSoru, manifest: ReadonlyMap<string, string>): TurEtkinlik {
   const uyaran: TurEtkinlik['uyaran'] =
@@ -79,7 +81,13 @@ export function turSoruEtkinligi(s: TurSoru, manifest: ReadonlyMap<string, strin
           },
     ),
     dogru:
-      s.kind === 'secim' ? s.dogru : Math.max(0, s.kartlar.findIndex((k) => k.metin === s.dogruDizi[0])),
+      s.kind === 'secim'
+        ? s.dogru
+        : s.kind === 'eslestir'
+          ? s.ciftler[0][0]
+          : s.kind === 'coklu'
+            ? s.dogrular[0]
+            : Math.max(0, s.kartlar.findIndex((k) => k.metin === s.dogruDizi[0])),
   };
 }
 
@@ -125,14 +133,16 @@ export function turSoruIhlalleri(
     h.push(`D-15: uyaran görseli "${s.hedefMetin}" sözcüğünün görseli değil.`);
   if (s.sablon === 'T-09' && (s.kartlar.some((k) => k.tur !== 'parca') || s.uyaran.tur !== 'parca'))
     h.push('T-09: kartlar hamle parçası, uyaran model harf olmalı.');
-  if (GORSELLI.has(s.sablon)) {
+  const gorseller = s.kartlar.filter((k) => k.tur === 'gorsel');
+  if (GORSELLI.has(s.sablon) || GORSEL_KARISIK.has(s.sablon)) {
     for (const k of s.kartlar) {
-      if (k.tur !== 'gorsel' || !k.gorselId) h.push(`D-15: ${s.sablon} seçeneği görsel olmalı ("${k.metin}").`);
-      else if (havuz && havuz.find((w) => w.metin === k.metin)?.gorselId !== k.gorselId)
+      if (k.tur !== 'gorsel' || !k.gorselId) {
+        if (GORSELLI.has(s.sablon)) h.push(`D-15: ${s.sablon} seçeneği görsel olmalı ("${k.metin}").`);
+      } else if (havuz && havuz.find((w) => w.metin === k.metin)?.gorselId !== k.gorselId)
         h.push(`D-15: "${k.metin}" görseli havuzdaki sözcüğün görseli değil.`);
     }
-    if (new Set(s.kartlar.map((k) => k.gorselId)).size !== s.kartlar.length) h.push('D-15: aynı görsel iki kez.');
-  } else if (s.kartlar.some((k) => k.tur === 'gorsel')) h.push(`${s.sablon}: görsel kart beklenmez.`);
+    if (new Set(gorseller.map((k) => k.gorselId)).size !== gorseller.length) h.push('D-15: aynı görsel iki kez.');
+  } else if (gorseller.length) h.push(`${s.sablon}: görsel kart beklenmez.`);
   if (s.dinlenen && s.soruKlipleri.join() !== s.dinlenen.map(sozcukKlibi).join())
     h.push('dinlenen sözcükler soru klipleriyle aynı değil.');
   if (s.kartlar.length > TUR_EN_COK_KART) h.push(`kart sayısı ${s.kartlar.length} > ${TUR_EN_COK_KART}.`);
@@ -145,6 +155,19 @@ export function turSoruIhlalleri(
     if (!dogru) h.push('doğru kart yok.');
     else if (dogru.diagnosticTag) h.push('D-23: tanı etiketi doğru kartta.');
     if (s.kartlar.filter((k) => k.metin === dogru?.metin).length !== 1) h.push('doğru kart metni tekil değil.');
+  } else if (s.kind === 'eslestir') {
+    // Her kart tam bir çiftte; çift üst sıradan (ilk yarı) bir kartı alt sıradan bir kartla birleştirir.
+    const yari = s.kartlar.length / 2;
+    const gorulen = s.ciftler.flat();
+    if (new Set(gorulen).size !== s.kartlar.length || gorulen.length !== s.kartlar.length)
+      h.push('eşleştirme: her kart tam bir çiftte olmalı.');
+    for (const [a, b] of s.ciftler) if (!(a < yari && b >= yari)) h.push('eşleştirme: çift iki sırayı birleştirmeli.');
+    if (s.kartlar.some((k) => k.diagnosticTag)) h.push('D-23: eşleştirmede tanı etiketi yok.');
+  } else if (s.kind === 'coklu') {
+    // Tek doğru küme: hedef metni taşıyan her kart doğru, taşımayan hiçbiri.
+    const beklenen = s.kartlar.flatMap((k, i) => (k.metin.includes(s.hedefMetin) ? [i] : []));
+    if (s.dogrular.length === 0 || s.dogrular.join() !== beklenen.join()) h.push('çoklu seçim: doğrular hedefi taşıyan kartlar değil.');
+    for (const i of s.dogrular) if (s.kartlar[i]?.diagnosticTag) h.push('D-23: tanı etiketi doğru kartta.');
   } else {
     const kalan = s.kartlar.map((k) => k.metin);
     for (const d of s.dogruDizi) {

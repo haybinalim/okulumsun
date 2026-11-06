@@ -124,7 +124,10 @@ const ust: CSSProperties = {
 function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => void }) {
   const [durum, setDurum] = useState<Durum>('bos');
   const [yanlislar, setYanlislar] = useState<ReadonlySet<number>>(new Set());
+  /** Yerleştirmede konan kartlar (sırayla); çoklu seçimde işaretli kartlar; eşleştirmede bulunan çiftler (düz). */
   const [yerlesim, setYerlesim] = useState<readonly number[]>([]);
+  /** Eşleştirmede seçili (eşi aranan) kart. */
+  const [acik, setAcik] = useState<number | null>(null);
   const [sesYok, setSesYok] = useState(false);
   const zamanlayici = useRef<number | undefined>(undefined);
 
@@ -157,16 +160,46 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
       }
       return;
     }
+    if (soru.kind === 'coklu') {
+      setYerlesim(yerlesim.includes(i) ? yerlesim.filter((k) => k !== i) : [...yerlesim, i]);
+      return;
+    }
+    if (soru.kind === 'eslestir') {
+      if (yerlesim.includes(i)) return;
+      const yari = soru.kartlar.length / 2;
+      if (acik === null || acik === i || acik < yari === i < yari) {
+        setAcik(acik === i ? null : i);
+        return;
+      }
+      const cift = soru.ciftler.find(([a, b]) => (a === acik && b === i) || (a === i && b === acik));
+      setAcik(null);
+      if (!cift) {
+        // Yanlış eş: iki kart kısa süre işaretlenir, sonra yeniden seçilebilir.
+        setYanlislar(new Set([acik, i]));
+        iste([geriBildirimKlibi('tekrar')]);
+        window.clearTimeout(zamanlayici.current);
+        zamanlayici.current = window.setTimeout(() => setYanlislar(new Set()), 800);
+        return;
+      }
+      const yeni = [...yerlesim, cift[0], cift[1]];
+      setYerlesim(yeni);
+      if (yeni.length === soru.kartlar.length) dogruOldu();
+      return;
+    }
     if (yerlesim.includes(i) || yerlesim.length >= soru.dogruDizi.length) return;
     setYerlesim([...yerlesim, i]);
   };
 
   const onayla = () => {
-    if (soru.kind !== 'yerlestir' || durum !== 'bos' || yerlesim.length < soru.dogruDizi.length) return;
+    if (durum !== 'bos' || !onaylanabilir) return;
     const konan = yerlesim.map((k) => soru.kartlar[k].metin);
-    const dogru = soru.sirasiz
-      ? [...konan].sort().join('|') === [...soru.dogruDizi].sort().join('|')
-      : konan.every((m, i) => m === soru.dogruDizi[i]);
+    const dogru =
+      soru.kind === 'coklu'
+        ? [...yerlesim].sort((a, b) => a - b).join() === soru.dogrular.join()
+        : soru.kind === 'yerlestir' &&
+          (soru.sirasiz
+            ? [...konan].sort().join('|') === [...soru.dogruDizi].sort().join('|')
+            : konan.every((m, i) => m === soru.dogruDizi[i]));
     if (dogru) {
       dogruOldu();
       return;
@@ -182,14 +215,26 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
   const alt = useRef<HTMLElement>(null);
   const duzen = useKartDuzeni(alt, soru);
   const yerlestir = soru.kind === 'yerlestir';
+  const onayVar = yerlestir || soru.kind === 'coklu';
+  const onaylanabilir = soru.kind === 'coklu' ? yerlesim.length > 0 : yerlestir && yerlesim.length >= soru.dogruDizi.length;
   const yuvalar = yerlestir ? soru.dogruDizi.map((_, i) => (yerlesim[i] === undefined ? null : soru.kartlar[yerlesim[i]].metin)) : [];
   const konanParcalar = yerlesim.map((k) => soru.kartlar[k].parca).filter((p): p is TurParca => Boolean(p));
   // Yalnız geliştirme / e2e kancalı test derlemesinde: testin cevabı bulması için (üretimde atılır).
+  const id = (i: number) => soru.kartlar[i].id;
   const cevap = E2E_KANCASI_ACIK
     ? soru.kind === 'secim'
-      ? soru.kartlar[soru.dogru].id
-      : soru.dogruDizi.join('|')
+      ? id(soru.dogru)
+      : soru.kind === 'eslestir'
+        ? soru.ciftler.map(([a, b]) => `${id(a)}-${id(b)}`).join('|')
+        : soru.kind === 'coklu'
+          ? soru.dogrular.map(id).join('|')
+          : soru.dogruDizi.join('|')
     : undefined;
+  // Eşleşen çiftin numarası (rozet; renk tek ipucu değil).
+  const ciftNo = (i: number) => {
+    const j = yerlesim.indexOf(i);
+    return soru.kind === 'eslestir' && j >= 0 ? String(Math.floor(j / 2) + 1) : undefined;
+  };
 
   return (
     <main
@@ -250,7 +295,9 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
                 altYazi={soru.sablon === 'T-01'}
                 enBoy={duzen?.enBoy ?? 1}
                 boy={duzen?.kart ?? 0}
-                kullanildi={yerlesim.includes(i)}
+                kullanildi={yerlestir && yerlesim.includes(i)}
+                secili={(soru.kind === 'coklu' && yerlesim.includes(i)) || acik === i}
+                rozet={ciftNo(i) ?? (soru.kind === 'coklu' && yerlesim.includes(i) ? 'tik' : undefined)}
                 yanlis={yanlislar.has(i)}
                 dogru={durum === 'dogru' && soru.kind === 'secim' && i === soru.dogru}
                 onPress={() => kartaDokun(i)}
@@ -277,14 +324,8 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
               <Simge yol="M20 6 H9 L3 12 L9 18 H20 Z M12 9.5 L16.5 14.5 M16.5 9.5 L12 14.5" />
             </CubukDugmesi>
           )}
-          {yerlestir && durum !== 'dogru' && (
-            <CubukDugmesi
-              boy={duzen?.cubuk}
-              label="Onayla"
-              accent
-              disabled={yerlesim.length < soru.dogruDizi.length || durum !== 'bos'}
-              onPress={onayla}
-            >
+          {onayVar && durum !== 'dogru' && (
+            <CubukDugmesi boy={duzen?.cubuk} label="Onayla" accent disabled={!onaylanabilir || durum !== 'bos'} onPress={onayla}>
               <Simge yol="M5 12.5 L10 17.5 L19 7" />
             </CubukDugmesi>
           )}
@@ -313,6 +354,7 @@ function useKartDuzeni(alan: RefObject<HTMLElement | null>, soru: TurSoru): (Kar
   const enBoy = kartEnBoy(soru.kartlar);
   const gorsel = soru.kartlar.some((k) => k.tur === 'gorsel');
   const adet = soru.kartlar.length;
+  const satir = soru.kind === 'eslestir' ? 2 : undefined;
   useLayoutEffect(() => {
     const el = alan.current;
     if (!el) return;
@@ -332,6 +374,7 @@ function useKartDuzeni(alan: RefObject<HTMLElement | null>, soru: TurSoru): (Kar
           tapMin: px('--size-tap-min'),
           aralik: px('--size-gap-tight'),
           kontrol: px('--size-control'),
+          satir,
         }),
       });
     };
@@ -339,7 +382,7 @@ function useKartDuzeni(alan: RefObject<HTMLElement | null>, soru: TurSoru): (Kar
     const ro = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(olc);
     ro?.observe(el);
     return () => ro?.disconnect();
-  }, [alan, adet, enBoy, gorsel]);
+  }, [alan, adet, enBoy, gorsel, satir]);
   return duzen;
 }
 
@@ -350,11 +393,16 @@ function Kart({
   enBoy,
   boy,
   kullanildi,
+  secili,
+  rozet,
   yanlis,
   dogru,
   onPress,
 }: {
   kart: TurKart;
+  secili: boolean;
+  /** Köşe rozeti: eşleşen çiftin numarası ya da çoklu seçimde işaret (`tik`). */
+  rozet?: string;
   sira: number;
   altYazi: boolean;
   enBoy: number;
@@ -384,11 +432,13 @@ function Kart({
       type="button"
       aria-label={ad}
       data-kart-gorsel={gorselId}
-      aria-disabled={pasif || undefined}
+      aria-disabled={pasif || (rozet !== undefined && rozet !== 'tik') || undefined}
+      aria-pressed={secili || undefined}
       data-kart={id}
       data-kart-metin={metin}
       data-kullanildi={kullanildi || undefined}
       data-yanlis={yanlis || undefined}
+      data-rozet={rozet}
       onClick={onPress}
       style={{
         width: genislik,
@@ -398,7 +448,10 @@ function Kart({
         border: 'none',
         borderRadius: 'calc(20px * var(--scale))',
         background: dogru ? 'var(--color-correct-soft)' : yanlis ? 'var(--color-retry-soft)' : 'var(--color-surface)',
-        boxShadow: `0 calc(4px * var(--scale)) 0 ${dogru ? 'var(--color-correct)' : 'var(--color-border)'}`,
+        // Seçili kart: kalın koyu çerçeve (renk tek ipucu değil; çoklu seçimde ayrıca işaret rozeti).
+        boxShadow: secili
+          ? 'inset 0 0 0 calc(6px * var(--scale)) var(--color-ink)'
+          : `0 calc(4px * var(--scale)) 0 ${dogru ? 'var(--color-correct)' : 'var(--color-border)'}`,
         color: 'var(--color-ink)',
         fontFamily: 'inherit',
         fontSize: Math.round(boy * yazi),
@@ -412,6 +465,7 @@ function Kart({
         overflow: 'hidden',
       }}
     >
+      {rozet && <Rozet metin={rozet} boy={boy} />}
       {gorselId ? (
         <>
           <img
@@ -763,5 +817,38 @@ function Noktalar({ adet }: { adet: number }) {
         <circle key={i} cx={5 + i * 10} cy={5} r={3.6} fill="var(--color-ink)" />
       ))}
     </svg>
+  );
+}
+
+/** Kart köşesindeki rozet: çift numarası ya da işaret (dokunulmaz, kartın içinde). */
+function Rozet({ metin, boy }: { metin: string; boy: number }) {
+  const r = Math.round(boy * 0.3);
+  return (
+    <span
+      aria-hidden="true"
+      style={{
+        position: 'absolute',
+        top: '4%',
+        right: '4%',
+        width: r,
+        height: r,
+        borderRadius: '50%',
+        background: 'var(--color-ink)',
+        color: 'var(--color-surface)',
+        display: 'grid',
+        placeItems: 'center',
+        fontSize: Math.round(r * 0.7),
+        lineHeight: 1,
+        zIndex: 1,
+      }}
+    >
+      {metin === 'tik' ? (
+        <svg viewBox="0 0 24 24" style={{ width: '70%', height: '70%' }}>
+          <path d="M5 12.5 L10 17.5 L19 7" fill="none" stroke="currentColor" strokeWidth={3.4} strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ) : (
+        metin
+      )}
+    </span>
   );
 }

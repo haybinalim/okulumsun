@@ -1282,6 +1282,31 @@
    "anahtar": "tur.yonerge.t18-iki",
    "metin": "Resmin adını dinle. Yukarıdaki harfin sesi nerede: başta mı, sonda mı?",
    "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t19",
+   "metin": "Aynı sesle başlayan resimleri eşleştir.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t19-harf",
+   "metin": "Her resmi, adının başladığı sesin harfiyle eşleştir.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t19-son",
+   "metin": "Aynı sesle biten resimleri eşleştir.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t20",
+   "metin": "Yukarıdaki harfin hepsini bul. Sonra onayla.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t20-hece",
+   "metin": "Yukarıdaki harfin geçtiği heceleri bul. Sonra onayla.",
+   "durum": "eksik"
   }
  ]
 }
