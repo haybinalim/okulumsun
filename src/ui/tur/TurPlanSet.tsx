@@ -158,10 +158,10 @@ export function SetHazirla({ ekAraclar }: { ekAraclar?: (duzey: SetDuzeyi, tohum
           <ol
             aria-label="Setteki etkinlikler"
             data-set-adimlari={set.adimlar.map((a) => `${a.sablon}/${a.zorluk}`).join(',')}
-            style={{ margin: 0, paddingLeft: '1.6em', fontSize: 'var(--text-adult)', columns: 2, columnGap: '2em' }}
+            style={{ margin: 0, paddingLeft: '1.6em', fontSize: 'var(--text-adult)', lineHeight: 1.2, columns: 2, columnGap: '2em' }}
           >
             {set.adimlar.map((a, i) => (
-              <li key={i}>
+              <li key={i} style={{ breakInside: 'avoid' }}>
                 {TUR_SABLONLARI[a.sablon].ad} <span style={{ color: 'var(--color-ink-soft, #6B6B6B)', fontSize: '0.8em', whiteSpace: 'nowrap' }}>(zorluk {a.zorluk})</span>
               </li>
             ))}

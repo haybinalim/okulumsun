@@ -61,41 +61,47 @@ export function EtkinlikSecimi() {
     setSecim(s);
   };
   return (
-    <main data-yetiskin="" aria-label="Etkinlikler" style={{ ...ekranStili, justifyContent: 'flex-start', overflowY: 'auto' }}>
+    <main data-yetiskin="" aria-label="Etkinlikler" style={{ ...ekranStili, justifyContent: 'flex-start', gap: 'var(--size-gap-tight)' }}>
       <Baslik baslik="Etkinlikler" alt="Öğretilen harfleri, etkinliği ve zorluğu seçin. Sözcükler öğretmen teyidi bekliyor; ses henüz yok." />
-      <KumeDuzenleyici />
-      <div aria-label="Etkinlik" role="group" data-katalog="" style={{ display: 'flex', flexDirection: 'column', gap: '0.3em', alignItems: 'stretch' }}>
-        {TUR_BECERILERI.map((b) => (
-          <section
-            key={b.kod}
-            aria-label={b.ad}
-            data-beceri={b.kod}
-            style={{ display: 'flex', gap: '0.4em', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}
-          >
-            <span style={{ fontSize: 'var(--text-adult)', minWidth: '7.5em', textAlign: 'right', color: 'var(--color-ink-soft, #6B6B6B)' }}>{b.ad}</span>
-            {TUR_SABLON_KODLARI.filter((kod) => TUR_SABLONLARI[kod].beceri === b.kod).map((kod) => {
-              const t = TUR_SABLONLARI[kod];
-              const olmaz = h.durum === 'hazir' && hv.durum !== 'yukleniyor' && !kurulabilirMi(kod, h.havuz, kume, secim.zorluk, hamleler);
-              return (
-                <BigButton
-                  key={kod}
-                  label={`${kod} ${t.ad}${olmaz ? ' (bu harflerle kurulamıyor)' : ''}`}
-                  data-yetiskin=""
-                  ariaPressed={secim.sablon === kod}
-                  variant={secim.sablon === kod ? 'accent' : 'solid'}
-                  style={{ ...kucukDugme, opacity: olmaz ? 0.5 : 1 }}
-                  onPress={() => sec({ ...secim, sablon: kod })}
-                >
-                  <span>
-                    {kod} {t.ad}
-                  </span>
-                </BigButton>
-              );
-            })}
-          </section>
-        ))}
+      {/* Başlık ile zorluk/Başlat sabit; harf kümesi ve katalog arada kayar (Başlat kaydırmadan görünür). */}
+      <div
+        data-katalog-kaydir=""
+        style={{ flex: '1 1 auto', minHeight: 0, overflowY: 'auto', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--size-gap)' }}
+      >
+        <KumeDuzenleyici />
+        <div aria-label="Etkinlik" role="group" data-katalog="" style={{ display: 'flex', flexDirection: 'column', gap: '0.3em', alignItems: 'stretch' }}>
+          {TUR_BECERILERI.map((b) => (
+            <section
+              key={b.kod}
+              aria-label={b.ad}
+              data-beceri={b.kod}
+              style={{ display: 'flex', gap: '0.4em', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}
+            >
+              <span style={{ fontSize: 'var(--text-adult)', minWidth: '7.5em', textAlign: 'right', color: 'var(--color-ink-soft, #6B6B6B)' }}>{b.ad}</span>
+              {TUR_SABLON_KODLARI.filter((kod) => TUR_SABLONLARI[kod].beceri === b.kod).map((kod) => {
+                const t = TUR_SABLONLARI[kod];
+                const olmaz = h.durum === 'hazir' && hv.durum !== 'yukleniyor' && !kurulabilirMi(kod, h.havuz, kume, secim.zorluk, hamleler);
+                return (
+                  <BigButton
+                    key={kod}
+                    label={`${kod} ${t.ad}${olmaz ? ' (bu harflerle kurulamıyor)' : ''}`}
+                    data-yetiskin=""
+                    ariaPressed={secim.sablon === kod}
+                    variant={secim.sablon === kod ? 'accent' : 'solid'}
+                    style={{ ...kucukDugme, opacity: olmaz ? 0.5 : 1 }}
+                    onPress={() => sec({ ...secim, sablon: kod })}
+                  >
+                    <span>
+                      {kod} {t.ad}
+                    </span>
+                  </BigButton>
+                );
+              })}
+            </section>
+          ))}
+        </div>
       </div>
-      <section aria-label="Zorluk" role="group" style={{ display: 'flex', gap: '0.4em', alignItems: 'center' }}>
+      <section aria-label="Zorluk" role="group" style={{ display: 'flex', gap: '0.4em', alignItems: 'center', flexShrink: 0 }}>
         <span style={{ fontSize: 'var(--text-adult)' }}>Zorluk:</span>
         {TUR_ZORLUKLARI.map((z) => (
           <BigButton
