@@ -8,13 +8,24 @@
  * "Sınıf tekrar eder" ve vurgu baştan yürür. Ses gerekmez (model okuma öğretmenin sesi); hiçbir şey saklanmaz,
  * süre ölçülmez (D-13). Tahtada denetimler alt bölgede (üst %35'te dokunulabilir öğe yok, D-24).
  */
-import { useMemo, useState, type CSSProperties } from 'react';
+import { useMemo, useState, type ComponentType, type CSSProperties } from 'react';
 import { BigButton } from '../../primitives/BigButton';
 import { dekodlanabilirMi } from '../../../content/dersler/tur/ogretilenKume';
 import type { TurHavuzCumlesi } from '../../../content/dersler/tur/sablonlar/turSoru';
-import { useTurKume } from '../turKume';
-import { useCumleVerisi } from '../useCumleVerisi';
-import { Baslik, ekranStili } from '../turOrtak';
+import type { CumleVerisiDurumu } from '../useCumleVerisi';
+
+/**
+ * Küme, cümle verisi, başlık ve ekran stili kabuktan (`TurEkrani`) gelir: bu parça `turKume`, `useCumleVerisi`,
+ * `turOrtak` modüllerini içe aktarmaz; aksi hâlde paketleyici onları ortak parçalara böler ve Türkçe temel JS büyür
+ * (KG-156 temel ≤ 120 KB).
+ */
+export interface KoroOkumaOzellikleri {
+  readonly kume: ReadonlySet<string>;
+  readonly cv: CumleVerisiDurumu;
+  readonly ekranStili: CSSProperties;
+  /** Başlık bileşeni (kabuktan; `turOrtak`). */
+  readonly Baslik: ComponentType<{ baslik: string; alt?: string }>;
+}
 
 type Kip = 'koro' | 'yanki';
 
@@ -23,9 +34,7 @@ function okunabilir(cumleler: readonly TurHavuzCumlesi[], kume: ReadonlySet<stri
   return cumleler.filter((c) => c.grup >= 2 && kume.has(c.girisHarfi) && dekodlanabilirMi(c.metin, kume));
 }
 
-export default function KoroOkuma() {
-  const kume = useTurKume();
-  const cv = useCumleVerisi(true);
+export default function KoroOkuma({ kume, cv, ekranStili, Baslik }: KoroOkumaOzellikleri) {
   const liste = useMemo(() => {
     if (cv.durum !== 'hazir') return [];
     const l = okunabilir(cv.cumleler, kume);

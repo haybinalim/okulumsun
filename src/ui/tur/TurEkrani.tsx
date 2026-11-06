@@ -28,9 +28,23 @@ import { SesPlani, SetAkisi, SetHazirla } from './TurPlanSet';
 import { EvAcilisi, TurEveGonder, TurKaynaklar } from './TurEv';
 import { evKipiMi } from './sinifAyariDepo';
 import { sikDugme } from './ogretmenOrtak';
+import { useTurKume } from './turKume';
+import { useCumleVerisi } from './useCumleVerisi';
 
 /** M-3 koro / yankılayıcı okuma: ayrı tembel parça (`KoroOkuma-*.js`, KG-156). */
 const KoroOkuma = lazy(() => import('./cumle/KoroOkuma'));
+
+/**
+ * Koro kabuğu: küme ve cümle verisi burada okunur, parçaya özellik olarak geçer (parça ortak modül içe aktarmaz).
+ * Parça küçüktür (≈4 KB); yüklenirken yedek çizilmez, veri yüklenirken parça kendi "Yükleniyor" ekranını gösterir.
+ */
+function KoroKabugu() {
+  return (
+    <Suspense fallback={null}>
+      <KoroOkuma kume={useTurKume()} cv={useCumleVerisi(true)} ekranStili={ekranStili} Baslik={Baslik} />
+    </Suspense>
+  );
+}
 
 export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; profil: DeviceProfile }) {
   // Eve link cihazı (veli/çocuk): ev açılışı köktür; set ekranlarının Geri ve Ana menüsü ona döner, öğretmen
@@ -95,15 +109,7 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
         ) : ekran.ekran === 'etkinlik' ? (
           <TurEtkinlikEkrani sablon={ekran.sablon} zorluk={ekran.zorluk} tohum={ekran.tohum} geri={ekran.geri} />
         ) : ekran.ekran === 'koro' ? (
-          <Suspense
-            fallback={
-              <main aria-label="Koro okuma" aria-busy="true" style={{ ...ekranStili, justifyContent: 'center' }}>
-                <p data-yetiskin="">Yükleniyor</p>
-              </main>
-            }
-          >
-            <KoroOkuma />
-          </Suspense>
+          <KoroKabugu />
         ) : ekran.ekran === 'kagit' ? (
           <KagitOnizleme istek={ekran.istek} />
         ) : (
