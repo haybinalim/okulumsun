@@ -52,6 +52,10 @@ export const TUR_YONERGELERI = {
   't09': 'Yukarıdaki harfi parçalarla oluştur.',
   't09-sira': 'Yukarıdaki harfi parçalarla oluştur. Parçaları yazılış sırasıyla seç.',
   't16': 'Yanlış yazılmış sözcüğü bul.',
+  't17': 'Resmin adını söyle. Her hecede bir kez alkışla. Kaç hece var?',
+  't17-oku': 'Sözcüğü içinden okuyup her hecede bir kez alkışla. Kaç hece var?',
+  't18': 'Resmin adını dinle. Yukarıdaki harfin sesi nerede: başta mı, ortada mı, sonda mı?',
+  't18-iki': 'Resmin adını dinle. Yukarıdaki harfin sesi nerede: başta mı, sonda mı?',
 } as const;
 
 export type TurYonergeAnahtari = keyof typeof TUR_YONERGELERI;

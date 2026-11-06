@@ -55,7 +55,9 @@ export function turSoruEtkinligi(s: TurSoru, manifest: ReadonlyMap<string, strin
   const uyaran: TurEtkinlik['uyaran'] =
     s.uyaran.tur === 'ses'
       ? { tur: 'ses' }
-      : { tur: 'yazi', metin: s.uyaran.tur === 'yazi' ? s.uyaran.metin : s.uyaran.tur === 'parca' ? s.uyaran.glif : s.hedefMetin };
+      : s.uyaran.tur === 'resim'
+        ? { tur: 'gorsel', ...((s.uyaran.harf ?? s.uyaran.metin) ? { metin: s.uyaran.harf ?? s.uyaran.metin } : {}) }
+        : { tur: 'yazi', metin: s.uyaran.tur === 'yazi' ? s.uyaran.metin : s.uyaran.tur === 'parca' ? s.uyaran.glif : s.hedefMetin };
   return {
     id: s.itemId.replace('#', '.').replace(/[^a-z0-9.-]/gi, '-').toLowerCase(),
     sablon: s.sablon,
@@ -102,7 +104,9 @@ export function turSoruIhlalleri(
         ? [s.uyaran.once, s.uyaran.sonra]
         : s.uyaran.tur === 'parca'
           ? [s.uyaran.glif]
-          : []),
+          : s.uyaran.tur === 'resim'
+            ? [s.uyaran.metin ?? '', s.uyaran.harf ?? '']
+            : []),
   ];
   for (const m of metinler) if (!dekodlanabilirMi(m, kume)) h.push(`D-23/küme: "${m}" öğretilen kümede olmayan harf içeriyor.`);
   const istenen = [s.yonerge, ...s.soruKlipleri, ...s.geriBildirim];
@@ -116,6 +120,9 @@ export function turSoruIhlalleri(
   for (const k of s.kartlar)
     if ((k.tur === 'parca') !== Boolean(k.parca) || (k.tur === 'parca' && !k.parca?.noktalar.length))
       h.push(`parça kartı biçimi bozuk ("${k.metin}").`);
+  // Resim uyaranı sorunun sözcüğünün görseli (D-15): yalnız görseli olan, öğretilmiş harfli sözcük.
+  if (s.uyaran.tur === 'resim' && havuz && havuz.find((w) => w.metin === s.hedefMetin)?.gorselId !== s.uyaran.gorselId)
+    h.push(`D-15: uyaran görseli "${s.hedefMetin}" sözcüğünün görseli değil.`);
   if (s.sablon === 'T-09' && (s.kartlar.some((k) => k.tur !== 'parca') || s.uyaran.tur !== 'parca'))
     h.push('T-09: kartlar hamle parçası, uyaran model harf olmalı.');
   if (GORSELLI.has(s.sablon)) {

@@ -5,7 +5,7 @@ import { geometriTemiz, sesKilidiniAc } from './yardimci/akis';
 import { sozcukKlibi } from '../../src/content/dersler/tur/sablonlar/klipler';
 
 /**
- * Okuma Yazma Adım 69–70, 79 — şablonlar T-01…T-09, T-16 (T-01, T-08 görselli), YALNIZ bayraklı derlemede (`VITE_DERS_TUR=1`, port 5174).
+ * Okuma Yazma Adım 69–70, 79 — şablonlar T-01…T-09, T-16…T-18 (T-01, T-08 görselli; T-17, T-18 resim uyaranlı), YALNIZ bayraklı derlemede (`VITE_DERS_TUR=1`, port 5174).
  *
  * Her şablon üç görünümde (tahta 1920×1080, tahta 1080×810, tablet 1080×810) açılır ve çözülür:
  *  - geometri temiz (üst %35'te dokunma yok, hedefler ≥ tap-min) — yuvalar yalnız gösterir;
@@ -24,7 +24,7 @@ const manifest = new Map(
 );
 const UNLU = /[aeıioöuüâîû]/i;
 
-export const SABLONLAR = ['T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07', 'T-08', 'T-09', 'T-16'] as const;
+export const SABLONLAR = ['T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07', 'T-08', 'T-09', 'T-16', 'T-17', 'T-18'] as const;
 const OKUMA_HEDEFLI = new Set(['T-03', 'T-04', 'T-05', 'T-06', 'T-08', 'T-09', 'T-16']);
 
 const gorunumler = (proje: string) =>

@@ -1262,6 +1262,26 @@
    "anahtar": "tur.yonerge.t16",
    "metin": "Yanlış yazılmış sözcüğü bul.",
    "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t17",
+   "metin": "Resmin adını söyle. Her hecede bir kez alkışla. Kaç hece var?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t17-oku",
+   "metin": "Sözcüğü içinden okuyup her hecede bir kez alkışla. Kaç hece var?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t18",
+   "metin": "Resmin adını dinle. Yukarıdaki harfin sesi nerede: başta mı, ortada mı, sonda mı?",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.yonerge.t18-iki",
+   "metin": "Resmin adını dinle. Yukarıdaki harfin sesi nerede: başta mı, sonda mı?",
+   "durum": "eksik"
   }
  ]
 }
