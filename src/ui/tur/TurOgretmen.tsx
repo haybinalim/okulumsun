@@ -275,10 +275,13 @@ function basamakEylemleri(b: AkisBasamagi, ses: string): { ad: string; ekran: Tu
   const geri: TurEkrani = { ekran: 'akis' };
   const h = b.hedef;
   if (h.tur === 'etkinlik')
-    return h.sablonlar.map((s) => ({
-      ad: h.sablonlar.length > 1 ? s : 'Aç',
-      ekran: { ekran: 'etkinlik', sablon: s, zorluk: 1, tohum: 1, geri },
-    }));
+    return [
+      ...h.sablonlar.map((s) => ({
+        ad: h.sablonlar.length > 1 ? s : 'Aç',
+        ekran: { ekran: 'etkinlik' as const, sablon: s, zorluk: 1 as const, tohum: 1, geri },
+      })),
+      ...(h.koro ? [{ ad: 'Koro', ekran: { ekran: 'koro' as const, geri } }] : []),
+    ];
   if (h.tur === 'yazilis')
     return [
       { ad: `Aç (${ses})`, ekran: { ekran: 'yazilis', anahtar: `kucuk:${ses}`, sekme: 0, geri } },

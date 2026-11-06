@@ -5,7 +5,7 @@ import { geometriTemiz, sesKilidiniAc } from './yardimci/akis';
 import { kumeKodla, resmiKume } from '../../src/content/dersler/tur/ogretilenKume';
 
 /**
- * Okuma Yazma Adım 74 — cümle şablonları (T-10, T-11), YALNIZ bayraklı derlemede (`VITE_DERS_TUR=1`, port 5174).
+ * Okuma Yazma Adım 74 — cümle şablonları (T-10, T-11, T-12) ve koro okuma (M-3), YALNIZ bayraklı derlemede (`VITE_DERS_TUR=1`, port 5174).
  * Cümle parçası (`turCumle-*.js`, KG-156) yalnız cümle şablonu açılınca indirilir. Her şablon üç görünümde açılır ve
  * çözülür: geometri temiz; okuma hedefli (açılışta yalnız yönerge, D-12); kartlar sessiz (D-11); doğru cevaptan sonra
  * övgü + cümle klibi; cümle tek satırda (D-22).
@@ -33,7 +33,7 @@ async function klipler(page: Page): Promise<string[]> {
   return hepsi.filter((k) => k.startsWith('tur.'));
 }
 
-export const CUMLE_SABLONLARI = ['T-10', 'T-11'] as const;
+export const CUMLE_SABLONLARI = ['T-10', 'T-11', 'T-12'] as const;
 
 for (const sablon of CUMLE_SABLONLARI) {
   test(`${sablon}: cümle parçası yüklenir, üç görünümde geometri temiz, okuma hedefli, çözülür`, async ({ browser }, bilgi) => {
@@ -53,11 +53,25 @@ for (const sablon of CUMLE_SABLONLARI) {
         await expect(page.locator('[data-kartlar][data-satir]')).toBeVisible();
         await geometriTemiz(page, baglam);
         const acilis = await klipler(page);
-        expect(acilis, `${baglam}: okuma sorusunda yalnız yönerge (D-12)`).toEqual([`tur.yonerge.${sablon.replace('-', '').toLowerCase()}`]);
+        expect(acilis, `${baglam}: okuma sorusunda yalnız yönerge (D-12)`).toHaveLength(1);
+        expect(acilis[0], `${baglam}: okuma sorusunda yalnız yönerge (D-12)`).toMatch(
+          new RegExp(`^tur\\.yonerge\\.${sablon.replace('-', '').toLowerCase()}(-ozel)?$`),
+        );
+        // T-12: üstte uyaran yok; her cümle kartı tek satırda.
+        if (sablon === 'T-12') {
+          for (const kart of await page.locator('[data-kart]').all()) {
+            const n = await kart.evaluate((e) => {
+              const r = document.createRange();
+              r.selectNodeContents(e);
+              return new Set([...r.getClientRects()].filter((x) => x.width > 1).map((x) => Math.round(x.top))).size;
+            });
+            expect(n, `${baglam}: cümle kartı tek satır`).toBe(1);
+          }
+        }
         // Cümle tek satırda (sözcük bölünmez, D-22).
         const model = page.locator('[data-uyaran-metni="model"]');
-        await expect(model).toBeVisible();
-        const satir = await model.evaluate((e) => {
+        if (sablon !== 'T-12') await expect(model).toBeVisible();
+        const satir = sablon === 'T-12' ? 1 : await model.evaluate((e) => {
           // T-11: cümle metni ilk çocukta, yanında boş yuva kutusu (satır sayımına girmez).
           const metin = e.hasAttribute('data-noktalama-yuvasi') ? e.firstElementChild! : e;
           const r = document.createRange();
@@ -114,4 +128,55 @@ test('T-11 noktalama kartlarının erişilebilir adları; ünlem kartı 5. grupt
   if (await basla.isVisible().catch(() => false)) await basla.click();
   await expect(page.locator('main[data-tur-etkinlik="T-11"]')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Ünlem işareti', exact: true })).toHaveCount(0);
+});
+
+test('M-3 koro / yankılayıcı okuma: tahtada sözcük sözcük vurgu, yankı kipi, ses istemez, ayrı parça', async ({ browser }, bilgi) => {
+  test.setTimeout(120_000);
+  for (const g of gorunumler(bilgi.project.name)) {
+    const ctx = await browser.newContext({ baseURL: TUR_URL, viewport: { width: g.w, height: g.h }, hasTouch: true });
+    const page = await ctx.newPage();
+    const parcalar: string[] = [];
+    page.on('request', (r) => {
+      if (/\/assets\/KoroOkuma-[^/]+\.js$/.test(r.url())) parcalar.push(r.url());
+    });
+    await sesKilidiniAc(page, `/?ders=tur&ekran=koro&device=${g.cihaz}&tur=${HEPSI}`);
+    const main = page.locator('main[data-koro-okuma]');
+    await expect(main).toBeVisible();
+    await geometriTemiz(page, `koro ${g.ad}`);
+    const sozcukSayisi = await page.locator('[data-koro-sozcuk]').count();
+    expect(sozcukSayisi).toBeGreaterThanOrEqual(2);
+    const sonraki = page.getByRole('button', { name: 'Sonraki sözcük', exact: true });
+    for (let i = 0; i < sozcukSayisi; i++) {
+      await sonraki.click();
+      await expect(main).toHaveAttribute('data-vurgu', String(i));
+      await expect(page.locator('[data-vurgulu]')).toHaveAttribute('data-koro-sozcuk', String(i));
+    }
+    await expect(sonraki).toBeDisabled();
+    // Yankı: öğretmen okur → sınıf tekrar eder, vurgu baştan.
+    await page.getByRole('button', { name: 'Kip: koro', exact: true }).click();
+    await expect(main).toHaveAttribute('data-kip', 'yanki');
+    for (let i = 0; i < sozcukSayisi; i++) await sonraki.click();
+    await expect(main).toHaveAttribute('data-asama', 'ogretmen');
+    await sonraki.click();
+    await expect(main).toHaveAttribute('data-asama', 'sinif');
+    await expect(main).toHaveAttribute('data-vurgu', '0');
+    const once = await main.getAttribute('data-koro-okuma');
+    await page.getByRole('button', { name: 'Sonraki cümle', exact: true }).click();
+    await expect(main).not.toHaveAttribute('data-koro-okuma', once ?? '');
+    await geometriTemiz(page, `koro ${g.ad} (yankı)`);
+    const klip = await page.evaluate(() => [...(window.__okulumsunE2E?.istenenKlipler ?? [])].filter((k) => k.startsWith('tur.')));
+    expect(klip, 'koro okuma ses istemez').toEqual([]);
+    expect(parcalar.length, 'koro parçası indirildi').toBeGreaterThan(0);
+    await ctx.close();
+  }
+});
+
+test('günün akışı: 6. basamaktan koro okuma ve T-10, 7. basamaktan T-11/T-12 açılır', async ({ page }, bilgi) => {
+  test.skip(bilgi.project.name !== 'tablet', 'bir kez');
+  await sesKilidiniAc(page, `/?ders=tur&ekran=akis&device=tablet&tur=${HEPSI}`);
+  await page.getByRole('button', { name: 'Hece ve sözcük: Koro', exact: true }).click();
+  await expect(page.locator('main[data-koro-okuma]')).toBeVisible();
+  await page.getByRole('button', { name: 'Geri', exact: true }).click();
+  await page.getByRole('button', { name: 'Dikte: T-12', exact: true }).click();
+  await expect(page.locator('main[data-tur-etkinlik="T-12"]')).toBeVisible();
 });

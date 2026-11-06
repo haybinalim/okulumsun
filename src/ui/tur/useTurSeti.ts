@@ -8,6 +8,7 @@ import { turSetiKur, type SetDuzeyi, type TurSeti } from '../../content/dersler/
 import { useTurKume } from './turKume';
 import { useTurHavuzu } from './useTurHavuzu';
 import { useHamleVerisi } from './useHamleVerisi';
+import { useCumleVerisi } from './useCumleVerisi';
 
 export type TurSetiDurumu =
   | { readonly durum: 'yukleniyor' }
@@ -20,9 +21,13 @@ export function useTurSeti(duzey: SetDuzeyi, tohum: number): TurSetiDurumu {
   const hv = useHamleVerisi();
   const hamleler = hv.durum === 'hazir' ? hv.veri.glifler : undefined;
   const hamleBitti = hv.durum !== 'yukleniyor';
+  // Adım 74: sınıf ve zenginleştirme tariflerinde cümle adımları (cümle parçası + havuz; açılamazsa yedek adım).
+  const cv = useCumleVerisi(duzey !== 'destek');
+  const cumleler = cv.durum === 'hazir' ? cv.cumleler : undefined;
+  const cumleBitti = cv.durum !== 'yukleniyor';
   return useMemo((): TurSetiDurumu => {
     if (h.durum === 'hata') return { durum: 'hata', mesaj: h.mesaj };
-    if (h.durum !== 'hazir' || !hamleBitti) return { durum: 'yukleniyor' };
-    return { durum: 'hazir', set: turSetiKur({ havuz: h.havuz, kume, duzey, tohum, hamleler }) };
-  }, [h, hamleBitti, hamleler, kume, duzey, tohum]);
+    if (h.durum !== 'hazir' || !hamleBitti || !cumleBitti) return { durum: 'yukleniyor' };
+    return { durum: 'hazir', set: turSetiKur({ havuz: h.havuz, kume, duzey, tohum, hamleler, cumleler }) };
+  }, [h, hamleBitti, hamleler, cumleBitti, cumleler, kume, duzey, tohum]);
 }

@@ -13,7 +13,13 @@
  * şablonda iki kez gelmez: tohum sırayla kaydırılır (en çok 4 deneme).
  */
 import { TUR_SABLONLARI } from './sablonlar';
-import { TurUretimHatasi, type TurHavuzSozcugu, type TurSablonKodu, type TurZorluk } from './sablonlar/turSoru';
+import {
+  TurUretimHatasi,
+  type TurHavuzCumlesi,
+  type TurHavuzSozcugu,
+  type TurSablonKodu,
+  type TurZorluk,
+} from './sablonlar/turSoru';
 import type { TurHamleGlifi } from '../../schema/turHamle';
 
 export type SetDuzeyi = 'destek' | 'sinif' | 'zengin';
@@ -37,11 +43,21 @@ export interface SetAdimi {
   readonly tohum: number;
 }
 
+/**
+ * Tarif adımı. `yedek`: adım bu kümeyle kurulamazsa (ör. cümle etkinliği 1. grupta, D-08) yerine denenen adım; set
+ * yine 8 adım kalır (Adım 74).
+ */
+export interface TarifAdimi {
+  readonly sablon: TurSablonKodu;
+  readonly zorluk: TurZorluk;
+  readonly yedek?: { readonly sablon: TurSablonKodu; readonly zorluk: TurZorluk };
+}
+
 /** Setteki adım sayısı (Adım 79: 6 → 8). */
 export const SET_ADIM_SAYISI = 8;
 
 /** Düzey tarifleri: sırayla denenir (8 adım; ses → harf → hece → sözcük → yazma). */
-export const SET_TARIFLERI: Readonly<Record<SetDuzeyi, readonly Omit<SetAdimi, 'tohum'>[]>> = {
+export const SET_TARIFLERI: Readonly<Record<SetDuzeyi, readonly TarifAdimi[]>> = {
   destek: [
     { sablon: 'T-03', zorluk: 1 },
     { sablon: 'T-18', zorluk: 1 },
@@ -60,15 +76,16 @@ export const SET_TARIFLERI: Readonly<Record<SetDuzeyi, readonly Omit<SetAdimi, '
     { sablon: 'T-04', zorluk: 3 },
     { sablon: 'T-06', zorluk: 2 },
     { sablon: 'T-05', zorluk: 2 },
-    { sablon: 'T-08', zorluk: 2 },
+    // Adım 74: 2. gruptan cümle okuma; kurulamazsa sözcük okuma.
+    { sablon: 'T-10', zorluk: 2, yedek: { sablon: 'T-08', zorluk: 2 } },
   ],
   zengin: [
     { sablon: 'T-18', zorluk: 4 },
     { sablon: 'T-19', zorluk: 5 },
     { sablon: 'T-04', zorluk: 5 },
-    { sablon: 'T-05', zorluk: 4 },
+    { sablon: 'T-12', zorluk: 4, yedek: { sablon: 'T-05', zorluk: 4 } },
     { sablon: 'T-16', zorluk: 4 },
-    { sablon: 'T-08', zorluk: 4 },
+    { sablon: 'T-11', zorluk: 4, yedek: { sablon: 'T-08', zorluk: 4 } },
     { sablon: 'T-09', zorluk: 4 },
     { sablon: 'T-07', zorluk: 5 },
   ],
@@ -90,31 +107,48 @@ export function turSetiKur(girdi: {
   readonly tohum: number;
   /** Hamle verisi (T-09 için); yoksa T-09 adımı atlanır. */
   readonly hamleler?: readonly TurHamleGlifi[];
+  /** Cümle havuzu (T-10, T-11, T-12; cümle parçası yüklü olmalı); yoksa cümle adımı yedeğiyle kurulur. */
+  readonly cumleler?: readonly TurHavuzCumlesi[];
 }): TurSeti {
   const adimlar: SetAdimi[] = [];
   const atlanan: Omit<SetAdimi, 'tohum'>[] = [];
   const gorulen = new Set<string>();
-  SET_TARIFLERI[girdi.duzey].forEach((t, i) => {
+  SET_TARIFLERI[girdi.duzey].forEach((tarif, i) => {
+    if (adimiKur({ sablon: tarif.sablon, zorluk: tarif.zorluk }, i)) return;
+    if (tarif.yedek && adimiKur(tarif.yedek, i)) return;
+    atlanan.push({ sablon: tarif.sablon, zorluk: tarif.zorluk });
+  });
+  return { duzey: girdi.duzey, adimlar, atlanan };
+
+  /** Adımı kurar (aynı hedef tekrarı olmadan); kurulamazsa `false`. */
+  function adimiKur(t: Omit<SetAdimi, 'tohum'>, i: number): boolean {
     let yedek: number | null = null;
     for (let d = 0; d < DENEME; d++) {
       const tohum = girdi.tohum * 10 + i + d * 100;
       try {
-        const soru = TUR_SABLONLARI[t.sablon].uret({ havuz: girdi.havuz, kume: girdi.kume, zorluk: t.zorluk, tohum, hamleler: girdi.hamleler });
+        const soru = TUR_SABLONLARI[t.sablon].uret({
+          havuz: girdi.havuz,
+          kume: girdi.kume,
+          zorluk: t.zorluk,
+          tohum,
+          hamleler: girdi.hamleler,
+          cumleler: girdi.cumleler,
+        });
         // Aynı şablonda aynı hedef setde ikinci kez gelmesin (çeşitlilik); yoksa ilk kurulan tohum kalır.
         const anahtar = `${t.sablon}|${soru.hedefMetin}`;
         yedek ??= tohum;
         if (gorulen.has(anahtar) && d < DENEME - 1) continue;
         gorulen.add(anahtar);
         adimlar.push({ ...t, tohum });
-        return;
+        return true;
       } catch (e) {
         if (!(e instanceof TurUretimHatasi)) throw e;
       }
     }
-    if (yedek !== null) adimlar.push({ ...t, tohum: yedek });
-    else atlanan.push(t);
-  });
-  return { duzey: girdi.duzey, adimlar, atlanan };
+    if (yedek === null) return false;
+    adimlar.push({ ...t, tohum: yedek });
+    return true;
+  }
 }
 
 /** Eve link set kodu: düzey harfi + tohum (`s3`, `d12`); katı çözücü. */

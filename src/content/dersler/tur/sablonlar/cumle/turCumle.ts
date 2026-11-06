@@ -6,6 +6,7 @@
  */
 import { uretT10 } from './t10CumleOku';
 import { uretT11 } from './t11Noktalama';
+import { uretT12 } from './t12BuyukHarf';
 import type { TurCumleSablonKodu, TurSoru, TurUretimGirdisi } from '../turSoru';
 
 export { cumleHavuzunuAyristir, okunabilirCumleler } from './cumleHavuzu';
@@ -13,4 +14,5 @@ export { cumleHavuzunuAyristir, okunabilirCumleler } from './cumleHavuzu';
 export const TUR_CUMLE_URETICILERI: Readonly<Record<TurCumleSablonKodu, (g: TurUretimGirdisi) => TurSoru>> = {
   'T-10': uretT10,
   'T-11': uretT11,
+  'T-12': uretT12,
 };

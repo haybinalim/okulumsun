@@ -23,7 +23,7 @@ export const TUR_SABLON_KODLARI = [
  * Cümle şablonları (Adım 74): üreticileri ayrı tembel parçada (`cumle/turCumle.ts`, KG-156); cümle havuzu ister
  * (`TurUretimGirdisi.cumleler`) ve 2. gruptan önce kurulmaz (D-08).
  */
-export const TUR_CUMLE_SABLON_KODLARI = ['T-10', 'T-11'] as const;
+export const TUR_CUMLE_SABLON_KODLARI = ['T-10', 'T-11', 'T-12'] as const;
 export type TurCumleSablonKodu = (typeof TUR_CUMLE_SABLON_KODLARI)[number];
 export type TurSablonKodu = (typeof TUR_SABLON_KODLARI)[number] | TurCumleSablonKodu;
 
