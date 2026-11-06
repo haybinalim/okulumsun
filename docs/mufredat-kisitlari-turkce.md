@@ -105,6 +105,7 @@ Kod karşılığı Adım 62'de; "Otomatik" sütunu ✓ olanlar `npm run validate
 | D-23 | Çeldiriciler öğretilmiş harflerden | 02 | ✓ | Hata |
 | D-24 | Tahtada üst %35'te etkileşim yok | — | Mevcut e2e | Hata |
 | D-25 | Sözcük görselleri (Adım 68): her resimli sözcüğün tek görseli var; görsel yalnız sözcüğün bütün harfleri öğretilmiş grupta (öğretilmemiş harfli sözcüğe görsel yok); kimlik tek; SVG kendi çizimimiz — `<mask>`, metin, raster/dış kaynak, gradyan yok, renkler paletten, ≤ 6 KB, koyu kontur (gri baskı); içerikteki `gorselId` aynı sözcüğün görseli; teyit bekleyen görsel yayında hata | 02, 08, 09 | ✓ (`gorselDenetimi.ts`) | Hata (teyit: geliştirmede uyarı) |
+| D-26 | Cümle havuzu (Adım 74, `ders-verisi/tur/icerik/cumleler.json`): `grup`, `harfler`, `tur`, `noktalama` etiketleri hesaplananla aynı; giriş harfi hesaplanan giriş noktası (ünlem cümlesinde en erken `p`, 5. grup); 2–5 sözcük; özel adlar cümlede; `gorselId` var ve sözcüğü cümlede (D-07, D-25); öğe teyidi `bekliyor` geliştirmede uyarı, `--yayin` hata (KG-155: havuz öğretmen onayı beklenmeden kuruldu) | 02, 08, 10–13 | ✓ | Hata |
 
 ## 6. Hece kuralı (hece ayırıcı)
 

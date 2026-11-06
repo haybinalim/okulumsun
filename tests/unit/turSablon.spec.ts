@@ -361,7 +361,9 @@ describe('Türkçe şablonlar — kural tuzakları (doğrulayıcı kırmızı ol
 
 describe('Türkçe klipler ve manifest (D-11, D-21)', () => {
   it('commitlenmiş manifest üreticiyle aynı (npm run tur:klip)', () => {
-    expect(readFileSync('ders-verisi/tur/ses/klipler.json', 'utf8')).toBe(klipManifestiMetni(havuzHam));
+    expect(readFileSync('ders-verisi/tur/ses/klipler.json', 'utf8')).toBe(
+      klipManifestiMetni(havuzHam, JSON.parse(readFileSync('ders-verisi/tur/icerik/cumleler.json', 'utf8'))),
+    );
   });
   it('hiçbir klip tek başına ünsüz değil, harf klibi yok, hepsi eksik (TTS yok)', () => {
     const m = JSON.parse(readFileSync('ders-verisi/tur/ses/klipler.json', 'utf8')) as {
