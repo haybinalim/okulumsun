@@ -55,6 +55,8 @@ let manifest: Promise<ReadonlyMap<string, TurKlip> | null> | null = null;
 let manifestHatasiYazildi = false;
 /** Çözülemeyen ("var" denip alınamayan) klipler: arayüz bunlar için "Ses yok" gösterir. */
 const basarisiz = new Set<string>();
+/** Hata kaydı yazılmış klipler: aynı klip için oturumda tek kayıt (her yeniden denemede kayıt spamı olmasın). */
+const hataYazilan = new Set<string>();
 
 /**
  * D-11 / K-OY-03: metin en az bir ünlü taşımalı; tek ünsüz (ya da ünlüsüz) metin çalınmaz. `alfabe` içe aktarılmaz
@@ -113,7 +115,9 @@ function hata(): null {
 /** Klip çalınabilir mi? (`var`, tutarlı, D-11'e uygun ve alınması denenip düşmemiş.) */
 export async function turKlipVarMi(anahtar: string): Promise<boolean> {
   const m = await manifestiOku();
-  return m !== null && m.has(anahtar) && !basarisiz.has(anahtar);
+  // `basarisiz` BURADA bakılmaz: düşmüş klip yeniden denenebilmeli (geçici 404 düzelince çalsın); "Ses yok" kararı
+  // yükleme sonrası `turKlipBasarisizMi` ile verilir.
+  return m !== null && m.has(anahtar);
 }
 
 /** Bu klibin alınışı düşmüş mü (404/ağ)? `prefetch` sonrasında arayüzün "Ses yok" kararı için. */
@@ -130,10 +134,15 @@ export async function turKlipBaytlari(anahtar: string): Promise<ArrayBuffer | nu
   const klip = m?.get(anahtar);
   if (!klip) return null;
   try {
-    return await turSesiniOku(klip.dosya);
+    const bayt = await turSesiniOku(klip.dosya);
+    basarisiz.delete(anahtar); // geçici hata sonrası başarı: kalıcı "Ses yok" kalmasın
+    return bayt;
   } catch {
     basarisiz.add(anahtar);
-    kayitEkle({ tur: 'ses', mesaj: `Türkçe klip yüklenemedi: ${anahtar}` });
+    if (!hataYazilan.has(anahtar)) {
+      hataYazilan.add(anahtar);
+      kayitEkle({ tur: 'ses', mesaj: `Türkçe klip yüklenemedi: ${anahtar}` });
+    }
     return null;
   }
 }
@@ -148,4 +157,5 @@ export function turKlipSifirla(): void {
   manifest = null;
   manifestHatasiYazildi = false;
   basarisiz.clear();
+  hataYazilan.clear();
 }

@@ -13,6 +13,7 @@ import { execFile } from 'node:child_process';
 import { rename, rm } from 'node:fs/promises';
 import { promisify } from 'node:util';
 import type { Clip } from './klipler.ts';
+import { geciciKlipYolu } from './geciciAd.ts';
 
 const exec = promisify(execFile);
 
@@ -144,7 +145,7 @@ export async function turKlibiSentezle(g: TurSentezGirdisi): Promise<number> {
   try {
     return await klibiUretVeDogrula({
       clip: g.clip,
-      gecici: g.hedef.replace(/\.m4a$/, '.yeni.m4a'),
+      gecici: geciciKlipYolu(g.hedef),
       sentezle: g.synth,
       olc: g.olc,
       yerlestir: (gecici) => rename(gecici, g.hedef),
@@ -159,7 +160,7 @@ export async function turKlibiSentezle(g: TurSentezGirdisi): Promise<number> {
     });
   } catch (err) {
     // Geçici yol başka bir hatayla (ör. yerleştirme) arkada kalmasın.
-    await rm(g.hedef.replace(/\.m4a$/, '.yeni.m4a'), { force: true });
+    await rm(geciciKlipYolu(g.hedef), { force: true });
     throw err;
   }
 }

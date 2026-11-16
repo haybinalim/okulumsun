@@ -154,6 +154,24 @@ describe('Türkçe klip: klip başına karar', () => {
     expect(sesHatalari(kayitlariAl).some((k) => k.mesaj.includes('tur.sozcuk.kale'))).toBe(true);
   });
 
+  it('geçici 404 sonra başarı: "Ses yok" kalkar ve klip çalar (kalıcı başarısız işareti kalmaz)', async () => {
+    sesYaniti = '404';
+    const { turKlipleriniIste } = await kur('1');
+    expect(await turKlipleriniIste(['tur.sozcuk.kale'])).toBe(false);
+    sesYaniti = 'tamam';
+    baslatilan.length = 0;
+    expect(await turKlipleriniIste(['tur.sozcuk.kale'])).toBe(true);
+    await vi.waitFor(() => expect(baslatilan.length).toBeGreaterThan(0));
+  });
+
+  it('aynı alınamayan klip tekrar istenirse yeniden denenir ama hata kaydı oturumda tek', async () => {
+    sesYaniti = '404';
+    const { turKlipleriniIste, kayitlariAl } = await kur('1');
+    for (let i = 0; i < 3; i++) expect(await turKlipleriniIste(['tur.sozcuk.kale'])).toBe(false);
+    expect(mp4ler().length).toBeGreaterThan(1);
+    expect(sesHatalari(kayitlariAl).filter((k) => k.mesaj.includes('tur.sozcuk.kale'))).toHaveLength(1);
+  });
+
   it('baytlar alındı ama çözülemedi (bozuk dosya): sessiz, "Ses yok" kalır + hata kaydı', async () => {
     cozmeHatasi = true;
     const { turKlipleriniIste, kayitlariAl } = await kur('1');
