@@ -50,3 +50,6 @@ scripts/claude-cikti/
 
 # Öğretmen formu vb. üretilmiş içerik çıktıları (Adım 30) — depoya girmez.
 cikti/
+
+# Ajan worktree leri
+.claude/worktrees/
