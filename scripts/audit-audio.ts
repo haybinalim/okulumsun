@@ -25,6 +25,7 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { klipleriTopla } from './ses/klipler.ts';
 import { kokenDenetle, ozetDosyasiniOku, sesKaynagiDosyasiniAyir } from './ses/sesKaynagi.ts';
+import { TUR_SES_DIZINI, turKlipDosyasi, turKlipleriniAyir } from './ses/turKlipleri.ts';
 
 const exec = promisify(execFile);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -96,6 +97,60 @@ async function walk(dir: string, base = ''): Promise<string[]> {
     else if (entry.name.endsWith('.m4a')) out.push(rel);
   }
   return out;
+}
+
+/**
+ * Türkçe klipler (Okuma Yazma, `ders-verisi/tur/ses/`): manifestte `var` olan her klibin dosyası olmalı, makul
+ * boyut/süre, köken özeti `.hashes.json`'da klibin kaynağıyla eşleşmeli; manifestte olmayan .m4a yetimdir.
+ * `eksik` klip burada hata DEĞİL (yayın kapısı: `npm run validate -- --yayin`, D-21).
+ */
+async function turDenetle(problems: string[], durationDiagnostics: string[]): Promise<void> {
+  const manifestYolu = path.join(ROOT, TUR_SES_DIZINI, 'klipler.json');
+  if (!existsSync(manifestYolu)) {
+    problems.push(`TÜRKÇE     ${TUR_SES_DIZINI}/klipler.json yok — \`npm run tur:klip\``);
+    return;
+  }
+  const ham = JSON.parse(await readFile(manifestYolu, 'utf8')) as { klipler: { anahtar: string; durum: string; dosya?: string }[] };
+  const clips = turKlipleriniAyir(ham);
+  const sesli = ham.klipler.filter((k) => k.durum === 'var');
+  const metin = new Map(clips.map((c) => [c.key, c.text]));
+  const dizin = path.join(ROOT, TUR_SES_DIZINI);
+  let bayt = 0;
+  for (const k of sesli) {
+    const dosya = turKlipDosyasi(k.anahtar);
+    if (k.dosya !== dosya) problems.push(`TÜRKÇE     ${k.anahtar}: manifest dosyası "${k.dosya}" ≠ beklenen "${dosya}"`);
+    const tam = path.join(dizin, dosya);
+    if (!existsSync(tam)) {
+      problems.push(`TÜRKÇE EKSİK ${k.anahtar} -> ${dosya} (manifestte var)`);
+      continue;
+    }
+    const { size } = await stat(tam);
+    bayt += size;
+    if (size < MIN_BYTES) {
+      problems.push(`TÜRKÇE SESSİZ? ${k.anahtar} (${size} bayt)`);
+      continue;
+    }
+    const sonuc = await duration(tam);
+    if (sonuc.seconds === null) {
+      problems.push(`TÜRKÇE OKUNAMADI ${k.anahtar} -> ${dosya}`);
+      durationDiagnostics.push(`  ${k.anahtar} -> ${dosya}\n    ${sonuc.diagnostic ?? 'Tanı ayrıntısı üretilemedi.'}`);
+    } else {
+      const beklenen = (metin.get(k.anahtar) ?? '').length / CHARS_PER_SEC;
+      if (sonuc.seconds < beklenen * 0.5) problems.push(`TÜRKÇE KISA ${k.anahtar} — ${sonuc.seconds.toFixed(2)}sn, beklenen ~${beklenen.toFixed(2)}sn`);
+    }
+  }
+  const bilinen = new Set(sesli.map((k) => turKlipDosyasi(k.anahtar)));
+  const yetim = (await walk(dizin)).filter((f) => !bilinen.has(f));
+  for (const y of yetim.slice(0, 10)) problems.push(`TÜRKÇE YETİM ${y} (manifestte var değil; \`npm run tur:klip\`)`);
+  if (sesli.length > 0) {
+    const { aktif, anahtarSesleri } = sesKaynagiDosyasiniAyir(JSON.parse(await readFile(SES_KAYNAGI, 'utf8')) as Record<string, unknown>);
+    const hashYolu = path.join(dizin, '.hashes.json');
+    const ozetler = existsSync(hashYolu) ? ozetDosyasiniOku(JSON.parse(await readFile(hashYolu, 'utf8'))).ozetler : {};
+    const koken = kokenDenetle(aktif, clips.filter((c) => bilinen.has(c.file)), ozetler, anahtarSesleri);
+    for (const k of koken.ozetsiz) problems.push(`TÜRKÇE ÖZETSİZ ${k} (ders-verisi/tur/ses/.hashes.json'da yok)`);
+    for (const k of koken.eslesmeyen) problems.push(`TÜRKÇE KÖKEN ${k} — özet klibin kaynağıyla eşleşmiyor (metin/ses değişti: \`npm run audio -- --ders tur\`)`);
+  }
+  console.log(`Türkçe: ${sesli.length}/${ham.klipler.length} klip sesli · eksik ${ham.klipler.length - sesli.length} · ${(bayt / 1048576).toFixed(2)} MB`);
 }
 
 async function main(): Promise<void> {
@@ -180,6 +235,7 @@ async function main(): Promise<void> {
     const n = clips.filter((c) => a.onekler.some((o) => c.key.startsWith(o))).length;
     console.log(`anahtar sesi (${a.karar}): ${a.onekler.join(', ')} → ${a.modelKimligi} hız ${a.hiz} · ${n} klip`);
   }
+  await turDenetle(problems, durationDiagnostics);
   // K4 (Adım 31): ticari izinsiz kaynak her zaman kırmızı; geçiş istisnası kaldırıldı.
   if (koken.lisansUyarisi) problems.push(koken.lisansUyarisi);
   if (orphans.length) {

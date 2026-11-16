@@ -48,7 +48,7 @@ import { turIcerikDosyasiniAyristir } from '../src/content/schema/turIcerik';
 import { hamleDosyasiniAyristir } from '../src/content/schema/turHamle';
 import { hamleVerisiniDenetle, teyitBekleyenler } from '../src/content/dersler/tur/hamleTablosu';
 import { gorselDiziniAyristir, type TurGorselDizini } from '../src/content/schema/turGorsel';
-import { klipManifestiMetni, KLIP_MANIFESTI_YOLU, type TurKlipManifesti } from './tur/klip-manifesti';
+import { klipManifestiBeklenen, KLIP_MANIFESTI_YOLU, type TurKlipManifesti } from './tur/klip-manifesti';
 import { klipMetniGecerliMi } from '../src/content/dersler/tur/sablonlar/klipler';
 import { veliKartiAyristir } from '../src/content/dersler/tur/veliKarti';
 import {
@@ -471,7 +471,7 @@ sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLE
 {
   const rel = KLIP_MANIFESTI_YOLU;
   try {
-    const beklenen = klipManifestiMetni(read('ders-verisi/tur/icerik/sozcukler.json'), read('ders-verisi/tur/icerik/cumleler.json'));
+    const beklenen = klipManifestiBeklenen(ROOT);
     const mevcut = readFileSync(path.join(ROOT, rel), 'utf8');
     if (mevcut !== beklenen) hata(`${rel}: şablonlarla eş değil — \`npm run tur:klip\` çalıştırın.`);
     const m = JSON.parse(mevcut) as TurKlipManifesti;
@@ -481,7 +481,7 @@ sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLE
     }
     const eksik = m.klipler.filter((k) => k.durum !== 'var').length;
     if (eksik > 0) {
-      const mesaj = `${rel}: ${eksik}/${m.klipler.length} klibin ses dosyası yok (Adım 67).`;
+      const mesaj = `${rel}: ${eksik}/${m.klipler.length} klibin ses dosyası yok (\`npm run audio -- --ders tur\`).`;
       if (process.argv.includes('--yayin')) hata(`${mesaj} D-21: yayında her klibin sesi olmalı.`);
       else sonuc.uyarilar.push(mesaj);
     }

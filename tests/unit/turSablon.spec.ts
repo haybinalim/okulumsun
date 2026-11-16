@@ -24,7 +24,7 @@ import { OGRETIM_SIRASI, yalnizUnsuzMu } from '../../src/content/dersler/tur/alf
 import { turIceriginiDogrula, TUR_TANI_ETIKETLERI } from '../../src/content/dersler/tur/dogrulayici';
 import { PROGRAM_SURUMU } from '../../src/content/dersler/tur/alfabe';
 import type { TurIcerikDosyasi } from '../../src/content/schema/turIcerik';
-import { klipManifestiMetni } from '../../scripts/tur/klip-manifesti';
+import { klipManifestiBeklenen } from '../../scripts/tur/klip-manifesti';
 import { kartDuzeni } from '../../src/ui/tur/etkinlikDuzeni';
 import { turAcilisEkrani } from '../../src/ui/tur/turEkraniDurumu';
 import { createRng } from '../../src/exercises/rng';
@@ -361,11 +361,9 @@ describe('Türkçe şablonlar — kural tuzakları (doğrulayıcı kırmızı ol
 
 describe('Türkçe klipler ve manifest (D-11, D-21)', () => {
   it('commitlenmiş manifest üreticiyle aynı (npm run tur:klip)', () => {
-    expect(readFileSync('ders-verisi/tur/ses/klipler.json', 'utf8')).toBe(
-      klipManifestiMetni(havuzHam, JSON.parse(readFileSync('ders-verisi/tur/icerik/cumleler.json', 'utf8'))),
-    );
+    expect(readFileSync('ders-verisi/tur/ses/klipler.json', 'utf8')).toBe(klipManifestiBeklenen(process.cwd()));
   });
-  it('hiçbir klip tek başına ünsüz değil, harf klibi yok, hepsi eksik (TTS yok)', () => {
+  it('hiçbir klip tek başına ünsüz değil, harf klibi yok, durum diskle tutarlı', () => {
     const m = JSON.parse(readFileSync('ders-verisi/tur/ses/klipler.json', 'utf8')) as {
       klipler: { anahtar: string; metin: string; durum: string }[];
     };
@@ -373,7 +371,7 @@ describe('Türkçe klipler ve manifest (D-11, D-21)', () => {
     for (const k of m.klipler) {
       expect(yalnizUnsuzMu(k.metin), k.anahtar).toBe(false);
       expect(k.anahtar).not.toMatch(/^tur\.harf\./);
-      expect(k.durum).toBe('eksik');
+      expect(['eksik', 'var']).toContain(k.durum);
     }
   });
   it('kimlik: Türkçe harfler çakışmaz (kır ≠ kir), tek ünsüz hece klibi üretilemez', () => {

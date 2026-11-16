@@ -1,7 +1,7 @@
 {
  "surum": 1,
  "programSurumu": "tymm-turkce-2026-09-02",
- "not": "Ses dosyaları Adım 67’de üretilecek (Puck, hız 0,9; TTS bu adımda yok). Tek ünsüz klibi yok (D-11).",
+ "not": "Ses dosyaları `npm run audio -- --ders tur` ile üretilir (Puck, hız 0,9); durum diskten türetilir. Tek ünsüz klibi yok (D-11).",
  "klipler": [
   {
    "anahtar": "tur.cumle.c201",
