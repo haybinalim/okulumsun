@@ -4,7 +4,7 @@
  * (hash klibin gerçek metninden), kota sınırı yeniden denemelerde de, matematik hattının değişmemesi.
  */
 import { execFileSync } from 'node:child_process';
-import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -16,8 +16,8 @@ import { uretimPlani } from '../../scripts/ses/uretimPlani';
 import {
   ESIKLER,
   ffmpegOlcum,
-  klibiUretVeDogrula,
   maxSesAyikla,
+  turKlibiSentezle,
   mevcutlariDogrula,
   olcumSorunu,
   yenidenDenemeMetni,
@@ -50,40 +50,67 @@ const klipler = (...metinler: [string, string][]) =>
   turKlipleriniAyir({ klipler: metinler.map(([anahtar, metin]) => ({ anahtar, metin })) });
 
 /**
- * generate-audio.ts'in Türkçe koşusunun aynısı: ret → plan → planiCalistir → klibiUretVeDogrula; yalnız sentez
- * (defter denetimi + bellekte "dosya") ve ölçüm (girdi metnine göre) sahte.
+ * generate-audio.ts'in Türkçe koşusunun aynısı: ret → (yeniden-doğrula) → plan → planiCalistir → `turKlibiSentezle`
+ * (gerçek kapanış, GERÇEK dosya sistemi: geçici yol + rename). Yalnız sentez (defter denetimi; "ses" = ölçümü
+ * taşıyan küçük JSON) ve ölçüm (dosyayı okur) sahte.
  */
+const DOSYALAR = () => path.join(dizin, 'ses');
+const yol = (dosya: string) => path.join(DOSYALAR(), dosya);
+function diskeKoy(dosya: string, olcum: Olcum | string): void {
+  mkdirSync(path.dirname(yol(dosya)), { recursive: true });
+  writeFileSync(yol(dosya), typeof olcum === 'string' ? olcum : JSON.stringify(olcum));
+}
+const diskte = (dosya: string) => existsSync(yol(dosya));
+const dizinDokumu = (): string[] => {
+  const t: string[] = [];
+  const gez = (d: string, on = '') => {
+    if (!existsSync(d)) return;
+    for (const e of readdirSync(d, { withFileTypes: true })) (e.isDirectory() ? gez(path.join(d, e.name), `${on}${e.name}/`) : t.push(`${on}${e.name}`));
+  };
+  gez(DOSYALAR());
+  return t.sort();
+};
+
 function kos(
   tum: ReturnType<typeof klipler>,
-  o: { defter: Defter; diskte: Set<string>; ozetler: Record<string, string>; olcum: (anahtar: string, girdi: string) => Olcum; ret?: Parameters<typeof retListesiniUygula>[1] },
+  o: {
+    defter: Defter;
+    ozetler: Record<string, string>;
+    olcum: (anahtar: string, girdi: string) => Olcum;
+    ret?: Parameters<typeof retListesiniUygula>[1];
+    /** `--yeniden-dogrula` ile bozuk saptanan eski dosyalar. */
+    eskiBozuk?: Set<string>;
+    sentezHatasi?: Error;
+    olcHatasi?: Error;
+    zorla?: boolean;
+  },
 ) {
   const istekler: { anahtar: string; girdi: string }[] = [];
-  const son = new Map<string, string>(); // dosya → son girdi
   const { uretilebilir } = retListesiniUygula(tum, o.ret ?? {});
-  const plan = uretimPlani(uretilebilir, o.ozetler, ozetHesapla, (d) => o.diskte.has(d), { zorla: false });
+  const plan = uretimPlani(uretilebilir, o.ozetler, ozetHesapla, diskte, { zorla: o.zorla ?? false });
   const sonuc = planiCalistir({
     plan,
     butce: () => o.defter.durum(),
     sentezle: async (clip) => {
-      try {
-        await klibiUretVeDogrula({
-          clip,
-          sentezle: async (girdi) => {
-            o.defter.istekOncesi(karakterSay(girdi));
-            istekler.push({ anahtar: clip.key, girdi });
-            o.defter.kaydet(karakterSay(girdi));
-            o.diskte.add(clip.file);
-            son.set(clip.file, girdi);
-          },
-          olc: async () => o.olcum(clip.key, son.get(clip.file) ?? ''),
-          sil: async () => {
-            o.diskte.delete(clip.file);
-          },
-        });
-      } catch (e) {
-        delete o.ozetler[clip.key];
-        throw e;
-      }
+      const hedef = yol(clip.file);
+      mkdirSync(path.dirname(hedef), { recursive: true });
+      await turKlibiSentezle({
+        clip,
+        hedef,
+        synth: async (girdi, gecici) => {
+          o.defter.istekOncesi(karakterSay(girdi));
+          if (o.sentezHatasi) throw o.sentezHatasi;
+          istekler.push({ anahtar: clip.key, girdi });
+          o.defter.kaydet(karakterSay(girdi));
+          writeFileSync(gecici, JSON.stringify(o.olcum(clip.key, girdi)));
+        },
+        olc: async (g) => {
+          if (o.olcHatasi) throw o.olcHatasi;
+          return JSON.parse(readFileSync(g, 'utf8')) as Olcum;
+        },
+        eskiBozuk: o.eskiBozuk?.has(clip.key) ?? false,
+        ozetler: o.ozetler,
+      });
     },
     kaydet: async (clip, ozet) => {
       o.ozetler[clip.key] = ozet;
@@ -93,42 +120,37 @@ function kos(
   return { plan, sonuc, istekler };
 }
 
-describe('doğrulama + yeniden deneme (sahte sentez/ölçüm)', () => {
-  it('iyi klip ilk denemede kabul: tek istek, girdi klibin kendi metni', async () => {
+describe('doğrulama + yeniden deneme (sahte sentez/ölçüm, gerçek dosya kapanışı)', () => {
+  it('iyi klip ilk denemede kabul: tek istek, girdi klibin kendi metni, geçici dosya kalmaz', async () => {
     const k = klipler(['tur.hece.ka', 'ka']);
-    const diskte = new Set<string>();
-    const r = kos(k, { defter: defterKur(0), diskte, ozetler: {}, olcum: () => IYI });
+    const r = kos(k, { defter: defterKur(0), ozetler: {}, olcum: () => IYI });
     const s = await r.sonuc;
     expect(s.made).toBe(1);
     expect(s.dogrulanamayan).toEqual([]);
     expect(r.istekler).toEqual([{ anahtar: 'tur.hece.ka', girdi: 'ka' }]);
-    expect(diskte.has('hece/ka.m4a')).toBe(true);
+    expect(dizinDokumu()).toEqual(['hece/ka.m4a']);
   });
 
   it('bozuk klip → "Ka." biçimiyle yeniden denenir → kabul; ikinci koşuda yeniden üretilmez (hash gerçek metinden)', async () => {
     const k = klipler(['tur.hece.ka', 'ka'], ['tur.sozcuk.ilk', 'ilk']);
-    const diskte = new Set<string>();
     const ozetler: Record<string, string> = {};
     const defter = defterKur(0);
     const olcum = (_a: string, girdi: string) => (girdi === 'ka' || girdi === 'ilk' ? BOZUK : IYI);
-    const bir = kos(k, { defter, diskte, ozetler, olcum });
-    const s = await bir.sonuc;
-    expect(s.made).toBe(2);
+    const bir = kos(k, { defter, ozetler, olcum });
+    expect((await bir.sonuc).made).toBe(2);
     expect(bir.istekler.map((i) => i.girdi)).toEqual(['ka', 'Ka.', 'ilk', 'İlk.']);
-    expect(diskte.size).toBe(2);
-    // artımlılık: özet klibin ORİJİNAL metninden; düzeltilmiş klip "değişmiş" sayılmaz.
+    expect(dizinDokumu()).toEqual(['hece/ka.m4a', 'sozcuk/ilk.m4a']);
     expect(ozetler['tur.hece.ka']).toBe(ozetHesapla('ka', { key: 'tur.hece.ka' }));
-    const iki = kos(k, { defter, diskte, ozetler, olcum });
+    const iki = kos(k, { defter, ozetler, olcum });
     expect(iki.plan.uretilecek).toHaveLength(0);
     expect((await iki.sonuc).made).toBe(0);
     expect(iki.istekler).toHaveLength(0);
   });
 
-  it('1 + 3 denemede de geçmeyen: dosya YOK, hash yok, eksik, uyarı listesi; art arda 3 olsa da döngü durmaz', async () => {
+  it('1 + 3 denemede de geçmeyen YENİ klip: dosya YOK, hash yok, eksik, uyarı listesi; art arda 3 olsa da döngü durmaz', async () => {
     const k = klipler(['tur.hece.a1', 'ka'], ['tur.hece.a2', 'ke'], ['tur.hece.a3', 'ki'], ['tur.hece.a4', 'ko'], ['tur.hece.iyi', 'ku']);
-    const diskte = new Set<string>(['hece/a1.m4a']); // eski bozuk dosya
-    const ozetler: Record<string, string> = { 'tur.hece.a1': 'eski' };
-    const r = kos(k, { defter: defterKur(0), diskte, ozetler, olcum: (a) => (a.endsWith('iyi') ? IYI : BOZUK) });
+    const ozetler: Record<string, string> = {};
+    const r = kos(k, { defter: defterKur(0), ozetler, olcum: (a) => (a.endsWith('iyi') ? IYI : BOZUK) });
     const s = await r.sonuc;
     expect(YENIDEN_DENEME_SAYISI).toBe(3);
     expect(r.istekler.filter((i) => i.anahtar === 'tur.hece.a1')).toHaveLength(4);
@@ -136,43 +158,126 @@ describe('doğrulama + yeniden deneme (sahte sentez/ölçüm)', () => {
     expect(s.dogrulanamayan[0]).toMatch(/tur\.hece\.a1: doğrulamadan geçmedi/);
     expect(s.failures).toEqual([]);
     expect(s.durduruldu).toBe(false);
-    expect(s.made).toBe(1); // sondaki iyi klip yine üretildi
-    expect([...diskte]).toEqual(['hece/iyi.m4a']);
+    expect(s.made).toBe(1);
+    expect(dizinDokumu()).toEqual(['hece/iyi.m4a']);
     expect(Object.keys(ozetler)).toEqual(['tur.hece.iyi']);
   });
 
   it('ret listesindeki klip istek almaz; diğerleri üretilir', async () => {
     const k = klipler(['tur.sozcuk.ok', 'ok'], ['tur.sozcuk.kale', 'kale']);
-    const r = kos(k, { defter: defterKur(0), diskte: new Set(), ozetler: {}, olcum: () => IYI, ret: { 'tur.sozcuk.ok': { neden: 'oke', tarih: '2026-11-16' } } });
+    const r = kos(k, { defter: defterKur(0), ozetler: {}, olcum: () => IYI, ret: { 'tur.sozcuk.ok': { neden: 'oke', tarih: '2026-11-16' } } });
     await r.sonuc;
     expect(r.istekler.map((i) => i.anahtar)).toEqual(['tur.sozcuk.kale']);
   });
 
-  it('kota sınırı yeniden denemelerde de durdurur (dosya kalmaz, istek sınırı aşılmaz)', async () => {
+  it('kota sınırı yeniden denemelerde de durdurur; YENİ klipte dosya kalmaz, istek sınırı aşılmaz', async () => {
     const defter = defterKur(899_990, 900_000); // kalan 10: "ka"(2) + "Ka."(3) + "Ka."(3) = 8, dördüncü (3) sığmaz
-    const diskte = new Set<string>();
-    const r = kos(klipler(['tur.hece.ka', 'ka']), { defter, diskte, ozetler: {}, olcum: () => BOZUK });
+    const r = kos(klipler(['tur.hece.ka', 'ka']), { defter, ozetler: {}, olcum: () => BOZUK });
     await expect(r.sonuc).rejects.toThrow(/ÜCRETSİZ KATMAN KORUMASI/);
     expect(r.istekler).toHaveLength(3);
     expect(defter.durum().kullanilan).toBe(899_998);
-    expect(diskte.size).toBe(0);
+    expect(dizinDokumu()).toEqual([]);
   });
 
-  it('ölçüm hatası (ffmpeg yok) "geçti" sayılmaz: hata fırlar, dosya silinir', async () => {
-    const diskte = new Set<string>();
-    const k = klipler(['tur.hece.ka', 'ka']);
-    const r = kos(k, {
-      defter: defterKur(0),
-      diskte,
-      ozetler: {},
-      olcum: () => {
-        throw new Error('spawn ffmpeg ENOENT');
-      },
-    });
+  it('ölçüm hatası (ffmpeg yok) "geçti" sayılmaz: hata fırlar, yeni dosya yerleşmez', async () => {
+    const r = kos(klipler(['tur.hece.ka', 'ka']), { defter: defterKur(0), ozetler: {}, olcum: () => IYI, olcHatasi: new Error('spawn ffmpeg ENOENT') });
     const s = await r.sonuc;
     expect(s.made).toBe(0);
     expect(s.failures[0]).toMatch(/ENOENT/);
-    expect(diskte.size).toBe(0);
+    expect(dizinDokumu()).toEqual([]);
+  });
+});
+
+describe('ESKİ İYİ dosya hata anında korunur (özet de)', () => {
+  const eskiOzet = 'ESKI-OZET';
+  const kur = () => {
+    diskeKoy('hece/ka.m4a', 'ESKI-IYI-SES');
+    return { k: klipler(['tur.hece.ka', 'ka']), ozetler: { 'tur.hece.ka': eskiOzet } as Record<string, string> };
+  };
+  const eskiDurur = (ozetler: Record<string, string>) => {
+    expect(readFileSync(yol('hece/ka.m4a'), 'utf8')).toBe('ESKI-IYI-SES');
+    expect(ozetler['tur.hece.ka']).toBe(eskiOzet);
+    expect(dizinDokumu()).toEqual(['hece/ka.m4a']); // geçici dosya yok
+  };
+
+  it('(a) --zorla + kota koruması atıyor → dosya ve özet duruyor', async () => {
+    const { k, ozetler } = kur();
+    const r = kos(k, { defter: defterKur(899_999, 900_000), ozetler, olcum: () => IYI, zorla: true });
+    // çalışma başı tahmin (2 karakter > kalan 1) zaten durdurur; istek öncesi koruma da aynı yolda
+    await expect(r.sonuc).rejects.toThrow(/ÜCRETSİZ KATMAN KORUMASI/);
+    eskiDurur(ozetler);
+    // tahmin geçer, istek anında aşım: ilk deneme bozuk → yeniden denemede kota aşılır
+    const d2 = defterKur(899_992, 900_000); // kalan 8: ilk "ka"(2) sığar, sonra "Ka."(3)+"Ka."(3) = 8, dördüncü sığmaz
+    const r2 = kos(k, { defter: d2, ozetler, olcum: () => BOZUK, zorla: true });
+    await expect(r2.sonuc).rejects.toThrow(/ÜCRETSİZ KATMAN KORUMASI/);
+    eskiDurur(ozetler);
+  });
+
+  it('(b) --zorla + sentez/ağ hatası → dosya ve özet duruyor (3 art arda hata durdursa bile)', async () => {
+    const { k, ozetler } = kur();
+    const r = kos(k, { defter: defterKur(0), ozetler, olcum: () => IYI, sentezHatasi: new Error('fetch failed'), zorla: true });
+    const s = await r.sonuc;
+    expect(s.failures[0]).toMatch(/fetch failed/);
+    expect(s.dogrulanamayan).toEqual([]);
+    eskiDurur(ozetler);
+  });
+
+  it('(c) yeni çıktı ölçümden geçmiyor (1 + 3 deneme) → eski dosya ve özet duruyor, klip uyarı listesinde', async () => {
+    const { k, ozetler } = kur();
+    const r = kos(k, { defter: defterKur(0), ozetler, olcum: () => BOZUK, zorla: true });
+    const s = await r.sonuc;
+    expect(r.istekler).toHaveLength(4);
+    expect(s.dogrulanamayan).toHaveLength(1);
+    eskiDurur(ozetler);
+  });
+
+  it('ölçüm aracı yok (ffmpeg hatası) → eski dosya ve özet duruyor', async () => {
+    const { k, ozetler } = kur();
+    const r = kos(k, { defter: defterKur(0), ozetler, olcum: () => IYI, olcHatasi: new Error('ENOENT'), zorla: true });
+    expect((await r.sonuc).failures).toHaveLength(1);
+    eskiDurur(ozetler);
+  });
+
+  it('başarılı yeni çıktı eski dosyanın yerini alır (atomik), geçici kalmaz', async () => {
+    const { k, ozetler } = kur();
+    const r = kos(k, { defter: defterKur(0), ozetler, olcum: () => IYI, zorla: true });
+    expect((await r.sonuc).made).toBe(1);
+    expect(readFileSync(yol('hece/ka.m4a'), 'utf8')).toBe(JSON.stringify(IYI));
+    expect(ozetler['tur.hece.ka']).toBe(ozetHesapla('ka', { key: 'tur.hece.ka' }));
+    expect(dizinDokumu()).toEqual(['hece/ka.m4a']);
+  });
+});
+
+describe('--yeniden-dogrula ile bozuk saptanan ESKİ dosya', () => {
+  const kur = () => {
+    diskeKoy('hece/ka.m4a', BOZUK);
+    return { k: klipler(['tur.hece.ka', 'ka']), ozetler: { 'tur.hece.ka': 'ESKI' } as Record<string, string>, eskiBozuk: new Set(['tur.hece.ka']) };
+  };
+
+  it('(d) 4 deneme de doğrulamada düşerse eski bozuk dosya ve özeti silinir → eksik', async () => {
+    const { k, ozetler, eskiBozuk } = kur();
+    const r = kos(k, { defter: defterKur(0), ozetler, olcum: () => BOZUK, eskiBozuk, zorla: true });
+    const s = await r.sonuc;
+    expect(r.istekler).toHaveLength(4);
+    expect(s.dogrulanamayan).toHaveLength(1);
+    expect(dizinDokumu()).toEqual([]);
+    expect('tur.hece.ka' in ozetler).toBe(false);
+  });
+
+  it('kota/ağ hatasında bozuk eski dosya BİLE silinmez (klip karara bağlanmadı; sonraki koşu yeniden dener)', async () => {
+    const { k, ozetler, eskiBozuk } = kur();
+    const r = kos(k, { defter: defterKur(0), ozetler, olcum: () => IYI, eskiBozuk, sentezHatasi: new Error('fetch failed'), zorla: true });
+    await r.sonuc;
+    expect(dizinDokumu()).toEqual(['hece/ka.m4a']);
+    expect(ozetler['tur.hece.ka']).toBe('ESKI');
+  });
+
+  it('yeniden denemede düzelirse yeni dosya eskinin yerine geçer', async () => {
+    const { k, ozetler, eskiBozuk } = kur();
+    const r = kos(k, { defter: defterKur(0), ozetler, olcum: (_a, g) => (g === 'ka' ? BOZUK : IYI), eskiBozuk, zorla: true });
+    expect((await r.sonuc).made).toBe(1);
+    expect(JSON.parse(readFileSync(yol('hece/ka.m4a'), 'utf8'))).toEqual(IYI);
+    expect(dizinDokumu()).toEqual(['hece/ka.m4a']);
   });
 });
 
@@ -198,6 +303,9 @@ describe('eşikler ve girdi dönüşümü', () => {
     expect(yenidenDenemeMetni('Ali geldi.')).toBe('Ali geldi.');
     expect(yenidenDenemeMetni('elma var mı?')).toBe('Elma var mı?');
     expect(yenidenDenemeMetni('çiçek')).toBe('Çiçek.');
+    expect(yenidenDenemeMetni('ev, ')).toBe('Ev,'); // virgül/parantez gibi bitişe nokta eklenmez
+    expect(yenidenDenemeMetni('(ev)')).toBe('(ev)');
+    expect(yenidenDenemeMetni('a3')).toBe('A3.');
   });
 
   it('volumedetect ayrıştırma; max_volume yoksa hata', () => {

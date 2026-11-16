@@ -10,6 +10,7 @@
  * fırlatır (ölçülemeyen klip "geçti" sayılmaz).
  */
 import { execFile } from 'node:child_process';
+import { rename, rm } from 'node:fs/promises';
 import { promisify } from 'node:util';
 import type { Clip } from './klipler.ts';
 
@@ -51,7 +52,9 @@ export function olcumSorunu(anahtar: string, o: Olcum): string | null {
 }
 
 /**
- * Yeniden deneme girdisi: yalnız ilk harf büyük (tr-TR: i→İ, ı→I) + noktalama yoksa sonuna nokta.
+ * Yeniden deneme girdisi: yalnız ilk harf büyük (tr-TR: i→İ, ı→I) + metin harf/rakamla bitiyorsa sonuna nokta.
+ * Başka bitişte (`.`, `!`, `?`, `…`, `,`, `)`, `;` vb.) nokta EKLENMEZ: "ka,." gibi bozuk girdi üretmemek için ve
+ * metin zaten bir noktalamayla bittiği için (Chirp'e "cümle sonu" ipucu veriyor).
  * YALNIZ sentez girdisidir; klip metni, `klipler.json` ve özet (hash) bundan etkilenmez (bkz. generate-audio).
  */
 export function yenidenDenemeMetni(metin: string): string {
@@ -59,7 +62,7 @@ export function yenidenDenemeMetni(metin: string): string {
   if (t === '') return t;
   const [ilk, ...geri] = [...t];
   const buyuk = ilk.toLocaleUpperCase('tr-TR') + geri.join('');
-  return /[.!?…]$/.test(buyuk) ? buyuk : `${buyuk}.`;
+  return /[\p{L}\p{N}]$/u.test(buyuk) ? `${buyuk}.` : buyuk;
 }
 
 /** 3 yeniden denemede de geçmeyen klip. `name` döngüde (uretimDongusu) kota/altyapı hatasından ayırt edilir. */
@@ -72,37 +75,93 @@ export class DogrulamaBasarisiz extends Error {
 
 export interface KlipUretimi {
   readonly clip: Clip;
-  /** Verilen girdi metniyle sentezleyip klibin dosyasına yazar (her çağrı bir istektir). */
-  readonly sentezle: (girdi: string) => Promise<void>;
-  readonly olc: () => Promise<Olcum>;
-  /** Klibin dosyasını siler (yoksa sessiz). */
-  readonly sil: () => Promise<void>;
+  /** Yeni sentezin yazılacağı GEÇİCİ yol (uzantı .m4a: ffprobe/ffmpeg biçimi tanır). Klibin gerçek dosyası değildir. */
+  readonly gecici: string;
+  /** Verilen girdi metniyle sentezleyip `yol`a yazar (her çağrı bir istektir). */
+  readonly sentezle: (girdi: string, yol: string) => Promise<void>;
+  readonly olc: (yol: string) => Promise<Olcum>;
+  /** Geçici dosyayı klibin gerçek yerine atomik taşır (yalnız doğrulamadan geçen çıktı). */
+  readonly yerlestir: (gecici: string) => Promise<void>;
+  /** Yolu siler (yoksa sessiz). */
+  readonly sil: (yol: string) => Promise<void>;
+  /**
+   * Diskteki ESKİ dosya `--yeniden-dogrula` ölçümüyle bozuk saptandıysa verilir: yalnız tüm denemeler doğrulamada
+   * başarısız olunca silinir. Verilmezse eski dosyaya hiçbir koşulda dokunulmaz.
+   */
+  readonly eskiBozuguSil?: () => Promise<void>;
   /** Geçmeyen her deneme sonrası (günlük için). */
   readonly gecmedi?: (deneme: number, neden: string) => void;
 }
 
 /**
- * Üret → ölç → geçmezse "Ka." biçimiyle en çok 3 kez yeniden dene. Başarıda dosya kalır (kabul edilen deneme sayısı
- * döner). Başarısızlıkta (doğrulama, kota, ölçüm hatası, sentez hatası) dosya SİLİNİR: bozuk dosya diskte kalırsa
- * `durum: "var"` olur ve çocuğa bozuk ses çalınır. Başlangıçta da eski (bozuk) dosya silinir.
+ * Üret (GEÇİCİ yola) → ölç → geçerse atomik yerine koy; geçmezse "Ka." biçimiyle en çok 3 kez yeniden dene.
+ * ESKİ DOSYA KORUNUR: sentez, ölçüm, kota ya da ağ hatasında ve doğrulama başarısızlığında yalnız geçici dosya silinir;
+ * iyi klip bir koşunun yarıda kesilmesiyle kaybolmaz (yeniden üretim kota harcar). İstisna: eski dosya yeniden
+ * doğrulamada ZATEN bozuk saptanmışsa (`eskiBozuguSil`) ve 1 + 3 deneme doğrulamada başarısız olduysa silinir — bozuk
+ * dosya diskte kalırsa `durum: "var"` olur ve çocuğa bozuk ses çalar; doğru durum `eksik`. Kota/ağ/altyapı hatasında
+ * o durumda bile SİLİNMEZ: klip henüz karara bağlanmadı, sonraki koşu yeniden dener. Geçici dosya her yolda silinir.
+ * Kabul edilen deneme numarasını döner.
  */
 export async function klibiUretVeDogrula(g: KlipUretimi): Promise<number> {
   const sorunlar: string[] = [];
-  await g.sil();
   try {
     for (let deneme = 0; deneme <= YENIDEN_DENEME_SAYISI; deneme++) {
-      await g.sentezle(deneme === 0 ? g.clip.text : yenidenDenemeMetni(g.clip.text));
-      const neden = olcumSorunu(g.clip.key, await g.olc());
-      if (neden === null) return deneme + 1;
+      await g.sentezle(deneme === 0 ? g.clip.text : yenidenDenemeMetni(g.clip.text), g.gecici);
+      const neden = olcumSorunu(g.clip.key, await g.olc(g.gecici));
+      if (neden === null) {
+        await g.yerlestir(g.gecici);
+        return deneme + 1;
+      }
       sorunlar.push(neden);
       g.gecmedi?.(deneme + 1, neden);
     }
+  } finally {
+    await g.sil(g.gecici);
+  }
+  if (g.eskiBozuguSil) await g.eskiBozuguSil();
+  throw new DogrulamaBasarisiz(g.clip.key, sorunlar);
+}
+
+export interface TurSentezGirdisi {
+  readonly clip: Clip;
+  /** Klibin gerçek dosya yolu. */
+  readonly hedef: string;
+  readonly synth: (girdi: string, yol: string) => Promise<void>;
+  readonly olc: OlcumFn;
+  /** `--yeniden-dogrula` ile bozuk saptanan klip mi (eski dosya yalnız bu durumda silinebilir). */
+  readonly eskiBozuk: boolean;
+  /** Özet kaydı (bellekte): yalnız eski dosya silinince bu klibin özeti de silinir. */
+  readonly ozetler: Record<string, string>;
+  readonly gecmedi?: (deneme: number, neden: string) => void;
+}
+
+/**
+ * `generate-audio.ts` Türkçe `sentezle` kapanışı (testlenebilsin diye çıkarıldı; gerçek dosya sistemiyle çalışır).
+ * Başarıda planiCalistir ardından özeti yazar (`kaydet`); burada özete yalnız dosya silinirse dokunulur
+ * (özet var + dosya yok tutarsızlığı kalmasın). Diğer hatalarda eski dosya VE özet olduğu gibi kalır.
+ */
+export async function turKlibiSentezle(g: TurSentezGirdisi): Promise<number> {
+  try {
+    return await klibiUretVeDogrula({
+      clip: g.clip,
+      gecici: g.hedef.replace(/\.m4a$/, '.yeni.m4a'),
+      sentezle: g.synth,
+      olc: g.olc,
+      yerlestir: (gecici) => rename(gecici, g.hedef),
+      sil: (yol) => rm(yol, { force: true }),
+      eskiBozuguSil: g.eskiBozuk
+        ? async () => {
+            await rm(g.hedef, { force: true });
+            delete g.ozetler[g.clip.key];
+          }
+        : undefined,
+      gecmedi: g.gecmedi,
+    });
   } catch (err) {
-    await g.sil();
+    // Geçici yol başka bir hatayla (ör. yerleştirme) arkada kalmasın.
+    await rm(g.hedef.replace(/\.m4a$/, '.yeni.m4a'), { force: true });
     throw err;
   }
-  await g.sil();
-  throw new DogrulamaBasarisiz(g.clip.key, sorunlar);
 }
 
 /** Diskteki mevcut klipleri İSTEK ATMADAN ölçer; geçmeyenleri döner (`--yeniden-dogrula`). Ölçüm hatası fırlar. */

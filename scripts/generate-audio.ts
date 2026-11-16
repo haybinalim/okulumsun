@@ -95,7 +95,7 @@ import {
   retListesiniUygula,
   turKlipleriniAyir,
 } from './ses/turKlipleri.ts';
-import { ESIKLER, ffmpegOlcum, klibiUretVeDogrula, mevcutlariDogrula, YENIDEN_DENEME_SAYISI } from './ses/turDogrulama.ts';
+import { ESIKLER, ffmpegOlcum, mevcutlariDogrula, turKlibiSentezle, YENIDEN_DENEME_SAYISI } from './ses/turDogrulama.ts';
 import { klipManifestiniYaz } from './tur/klip-manifesti.ts';
 
 const exec = promisify(execFile);
@@ -260,9 +260,12 @@ async function synthPiper(text: string, out: string): Promise<void> {
 /** WAV baytlarını 24 kHz mono AAC m4a'ya çevirir (diğer sağlayıcılarla aynı biçim). */
 async function wavdanM4a(wav: Buffer, out: string): Promise<void> {
   const tmp = `${out}.wav`;
-  await writeFile(tmp, wav);
-  await exec('ffmpeg', ['-y', '-loglevel', 'error', '-i', tmp, '-ac', '1', '-ar', '24000', '-c:a', 'aac', '-b:a', '40k', out]);
-  await rm(tmp, { force: true });
+  try {
+    await writeFile(tmp, wav);
+    await exec('ffmpeg', ['-y', '-loglevel', 'error', '-i', tmp, '-ac', '1', '-ar', '24000', '-c:a', 'aac', '-b:a', '40k', out]);
+  } finally {
+    await rm(tmp, { force: true }); // ffmpeg düşse de ara WAV arkada kalmaz
+  }
 }
 
 /** Chirp 3 HD kotası 200 istek/dk/proje → istekler arası ≥350 ms. */
@@ -452,6 +455,8 @@ async function main(): Promise<void> {
   // Ölçüm: tek örnek; ffprobe/ffmpeg yoksa hata verir ("ölçülemedi" asla "geçti" sayılmaz).
   const olc = ffmpegOlcum();
   let planKlipleri: readonly Clip[] = uretilebilir;
+  /** `--yeniden-dogrula` ile ölçümde bozuk saptanan mevcut dosyalar (yalnız bunlar başarısızlıkta silinebilir). */
+  const eskiBozuklar = new Set<string>();
   if (TUR) {
     console.log(
       `doğrulama eşikleri: süre ≥ ${ESIKLER.ENAZ_SURE_SN} sn · max_volume ≥ ${ESIKLER.ENAZ_MAX_SES_DB} dB · hece/sözcük ≤ ${ESIKLER.HECE_SOZCUK_ENCOK_SURE_SN} sn · ` +
@@ -473,7 +478,10 @@ async function main(): Promise<void> {
     const gecmeyen = new Set(r.gecmeyen.map((g) => g.anahtar));
     planKlipleri = uretilebilir.filter((c) => gecmeyen.has(c.key));
     // Özeti silinen klip "değişmiş" sayılır → planda yeniden üretilir (yalnız bunlar).
-    for (const k of gecmeyen) delete hashes[k];
+    for (const k of gecmeyen) {
+      eskiBozuklar.add(k);
+      delete hashes[k];
+    }
   }
 
   // Yalnız özeti değişen / dosyası eksik klipler (özete sağlayıcı + model kimliği girer).
@@ -527,21 +535,18 @@ async function main(): Promise<void> {
       const out = path.join(OUT_AUDIO, clip.file);
       await mkdir(path.dirname(out), { recursive: true });
       if (!TUR) return synth(provider, clip.text, out, klipSesi(clip.key));
-      // Türkçe: üret → ölç → geçmezse "Ka." biçimiyle yeniden dene; başarısızlıkta dosya silinir. Girdi biçimi YALNIZ
-      // sentezde değişir: özet (hash) klibin gerçek metninden hesaplanır → düzeltilmiş klip sonraki koşuda "değişmiş" sayılmaz.
-      const ses = klipSesi(clip.key);
-      try {
-        await klibiUretVeDogrula({
-          clip,
-          sentezle: (girdi) => synth(provider, girdi, out, ses),
-          olc: () => olc(out),
-          sil: () => rm(out, { force: true }),
-          gecmedi: (n, neden) => console.warn(`  doğrulama ${n}. deneme geçmedi: ${clip.key} — ${neden}`),
-        });
-      } catch (err) {
-        delete hashes[clip.key]; // dosya silindi → eski özet de geçersiz (özet var + dosya yok tutarsızlığı kalmasın)
-        throw err;
-      }
+      // Türkçe: GEÇİCİ yola üret → ölç → geçerse atomik yerine koy; geçmezse "Ka." biçimiyle yeniden dene (turDogrulama.ts).
+      // Hata/başarısızlıkta eski dosya ve özet korunur (yalnız --yeniden-dogrula ile bozuk saptanmış klip, tüm denemeler
+      // doğrulamada düşerse silinir). Girdi biçimi YALNIZ sentezde değişir: özet klibin gerçek metninden hesaplanır.
+      await turKlibiSentezle({
+        clip,
+        hedef: out,
+        synth: (girdi, yol) => synth(provider, girdi, yol, klipSesi(clip.key)),
+        olc,
+        eskiBozuk: eskiBozuklar.has(clip.key),
+        ozetler: hashes,
+        gecmedi: (n, neden) => console.warn(`  doğrulama ${n}. deneme geçmedi: ${clip.key} — ${neden}`),
+      });
     },
     // Her klipten sonra: kesilen çalışma kaldığı yerden sürer.
     kaydet: async (clip, hash) => {
