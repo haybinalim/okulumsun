@@ -30,6 +30,9 @@ manifesti. `public/` altında değildir; yalnız `VITE_DERS_TUR=1` derlemesinde 
   `ses/.hashes.json`, bkz. `docs/ses/SES_KAYNAKLARI.md` §14). Dosyası olan klip `durum: "var"` + `dosya` taşır
   (diskten türetilir); olmayan `eksik`. Arayüz ses çalıcısı henüz bağlı değil: "Ses yok" gösterir. `--yayin` eksik
   klipte kırmızıdır. Tek ünsüz klibi yok (D-11); üretim betiği de reddeder.
+  Üretilen klip ölçülür (süre, ses seviyesi); geçmeyen "Ka." biçimiyle yeniden denenir, yine geçmezse dosya yazılmaz
+  ve klip `eksik` kalır. `ses/reddedilen.json` kulakla reddedilen klipleri tutar (üretilmez, durum `eksik`, yayına girmez);
+  bkz. `docs/ses/SES_KAYNAKLARI.md` §14.
 - `veli-karti.json` (Adım 71): eve link ekranında ve eve giden bağlantının açılışında veliye gösterilen kısa metin
   (ses esaslı çalışma, harf adı yerine ses, ünsüzü tek başına söyletmeme, kalem tutuşu, sol el, kısa ve süresiz).
   Katı ayrıştırıcı `src/content/dersler/tur/veliKarti.ts` (altı madde birer kez). Taslak: `teyit: { durum: "bekliyor" }`,
