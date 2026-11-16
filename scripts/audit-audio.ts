@@ -25,7 +25,7 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { klipleriTopla } from './ses/klipler.ts';
 import { kokenDenetle, ozetDosyasiniOku, sesKaynagiDosyasiniAyir } from './ses/sesKaynagi.ts';
-import { TUR_SES_DIZINI, turKlipDosyasi, turKlipleriniAyir } from './ses/turKlipleri.ts';
+import { TUR_SES_DIZINI, retListesiniOku, turKlipDosyasi, turKlipleriniAyir } from './ses/turKlipleri.ts';
 
 const exec = promisify(execFile);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -140,8 +140,21 @@ async function turDenetle(problems: string[], durationDiagnostics: string[]): Pr
     }
   }
   const bilinen = new Set(sesli.map((k) => turKlipDosyasi(k.anahtar)));
+  // Ret listesi (kulakla reddedilen): üretilmez, durum eksik; manifestte `var` kalmışsa ya da anahtar bilinmiyorsa tutarsızdır.
+  const ret = retListesiniOku(ROOT);
+  const retDosyalari = new Set(Object.keys(ret).map(turKlipDosyasi));
+  for (const k of Object.keys(ret)) {
+    if (!metin.has(k)) problems.push(`TÜRKÇE REDDEDİLEN ${k} — reddedilen.json'da ama klipler.json'da yok`);
+    if (sesli.some((s) => s.anahtar === k)) problems.push(`TÜRKÇE REDDEDİLEN ${k} — reddedilmiş ama manifestte "var" (\`npm run tur:klip\`)`);
+  }
   const yetim = (await walk(dizin)).filter((f) => !bilinen.has(f));
-  for (const y of yetim.slice(0, 10)) problems.push(`TÜRKÇE YETİM ${y} (manifestte var değil; \`npm run tur:klip\`)`);
+  for (const y of yetim.slice(0, 10)) {
+    problems.push(
+      retDosyalari.has(y)
+        ? `TÜRKÇE REDDEDİLEN DOSYA ${y} (kulakla reddedilmiş; durum eksik ama dosya diskte ve yayına girer — silin)`
+        : `TÜRKÇE YETİM ${y} (manifestte var değil; \`npm run tur:klip\`)`,
+    );
+  }
   if (sesli.length > 0) {
     const { aktif, anahtarSesleri } = sesKaynagiDosyasiniAyir(JSON.parse(await readFile(SES_KAYNAGI, 'utf8')) as Record<string, unknown>);
     const hashYolu = path.join(dizin, '.hashes.json');
@@ -150,7 +163,7 @@ async function turDenetle(problems: string[], durationDiagnostics: string[]): Pr
     for (const k of koken.ozetsiz) problems.push(`TÜRKÇE ÖZETSİZ ${k} (ders-verisi/tur/ses/.hashes.json'da yok)`);
     for (const k of koken.eslesmeyen) problems.push(`TÜRKÇE KÖKEN ${k} — özet klibin kaynağıyla eşleşmiyor (metin/ses değişti: \`npm run audio -- --ders tur\`)`);
   }
-  console.log(`Türkçe: ${sesli.length}/${ham.klipler.length} klip sesli · eksik ${ham.klipler.length - sesli.length} · ${(bayt / 1048576).toFixed(2)} MB`);
+  console.log(`Türkçe: ${sesli.length}/${ham.klipler.length} klip sesli · eksik ${ham.klipler.length - sesli.length} · reddedildi ${Object.keys(ret).length} · ${(bayt / 1048576).toFixed(2)} MB`);
 }
 
 async function main(): Promise<void> {

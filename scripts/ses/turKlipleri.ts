@@ -9,8 +9,9 @@
  *
  * D-11 KAPISI: tek ünsüz (ya da ünlüsüz) metinli klip üretim planına GİRMEZ; hata fırlatılır, hiç istek gitmez.
  */
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
+import { z } from 'zod';
 import { harfMi, unluMu, yalnizUnsuzMu } from '../../src/content/dersler/tur/alfabe';
 import type { Clip } from './klipler.ts';
 
@@ -62,7 +63,42 @@ export function turKlipleriniAyir(ham: unknown): readonly Clip[] {
   return sonuc;
 }
 
-/** Klip dosyası diskte var mı (`tur:klip` durumu buradan türetir; elle düzenleme yok). */
+export const TUR_RET_LISTESI = `${TUR_SES_DIZINI}/reddedilen.json`;
+
+/**
+ * Kulakla reddedilen klipler (ölçümün yakalayamayacağı hatalar: ör. "ok" → "oke", fazladan ünlü).
+ * Biçim: `{ "tur.sozcuk.ok": { "neden": "...", "tarih": "2026-11-16" } }`. Bu listedeki klip ÜRETİLMEZ ve dosyası
+ * diskte olsa bile `durum` `eksik` türetilir (çalıcı yalnız `var` çalar → çalmaz).
+ */
+export const RetListesiSemasi = z.record(
+  z.string().regex(ANAHTAR, 'geçersiz Türkçe klip anahtarı'),
+  z.object({ neden: z.string().trim().min(1), tarih: z.string().regex(/^\d{4}-\d{2}-\d{2}$/) }).strict(),
+);
+export type RetListesi = z.infer<typeof RetListesiSemasi>;
+
+/** Ham JSON'u doğrular; bozuk biçim hata verir (sessizce yok sayılırsa reddedilen klip yeniden üretilirdi). */
+export function retListesiniAyir(ham: unknown): RetListesi {
+  const s = RetListesiSemasi.safeParse(ham);
+  if (!s.success) throw new Error(`${TUR_RET_LISTESI}: ${s.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ')}`);
+  return s.data;
+}
+
+/** Depo köküne göre ret listesi; dosya yoksa boş (liste isteğe bağlı), bozuksa hata. */
+export function retListesiniOku(kok: string): RetListesi {
+  const yol = path.join(kok, TUR_RET_LISTESI);
+  return existsSync(yol) ? retListesiniAyir(JSON.parse(readFileSync(yol, 'utf8')) as unknown) : {};
+}
+
+/** Reddedilen klipleri üretim listesinden ayırır (reddedilene istek atılmaz). */
+export function retListesiniUygula(klipler: readonly Clip[], ret: RetListesi): { readonly uretilebilir: readonly Clip[]; readonly reddedilen: readonly Clip[] } {
+  return { uretilebilir: klipler.filter((c) => !(c.key in ret)), reddedilen: klipler.filter((c) => c.key in ret) };
+}
+
+/**
+ * Klip dosyası diskte var mı (`tur:klip` durumu buradan türetir; elle düzenleme yok). Reddedilen klibin dosyası
+ * diskte olsa bile YOK sayılır → `durum: "eksik"`; `validate`, `tur:klip` ve çalıcı aynı kararı görür.
+ */
 export function turKlipDiskteVarMi(kok: string): (dosya: string) => boolean {
-  return (dosya) => existsSync(path.join(kok, TUR_SES_DIZINI, dosya));
+  const reddedilenDosyalar = new Set(Object.keys(retListesiniOku(kok)).map(turKlipDosyasi));
+  return (dosya) => !reddedilenDosyalar.has(dosya) && existsSync(path.join(kok, TUR_SES_DIZINI, dosya));
 }

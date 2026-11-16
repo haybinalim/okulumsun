@@ -23,6 +23,11 @@ export interface DongaSonucu {
   readonly made: number;
   readonly failures: readonly string[];
   readonly durduruldu: boolean;
+  /**
+   * Çıktı doğrulamasından geçmeyen (Türkçe, `DogrulamaBasarisiz`) klipler: altyapı hatası DEĞİL, bu yüzden `failures`a
+   * girmez ve art arda 3 hata sayacını artırmaz. Matematikte her zaman boştur.
+   */
+  readonly dogrulanamayan: readonly string[];
 }
 
 export async function planiCalistir(g: DongaGirdisi): Promise<DongaSonucu> {
@@ -34,6 +39,7 @@ export async function planiCalistir(g: DongaGirdisi): Promise<DongaSonucu> {
   let ardisikHata = 0;
   let durduruldu = false;
   const failures: string[] = [];
+  const dogrulanamayan: string[] = [];
   for (const { clip, ozet } of plan.uretilecek) {
     try {
       await g.sentezle(clip);
@@ -47,6 +53,10 @@ export async function planiCalistir(g: DongaGirdisi): Promise<DongaSonucu> {
         await g.asimdaKaydet();
         throw err;
       }
+      if ((err as Error).name === 'DogrulamaBasarisiz') {
+        dogrulanamayan.push((err as Error).message.split('\n')[0]);
+        continue;
+      }
       failures.push(`${clip.key}: ${(err as Error).message.split('\n')[0]}`);
       // Kota/faturalandırma gibi kalıcı hatada 287 kez denemek yerine dur.
       if (++ardisikHata >= 3) {
@@ -55,5 +65,5 @@ export async function planiCalistir(g: DongaGirdisi): Promise<DongaSonucu> {
       }
     }
   }
-  return { made, failures, durduruldu };
+  return { made, failures, durduruldu, dogrulanamayan };
 }

@@ -166,6 +166,7 @@ describe('ders verisi yayını ve bütçe', () => {
     const d = dersVerisiDosyalari(KOK);
     expect(d).toContain('manifest.json');
     expect(d).not.toContain('README.md');
+    expect(d).not.toContain('ses/reddedilen.json');
   });
 
   const manifest: DersVeriManifesti = {

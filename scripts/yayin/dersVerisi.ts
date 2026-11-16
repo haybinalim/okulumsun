@@ -4,7 +4,7 @@
  * Türkçe ders verisi (içerik JSON'u; ileride statik SVG, ses manifesti) depoda `ders-verisi/tur/` altında durur,
  * `public/` altında DEĞİL — `public/` her derlemeye ve precache'e kopyalanırdı. Bu eklenti veriyi YALNIZ
  * `VITE_DERS_TUR=1` derlemesinde `dist/tur/` altına yayar; geliştirme sunucusunda aynı `/tur/` yolundan sunar.
- * Bayrak kapalıyken hiçbir şey yapmaz: üretim `dist/` bayt bayt aynı kalır. `README.md` yayılmaz.
+ * Bayrak kapalıyken hiçbir şey yapmaz: üretim `dist/` bayt bayt aynı kalır. `README.md` ve `ses/reddedilen.json` (üretim notu) yayılmaz.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
@@ -20,7 +20,7 @@ export function dersVerisiDosyalari(kok: string): string[] {
   const sonuc: string[] = [];
   const gez = (alt: string): void => {
     for (const ad of readdirSync(path.join(dizin, alt)).sort()) {
-      if (ad.startsWith('.') || ad === 'README.md') continue;
+      if (ad.startsWith('.') || ad === 'README.md' || ad === 'reddedilen.json') continue; // reddedilen.json: üretim notu, yayına girmez
       const goreli = alt ? `${alt}/${ad}` : ad;
       if (statSync(path.join(dizin, goreli)).isDirectory()) gez(goreli);
       else sonuc.push(goreli);

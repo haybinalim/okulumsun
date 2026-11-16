@@ -49,7 +49,13 @@
  *   npm run audio -- --en-cok 60        (en çok 60 klip üret ve dur; özetler her klipten sonra
  *                                        yazıldığı için kesilen çalışma kaldığı yerden sürer)
  *   npm run audio -- --ders tur [--kuru|--en-cok N|--zorla]
+ *       Türkçe klipler üretimden sonra ÖLÇÜLÜR (süre, max_volume; scripts/ses/turDogrulama.ts). Geçmeyen klip
+ *       "Ka." biçimiyle en çok 3 kez yeniden denenir; yine geçmezse dosya YAZILMAZ ve klip eksik kalır (UYARI).
+ *       `ders-verisi/tur/ses/reddedilen.json` (kulakla reddedilen klipler) üretilmez.
  *                                       (Türkçe Okuma Yazma klipleri: ders-verisi/tur/ses/; aynı defter ve plan)
+ *   npm run audio -- --ders tur --yeniden-dogrula [--kuru]
+ *                                       (diskteki MEVCUT Türkçe klipleri istek atmadan ölçer, geçmeyenleri listeler;
+ *                                        --kuru yalnız listeler, bayrak tek başına geçmeyenleri yeniden üretir)
  *   npm run audio -- --ornek [--ses Kore,Aoede,Puck]
  *                                       (KG-04: ses seçimi için ses başına 10 örnek +
  *                                        "on yedi elma" birleştirme örneği; çıktı
@@ -81,7 +87,15 @@ import {
 import { Defter, defterYolu, guvenliSinir, karakterSay, onTahmin, UCRETSIZ_AYLIK_KARAKTER } from './ses/ucretsizKatman.ts';
 import { uretimPlani } from './ses/uretimPlani.ts';
 import { planiCalistir } from './ses/uretimDongusu.ts';
-import { TUR_KLIP_MANIFESTI, TUR_SES_DIZINI, turKlipleriniAyir } from './ses/turKlipleri.ts';
+import {
+  TUR_KLIP_MANIFESTI,
+  TUR_RET_LISTESI,
+  TUR_SES_DIZINI,
+  retListesiniOku,
+  retListesiniUygula,
+  turKlipleriniAyir,
+} from './ses/turKlipleri.ts';
+import { ESIKLER, ffmpegOlcum, klibiUretVeDogrula, mevcutlariDogrula, YENIDEN_DENEME_SAYISI } from './ses/turDogrulama.ts';
 import { klipManifestiniYaz } from './tur/klip-manifesti.ts';
 
 const exec = promisify(execFile);
@@ -107,6 +121,8 @@ const ORNEK = process.argv.includes('--ornek');
  */
 const DERS = argDegeri('--ders');
 const TUR = DERS === 'tur';
+/** `--yeniden-dogrula` (yalnız `--ders tur`): mevcut klipleri ölç, yalnız geçmeyenleri yeniden üret. */
+const YENIDEN_DOGRULA = process.argv.includes('--yeniden-dogrula');
 const OUT_AUDIO = path.join(ROOT, TUR ? TUR_SES_DIZINI : PROTOTIP ? 'public/audio-prototip' : 'public/audio');
 const OUT_ORNEK = path.join(ROOT, 'public/audio-prototip/ornek');
 
@@ -396,6 +412,7 @@ async function main(): Promise<void> {
   vekilUyarisi();
   if (DERS !== undefined && DERS !== 'tur') throw new Error(`Bilinmeyen --ders değeri: "${DERS}" (yalnız "tur"; matematik için bayraksız).`);
   if (TUR && (PROTOTIP || ORNEK)) throw new Error('--ders tur, --prototip ve --ornek ile birlikte kullanılamaz.');
+  if (YENIDEN_DOGRULA && !TUR) throw new Error('--yeniden-dogrula yalnız --ders tur ile kullanılır.');
   if (ORNEK) return ornekUret();
   const { kaynak, anahtarSesleri: tanimliAnahtarSesleri, provider } = await aktifKaynagiOku();
   const anahtarSesleri = provider === 'google' ? tanimliAnahtarSesleri : [];
@@ -405,9 +422,17 @@ async function main(): Promise<void> {
   };
   // Model kimlikleri baştan doğrulanır (yanlış ses adı istek atılmadan yakalanır).
   if (provider === 'google') for (const a of anahtarSesleri) modelKimligindenSes(a.modelKimligi);
-  const clips = TUR
+  const tumKlipler = TUR
     ? turKlipleriniAyir(JSON.parse(await readFile(path.join(ROOT, TUR_KLIP_MANIFESTI), 'utf8')) as unknown)
     : klipleriTopla(JSON.parse(await readFile(CONTENT, 'utf8')) as Record<string, unknown>);
+  // Ret listesi (kulakla reddedilen): üretilmez. Listede olup manifestte olmayan anahtar yazım hatasıdır → hata.
+  const ret = TUR ? retListesiniOku(ROOT) : {};
+  const bilinenAnahtarlar = new Set(tumKlipler.map((c) => c.key));
+  for (const k of Object.keys(ret)) {
+    if (!bilinenAnahtarlar.has(k)) throw new Error(`${TUR_RET_LISTESI}: "${k}" klipler.json'da yok.`);
+  }
+  const { uretilebilir, reddedilen } = retListesiniUygula(tumKlipler, ret);
+  const clips = tumKlipler;
   console.log(
     `${TUR ? 'Türkçe ' : ''}${clips.length} klip · kaynak: ${kaynak.modelKimligi}${PROTOTIP ? ' · --prototip' : ''}${TUR ? ' · --ders tur' : ''}${FORCE ? ' · --zorla' : ''}${KURU ? ' · --kuru' : ''}`,
   );
@@ -424,9 +449,36 @@ async function main(): Promise<void> {
   const gecerli = new Set(clips.map((c) => c.key));
   for (const k of Object.keys(hashes)) if (!gecerli.has(k)) delete hashes[k];
 
+  // Ölçüm: tek örnek; ffprobe/ffmpeg yoksa hata verir ("ölçülemedi" asla "geçti" sayılmaz).
+  const olc = ffmpegOlcum();
+  let planKlipleri: readonly Clip[] = uretilebilir;
+  if (TUR) {
+    console.log(
+      `doğrulama eşikleri: süre ≥ ${ESIKLER.ENAZ_SURE_SN} sn · max_volume ≥ ${ESIKLER.ENAZ_MAX_SES_DB} dB · hece/sözcük ≤ ${ESIKLER.HECE_SOZCUK_ENCOK_SURE_SN} sn · ` +
+        `geçmeyene en çok ${YENIDEN_DENEME_SAYISI} yeniden deneme`,
+    );
+    if (reddedilen.length) {
+      console.log(`reddedilen (üretilmez): ${reddedilen.length} klip — ${reddedilen.map((c) => c.key).join(', ')}`);
+      for (const c of reddedilen) {
+        if (existsSync(path.join(OUT_AUDIO, c.file))) {
+          console.warn(`UYARI: reddedilen klibin dosyası diskte: ${path.join(TUR_SES_DIZINI, c.file)} — durum eksik sayılır, dosyayı silin.`);
+        }
+      }
+    }
+  }
+  if (YENIDEN_DOGRULA) {
+    const r = await mevcutlariDogrula(uretilebilir, (d) => existsSync(path.join(OUT_AUDIO, d)), (d) => path.join(OUT_AUDIO, d), olc);
+    console.log(`yeniden doğrulama: ${r.olculen} mevcut klip ölçüldü (istek yok) · doğrulamadan geçmeyen ${r.gecmeyen.length}`);
+    for (const g of r.gecmeyen) console.log(`  ${g.anahtar}: ${g.neden}`);
+    const gecmeyen = new Set(r.gecmeyen.map((g) => g.anahtar));
+    planKlipleri = uretilebilir.filter((c) => gecmeyen.has(c.key));
+    // Özeti silinen klip "değişmiş" sayılır → planda yeniden üretilir (yalnız bunlar).
+    for (const k of gecmeyen) delete hashes[k];
+  }
+
   // Yalnız özeti değişen / dosyası eksik klipler (özete sağlayıcı + model kimliği girer).
   const plan = uretimPlani(
-    clips,
+    planKlipleri,
     hashes,
     (metin, clip) => anahtarliKlipOzeti(kaynak, anahtarSesleri, clip.key, metin),
     (dosya) => existsSync(path.join(OUT_AUDIO, dosya)),
@@ -474,7 +526,22 @@ async function main(): Promise<void> {
     sentezle: async (clip) => {
       const out = path.join(OUT_AUDIO, clip.file);
       await mkdir(path.dirname(out), { recursive: true });
-      await synth(provider, clip.text, out, klipSesi(clip.key));
+      if (!TUR) return synth(provider, clip.text, out, klipSesi(clip.key));
+      // Türkçe: üret → ölç → geçmezse "Ka." biçimiyle yeniden dene; başarısızlıkta dosya silinir. Girdi biçimi YALNIZ
+      // sentezde değişir: özet (hash) klibin gerçek metninden hesaplanır → düzeltilmiş klip sonraki koşuda "değişmiş" sayılmaz.
+      const ses = klipSesi(clip.key);
+      try {
+        await klibiUretVeDogrula({
+          clip,
+          sentezle: (girdi) => synth(provider, girdi, out, ses),
+          olc: () => olc(out),
+          sil: () => rm(out, { force: true }),
+          gecmedi: (n, neden) => console.warn(`  doğrulama ${n}. deneme geçmedi: ${clip.key} — ${neden}`),
+        });
+      } catch (err) {
+        delete hashes[clip.key]; // dosya silindi → eski özet de geçersiz (özet var + dosya yok tutarsızlığı kalmasın)
+        throw err;
+      }
     },
     // Her klipten sonra: kesilen çalışma kaldığı yerden sürer.
     kaydet: async (clip, hash) => {
@@ -506,6 +573,11 @@ async function main(): Promise<void> {
   if (provider === 'google') {
     console.log(`sağlayıcıya giden: ${sayac.istek} istek · ${sayac.karakter} karakter (içerik yazdırılmaz)`);
     butceYaz('ücretsiz katman (sonra)');
+  }
+  if (TUR && sonuc.dogrulanamayan.length) {
+    console.warn(`\nUYARI: ${sonuc.dogrulanamayan.length} klip doğrulamadan geçmedi (dosya YAZILMADI, klip eksik kaldı; çıkış kodu 0 — kısmi başarı):`);
+    for (const f of sonuc.dogrulanamayan) console.warn(`  ${f}`);
+    console.warn('  Yeniden denemek için: npm run audio -- --ders tur   (eksik klipler yeniden üretilir). Kulakla kötü bulunanı reddedilen.json\'a ekleyin.');
   }
   if (!TUR) console.log(`manifesto: ${path.relative(ROOT, OUT_MANIFEST)}`);
 
