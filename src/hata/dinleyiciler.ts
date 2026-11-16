@@ -4,7 +4,7 @@ import { kayitEkle } from './hataKaydi';
 export function hataDinleyicileriniKur(hedef: Window = window): void {
   hedef.addEventListener('error', (e: ErrorEvent) => {
     kayitEkle({
-      tur: 'promise',
+      tur: 'pencere',
       mesaj: e.message || String(e.error),
       yigin: e.error instanceof Error ? e.error.stack : undefined,
     });
