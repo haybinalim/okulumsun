@@ -23,7 +23,7 @@ import { qrMatrisi, qrSvgYolu } from '../../ogretmen/qrMatrisi';
 import { eveLinkKoku } from '../../platform/kanonikKok';
 import { UCUNCU_TARAF_VARLIKLAR } from '../../content/ucuncuTarafVarliklar';
 import { BigButton } from '../primitives/BigButton';
-import { turEkraniAc } from './turEkrani';
+import { turEkraniAc } from './turEkraniDurumu';
 import { useTurKume } from './turKume';
 import { Baslik, ekranStili } from './turOrtak';
 import { sikDugme } from './ogretmenOrtak';

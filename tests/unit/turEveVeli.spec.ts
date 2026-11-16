@@ -4,7 +4,7 @@ import { VELI_KARTI_MADDELERI, veliKartiAyristir } from '../../src/content/dersl
 import { PROGRAM_SURUMU } from '../../src/content/dersler/tur/alfabe';
 import { kumeCoz, kumeKodla, resmiKume } from '../../src/content/dersler/tur/ogretilenKume';
 import { setKoduCoz } from '../../src/content/dersler/tur/turSet';
-import { turAcilisEkrani } from '../../src/ui/tur/turEkrani';
+import { turAcilisEkrani } from '../../src/ui/tur/turEkraniDurumu';
 import { evKipiMi } from '../../src/ui/tur/sinifAyariDepo';
 import { PROGRAM_ADRESI, turEveLink } from '../../src/ui/tur/turEveLink';
 

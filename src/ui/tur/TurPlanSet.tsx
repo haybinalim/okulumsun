@@ -14,7 +14,7 @@ import { DUZEY_ACIKLAMASI, DUZEY_ADI, SET_ADIM_SAYISI, SET_DUZEYLERI, type SetAd
 import { useTurSeti } from './useTurSeti';
 import { TUR_SABLONLARI } from '../../content/dersler/tur/sablonlar';
 import { BigButton } from '../primitives/BigButton';
-import { turEkraniAc, type TurEkrani } from './turEkrani';
+import { turEkraniAc, type TurEkrani } from './turEkraniDurumu';
 import { turKumeYaz, useTurKume } from './turKume';
 import { Baslik, ekranStili } from './turOrtak';
 import { bugunkuSes, sikDugme } from './ogretmenOrtak';

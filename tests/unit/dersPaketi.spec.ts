@@ -77,7 +77,7 @@ describe('üretim paketi korunur', () => {
       /if \(import\.meta\.env\.VITE_DERS_TUR === '1' && arsivKodu\?\.startsWith\('tur-'\)\) \{\n(?:\s*\/\/[^\n]*\n)?\s*void import\('\.\/ui\/tur\/kagit\/TurArsivKagidi\.tsx'\)/,
     );
     // Durum modülü yan etkisiz (tek içe aktarım); ekran tembel ve bayrak sabitine bağlı; kanca seçimi modül düzeyinde.
-    expect(satirlar[0]).toBe("import { useTurEkrani } from './ui/tur/turEkrani';");
+    expect(satirlar[0]).toBe("import { useTurEkrani } from './ui/tur/turEkraniDurumu';");
     expect(satirlar[1]).toBe(
       "const TurEkrani = import.meta.env.VITE_DERS_TUR === '1' ? lazy(() => import('./ui/tur/TurEkrani')) : null;",
     );
@@ -94,7 +94,7 @@ describe('üretim paketi korunur', () => {
       /if \(import\.meta\.env\.VITE_DERS_TUR === '1' && TurEkrani && turEkrani\) \{\n\s*return kabuk\(/,
     );
     // Durum modülünün üst düzeyinde çağrı yok (ağaç sallamada atılabilir olmalı).
-    const durum = oku('src/ui/tur/turEkrani.ts');
+    const durum = oku('src/ui/tur/turEkraniDurumu.ts');
     expect(durum).not.toMatch(/^(?:export )?(?:const|let) \w+[^=\n]*= *(?:new |create|[a-zA-Z_]+\()/m);
   });
 

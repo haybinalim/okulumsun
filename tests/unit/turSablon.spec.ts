@@ -26,7 +26,7 @@ import { PROGRAM_SURUMU } from '../../src/content/dersler/tur/alfabe';
 import type { TurIcerikDosyasi } from '../../src/content/schema/turIcerik';
 import { klipManifestiMetni } from '../../scripts/tur/klip-manifesti';
 import { kartDuzeni } from '../../src/ui/tur/etkinlikDuzeni';
-import { turAcilisEkrani } from '../../src/ui/tur/turEkrani';
+import { turAcilisEkrani } from '../../src/ui/tur/turEkraniDurumu';
 import { createRng } from '../../src/exercises/rng';
 import type { TurHamleGlifi } from '../../src/content/schema/turHamle';
 

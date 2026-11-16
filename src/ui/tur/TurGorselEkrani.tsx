@@ -11,7 +11,7 @@ import { HARF_GRUPLARI } from '../../content/dersler/tur/alfabe';
 import { TUR_VERI_KOKU } from '../../content/dersler/tur/veriYukleyici';
 import { grupGorselleriniYukle, type GorselOgesi } from './turGorselVerisi';
 import { BigButton } from '../primitives/BigButton';
-import { turEkraniAc } from './turEkrani';
+import { turEkraniAc } from './turEkraniDurumu';
 import { Baslik, ekranStili } from './turOrtak';
 
 type Durum =

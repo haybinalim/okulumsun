@@ -11,7 +11,7 @@ import { BigButton } from '../primitives/BigButton';
 import { glifAdi, glifAnahtari, sekmeGlifleri } from './hamleCizim';
 import { TurKagitlari } from './kagit/TurArsivKagidi';
 import { DESTEK_EN_COK, turKagitKodu, type DestekGlifi, type TurKagitIstegi } from './kagit/turKagidi';
-import { turEkraniAc, type TurEkrani } from './turEkrani';
+import { turEkraniAc, type TurEkrani } from './turEkraniDurumu';
 import { Baslik, ekranStili, SEKME_SAYISI } from './turOrtak';
 import { YazilisGlifi } from './YazilisGlifi';
 
