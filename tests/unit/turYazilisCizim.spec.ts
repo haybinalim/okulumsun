@@ -19,7 +19,7 @@ import {
   zamanlama,
 } from '../../src/ui/tur/hamleCizim';
 import { hamleVerisiBicimliMi } from '../../src/ui/tur/useHamleVerisi';
-import { turAcilisEkrani, turEkraniAc, turEkraniKapat, turEkraniOku } from '../../src/ui/tur/turEkrani';
+import { turAcilisEkrani, turEkraniAc, turEkraniKapat, turEkraniOku } from '../../src/ui/tur/turEkraniDurumu';
 
 const VERI = hamleDosyasiniAyristir(JSON.parse(readFileSync('ders-verisi/tur/hamleler.json', 'utf8')));
 const g = (bicim: string, glif: string) => VERI.glifler.find((x) => x.bicim === bicim && x.glif === glif)!;

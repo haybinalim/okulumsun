@@ -14,7 +14,7 @@ import { BigButton } from '../primitives/BigButton';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import type { TurHamleGlifi } from '../../content/schema/turHamle';
 import { glifAdi, glifAnahtari, HIZ_ADI, HIZLAR, sekmeGlifleri, type Hiz } from './hamleCizim';
-import { turEkraniAc, turEkraniKapat, type TurEkrani as TurEkraniDurumu } from './turEkrani';
+import { turEkraniAc, turEkraniKapat, type TurEkrani as TurEkraniDurumu } from './turEkraniDurumu';
 import { useHamleVerisi } from './useHamleVerisi';
 import { YazilisGlifi } from './YazilisGlifi';
 import { KagitMenusu, KagitOnizleme, KagitSecimi } from './TurKagitEkranlari';

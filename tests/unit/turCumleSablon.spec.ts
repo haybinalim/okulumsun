@@ -23,7 +23,7 @@ import { turIceriginiDogrula, UNLEM_SOZCUKLERI } from '../../src/content/dersler
 import { PROGRAM_SURUMU, trKucuk } from '../../src/content/dersler/tur/alfabe';
 import type { TurIcerikDosyasi } from '../../src/content/schema/turIcerik';
 import { cumleKlibi } from '../../src/content/dersler/tur/sablonlar/klipler';
-import { turAcilisEkrani } from '../../src/ui/tur/turEkrani';
+import { turAcilisEkrani } from '../../src/ui/tur/turEkraniDurumu';
 
 const havuzHam = JSON.parse(readFileSync('ders-verisi/tur/icerik/sozcukler.json', 'utf8')) as unknown;
 const cumleHam = JSON.parse(readFileSync('ders-verisi/tur/icerik/cumleler.json', 'utf8')) as unknown;

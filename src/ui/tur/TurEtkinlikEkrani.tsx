@@ -37,7 +37,7 @@ import {
   type TurZorluk,
 } from '../../content/dersler/tur/sablonlar/turSoru';
 import { geriBildirimKlibi } from '../../content/dersler/tur/sablonlar/klipler';
-import { turEkraniAc, type TurEkrani } from './turEkrani';
+import { turEkraniAc, type TurEkrani } from './turEkraniDurumu';
 import { useTurKume } from './turKume';
 import { useTurHavuzu } from './useTurHavuzu';
 import { turKlipleriniIste } from './turSes';

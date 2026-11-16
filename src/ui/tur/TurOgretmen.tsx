@@ -21,7 +21,7 @@ import {
 } from '../../content/dersler/tur/gununAkisi';
 import { BigButton } from '../primitives/BigButton';
 import { COLOR } from '../../design/tokens';
-import { turEkraniAc, turEkraniKapat, type TurEkrani } from './turEkrani';
+import { turEkraniAc, turEkraniKapat, type TurEkrani } from './turEkraniDurumu';
 import type { TurKagitIstegi } from './kagit/turKagidi';
 import { turKumeYaz, useTurKume } from './turKume';
 import { sinifAyariGuncelle, sinifAyariOku } from './sinifAyariDepo';

@@ -14,7 +14,7 @@ import {
   izlemeIlerle,
 } from '../../src/ui/tur/izleme';
 import type { Nokta } from '../../src/ui/tur/hamleCizim';
-import { turAcilisEkrani } from '../../src/ui/tur/turEkrani';
+import { turAcilisEkrani } from '../../src/ui/tur/turEkraniDurumu';
 
 const veri = JSON.parse(readFileSync('ders-verisi/tur/hamleler.json', 'utf8')) as TurHamleDosyasi;
 const glif = (anahtar: string) => veri.glifler.find((g) => `${g.bicim}:${g.glif}` === anahtar)!;

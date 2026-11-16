@@ -53,7 +53,7 @@ const TemaTuru = lazy(() => import('./ui/screens/TemaTuru'));
 import { setSorusu } from './ogretmen/gunlukSet';
 import { setSorusuUret, tahtaSorusuUret } from './ogretmen/tahtaSorusu';
 import { girisliSoru } from './audio/girisSesi';
-import { useTurEkrani } from './ui/tur/turEkrani';
+import { useTurEkrani } from './ui/tur/turEkraniDurumu';
 // Türkçe (Okuma Yazma) önizlemesi (Adım 64, ADR-0016): YALNIZ `VITE_DERS_TUR=1` derlemesinde; üretimde ölü kod.
 const TurEkrani = import.meta.env.VITE_DERS_TUR === '1' ? lazy(() => import('./ui/tur/TurEkrani')) : null;
 const TurDersSecimi =

@@ -23,7 +23,7 @@ import {
 } from '../../content/dersler/tur/sablonlar/turSoru';
 import { useCumleVerisi } from './useCumleVerisi';
 import { BigButton } from '../primitives/BigButton';
-import { turEkraniAc } from './turEkrani';
+import { turEkraniAc } from './turEkraniDurumu';
 import { useTurKume } from './turKume';
 import { KumeDuzenleyici } from './TurOgretmen';
 import { kucukDugme } from './ogretmenOrtak';
