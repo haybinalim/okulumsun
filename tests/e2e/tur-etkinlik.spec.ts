@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { TUR_URL } from '../../playwright.config';
 import { geometriTemiz, sesKilidiniAc } from './yardimci/akis';
+import { sesiEksikKur } from './yardimci/turSes';
 import { sozcukKlibi } from '../../src/content/dersler/tur/sablonlar/klipler';
 
 /**
@@ -12,7 +13,7 @@ import { sozcukKlibi } from '../../src/content/dersler/tur/sablonlar/klipler';
  *  - SES (istenen klipler listesi, `e2eKanca.istenenKlipler`): açılışta yönerge (+ dinleme sorusunda sözcükler);
  *    okuma hedefli soruda (T-03…T-06) yalnız yönerge (D-12); kartlara dokunmak hiçbir klip istemez (D-11, sessiz kart);
  *    istenen her klip manifestte ve hiçbiri tek başına ünsüz değil; doğru cevaptan sonra geri bildirim klipleri;
- *  - Türkçe ses dosyası yok (klipler.json hepsi `eksik`): ekranda "Ses yok" görünür, akış sessiz çalışır (klip başına karar; `var` klip çalar: turSesCalma.spec).
+ *  - Türkçe ses dosyası yok (klipler.json yanıtı rota ile hepsi `eksik` yapılır; gerçek veriden bağımsız): ekranda "Ses yok" görünür, akış sessiz çalışır (klip başına karar; `var` klip çalar: turSesCalma.spec).
  * Cevap e2e kancalı derlemede `main[data-cevap]`tan okunur (üretimde yok).
  */
 test.use({ baseURL: TUR_URL });
@@ -55,6 +56,7 @@ function klipleriDenetle(liste: readonly string[], baglam: string) {
 }
 
 async function ac(page: Page, sablon: string, zorluk: number, tohum: number, cihaz: string) {
+  await sesiEksikKur(page);
   await sesKilidiniAc(page, `/?ders=tur&etkinlik=${sablon}&zorluk=${zorluk}&tohum=${tohum}&device=${cihaz}`);
   const main = page.locator(`main[data-tur-etkinlik="${sablon}"]`);
   await expect(main).toBeVisible();

@@ -3,7 +3,7 @@
  * Gerçek ses dosyası yok: `klipler.json` yanıtı rota ile `var`a çevrilir ve `.m4a` isteklerine bellekte üretilmiş,
  * tarayıcının çözebildiği küçük bir sessiz WAV verilir (çözücü uzantıya değil içeriğe bakar). Diske/depoya ses konmaz.
  *  - `var` klip: bayt alınır (`alinanKlipler`), çözülür ve "Ses yok" GÖRÜNMEZ;
- *  - `eksik` klip (manifest olduğu gibi): ses dosyası istenmez, "Ses yok" görünür;
+ *  - `eksik` klip (rota ile hepsi `eksik`): ses dosyası istenmez, "Ses yok" görünür;
  *  - `var` ama dosya 404 ya da çözülemeyen bayt: "Ses yok" kalır (sessizce "çaldı" sayılmaz).
  */
 import { expect, test, type Page } from '@playwright/test';
@@ -37,8 +37,12 @@ async function kur(page: Page, mod: 'var' | 'eksik' | 'var-404' | 'var-bozuk') {
   await page.route('**/tur/ses/klipler.json', async (rota) => {
     const yanit = await rota.fetch();
     const j = (await yanit.json()) as { klipler: { anahtar: string; durum: string; dosya?: string }[] };
-    if (mod !== 'eksik') {
-      for (const k of j.klipler) {
+    // Durumu gerçek veriden bağımsız kur: 'eksik' kipinde de hepsi rota ile `eksik` yapılır.
+    for (const k of j.klipler) {
+      if (mod === 'eksik') {
+        k.durum = 'eksik';
+        delete k.dosya;
+      } else {
         const [, tur, ad] = k.anahtar.split('.');
         k.durum = 'var';
         k.dosya = `${tur}/${ad}.m4a`;
