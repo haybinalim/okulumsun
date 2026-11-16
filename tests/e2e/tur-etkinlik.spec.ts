@@ -12,7 +12,7 @@ import { sozcukKlibi } from '../../src/content/dersler/tur/sablonlar/klipler';
  *  - SES (istenen klipler listesi, `e2eKanca.istenenKlipler`): açılışta yönerge (+ dinleme sorusunda sözcükler);
  *    okuma hedefli soruda (T-03…T-06) yalnız yönerge (D-12); kartlara dokunmak hiçbir klip istemez (D-11, sessiz kart);
  *    istenen her klip manifestte ve hiçbiri tek başına ünsüz değil; doğru cevaptan sonra geri bildirim klipleri;
- *  - Türkçe ses dosyası yok (Adım 67): ekranda "Ses yok" görünür, akış sessiz çalışır.
+ *  - Türkçe ses dosyası yok (klipler.json hepsi `eksik`): ekranda "Ses yok" görünür, akış sessiz çalışır (klip başına karar; `var` klip çalar: turSesCalma.spec).
  * Cevap e2e kancalı derlemede `main[data-cevap]`tan okunur (üretimde yok).
  */
 test.use({ baseURL: TUR_URL });
@@ -59,6 +59,14 @@ async function ac(page: Page, sablon: string, zorluk: number, tohum: number, cih
   const main = page.locator(`main[data-tur-etkinlik="${sablon}"]`);
   await expect(main).toBeVisible();
   await expect(page.locator('[data-kartlar][data-satir]')).toBeVisible();
+  // Klipler servise manifest çözümünden SONRA (eşzamansız) gider: açılış yönergesi istenene dek bekle.
+  await expect
+    .poll(async () => {
+      const a = await klipler(page);
+      await page.waitForTimeout(150);
+      return a.length > 0 && a.length === (await klipler(page)).length;
+    })
+    .toBe(true);
   return main;
 }
 
@@ -112,9 +120,8 @@ async function coz(page: Page, sablon: string, baglam: string) {
     const yanlis = kartlar.and(page.locator(`:not([data-kart="${cevap}"])`)).first();
     await yanlis.click();
     await expect(yanlis).toHaveAttribute('data-yanlis', 'true');
-    const sonra = await klipler(page);
     // Yanlış dokunuş yalnız "Bir daha deneyelim." ister; kartın harfi/hecesi asla.
-    expect(sonra.slice(ilk.length), `${baglam}: yanlış kart`).toEqual(['tur.geri.tekrar']);
+    await expect.poll(async () => (await klipler(page)).slice(ilk.length), `${baglam}: yanlış kart`).toEqual(['tur.geri.tekrar']);
     await page.waitForTimeout(300); // BigButton soğuması değil, ayrı kart; görsel durum otursun
     await page.locator(`[data-kart="${cevap}"]`).click();
     // Adım 79: doğru kartta işaret rozeti (renk tek ipucu değil).
@@ -125,6 +132,7 @@ async function coz(page: Page, sablon: string, baglam: string) {
   await expect(page.getByRole('button', { name: 'Sonraki', exact: true })).toBeVisible();
   // T-16: doğru cevaptan sonra sözcüğün doğru yazılışı üstte görünür.
   if (sablon === 'T-16') await expect(page.locator('[data-uyaran-metni="dogru-yazilis"]')).toBeVisible();
+  await expect.poll(() => klipler(page), `${baglam}: geri bildirim istendi`).toContain('tur.geri.dogru');
   const son = await klipler(page);
   expect(son.slice(-1)[0], `${baglam}: geri bildirim istendi`).toMatch(/^tur\.(sozcuk|hece|geri)\./);
   expect(son, `${baglam}: geri bildirimde övgü`).toContain('tur.geri.dogru');

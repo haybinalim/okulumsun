@@ -8,7 +8,8 @@
  *
  * Ses: kartlar hiçbir zaman ses istemez (D-11). Açılışta ve ↻'de yönerge + soru sesi (dinleme sorusunda sözcükler)
  * istenir; okuma hedefli soruda yalnız yönerge (D-12). Doğru cevapta bütün sözcük/hece vurgulanır ve geri bildirim
- * klipleri istenir. Türkçe ses dosyaları henüz yok (Adım 67): ekran sessiz çalışır ve "Ses yok" gösterir; dinleme
+ * klipleri istenir ve matematikle AYNI `speech` servisinde çalınır (`turSes.ts`): yalnız `durum: "var"` klipler çalar;
+ * `eksik` klip sessiz kalır ve o istek için "Ses yok" gösterilir (klip başına karar). Dinleme
  * sorusunda öğretmen sözcükleri "Öğretmen: sözcükler" altında görür ve kendisi söyler. Hiçbir şey saklanmaz, süre
  * ölçülmez (D-13).
  *
@@ -40,7 +41,7 @@ import { geriBildirimKlibi } from '../../content/dersler/tur/sablonlar/klipler';
 import { turEkraniAc, type TurEkrani } from './turEkraniDurumu';
 import { useTurKume } from './turKume';
 import { useTurHavuzu } from './useTurHavuzu';
-import { turKlipleriniIste } from './turSes';
+import { turKlipleriniIste, turSesiniDurdur } from './turSes';
 import { E2E_KANCASI_ACIK } from '../../dev/e2eKanca';
 import { kartDuzeni, type KartDuzeni } from './etkinlikDuzeni';
 import { ekranStili } from './turOrtak';
@@ -162,17 +163,34 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
   const [sesYok, setSesYok] = useState(false);
   const zamanlayici = useRef<number | undefined>(undefined);
 
-  const iste = (klipler: readonly string[]) => setSesYok(!turKlipleriniIste(klipler));
-  const soruSesi = () => iste([soru.yonerge, ...soru.soruKlipleri]);
+  // Çalma matematikle aynı `speech` servisinde; "Ses yok" KLİP BAŞINA: istenen klibin tümü çalınabildiyse kalkar.
+  const iptal = useRef<AbortSignal | undefined>(undefined);
+  const istek = useRef(0);
+  const iste = (klipler: readonly string[], talimat = false) => {
+    const no = ++istek.current;
+    void turKlipleriniIste(klipler, { signal: iptal.current, talimat }).then((calindi) => {
+      if (no === istek.current) setSesYok(!calindi);
+    });
+  };
+  const soruSesi = () => iste([soru.yonerge, ...soru.soruKlipleri], true);
   // Açılışta bir kez (soru `useMemo` ile sabit; soru değişince bileşen `key` ile yeniden kurulur). Geliştirmede
-  // StrictMode etkiyi iki kez çalıştırır; aynı soru için yönerge ikinci kez istenmesin diye ref ile korunur.
+  // StrictMode etkiyi iki kez çalıştırır: temizlik konuşmayı keser ve işareti sıfırlar, ikinci çalıştırma yönergeyi
+  // yeniden ister (iptal edilen ilk istek hiç çalmaz / kancaya yazılmaz).
   const duyurulan = useRef<TurSoru | null>(null);
   useEffect(() => {
+    const kontrol = new AbortController();
+    iptal.current = kontrol.signal;
     if (duyurulan.current !== soru) {
       duyurulan.current = soru;
-      setSesYok(!turKlipleriniIste([soru.yonerge, ...soru.soruKlipleri]));
+      iste([soru.yonerge, ...soru.soruKlipleri], true);
     }
-    return () => window.clearTimeout(zamanlayici.current);
+    return () => {
+      kontrol.abort();
+      turSesiniDurdur();
+      duyurulan.current = null;
+      window.clearTimeout(zamanlayici.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [soru]);
 
   const dogruOldu = () => {

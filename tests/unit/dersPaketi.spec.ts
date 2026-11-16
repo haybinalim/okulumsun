@@ -54,10 +54,14 @@ describe('üretim paketi korunur', () => {
           .filter((s) => /dersler\/tur/.test(s))
           .map((s) => [path.relative(KOK, f), s.trim()] as const),
       );
-    expect(bulunan).toHaveLength(1);
-    const [dosya, satir] = bulunan[0];
-    expect(dosya).toBe('src/main.tsx');
+    // İki yol: main.tsx (bayrak korumalı dinamik içe aktarım) ve speech.ts (Türkçe klip çözümü; kullanımı
+    // `VITE_DERS_TUR` sabitine bağlı, bayraksız derlemede ağaçtan atılır — `npx vite build` çıktısı main ile bayt bayt aynı).
+    expect(bulunan.map(([d]) => d).sort()).toEqual(['src/audio/speech.ts', 'src/main.tsx']);
+    const satir = bulunan.find(([d]) => d === 'src/main.tsx')![1];
     expect(satir).toMatch(/^if \(import\.meta\.env\.VITE_DERS_TUR === '1'\) void import\('\.\/content\/dersler\/tur\//);
+    const speechSatiri = bulunan.find(([d]) => d === 'src/audio/speech.ts')![1];
+    expect(speechSatiri).toBe("import { turKlipBaytlari, turKlipCozulemedi } from '../content/dersler/tur/veriYukleyici';");
+    expect(oku('src/audio/speech.ts')).toMatch(/import\.meta\.env\.VITE_DERS_TUR === '1'\s*\?\s*turKlipBaytlari\s*:\s*null/);
   });
 
   it('Türkçe arayüz paketine (src/ui/tur) yalnız App.tsx ve main.tsx bayrak sabitiyle ulaşır (Adım 64, 65)', () => {
