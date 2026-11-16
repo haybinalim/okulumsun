@@ -25,8 +25,11 @@ manifesti. `public/` altında değildir; yalnız `VITE_DERS_TUR=1` derlemesinde 
   dosya teyidini hem D-14'ü (iki öğretmen) hata sayar. Hece listesi depoya girmez: şablonlar heceyi sözcükten
   heceler (bağlamsız hece yok, D-05).
 - `ses/klipler.json` (Adım 69): şablonların isteyebileceği bütün klip kimlikleri ve metinleri (yönerge, geri bildirim,
-  sözcük, sözcükten gelen hece). **Elle düzenlenmez:** `npm run tur:klip` üretir. Ses dosyası yok (Adım 67): her klip
-  `durum: "eksik"`, arayüz sessiz çalışır ve "Ses yok" gösterir; `--yayin` eksik klipte kırmızıdır. Tek ünsüz klibi yok (D-11).
+  sözcük, sözcükten gelen hece). **Elle düzenlenmez:** `npm run tur:klip` üretir. Ses dosyaları `ses/<tür>/<ad>.m4a` (`tur.sozcuk.kale` → `sozcuk/kale.m4a`)
+  olarak `npm run audio -- --ders tur` ile üretilir (Puck, hız 0,9; matematikle aynı defter ve artımlı plan, özetler
+  `ses/.hashes.json`, bkz. `docs/ses/SES_KAYNAKLARI.md` §14). Dosyası olan klip `durum: "var"` + `dosya` taşır
+  (diskten türetilir); olmayan `eksik`. Arayüz ses çalıcısı henüz bağlı değil: "Ses yok" gösterir. `--yayin` eksik
+  klipte kırmızıdır. Tek ünsüz klibi yok (D-11); üretim betiği de reddeder.
 - `veli-karti.json` (Adım 71): eve link ekranında ve eve giden bağlantının açılışında veliye gösterilen kısa metin
   (ses esaslı çalışma, harf adı yerine ses, ünsüzü tek başına söyletmeme, kalem tutuşu, sol el, kısa ve süresiz).
   Katı ayrıştırıcı `src/content/dersler/tur/veliKarti.ts` (altı madde birer kez). Taslak: `teyit: { durum: "bekliyor" }`,
