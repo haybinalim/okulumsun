@@ -16,7 +16,8 @@ import {
 } from '../../src/content/dersler/tur/sablonlar';
 import { turKlipManifesti, turSoruEtkinligi, turSoruIhlalleri } from '../../src/content/dersler/tur/sablonlar/denetim';
 import { karistirilanlar, KARISTIRILAN_CIFTLER } from '../../src/content/dersler/tur/sablonlar/celdiriciler';
-import { heceKlibi, klipParcasi, sozcukKlibi, TUR_YONERGELERI } from '../../src/content/dersler/tur/sablonlar/klipler';
+import { turKlipDosyasi, turKlipMetniUretilebilirMi } from '../../scripts/ses/turKlipleri';
+import { klipMetniGecerliMi, heceKlibi, klipParcasi, sozcukKlibi, t02KapanisKlipleri, T02_UNLULERI as UNLU_HARFLER, TUR_YONERGELERI } from '../../src/content/dersler/tur/sablonlar/klipler';
 import { BELIRSIZLIK_SOZCUKLERI, bilinenSozcukMu, okunabilirSozcukler } from '../../src/content/dersler/tur/sablonlar/ortak';
 import { hecele, heceTuru } from '../../src/content/dersler/tur/heceleme';
 import { kumeKodla, kumeGecerliMi, resmiKume, dekodlanabilirMi } from '../../src/content/dersler/tur/ogretilenKume';
@@ -121,6 +122,40 @@ describe('Türkçe şablonlar — üretim (Adım 69)', () => {
       expect(soru.kartlar.filter((k) => k.metin === dogru.metin)).toHaveLength(1);
       expect(dogru.diagnosticTag).toBeUndefined();
       for (const k of soru.kartlar) if (k.diagnosticTag) expect(TUR_TANI_ETIKETLERI.has(k.diagnosticTag)).toBe(true);
+    }
+  });
+
+  it('T-02: geri bildirim = Aferin + sözcükler + neden kapanışı; ünsüzde harf adı yok, tek ünsüz klibi yok', () => {
+    const ONEK = { 1: 'bas', 2: 'bas', 3: 'her', 4: 'her', 5: 'her' } as const;
+    let unlu = 0;
+    let unsuz = 0;
+    for (const { soru } of URETILEN.filter((u) => u.soru.sablon === 'T-02')) {
+      if (soru.kind !== 'secim') throw new Error('T-02 seçim');
+      const hedef = soru.hedefMetin;
+      const ek = (UNLU_HARFLER as readonly string[]).includes(hedef) ? klipParcasi(hedef) : 'harf';
+      expect(soru.geriBildirim, soru.itemId).toEqual(['tur.geri.dogru', ...soru.soruKlipleri, `tur.geri.${ONEK[soru.zorluk]}-${ek}`]);
+      expect(soru.geriBildirim.every((k) => manifest.has(k)), soru.itemId).toBe(true);
+      if (ek === 'harf') unsuz++;
+      else unlu++;
+      for (const k of soru.geriBildirim) expect(yalnizUnsuzMu(manifest.get(k) ?? ''), `${k} tek ünsüz`).toBe(false);
+    }
+    expect(unlu).toBeGreaterThan(0);
+    expect(unsuz).toBeGreaterThan(0);
+  });
+
+  it('T-02 kapanış klipleri: 18 klip, metinler beklenen cümleler (ünlü ı → "Hepsi ı sesiyle başlıyor.")', () => {
+    const k = new Map(t02KapanisKlipleri().map((x) => [x.anahtar, x.metin]));
+    expect(k.size).toBe(18);
+    expect(k.get('tur.geri.bas-i2')).toBe('Hepsi ı sesiyle başlıyor.');
+    expect(k.get('tur.geri.her-o2')).toBe('Hepsinde ö sesi var.');
+    expect(k.get('tur.geri.bas-harf')).toBe('Hepsi bu harfle başlıyor.');
+    expect(k.get('tur.geri.her-harf')).toBe('Hepsinde bu harf var.');
+    for (const [a, metin] of k) {
+      expect(manifest.has(a), a).toBe(true);
+      // D-11: cümle, tek harf değil; hem çalıcı kuralı hem üretim kapısı kabul eder.
+      expect(klipMetniGecerliMi(metin), a).toBe(true);
+      expect(turKlipMetniUretilebilirMi(metin), a).toBe(true);
+      expect(turKlipDosyasi(a), a).toMatch(/^geri\/(bas|her)-[a-z0-9]+\.m4a$/);
     }
   });
 

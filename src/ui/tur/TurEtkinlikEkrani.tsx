@@ -51,6 +51,7 @@ import { useCumleVerisi } from './useCumleVerisi';
 import { TUR_CUMLE_SABLON_KODLARI } from '../../content/dersler/tur/sablonlar/turSoru';
 import { KALEM, SATIR, yolVerisi } from './hamleCizim';
 import type { TurKart, TurParca } from '../../content/dersler/tur/sablonlar/turSoru';
+import { unluMu } from '../../content/dersler/tur/alfabe';
 import { hecele } from '../../content/dersler/tur/heceleme';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import './tur.css';
@@ -349,6 +350,8 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
                 rozet={ciftNo(i) ?? (soru.kind === 'coklu' && yerlesim.includes(i) ? 'tik' : undefined)}
                 yanlis={yanlislar.has(i)}
                 dogru={durum === 'dogru' && soru.kind === 'secim' && i === soru.dogru}
+                // T-02 ünsüz hedef: harf sesi tek başına söylenmez (K-OY-03); onun yerine doğru harf kartı büyütülüp vurgulanır.
+                vurgu={durum === 'dogru' && soru.kind === 'secim' && soru.sablon === 'T-02' && i === soru.dogru && !unluMu(soru.hedefMetin)}
                 hareket={!hareketAzalt}
                 onPress={() => kartaDokun(i)}
               />
@@ -451,6 +454,7 @@ function Kart({
   rozet,
   yanlis,
   dogru,
+  vurgu,
   hareket,
   onPress,
 }: {
@@ -465,6 +469,8 @@ function Kart({
   kullanildi: boolean;
   yanlis: boolean;
   dogru: boolean;
+  /** Doğru cevaptan sonra belirgin büyütme + kalın çerçeve (T-02 ünsüz hedef); hareket azaltmada da boyut büyür, animasyon yok. */
+  vurgu: boolean;
   /** Yumuşak geri bildirim hareketi (doğru: hafif büyüme, yanlış: hafif sallanma); hareket azaltmada verilmez. */
   hareket: boolean;
   onPress: () => void;
@@ -498,8 +504,9 @@ function Kart({
       data-kullanildi={kullanildi || undefined}
       data-yanlis={yanlis || undefined}
       data-dogru={dogru || undefined}
+      data-vurgu={vurgu || undefined}
       data-rozet={rozet ?? (dogru ? 'tik' : undefined)}
-      className={hareket ? (dogru ? 'tur-kart-dogru' : yanlis ? 'tur-kart-yanlis' : undefined) : undefined}
+      className={hareket ? (vurgu ? 'tur-kart-vurgu' : dogru ? 'tur-kart-dogru' : yanlis ? 'tur-kart-yanlis' : undefined) : undefined}
       onClick={onPress}
       style={{
         width: genislik,
@@ -510,7 +517,9 @@ function Kart({
         borderRadius: 'calc(20px * var(--scale))',
         background: dogru ? 'var(--color-correct-soft)' : yanlis ? 'var(--color-retry-soft)' : 'var(--color-surface)',
         // Seçili kart: kalın koyu çerçeve (renk tek ipucu değil; çoklu seçimde ayrıca işaret rozeti).
-        boxShadow: secili
+        boxShadow: vurgu
+          ? 'inset 0 0 0 calc(8px * var(--scale)) var(--color-correct), 0 calc(8px * var(--scale)) 0 var(--color-correct)'
+          : secili
           ? 'inset 0 0 0 calc(6px * var(--scale)) var(--color-ink)'
           : `0 calc(4px * var(--scale)) 0 ${dogru ? 'var(--color-correct)' : 'var(--color-border)'}`,
         color: 'var(--color-ink)',
@@ -524,6 +533,7 @@ function Kart({
         padding: 0,
         position: 'relative',
         overflow: 'hidden',
+        ...(vurgu ? { transform: 'scale(1.3)', zIndex: 2 } : {}),
       }}
     >
       {/* Doğru kartta işaret rozeti (renk tek ipucu değil). */}
