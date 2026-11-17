@@ -11,7 +11,8 @@
  * Mesajdaki e-posta adresleri, URL sorgu/hash parçaları `temizle()` ile atılır.
  */
 
-export type HataTuru = 'render' | 'promise' | 'ses' | 'pwa';
+/** render: ErrorBoundary; pencere: window 'error' (yakalanmamış senkron hata); promise: 'unhandledrejection'. */
+export type HataTuru = 'render' | 'pencere' | 'promise' | 'ses';
 
 export interface HataKaydi {
   /** Date.now() — yalnız bellekte. */

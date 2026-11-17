@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { hataDinleyicileriniKur } from '../../src/hata/dinleyiciler';
 import {
   AZAMI_KAYIT,
   AZAMI_MESAJ,
@@ -89,5 +90,30 @@ describe('yerel hata günlüğü (Adım 23, ADR-0005)', () => {
     expect(casus.indexedDB.open).not.toHaveBeenCalled();
     expect(casus.fetch).not.toHaveBeenCalled();
     expect(casus.navigator.sendBeacon).not.toHaveBeenCalled();
+  });
+
+  function sahteHedef(): EventTarget {
+    const h = new EventTarget();
+    hataDinleyicileriniKur(h as unknown as Window);
+    return h;
+  }
+
+  it("window 'error' olayı 'pencere' türüyle kaydedilir", () => {
+    const h = sahteHedef();
+    const hata = new Error('senkron patladı');
+    h.dispatchEvent(Object.assign(new Event('error'), { message: hata.message, error: hata }));
+    const k = kayitlariAl();
+    expect(k).toHaveLength(1);
+    expect(k[0]?.tur).toBe('pencere');
+    expect(k[0]?.mesaj).toBe('senkron patladı');
+  });
+
+  it("'unhandledrejection' olayı 'promise' türüyle kaydedilir", () => {
+    const h = sahteHedef();
+    h.dispatchEvent(Object.assign(new Event('unhandledrejection'), { reason: new Error('söz reddedildi') }));
+    const k = kayitlariAl();
+    expect(k).toHaveLength(1);
+    expect(k[0]?.tur).toBe('promise');
+    expect(k[0]?.mesaj).toBe('söz reddedildi');
   });
 });
