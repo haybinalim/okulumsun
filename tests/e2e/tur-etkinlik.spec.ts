@@ -139,6 +139,21 @@ async function coz(page: Page, sablon: string, baglam: string) {
   expect(son.slice(-1)[0], `${baglam}: geri bildirim istendi`).toMatch(/^tur\.(sozcuk|hece|geri)\./);
   expect(son, `${baglam}: geri bildirimde övgü`).toContain('tur.geri.dogru');
   klipleriDenetle(son, baglam);
+  // T-02: geri bildirim NEDENİ söyler (Aferin → sözcükler → kapanış); ünsüzde harf adı yok, doğru kart vurgulanır.
+  if (sablon === 'T-02') {
+    const zorluk = Number(await main.getAttribute('data-zorluk'));
+    const hedef = (await page.locator(`[data-kart="${cevap}"]`).getAttribute('data-kart-metin')) ?? '';
+    const unlu = /^[aeıioöuü]$/.test(hedef);
+    const ek = unlu ? hedef.replace('ı', 'i2').replace('ö', 'o2').replace('ü', 'u2') : 'harf';
+    expect(son.slice(-1)[0], `${baglam}: kapanış`).toBe(`tur.geri.${zorluk <= 2 ? 'bas' : 'her'}-${ek}`);
+    expect(son.filter((k) => k.startsWith('tur.geri.')), `${baglam}: tekrar + övgü + kapanış`).toContain('tur.geri.dogru');
+    const vurgu = page.locator(`[data-kart="${cevap}"]`);
+    if (unlu) await expect(vurgu).not.toHaveAttribute('data-vurgu', 'true');
+    else {
+      await expect(vurgu).toHaveAttribute('data-vurgu', 'true');
+      await expect(page.locator('[data-vurgu]')).toHaveCount(1);
+    }
+  }
 }
 
 for (const sablon of SABLONLAR) {

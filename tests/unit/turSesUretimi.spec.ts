@@ -58,27 +58,27 @@ function sahteKosu(klipler: ReturnType<typeof turKlipleriniAyir>, defter: Defter
 describe('Türkçe klip planı', () => {
   const klipler = turKlipleriniAyir(manifest);
 
-  it('364 klip, ~3.833 karakter (UTF-16 sayımı), yollar tür/ad.m4a', () => {
-    expect(klipler).toHaveLength(364);
-    expect(klipler.reduce((t, c) => t + karakterSay(c.text), 0)).toBe(3833);
-    expect(new Set(klipler.map((c) => c.file)).size).toBe(364);
+  it('383 klip, ~4.308 karakter (UTF-16 sayımı), yollar tür/ad.m4a', () => {
+    expect(klipler).toHaveLength(383);
+    expect(klipler.reduce((t, c) => t + karakterSay(c.text), 0)).toBe(4308);
+    expect(new Set(klipler.map((c) => c.file)).size).toBe(383);
     expect(turKlipDosyasi('tur.sozcuk.kale')).toBe('sozcuk/kale.m4a');
     expect(turKlipDosyasi('tur.yonerge.t05-model')).toBe('yonerge/t05-model.m4a');
     expect(() => turKlipDosyasi('mat.sayi.1')).toThrow();
     expect(() => turKlipDosyasi('tur.sozcuk.../x')).toThrow();
   });
 
-  it('ilk koşu 364 klip sentezler, ikinci koşu 0 (artımlı); metni değişen tek klip yeniden üretilir', async () => {
+  it('ilk koşu 383 klip sentezler, ikinci koşu 0 (artımlı); metni değişen tek klip yeniden üretilir', async () => {
     const defter = defterKur(0);
     const diskte = new Set<string>();
     const ozetler: Record<string, string> = {};
     const bir = sahteKosu(klipler, defter, diskte, ozetler);
-    expect((await bir.sonuc).made).toBe(364);
-    expect(defter.durum().kullanilan).toBe(3833);
+    expect((await bir.sonuc).made).toBe(383);
+    expect(defter.durum().kullanilan).toBe(4308);
 
     const iki = sahteKosu(klipler, defter, diskte, ozetler);
     expect(iki.plan.uretilecek).toHaveLength(0);
-    expect(iki.plan.atlanan).toBe(364);
+    expect(iki.plan.atlanan).toBe(383);
     expect((await iki.sonuc).made).toBe(0);
     expect(iki.istekler).toHaveLength(0);
 
@@ -94,11 +94,11 @@ describe('Türkçe klip planı', () => {
   it('--en-cok N: yalnız N klip, kalan sonraki çalışmaya', () => {
     const p = uretimPlani(klipler, {}, ozetHesapla, () => false, { zorla: false, enCok: 10 });
     expect(p.uretilecek).toHaveLength(10);
-    expect(p.kalan).toBe(354);
+    expect(p.kalan).toBe(373);
   });
 
   it('sınır aşımında HİÇ istek gitmez (çalışma başı tahmin), defter değişmez', async () => {
-    const defter = defterKur(899_000); // kalan 1.000 < 3.833
+    const defter = defterKur(899_000); // kalan 1.000 < 4.308
     const istek = vi.fn();
     const plan = uretimPlani(klipler, {}, ozetHesapla, () => false, { zorla: false });
     await expect(

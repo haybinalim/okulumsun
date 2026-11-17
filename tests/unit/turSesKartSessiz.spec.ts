@@ -64,7 +64,7 @@ let kok: Root | null = null;
 let kap: HTMLDivElement;
 const bekle = (ms: number) => act(async () => void (await new Promise((r) => setTimeout(r, ms))));
 
-async function ac(sablon: 'T-02' | 'T-03' | 'T-04' | 'T-05' | 'T-06', tohum: number) {
+async function ac(sablon: 'T-02' | 'T-03' | 'T-04' | 'T-05' | 'T-06', tohum: number, zorluk: 1 | 3 = 1) {
   delete (window as { __okulumsunE2E?: unknown }).__okulumsunE2E;
   vi.resetModules();
   vi.stubEnv('VITE_DERS_TUR', '1');
@@ -77,7 +77,7 @@ async function ac(sablon: 'T-02' | 'T-03' | 'T-04' | 'T-05' | 'T-06', tohum: num
   const { createElement } = await import('react');
   act(() => {
     kok = createRoot(kap);
-    kok.render(createElement(TurEtkinlikEkrani, { sablon, zorluk: 1, tohum, onSonraki: () => {} }));
+    kok.render(createElement(TurEtkinlikEkrani, { sablon, zorluk, tohum, onSonraki: () => {} }));
   });
   for (let i = 0; i < 40 && !kap.querySelector('[data-kart]'); i++) await bekle(25);
   await bekle(60);
@@ -123,6 +123,41 @@ describe('seçenek kartı cevaptan önce sessiz (D-11), çalıcı bağlıyken', 
       // Servise giden İSTEKLER de aynı: kart için hiçbir klip anahtarı istenmez (manifestte olmasa bile).
       expect(istenen().slice(acilisIstenen.length)).toEqual(beklenen.map((k) => `tur.${k.replace('/', '.')}`));
       expect(sesIstekleri.some((k) => k.startsWith('harf/'))).toBe(false);
+    });
+  }
+});
+
+describe('T-02 doğru cevap: neden doğru (kapanış klibi) ve ünsüz hedefte kart vurgusu', () => {
+  const UNLULER = new Set(['a', 'e', 'ı', 'i', 'o', 'ö', 'u', 'ü']);
+  for (const [zorluk, konum] of [[1, 'bas'], [3, 'her']] as const) {
+    it(`z${zorluk}: ünlüde ünlü kapanışı, ünsüzde "harf" kapanışı + vurgu; kapanış yalnız doğru cevaptan sonra`, async () => {
+      const gorulen = { unlu: false, unsuz: false };
+      for (let tohum = 1; tohum <= 40 && !(gorulen.unlu && gorulen.unsuz); tohum++) {
+        if (kok) {
+          act(() => kok?.unmount());
+          kok = null;
+        }
+        await ac('T-02', tohum, zorluk);
+        const ana = kap.querySelector('main[data-tur-etkinlik]')!;
+        const kart = kap.querySelector<HTMLButtonElement>(`button[data-kart="${ana.getAttribute('data-cevap')}"]`)!;
+        const hedef = kart.getAttribute('data-kart-metin')!;
+        const unlu = UNLULER.has(hedef);
+        if (unlu ? gorulen.unlu : gorulen.unsuz) continue;
+        gorulen[unlu ? 'unlu' : 'unsuz'] = true;
+        const istenen = () => [...(window.__okulumsunE2E?.istenenKlipler ?? [])];
+        expect(istenen().some((k) => k.startsWith('tur.geri.')), 'kapanış cevaptan önce yok').toBe(false);
+        expect(kart.hasAttribute('data-vurgu')).toBe(false);
+        act(() => kart.click());
+        for (let i = 0; i < 80 && !istenen().some((k) => /^tur\.geri\.(bas|her)-/.test(k)); i++) await bekle(50);
+        const ek = unlu ? hedef.replace('ı', 'i2').replace('ö', 'o2').replace('ü', 'u2') : 'harf';
+        expect(istenen().slice(-1)[0]).toBe(`tur.geri.${konum}-${ek}`);
+        expect(istenen().filter((k) => /^tur\.geri\.(bas|her)-/.test(k))).toHaveLength(1);
+        // Ünsüz harf adı hiçbir klipte yok; ünsüzde kart vurgulanır, ünlüde vurgu gerekmez.
+        expect(istenen().some((k) => k.startsWith('tur.harf.'))).toBe(false);
+        expect(kap.querySelector(`button[data-kart="${ana.getAttribute('data-cevap')}"]`)!.hasAttribute('data-vurgu')).toBe(!unlu);
+        expect(kap.querySelectorAll('[data-vurgu]').length).toBe(unlu ? 0 : 1);
+      }
+      expect(gorulen, 'her iki hedef türü de görüldü').toEqual({ unlu: true, unsuz: true });
     });
   }
 });
