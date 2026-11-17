@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { TUR_URL } from '../../playwright.config';
 import { geometriTemiz, sesKilidiniAc } from './yardimci/akis';
+import { sesiEksikKur } from './yardimci/turSes';
 import { sozcukKlibi } from '../../src/content/dersler/tur/sablonlar/klipler';
 
 /**
@@ -12,7 +13,7 @@ import { sozcukKlibi } from '../../src/content/dersler/tur/sablonlar/klipler';
  *  - SES (istenen klipler listesi, `e2eKanca.istenenKlipler`): açılışta yönerge (+ dinleme sorusunda sözcükler);
  *    okuma hedefli soruda (T-03…T-06) yalnız yönerge (D-12); kartlara dokunmak hiçbir klip istemez (D-11, sessiz kart);
  *    istenen her klip manifestte ve hiçbiri tek başına ünsüz değil; doğru cevaptan sonra geri bildirim klipleri;
- *  - Türkçe ses dosyası yok (Adım 67): ekranda "Ses yok" görünür, akış sessiz çalışır.
+ *  - Türkçe ses dosyası yok (klipler.json yanıtı rota ile hepsi `eksik` yapılır; gerçek veriden bağımsız): ekranda "Ses yok" görünür, akış sessiz çalışır (klip başına karar; `var` klip çalar: turSesCalma.spec).
  * Cevap e2e kancalı derlemede `main[data-cevap]`tan okunur (üretimde yok).
  */
 test.use({ baseURL: TUR_URL });
@@ -55,10 +56,19 @@ function klipleriDenetle(liste: readonly string[], baglam: string) {
 }
 
 async function ac(page: Page, sablon: string, zorluk: number, tohum: number, cihaz: string) {
+  await sesiEksikKur(page);
   await sesKilidiniAc(page, `/?ders=tur&etkinlik=${sablon}&zorluk=${zorluk}&tohum=${tohum}&device=${cihaz}`);
   const main = page.locator(`main[data-tur-etkinlik="${sablon}"]`);
   await expect(main).toBeVisible();
   await expect(page.locator('[data-kartlar][data-satir]')).toBeVisible();
+  // Klipler servise manifest çözümünden SONRA (eşzamansız) gider: açılış yönergesi istenene dek bekle.
+  await expect
+    .poll(async () => {
+      const a = await klipler(page);
+      await page.waitForTimeout(150);
+      return a.length > 0 && a.length === (await klipler(page)).length;
+    })
+    .toBe(true);
   return main;
 }
 
@@ -112,9 +122,8 @@ async function coz(page: Page, sablon: string, baglam: string) {
     const yanlis = kartlar.and(page.locator(`:not([data-kart="${cevap}"])`)).first();
     await yanlis.click();
     await expect(yanlis).toHaveAttribute('data-yanlis', 'true');
-    const sonra = await klipler(page);
     // Yanlış dokunuş yalnız "Bir daha deneyelim." ister; kartın harfi/hecesi asla.
-    expect(sonra.slice(ilk.length), `${baglam}: yanlış kart`).toEqual(['tur.geri.tekrar']);
+    await expect.poll(async () => (await klipler(page)).slice(ilk.length), `${baglam}: yanlış kart`).toEqual(['tur.geri.tekrar']);
     await page.waitForTimeout(300); // BigButton soğuması değil, ayrı kart; görsel durum otursun
     await page.locator(`[data-kart="${cevap}"]`).click();
     // Adım 79: doğru kartta işaret rozeti (renk tek ipucu değil).
@@ -125,10 +134,26 @@ async function coz(page: Page, sablon: string, baglam: string) {
   await expect(page.getByRole('button', { name: 'Sonraki', exact: true })).toBeVisible();
   // T-16: doğru cevaptan sonra sözcüğün doğru yazılışı üstte görünür.
   if (sablon === 'T-16') await expect(page.locator('[data-uyaran-metni="dogru-yazilis"]')).toBeVisible();
+  await expect.poll(() => klipler(page), `${baglam}: geri bildirim istendi`).toContain('tur.geri.dogru');
   const son = await klipler(page);
   expect(son.slice(-1)[0], `${baglam}: geri bildirim istendi`).toMatch(/^tur\.(sozcuk|hece|geri)\./);
   expect(son, `${baglam}: geri bildirimde övgü`).toContain('tur.geri.dogru');
   klipleriDenetle(son, baglam);
+  // T-02: geri bildirim NEDENİ söyler (Aferin → sözcükler → kapanış); ünsüzde harf adı yok, doğru kart vurgulanır.
+  if (sablon === 'T-02') {
+    const zorluk = Number(await main.getAttribute('data-zorluk'));
+    const hedef = (await page.locator(`[data-kart="${cevap}"]`).getAttribute('data-kart-metin')) ?? '';
+    const unlu = /^[aeıioöuü]$/.test(hedef);
+    const ek = unlu ? hedef.replace('ı', 'i2').replace('ö', 'o2').replace('ü', 'u2') : 'harf';
+    expect(son.slice(-1)[0], `${baglam}: kapanış`).toBe(`tur.geri.${zorluk <= 2 ? 'bas' : 'her'}-${ek}`);
+    expect(son.filter((k) => k.startsWith('tur.geri.')), `${baglam}: tekrar + övgü + kapanış`).toContain('tur.geri.dogru');
+    const vurgu = page.locator(`[data-kart="${cevap}"]`);
+    if (unlu) await expect(vurgu).not.toHaveAttribute('data-vurgu', 'true');
+    else {
+      await expect(vurgu).toHaveAttribute('data-vurgu', 'true');
+      await expect(page.locator('[data-vurgu]')).toHaveCount(1);
+    }
+  }
 }
 
 for (const sablon of SABLONLAR) {

@@ -19,13 +19,21 @@
 import { e2eKlipAlindi, e2eKlipIstendi } from '../dev/e2eKanca';
 import { AUDIO_MANIFEST, type SpeechKey } from './audioManifest.generated';
 import { kayitEkle } from '../hata/hataKaydi';
+import { turKlipBaytlari, turKlipCozulemedi } from '../content/dersler/tur/veriYukleyici';
 import { hash32 } from '../exercises/rng';
 import { EN_DUSUK_CALMA_HIZI } from '../design/kapsayicilik';
 
 export type { SpeechKey };
 
+/**
+ * Türkçe (Okuma Yazma) klip anahtarı: `tur.<tür>.<ad>`. Matematik `SpeechKey`i gibi aynı çalma hattından geçer
+ * (kuyruk, kesme, hız, hata kaydı); baytları `turKlip.ts` çözer — YALNIZ `VITE_DERS_TUR=1` derlemesinde.
+ */
+export type TurKlipAnahtari = `tur.${string}`;
+export type KlipAnahtari = SpeechKey | TurKlipAnahtari;
+
 export type SpeakSource =
-  | { kind: 'key'; key: SpeechKey }
+  | { kind: 'key'; key: KlipAnahtari }
   /**
    * Klip dizisi — ~140 sayı/işlem klibiyle sonsuz matematik sorusu seslendirilir.
    * SADECE sayı ve işlem sözcükleri için. Cümleleri parçadan birleştirmeyin:
@@ -33,7 +41,7 @@ export type SpeakSource =
    */
   | {
       kind: 'sequence';
-      keys: SpeechKey[];
+      keys: KlipAnahtari[];
       gapMs?: number;
       /**
        * Yalnız ilk klipten sonraki ara (KG-110): bir giriş/duyuru cümlesi (ör. `isinma.basliyor`) ilk
@@ -75,6 +83,15 @@ const DEFAULT_GAP_MS = 90;
 /** Kuyruk sınırı: çocuk hızlı hızlı dokununca talimatlar birikmesin. */
 const MAX_QUEUE = 3;
 
+/**
+ * Türkçe klip çözücüsü: bayrak kapalıyken `null` ve bağ ağaçtan atılır (üretim paketi değişmez; CI
+ * `dist/` denetimi). Bayraklı derlemede `veriYukleyici.ts` klip çözümü bağlanır.
+ */
+const TUR_KLIP_BAYTLARI: ((key: string) => Promise<ArrayBuffer | null>) | null =
+  typeof import.meta.env !== 'undefined' && import.meta.env.VITE_DERS_TUR === '1'
+    ? turKlipBaytlari
+    : null;
+
 interface QueueItem {
   source: SpeakSource;
   options: SpeakOptions;
@@ -83,8 +100,8 @@ interface QueueItem {
 
 class SpeechService {
   #ctx: AudioContext | null = null;
-  #buffers = new Map<SpeechKey, AudioBuffer>();
-  #inflight = new Map<SpeechKey, Promise<AudioBuffer | null>>();
+  #buffers = new Map<KlipAnahtari, AudioBuffer>();
+  #inflight = new Map<KlipAnahtari, Promise<AudioBuffer | null>>();
   #queue: QueueItem[] = [];
   #playing: AudioBufferSourceNode | null = null;
   #draining = false;
@@ -150,7 +167,7 @@ class SpeechService {
   }
 
   /** Klipleri önden indirip çözer. Ekran geçişinde takılma olmasın diye. */
-  async prefetch(keys: readonly SpeechKey[]): Promise<void> {
+  async prefetch(keys: readonly KlipAnahtari[]): Promise<void> {
     await Promise.all(keys.map((k) => this.#load(k)));
   }
 
@@ -343,7 +360,7 @@ class SpeechService {
     });
   }
 
-  async #load(key: SpeechKey): Promise<AudioBuffer | null> {
+  async #load(key: KlipAnahtari): Promise<AudioBuffer | null> {
     const cached = this.#buffers.get(key);
     if (cached) return cached;
 
@@ -351,8 +368,26 @@ class SpeechService {
     if (pending) return pending;
 
     const task = (async () => {
-      const entry = AUDIO_MANIFEST[key];
-      if (!entry) return null;
+      const entry = AUDIO_MANIFEST[key as SpeechKey];
+      if (!entry) {
+        // Türkçe klip (yalnız bayraklı derleme; aksi halde bu dal ağaçtan atılır, matematik yolu aşağıda değişmez).
+        if (TUR_KLIP_BAYTLARI === null || !key.startsWith('tur.')) return null;
+        try {
+          // `eksik`/bilinmeyen klip → null (sessiz); alınamayan `var` klibin hata kaydını `turKlipBaytlari` yazar.
+          const turBayt = await TUR_KLIP_BAYTLARI(key);
+          if (!turBayt) return null;
+          e2eKlipAlindi(key);
+          const turTampon = await this.#ctx!.decodeAudioData(turBayt);
+          this.#buffers.set(key, turTampon);
+          return turTampon;
+        } catch {
+          turKlipCozulemedi(key);
+          kayitEkle({ tur: 'ses', mesaj: `klip yüklenemedi: ${key}` });
+          return null;
+        } finally {
+          this.#inflight.delete(key);
+        }
+      }
       try {
         const res = await fetch(`${AUDIO_BASE}${entry.file}`);
         if (!res.ok) {
@@ -396,7 +431,7 @@ export const speech = new SpeechService();
 // --------------------------------------------------------------- yardımcılar
 
 /** Bir sayıyı sesli okur. */
-export function sayNumber(n: number): SpeakSource {
+export function sayNumber(n: number): { kind: 'key'; key: SpeechKey } {
   return { kind: 'key', key: `sayi.${n}` as SpeechKey };
 }
 

@@ -18,6 +18,7 @@ import {
   heceKlibi,
   klipMetniGecerliMi,
   sozcukKlibi,
+  t02KapanisKlipleri,
   TUR_GERI_BILDIRIMLERI,
   TUR_YONERGELERI,
   yonergeKlibi,
@@ -37,6 +38,7 @@ export function turKlipManifesti(havuz: readonly TurHavuzSozcugu[], cumleler: re
   for (const [k, metin] of Object.entries(TUR_YONERGELERI)) m.set(yonergeKlibi(k as TurYonergeAnahtari), metin);
   for (const [k, metin] of Object.entries(TUR_GERI_BILDIRIMLERI))
     m.set(geriBildirimKlibi(k as keyof typeof TUR_GERI_BILDIRIMLERI), metin);
+  for (const k of t02KapanisKlipleri()) m.set(k.anahtar, k.metin);
   for (const s of havuz) {
     m.set(sozcukKlibi(s.metin), s.metin);
     for (const h of hecele(s.metin)) if ([...h].length >= 2) m.set(heceKlibi(h), h);

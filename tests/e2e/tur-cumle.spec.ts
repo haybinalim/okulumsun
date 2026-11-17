@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { TUR_URL } from '../../playwright.config';
 import { geometriTemiz, sesKilidiniAc } from './yardimci/akis';
+import { sesiEksikKur } from './yardimci/turSes';
 import { kumeKodla, resmiKume } from '../../src/content/dersler/tur/ogretilenKume';
 
 /**
@@ -49,11 +50,14 @@ for (const sablon of CUMLE_SABLONLARI) {
       });
       for (const zorluk of [1, 3, 5]) {
         const baglam = `${sablon} z${zorluk} ${g.ad}`;
+        await sesiEksikKur(page);
         await sesKilidiniAc(page, `/?ders=tur&etkinlik=${sablon}&zorluk=${zorluk}&tohum=2&device=${g.cihaz}&tur=${HEPSI}`);
         const main = page.locator(`main[data-tur-etkinlik="${sablon}"]`);
         await expect(main).toBeVisible();
         await expect(page.locator('[data-kartlar][data-satir]')).toBeVisible();
         await geometriTemiz(page, baglam);
+        // Klip istekleri manifest çözümünden sonra (eşzamansız) kaydedilir: yük altında yarışmasın diye ilk klibi bekle.
+        await expect.poll(async () => (await klipler(page)).length).toBeGreaterThan(0);
         const acilis = await klipler(page);
         expect(acilis, `${baglam}: okuma sorusunda yalnız yönerge (D-12)`).toHaveLength(1);
         expect(acilis[0], `${baglam}: okuma sorusunda yalnız yönerge (D-12)`).toMatch(

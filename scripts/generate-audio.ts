@@ -48,6 +48,14 @@
  *   npm run audio -- --zorla            (özetleri yoksay, hepsini yeniden üret; --force eşanlamlı)
  *   npm run audio -- --en-cok 60        (en çok 60 klip üret ve dur; özetler her klipten sonra
  *                                        yazıldığı için kesilen çalışma kaldığı yerden sürer)
+ *   npm run audio -- --ders tur [--kuru|--en-cok N|--zorla]
+ *       Türkçe klipler üretimden sonra ÖLÇÜLÜR (süre, max_volume; scripts/ses/turDogrulama.ts). Geçmeyen klip
+ *       "Ka." biçimiyle en çok 3 kez yeniden denenir; yine geçmezse dosya YAZILMAZ ve klip eksik kalır (UYARI).
+ *       `ders-verisi/tur/ses/reddedilen.json` (kulakla reddedilen klipler) üretilmez.
+ *                                       (Türkçe Okuma Yazma klipleri: ders-verisi/tur/ses/; aynı defter ve plan)
+ *   npm run audio -- --ders tur --yeniden-dogrula [--kuru]
+ *                                       (diskteki MEVCUT Türkçe klipleri istek atmadan ölçer, geçmeyenleri listeler;
+ *                                        --kuru yalnız listeler, bayrak tek başına geçmeyenleri yeniden üretir)
  *   npm run audio -- --ornek [--ses Kore,Aoede,Puck]
  *                                       (KG-04: ses seçimi için ses başına 10 örnek +
  *                                        "on yedi elma" birleştirme örneği; çıktı
@@ -78,6 +86,17 @@ import {
 } from './ses/googleTts.ts';
 import { Defter, defterYolu, guvenliSinir, karakterSay, onTahmin, UCRETSIZ_AYLIK_KARAKTER } from './ses/ucretsizKatman.ts';
 import { uretimPlani } from './ses/uretimPlani.ts';
+import { planiCalistir } from './ses/uretimDongusu.ts';
+import {
+  TUR_KLIP_MANIFESTI,
+  TUR_RET_LISTESI,
+  TUR_SES_DIZINI,
+  retListesiniOku,
+  retListesiniUygula,
+  turKlipleriniAyir,
+} from './ses/turKlipleri.ts';
+import { ESIKLER, ffmpegOlcum, mevcutlariDogrula, turKlibiSentezle, YENIDEN_DENEME_SAYISI } from './ses/turDogrulama.ts';
+import { klipManifestiniYaz } from './tur/klip-manifesti.ts';
 
 const exec = promisify(execFile);
 
@@ -96,7 +115,15 @@ const EN_COK = Number.parseInt(process.argv[process.argv.indexOf('--en-cok') + 1
 const PROTOTIP = process.argv.includes('--prototip');
 /** KG-04: ses seçimi örnekleri. Manifest ve .hashes.json'a dokunmaz. */
 const ORNEK = process.argv.includes('--ornek');
-const OUT_AUDIO = path.join(ROOT, PROTOTIP ? 'public/audio-prototip' : 'public/audio');
+/**
+ * `--ders tur`: Türkçe (Okuma Yazma) klipleri. Aynı kaynak, aynı defter, aynı artımlı plan; girdi
+ * `ders-verisi/tur/ses/klipler.json`, çıktı `ders-verisi/tur/ses/` (+ kendi `.hashes.json`'u). Bayraksız = matematik.
+ */
+const DERS = argDegeri('--ders');
+const TUR = DERS === 'tur';
+/** `--yeniden-dogrula` (yalnız `--ders tur`): mevcut klipleri ölç, yalnız geçmeyenleri yeniden üret. */
+const YENIDEN_DOGRULA = process.argv.includes('--yeniden-dogrula');
+const OUT_AUDIO = path.join(ROOT, TUR ? TUR_SES_DIZINI : PROTOTIP ? 'public/audio-prototip' : 'public/audio');
 const OUT_ORNEK = path.join(ROOT, 'public/audio-prototip/ornek');
 
 /** Örnek dinleme kümesi: yönerge, geri bildirim, sayı ve birleştirme parçaları (gerçek klip anahtarları). */
@@ -233,9 +260,12 @@ async function synthPiper(text: string, out: string): Promise<void> {
 /** WAV baytlarını 24 kHz mono AAC m4a'ya çevirir (diğer sağlayıcılarla aynı biçim). */
 async function wavdanM4a(wav: Buffer, out: string): Promise<void> {
   const tmp = `${out}.wav`;
-  await writeFile(tmp, wav);
-  await exec('ffmpeg', ['-y', '-loglevel', 'error', '-i', tmp, '-ac', '1', '-ar', '24000', '-c:a', 'aac', '-b:a', '40k', out]);
-  await rm(tmp, { force: true });
+  try {
+    await writeFile(tmp, wav);
+    await exec('ffmpeg', ['-y', '-loglevel', 'error', '-i', tmp, '-ac', '1', '-ar', '24000', '-c:a', 'aac', '-b:a', '40k', out]);
+  } finally {
+    await rm(tmp, { force: true }); // ffmpeg düşse de ara WAV arkada kalmaz
+  }
 }
 
 /** Chirp 3 HD kotası 200 istek/dk/proje → istekler arası ≥350 ms. */
@@ -383,6 +413,9 @@ async function ozetleriYaz(
 
 async function main(): Promise<void> {
   vekilUyarisi();
+  if (DERS !== undefined && DERS !== 'tur') throw new Error(`Bilinmeyen --ders değeri: "${DERS}" (yalnız "tur"; matematik için bayraksız).`);
+  if (TUR && (PROTOTIP || ORNEK)) throw new Error('--ders tur, --prototip ve --ornek ile birlikte kullanılamaz.');
+  if (YENIDEN_DOGRULA && !TUR) throw new Error('--yeniden-dogrula yalnız --ders tur ile kullanılır.');
   if (ORNEK) return ornekUret();
   const { kaynak, anahtarSesleri: tanimliAnahtarSesleri, provider } = await aktifKaynagiOku();
   const anahtarSesleri = provider === 'google' ? tanimliAnahtarSesleri : [];
@@ -392,9 +425,19 @@ async function main(): Promise<void> {
   };
   // Model kimlikleri baştan doğrulanır (yanlış ses adı istek atılmadan yakalanır).
   if (provider === 'google') for (const a of anahtarSesleri) modelKimligindenSes(a.modelKimligi);
-  const clips = klipleriTopla(JSON.parse(await readFile(CONTENT, 'utf8')) as Record<string, unknown>);
+  const tumKlipler = TUR
+    ? turKlipleriniAyir(JSON.parse(await readFile(path.join(ROOT, TUR_KLIP_MANIFESTI), 'utf8')) as unknown)
+    : klipleriTopla(JSON.parse(await readFile(CONTENT, 'utf8')) as Record<string, unknown>);
+  // Ret listesi (kulakla reddedilen): üretilmez. Listede olup manifestte olmayan anahtar yazım hatasıdır → hata.
+  const ret = TUR ? retListesiniOku(ROOT) : {};
+  const bilinenAnahtarlar = new Set(tumKlipler.map((c) => c.key));
+  for (const k of Object.keys(ret)) {
+    if (!bilinenAnahtarlar.has(k)) throw new Error(`${TUR_RET_LISTESI}: "${k}" klipler.json'da yok.`);
+  }
+  const { uretilebilir, reddedilen } = retListesiniUygula(tumKlipler, ret);
+  const clips = tumKlipler;
   console.log(
-    `${clips.length} klip · kaynak: ${kaynak.modelKimligi}${PROTOTIP ? ' · --prototip' : ''}${FORCE ? ' · --zorla' : ''}${KURU ? ' · --kuru' : ''}`,
+    `${TUR ? 'Türkçe ' : ''}${clips.length} klip · kaynak: ${kaynak.modelKimligi}${PROTOTIP ? ' · --prototip' : ''}${TUR ? ' · --ders tur' : ''}${FORCE ? ' · --zorla' : ''}${KURU ? ' · --kuru' : ''}`,
   );
   if (!kaynak.ticariDagitimIzni) {
     console.warn('UYARI LİSANS: aktif ses kaynağının ticari dağıtım izni yok (ADR-0004).');
@@ -405,16 +448,45 @@ async function main(): Promise<void> {
     ? { ...ozetDosyasiniOku(JSON.parse(await readFile(CACHE, 'utf8'))).ozetler }
     : {};
 
-  let made = 0;
-  let ardisikHata = 0;
-  const failures: string[] = [];
   // Manifestte olmayan (tr.json'dan silinmiş) anahtarların özetleri atılır.
   const gecerli = new Set(clips.map((c) => c.key));
   for (const k of Object.keys(hashes)) if (!gecerli.has(k)) delete hashes[k];
 
+  // Ölçüm: tek örnek; ffprobe/ffmpeg yoksa hata verir ("ölçülemedi" asla "geçti" sayılmaz).
+  const olc = ffmpegOlcum();
+  let planKlipleri: readonly Clip[] = uretilebilir;
+  /** `--yeniden-dogrula` ile ölçümde bozuk saptanan mevcut dosyalar (yalnız bunlar başarısızlıkta silinebilir). */
+  const eskiBozuklar = new Set<string>();
+  if (TUR) {
+    console.log(
+      `doğrulama eşikleri: süre ≥ ${ESIKLER.ENAZ_SURE_SN} sn · max_volume ≥ ${ESIKLER.ENAZ_MAX_SES_DB} dB · hece/sözcük ≤ ${ESIKLER.HECE_SOZCUK_ENCOK_SURE_SN} sn · ` +
+        `geçmeyene en çok ${YENIDEN_DENEME_SAYISI} yeniden deneme`,
+    );
+    if (reddedilen.length) {
+      console.log(`reddedilen (üretilmez): ${reddedilen.length} klip — ${reddedilen.map((c) => c.key).join(', ')}`);
+      for (const c of reddedilen) {
+        if (existsSync(path.join(OUT_AUDIO, c.file))) {
+          console.warn(`UYARI: reddedilen klibin dosyası diskte: ${path.join(TUR_SES_DIZINI, c.file)} — durum eksik sayılır, dosyayı silin.`);
+        }
+      }
+    }
+  }
+  if (YENIDEN_DOGRULA) {
+    const r = await mevcutlariDogrula(uretilebilir, (d) => existsSync(path.join(OUT_AUDIO, d)), (d) => path.join(OUT_AUDIO, d), olc);
+    console.log(`yeniden doğrulama: ${r.olculen} mevcut klip ölçüldü (istek yok) · doğrulamadan geçmeyen ${r.gecmeyen.length}`);
+    for (const g of r.gecmeyen) console.log(`  ${g.anahtar}: ${g.neden}`);
+    const gecmeyen = new Set(r.gecmeyen.map((g) => g.anahtar));
+    planKlipleri = uretilebilir.filter((c) => gecmeyen.has(c.key));
+    // Özeti silinen klip "değişmiş" sayılır → planda yeniden üretilir (yalnız bunlar).
+    for (const k of gecmeyen) {
+      eskiBozuklar.add(k);
+      delete hashes[k];
+    }
+  }
+
   // Yalnız özeti değişen / dosyası eksik klipler (özete sağlayıcı + model kimliği girer).
   const plan = uretimPlani(
-    clips,
+    planKlipleri,
     hashes,
     (metin, clip) => anahtarliKlipOzeti(kaynak, anahtarSesleri, clip.key, metin),
     (dosya) => existsSync(path.join(OUT_AUDIO, dosya)),
@@ -448,39 +520,56 @@ async function main(): Promise<void> {
     console.log('--kuru: hiç istek atılmadı, dosya yazılmadı.');
     return;
   }
-  // Çalışma başı kuru tahmin: bütçeyi aşacaksa hiç başlama (KG-109).
-  if (provider === 'google' && plan.uretilecek.length > 0) onTahmin(planMetinleri, defter().durum());
-
-  for (const { clip, ozet: hash } of plan.uretilecek) {
-    const out = path.join(OUT_AUDIO, clip.file);
-    await mkdir(path.dirname(out), { recursive: true });
-    try {
-      await synth(provider, clip.text, out, klipSesi(clip.key));
-      hashes[clip.key] = hash;
-      made++;
-      // Her klipten sonra: kesilen çalışma kaldığı yerden sürer.
-      if (!PROTOTIP) await ozetleriYaz(kaynak, anahtarSesleri, hashes);
-      if (made % 25 === 0) console.log(`  ${made} üretildi...`);
-      ardisikHata = 0;
-    } catch (err) {
-      // Ücretsiz katman sınırı kalıcıdır: hemen dur, sonraki klipleri deneme.
-      if ((err as Error).name === 'UcretsizKatmanAsimi' || /ÜCRETSİZ KATMAN KORUMASI/.test((err as Error).message)) {
-        await ozetleriYaz(kaynak, anahtarSesleri, hashes);
-        throw err;
-      }
-      failures.push(`${clip.key}: ${(err as Error).message.split('\n')[0]}`);
-      // Kota/faturalandırma gibi kalıcı hatada 287 kez denemek yerine dur.
-      if (++ardisikHata >= 3) {
-        console.error('Art arda 3 klip üretilemedi; durduruldu (kota, faturalandırma veya anahtar).');
-        break;
-      }
-    }
+  // Defter yoksa kullanım bilinmiyor = güvenli değil: tek istek bile atılmadan, sıfırdan farklı çıkışla dur.
+  if (provider === 'google' && plan.uretilecek.length > 0 && !defter().var()) {
+    throw new Error(
+      `ÜCRETSİZ KATMAN KORUMASI: kullanım defteri yok (${defter().yol}); ${plan.uretilecek.length} klibin hiçbiri üretilmedi. ` +
+        'Bu ayki gerçek kullanımı yazarak oluşturun veya TTS_KULLANIM_DOSYASI ile yolunu verin.',
+    );
   }
+  // Çalışma başı kuru tahmin (bütçeyi aşacaksa hiç başlama, KG-109) + döngü: planiCalistir içinde, matematik ve Türkçe ortak.
+  const sonuc = await planiCalistir({
+    plan,
+    butce: provider === 'google' ? () => defter().durum() : undefined,
+    sentezle: async (clip) => {
+      const out = path.join(OUT_AUDIO, clip.file);
+      await mkdir(path.dirname(out), { recursive: true });
+      if (!TUR) return synth(provider, clip.text, out, klipSesi(clip.key));
+      // Türkçe: GEÇİCİ yola üret → ölç → geçerse atomik yerine koy; geçmezse "Ka." biçimiyle yeniden dene (turDogrulama.ts).
+      // Hata/başarısızlıkta eski dosya ve özet korunur (yalnız --yeniden-dogrula ile bozuk saptanmış klip, tüm denemeler
+      // doğrulamada düşerse silinir). Girdi biçimi YALNIZ sentezde değişir: özet klibin gerçek metninden hesaplanır.
+      await turKlibiSentezle({
+        clip,
+        hedef: out,
+        synth: (girdi, yol) => synth(provider, girdi, yol, klipSesi(clip.key)),
+        olc,
+        eskiBozuk: eskiBozuklar.has(clip.key),
+        ozetler: hashes,
+        gecmedi: (n, neden) => console.warn(`  doğrulama ${n}. deneme geçmedi: ${clip.key} — ${neden}`),
+      });
+    },
+    // Her klipten sonra: kesilen çalışma kaldığı yerden sürer.
+    kaydet: async (clip, hash) => {
+      hashes[clip.key] = hash;
+      if (!PROTOTIP) await ozetleriYaz(kaynak, anahtarSesleri, hashes);
+    },
+    asimdaKaydet: () => ozetleriYaz(kaynak, anahtarSesleri, hashes),
+    ilerleme: (n) => {
+      if (n % 25 === 0) console.log(`  ${n} üretildi...`);
+    },
+  });
+  const made = sonuc.made;
+  const failures = sonuc.failures;
+  if (sonuc.durduruldu) console.error('Art arda 3 klip üretilemedi; durduruldu (kota, faturalandırma veya anahtar).');
 
   await mkdir(OUT_AUDIO, { recursive: true });
   await ozetleriYaz(kaynak, anahtarSesleri, hashes);
   // Prototip çıktısı dağıtılmadığı için manifesto yalnız gerçek üretimde yazılır.
-  if (!PROTOTIP) {
+  if (TUR) {
+    // Durum diskten türetilir (elle düzenleme yok): dosyası olan klip `durum: "var"` olur.
+    const n = klipManifestiniYaz(ROOT);
+    console.log(`${TUR_KLIP_MANIFESTI}: ${n.var}/${n.toplam} klip sesli (durum diskten türetildi).`);
+  } else if (!PROTOTIP) {
     await mkdir(path.dirname(OUT_MANIFEST), { recursive: true });
     await writeFile(OUT_MANIFEST, buildManifest(clips));
   }
@@ -490,7 +579,12 @@ async function main(): Promise<void> {
     console.log(`sağlayıcıya giden: ${sayac.istek} istek · ${sayac.karakter} karakter (içerik yazdırılmaz)`);
     butceYaz('ücretsiz katman (sonra)');
   }
-  console.log(`manifesto: ${path.relative(ROOT, OUT_MANIFEST)}`);
+  if (TUR && sonuc.dogrulanamayan.length) {
+    console.warn(`\nUYARI: ${sonuc.dogrulanamayan.length} klip doğrulamadan geçmedi (dosya YAZILMADI, klip eksik kaldı; çıkış kodu 0 — kısmi başarı):`);
+    for (const f of sonuc.dogrulanamayan) console.warn(`  ${f}`);
+    console.warn('  Yeniden denemek için: npm run audio -- --ders tur   (eksik klipler yeniden üretilir). Kulakla kötü bulunanı reddedilen.json\'a ekleyin.');
+  }
+  if (!TUR) console.log(`manifesto: ${path.relative(ROOT, OUT_MANIFEST)}`);
 
   if (failures.length) {
     console.error(`\n${failures.length} klip üretilemedi:`);

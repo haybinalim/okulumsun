@@ -4,13 +4,16 @@
  * 2–3 sözcük dinlenir; hepsinde ortak olan sesin harfi sessiz harf kartları arasından seçilir. Ses yalnız
  * SÖZCÜKTÜR: harf hiçbir zaman tek başına seslendirilmez (K-OY-03, D-11), kartlar cevaptan önce sessizdir.
  *
+ * Doğru cevapta geri bildirim NEDENİ söyler: "Aferin!" → sözcükler → kapanış (ünlüde "Hepsi ı sesiyle başlıyor.";
+ * ünsüzde harf adsız "Hepsi bu harfle başlıyor." ve ekranda doğru harf kartı büyütülür). Kapanış yalnız doğru cevaptan SONRA.
+ *
  * Zorluk: z1 iki sözcük, ses başta, 2 kart · z2 üç sözcük, ses başta, 3 kart · z3 üç sözcük, ses herhangi bir
  * yerde, 4 kart (karıştırılan çift öncelikli) · z4 en az ikisinde ses içeride, 5 kart · z5 hepsinde ses içeride,
  * 6 kart. Çeldirici harf sözcüklerin HEPSİNDE geçemez (tek doğru); z1–z2'de hiçbirinde geçmez.
  */
 import { createRng } from '../../../../exercises/rng';
 import { kumeKodla } from '../ogretilenKume';
-import { geriBildirimKlibi, sozcukKlibi, yonergeKlibi } from './klipler';
+import { geriBildirimKlibi, sozcukKlibi, t02KapanisKlibi, yonergeKlibi } from './klipler';
 import { enYeniHarf, harfCeldiricileri, kartlariKaristir, kumeHarfleri, okunabilirSozcukler, soruGirisHarfi } from './ortak';
 import { turItemId, TurUretimHatasi, type TurSecimSorusu, type TurUretimGirdisi } from './turSoru';
 
@@ -61,10 +64,10 @@ export function uretT02(g: TurUretimGirdisi): TurSecimSorusu {
       zorluk: g.zorluk,
       tohum: g.tohum,
       girisHarfi: soruGirisHarfi([...sozcukler, ...kartlar.map((k) => k.metin)]),
-      yonerge: yonergeKlibi('t02'),
+      yonerge: yonergeKlibi(ayar.konum === 'bas' ? 't02-bas' : 't02'),
       soruKlipleri: klipler,
       uyaran: { tur: 'ses', adet: sozcukler.length },
-      geriBildirim: [geriBildirimKlibi('dogru'), ...klipler],
+      geriBildirim: [geriBildirimKlibi('dogru'), ...klipler, t02KapanisKlibi(ayar.konum === 'bas' ? 'bas' : 'her', hedef)],
       hedefMetin: hedef,
       sozcukler,
       kartlar,
