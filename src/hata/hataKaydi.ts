@@ -12,7 +12,7 @@
  */
 
 /** render: ErrorBoundary; pencere: window 'error' (yakalanmamış senkron hata); promise: 'unhandledrejection'. */
-export type HataTuru = 'render' | 'pencere' | 'promise' | 'ses' | 'pwa';
+export type HataTuru = 'render' | 'pencere' | 'promise' | 'ses';
 
 export interface HataKaydi {
   /** Date.now() — yalnız bellekte. */
