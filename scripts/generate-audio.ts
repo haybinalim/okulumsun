@@ -104,7 +104,7 @@ import {
   turKlipleriniAyir,
 } from './ses/turKlipleri.ts';
 import { ESIKLER, ffmpegOlcum, mevcutlariDogrula, YENIDEN_DENEME_SAYISI } from './ses/turDogrulama.ts';
-import { dogrulamaAcik, klipSentezleyici } from './ses/klipSentezleyici.ts';
+import { klipSentezleyici, sentezAyari } from './ses/klipSentezleyici.ts';
 import { klipManifestiniYaz } from './tur/klip-manifesti.ts';
 
 const exec = promisify(execFile);
@@ -121,7 +121,9 @@ const KURU = process.argv.includes('--kuru') || process.argv.includes('--dry-run
 /** Bu çalışmada en çok kaç klip sentezlensin (kota/süre sınırlı ortamlar için). */
 const EN_COK = Number.parseInt(process.argv[process.argv.indexOf('--en-cok') + 1] ?? '', 10);
 /** macOS `say` yalnız prototip içindir; çıktısı dağıtılan klasöre asla yazılmaz. */
-const PROTOTIP = process.argv.includes('--prototip');
+/** Sentez ayarı (prototip / tur / ölçüm): TEK yerden; kapanış ve eşik günlüğü aynı nesneyi kullanır. */
+const ayar = sentezAyari(process.argv);
+const PROTOTIP = ayar.prototip;
 /** KG-04: ses seçimi örnekleri. Manifest ve .hashes.json'a dokunmaz. */
 const ORNEK = process.argv.includes('--ornek');
 /**
@@ -129,7 +131,7 @@ const ORNEK = process.argv.includes('--ornek');
  * `ders-verisi/tur/ses/klipler.json`, çıktı `ders-verisi/tur/ses/` (+ kendi `.hashes.json`'u). Bayraksız = matematik.
  */
 const DERS = argDegeri('--ders');
-const TUR = DERS === 'tur';
+const TUR = ayar.tur;
 /** `--yeniden-dogrula`: mevcut klipleri (matematik ya da `--ders tur`) ölç, yalnız geçmeyenleri yeniden üret. */
 const YENIDEN_DOGRULA = process.argv.includes('--yeniden-dogrula');
 const OUT_AUDIO = path.join(ROOT, TUR ? TUR_SES_DIZINI : PROTOTIP ? 'public/audio-prototip' : 'public/audio');
@@ -467,7 +469,7 @@ async function main(): Promise<void> {
   /** `--yeniden-dogrula` ile ölçümde bozuk saptanan mevcut dosyalar (yalnız bunlar başarısızlıkta silinebilir). */
   const eskiBozuklar = new Set<string>();
   // Prototip (macOS say, dağıtılmaz) ölçülmez; matematik ve Türkçe aynı doğrulamadan geçer.
-  if (dogrulamaAcik(PROTOTIP)) {
+  if (ayar.dogrula) {
     console.log(
       `doğrulama eşikleri: süre ≥ ${ESIKLER.ENAZ_SURE_SN} sn · max_volume ≥ ${ESIKLER.ENAZ_MAX_SES_DB} dB · ` +
         (TUR ? `hece/sözcük ≤ ${ESIKLER.HECE_SOZCUK_ENCOK_SURE_SN} sn · ` : '') +
@@ -545,8 +547,7 @@ async function main(): Promise<void> {
     plan,
     butce: provider === 'google' ? () => defter().durum() : undefined,
     sentezle: klipSentezleyici({
-      prototip: PROTOTIP,
-      tur: TUR,
+      ayar,
       cikisDizini: OUT_AUDIO,
       synth: (clip, girdi, yol) => synth(provider, girdi, yol, klipSesi(clip.key)),
       olc,

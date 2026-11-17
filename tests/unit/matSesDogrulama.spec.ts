@@ -9,7 +9,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { Clip } from '../../scripts/ses/klipler';
-import { klipSentezleyici } from '../../scripts/ses/klipSentezleyici';
+import { klipSentezleyici, sentezAyari } from '../../scripts/ses/klipSentezleyici';
 import { mevcutlariDogrula, olcumSorunu, type Olcum } from '../../scripts/ses/turDogrulama';
 import { planiCalistir } from '../../scripts/ses/uretimDongusu';
 import { uretimPlani } from '../../scripts/ses/uretimPlani';
@@ -38,8 +38,7 @@ async function kos(klipler: Clip[], ozetler: Record<string, string>, olcum: (gir
   const sonuc = await planiCalistir({
     plan,
     sentezle: klipSentezleyici({
-      prototip,
-      tur: false,
+      ayar: sentezAyari(prototip ? ['--prototip'] : []),
       cikisDizini: dizin,
       synth: async (_c, girdi, gecici) => {
         istekler.push(girdi);
@@ -161,4 +160,22 @@ describe('geçici .yeni.m4a yayına sızmaz', () => {
       rmSync(geciciDosya, { force: true });
     }
   }, 120_000);
+});
+
+describe('sentez ayarı tek yerden (generate-audio.ts bağlantısı)', () => {
+  it('matematik argv: ölçüm AÇIK, tur değil; --prototip: kapalı; --ders tur: tur + açık', () => {
+    expect(sentezAyari([])).toEqual({ prototip: false, tur: false, dogrula: true });
+    expect(sentezAyari(['--kuru', '--yeniden-dogrula'])).toMatchObject({ tur: false, dogrula: true });
+    expect(sentezAyari(['--prototip'])).toEqual({ prototip: true, tur: false, dogrula: false });
+    expect(sentezAyari(['--ders', 'tur'])).toEqual({ prototip: false, tur: true, dogrula: true });
+  });
+
+  it('generate-audio.ts ayarı tek satırda türetir; kapanış ve günlük aynı nesneyi alır, kopya hesap yok', () => {
+    const k = readFileSync('scripts/generate-audio.ts', 'utf8');
+    expect(k.match(/const ayar = sentezAyari\(process\.argv\);/g)).toHaveLength(1);
+    expect(k).toMatch(/klipSentezleyici\(\{\s*ayar,/);
+    expect(k).toMatch(/if \(ayar\.dogrula\) \{/);
+    expect(k).not.toMatch(/dogrulamaAcik/);
+    expect(k).not.toMatch(/^\s*(prototip|tur):/m); // kapanışa elle prototip/tur verilmez
+  });
 });
