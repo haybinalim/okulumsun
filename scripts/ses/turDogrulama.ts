@@ -1,5 +1,5 @@
 /**
- * Türkçe klip ÇIKTI DOĞRULAMASI + yeniden deneme (yalnız `--ders tur`; matematik hattı değişmez).
+ * Klip ÇIKTI DOĞRULAMASI + yeniden deneme (matematik ve Türkçe AYNI kod; dosya adı tarihsel: önce Türkçe için yazıldı).
  *
  * NEDEN: Chirp 3 HD tek başına verilen kısa hece/sözcüğü bozuk üretebiliyor (24/111 hece, 9/125 sözcük:
  * ~0,2-0,3 sn, max_volume -30...-60 dB = neredeyse sessiz). Çocuk okuyamaz; sessiz klip = ölü ekran.
