@@ -2043,6 +2043,11 @@
    "dosya": "yonerge/t02.m4a"
   },
   {
+   "anahtar": "tur.yonerge.t02-bas",
+   "metin": "Dinle. Bu sözcüklerin hepsi aynı sesle başlıyor. O sesin harfini bul.",
+   "durum": "eksik"
+  },
+  {
    "anahtar": "tur.yonerge.t03",
    "metin": "Yukarıdaki harfin aynısını bul.",
    "durum": "var",

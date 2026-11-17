@@ -61,7 +61,7 @@ export function uretT02(g: TurUretimGirdisi): TurSecimSorusu {
       zorluk: g.zorluk,
       tohum: g.tohum,
       girisHarfi: soruGirisHarfi([...sozcukler, ...kartlar.map((k) => k.metin)]),
-      yonerge: yonergeKlibi('t02'),
+      yonerge: yonergeKlibi(ayar.konum === 'bas' ? 't02-bas' : 't02'),
       soruKlipleri: klipler,
       uyaran: { tur: 'ses', adet: sozcukler.length },
       geriBildirim: [geriBildirimKlibi('dogru'), ...klipler],

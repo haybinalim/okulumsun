@@ -133,6 +133,8 @@ describe('Türkçe şablonlar — üretim (Adım 69)', () => {
         if (k.metin !== hedef) expect(soru.sozcukler.every((w) => w.includes(k.metin)), soru.itemId).toBe(false);
       expect(soru.soruKlipleri).toEqual(soru.sozcukler.map(sozcukKlibi));
       if (soru.zorluk <= 2) expect(soru.sozcukler.every((w) => w[0] === hedef)).toBe(true);
+      // Ses başta olduğu z1–z2'de yönerge "aynı sesle başlıyor" der; z3+ genel yönergeyle kalır.
+      expect(soru.yonerge, soru.itemId).toBe(soru.zorluk <= 2 ? 'tur.yonerge.t02-bas' : 'tur.yonerge.t02');
     }
   });
 

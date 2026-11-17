@@ -47,6 +47,7 @@ export function heceKlibi(hece: string): TurKlipKimligi {
  */
 export const TUR_YONERGELERI = {
   't02': 'Dinle. Bu sözcüklerin hepsinde aynı ses var. O sesin harfini bul.',
+  't02-bas': 'Dinle. Bu sözcüklerin hepsi aynı sesle başlıyor. O sesin harfini bul.',
   't03': 'Yukarıdaki harfin aynısını bul.',
   't04': 'Yukarıdaki heceyi harf kartlarıyla oluştur.',
   't05': 'Heceleri birleştir. Anlamlı bir sözcük oluştur.',
