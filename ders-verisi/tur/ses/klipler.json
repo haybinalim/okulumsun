@@ -600,47 +600,56 @@
   {
    "anahtar": "tur.geri.bas-a",
    "metin": "Hepsi a sesiyle başlıyor.",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "geri/bas-a.m4a"
   },
   {
    "anahtar": "tur.geri.bas-e",
    "metin": "Hepsi e sesiyle başlıyor.",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "geri/bas-e.m4a"
   },
   {
    "anahtar": "tur.geri.bas-harf",
    "metin": "Hepsi bu harfle başlıyor.",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "geri/bas-harf.m4a"
   },
   {
    "anahtar": "tur.geri.bas-i",
    "metin": "Hepsi i sesiyle başlıyor.",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "geri/bas-i.m4a"
   },
   {
    "anahtar": "tur.geri.bas-i2",
    "metin": "Hepsi ı sesiyle başlıyor.",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "geri/bas-i2.m4a"
   },
   {
    "anahtar": "tur.geri.bas-o",
    "metin": "Hepsi o sesiyle başlıyor.",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "geri/bas-o.m4a"
   },
   {
    "anahtar": "tur.geri.bas-o2",
    "metin": "Hepsi ö sesiyle başlıyor.",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "geri/bas-o2.m4a"
   },
   {
    "anahtar": "tur.geri.bas-u",
    "metin": "Hepsi u sesiyle başlıyor.",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "geri/bas-u.m4a"
   },
   {
    "anahtar": "tur.geri.bas-u2",
    "metin": "Hepsi ü sesiyle başlıyor.",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "geri/bas-u2.m4a"
   },
   {
    "anahtar": "tur.geri.dogru",
@@ -651,47 +660,56 @@
   {
    "anahtar": "tur.geri.her-a",
    "metin": "Hepsinde a sesi var.",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "geri/her-a.m4a"
   },
   {
    "anahtar": "tur.geri.her-e",
    "metin": "Hepsinde e sesi var.",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "geri/her-e.m4a"
   },
   {
    "anahtar": "tur.geri.her-harf",
    "metin": "Hepsinde bu harf var.",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "geri/her-harf.m4a"
   },
   {
    "anahtar": "tur.geri.her-i",
    "metin": "Hepsinde i sesi var.",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "geri/her-i.m4a"
   },
   {
    "anahtar": "tur.geri.her-i2",
    "metin": "Hepsinde ı sesi var.",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "geri/her-i2.m4a"
   },
   {
    "anahtar": "tur.geri.her-o",
    "metin": "Hepsinde o sesi var.",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "geri/her-o.m4a"
   },
   {
    "anahtar": "tur.geri.her-o2",
    "metin": "Hepsinde ö sesi var.",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "geri/her-o2.m4a"
   },
   {
    "anahtar": "tur.geri.her-u",
    "metin": "Hepsinde u sesi var.",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "geri/her-u.m4a"
   },
   {
    "anahtar": "tur.geri.her-u2",
    "metin": "Hepsinde ü sesi var.",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "geri/her-u2.m4a"
   },
   {
    "anahtar": "tur.geri.tekrar",
