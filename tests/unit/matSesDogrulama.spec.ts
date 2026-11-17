@@ -4,12 +4,13 @@
  * korunur, `--yeniden-dogrula --kuru` sıfır istek, matematikte üst süre sınırı yok.
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, copyFileSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { Clip } from '../../scripts/ses/klipler';
-import { mevcutlariDogrula, olcumSorunu, turKlibiSentezle, type Olcum } from '../../scripts/ses/turDogrulama';
+import { klipSentezleyici } from '../../scripts/ses/klipSentezleyici';
+import { mevcutlariDogrula, olcumSorunu, type Olcum } from '../../scripts/ses/turDogrulama';
 import { planiCalistir } from '../../scripts/ses/uretimDongusu';
 import { uretimPlani } from '../../scripts/ses/uretimPlani';
 
@@ -30,26 +31,24 @@ const diskeKoy = (d: string, o: Olcum | string) => {
 const tumDosyalar = (): string[] =>
   readdirSync(dizin, { recursive: true, withFileTypes: true }).filter((e) => e.isFile()).map((e) => e.name).sort();
 
-/** generate-audio.ts'in matematik koşusu: plan → planiCalistir → turKlibiSentezle (eskiBozuk matematikte HEP false). */
-async function kos(klipler: Clip[], ozetler: Record<string, string>, olcum: (girdi: string) => Olcum, zorla = false) {
+/** generate-audio.ts'in GERÇEK kapanışı (`klipSentezleyici`, matematik: tur=false) + plan + planiCalistir. Yalnız sentez/ölçüm sahte. */
+async function kos(klipler: Clip[], ozetler: Record<string, string>, olcum: (girdi: string) => Olcum, zorla = false, prototip = false) {
   const istekler: string[] = [];
   const plan = uretimPlani(klipler, ozetler, (m) => `h:${m}`, (d) => existsSync(yol(d)), { zorla });
   const sonuc = await planiCalistir({
     plan,
-    sentezle: async (c) => {
-      mkdirSync(path.dirname(yol(c.file)), { recursive: true });
-      await turKlibiSentezle({
-        clip: c,
-        hedef: yol(c.file),
-        synth: async (girdi, gecici) => {
-          istekler.push(girdi);
-          writeFileSync(gecici, JSON.stringify(olcum(girdi)));
-        },
-        olc: async (g) => JSON.parse(readFileSync(g, 'utf8')) as Olcum,
-        eskiBozuk: false,
-        ozetler,
-      });
-    },
+    sentezle: klipSentezleyici({
+      prototip,
+      tur: false,
+      cikisDizini: dizin,
+      synth: async (_c, girdi, gecici) => {
+        istekler.push(girdi);
+        writeFileSync(gecici, JSON.stringify(olcum(girdi)));
+      },
+      olc: async (g) => JSON.parse(readFileSync(g, 'utf8')) as Olcum,
+      eskiBozuklar: new Set(klipler.map((c) => c.key)), // matematikte (tur=false) yok sayılmalı
+      ozetler,
+    }),
     kaydet: async (c, o) => {
       ozetler[c.key] = o;
     },
@@ -88,6 +87,12 @@ describe('matematik klibi: doğrula + yeniden dene', () => {
     expect(tumDosyalar()).toEqual(['top.m4a']);
   });
 
+  it('--prototip ölçülmez: bozuk çıktı olduğu gibi yazılır, yeniden deneme yok', async () => {
+    const { istekler, sonuc } = await kos([clip('sayi.1', 'bir')], {}, () => BOZUK, false, true);
+    expect(istekler).toEqual(['bir']);
+    expect(sonuc.made).toBe(1);
+  });
+
   it('eski BOZUK dosya matematikte tüm denemeler düşse de silinmez (manifest o dosyayı bekler)', async () => {
     diskeKoy('sayi/5.m4a', BOZUK);
     const { istekler } = await kos([clip('sayi.5', 'beş')], {}, () => BOZUK);
@@ -105,6 +110,7 @@ describe('CLI: npm run audio -- --yeniden-dogrula --kuru (matematik, gerçek dos
       env: { ...process.env, TTS_KULLANIM_DOSYASI: defter, GOOGLE_TTS_API_KEY: '' },
     });
     expect(r.status, r.stderr).toBe(0);
+    expect(r.stdout).toMatch(/doğrulama eşikleri: süre ≥ 0.35/);
     expect(r.stdout).toMatch(/yeniden doğrulama: \d+ mevcut klip ölçüldü \(istek yok\)/);
     expect(r.stdout).toContain('--kuru: hiç istek atılmadı, dosya yazılmadı.');
     expect(r.stdout).not.toContain('--ders tur');
@@ -136,4 +142,23 @@ describe('matematik eşikleri ve --yeniden-dogrula', () => {
     expect(r.olculen).toBe(3);
     expect(r.gecmeyen.map((g) => g.anahtar)).toEqual(['sayi.1', 'nesne.top']);
   });
+});
+
+describe('geçici .yeni.m4a yayına sızmaz', () => {
+  it('vite precache globIgnores, .gitignore ve audit aynı sabiti/deseni kullanır', () => {
+    expect(readFileSync('vite.config.ts', 'utf8')).toMatch(/globIgnores:[^\]]*GECICI_KLIP_SONEKI/);
+    expect(readFileSync('.gitignore', 'utf8')).toMatch(/^\*\.yeni\.m4a$/m);
+  });
+
+  it.skipIf(spawnSync('ffprobe', ['-version']).status !== 0)('audit: public/audio altında .yeni.m4a kalmışsa HATA (çıkış 1, GEÇİCİ)', () => {
+    const geciciDosya = 'public/audio/sayi/zz-test.yeni.m4a';
+    copyFileSync('public/audio/sayi/2.m4a', geciciDosya);
+    try {
+      const r = spawnSync('npx', ['tsx', 'scripts/audit-audio.ts'], { encoding: 'utf8' });
+      expect(r.status).toBe(1);
+      expect(r.stderr).toContain('GEÇİCİ     sayi/zz-test.yeni.m4a');
+    } finally {
+      rmSync(geciciDosya, { force: true });
+    }
+  }, 120_000);
 });

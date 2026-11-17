@@ -103,7 +103,8 @@ import {
   retListesiniUygula,
   turKlipleriniAyir,
 } from './ses/turKlipleri.ts';
-import { ESIKLER, ffmpegOlcum, mevcutlariDogrula, turKlibiSentezle, YENIDEN_DENEME_SAYISI } from './ses/turDogrulama.ts';
+import { ESIKLER, ffmpegOlcum, mevcutlariDogrula, YENIDEN_DENEME_SAYISI } from './ses/turDogrulama.ts';
+import { dogrulamaAcik, klipSentezleyici } from './ses/klipSentezleyici.ts';
 import { klipManifestiniYaz } from './tur/klip-manifesti.ts';
 
 const exec = promisify(execFile);
@@ -466,8 +467,7 @@ async function main(): Promise<void> {
   /** `--yeniden-dogrula` ile ölçümde bozuk saptanan mevcut dosyalar (yalnız bunlar başarısızlıkta silinebilir). */
   const eskiBozuklar = new Set<string>();
   // Prototip (macOS say, dağıtılmaz) ölçülmez; matematik ve Türkçe aynı doğrulamadan geçer.
-  const DOGRULA = !PROTOTIP;
-  if (DOGRULA) {
+  if (dogrulamaAcik(PROTOTIP)) {
     console.log(
       `doğrulama eşikleri: süre ≥ ${ESIKLER.ENAZ_SURE_SN} sn · max_volume ≥ ${ESIKLER.ENAZ_MAX_SES_DB} dB · ` +
         (TUR ? `hece/sözcük ≤ ${ESIKLER.HECE_SOZCUK_ENCOK_SURE_SN} sn · ` : '') +
@@ -544,24 +544,16 @@ async function main(): Promise<void> {
   const sonuc = await planiCalistir({
     plan,
     butce: provider === 'google' ? () => defter().durum() : undefined,
-    sentezle: async (clip) => {
-      const out = path.join(OUT_AUDIO, clip.file);
-      await mkdir(path.dirname(out), { recursive: true });
-      if (!DOGRULA) return synth(provider, clip.text, out, klipSesi(clip.key));
-      // Matematik + Türkçe: GEÇİCİ yola üret → ölç → geçerse atomik yerine koy; geçmezse "Ka." biçimiyle yeniden dene (turDogrulama.ts).
-      // Hata/başarısızlıkta eski dosya ve özet korunur (yalnız --yeniden-dogrula ile bozuk saptanmış klip, tüm denemeler
-      // doğrulamada düşerse silinir). Girdi biçimi YALNIZ sentezde değişir: özet klibin gerçek metninden hesaplanır.
-      await turKlibiSentezle({
-        clip,
-        hedef: out,
-        synth: (girdi, yol) => synth(provider, girdi, yol, klipSesi(clip.key)),
-        olc,
-        // Matematikte eski bozuk dosya silinmez (manifest o dosyayı bekler; çıkış kodu 1 + ÖZETSİZ yüksek sesle bildirir).
-        eskiBozuk: TUR && eskiBozuklar.has(clip.key),
-        ozetler: hashes,
-        gecmedi: (n, neden) => console.warn(`  doğrulama ${n}. deneme geçmedi: ${clip.key} — ${neden}`),
-      });
-    },
+    sentezle: klipSentezleyici({
+      prototip: PROTOTIP,
+      tur: TUR,
+      cikisDizini: OUT_AUDIO,
+      synth: (clip, girdi, yol) => synth(provider, girdi, yol, klipSesi(clip.key)),
+      olc,
+      eskiBozuklar,
+      ozetler: hashes,
+      gecmedi: (clip, n, neden) => console.warn(`  doğrulama ${n}. deneme geçmedi: ${clip.key} — ${neden}`),
+    }),
     // Her klipten sonra: kesilen çalışma kaldığı yerden sürer.
     kaydet: async (clip, hash) => {
       hashes[clip.key] = hash;

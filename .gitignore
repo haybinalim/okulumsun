@@ -53,3 +53,6 @@ cikti/
 
 # Ajan worktree leri
 .claude/worktrees/
+
+# Ses üretiminin yarım kalmış geçici klipleri (scripts/ses/geciciAd.ts)
+*.yeni.m4a

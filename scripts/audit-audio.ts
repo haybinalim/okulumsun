@@ -24,6 +24,7 @@ import { fileURLToPath } from 'node:url';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { klipleriTopla } from './ses/klipler.ts';
+import { GECICI_KLIP_SONEKI } from './ses/geciciAd.ts';
 import { kokenDenetle, ozetDosyasiniOku, sesKaynagiDosyasiniAyir } from './ses/sesKaynagi.ts';
 import { TUR_SES_DIZINI, retListesiniOku, turKlipDosyasi, turKlipleriniAyir } from './ses/turKlipleri.ts';
 
@@ -223,6 +224,10 @@ async function main(): Promise<void> {
   const onDisk = await walk(AUDIO);
   const known = new Set(entries.map((e) => e.file));
   const orphans = onDisk.filter((f) => !known.has(f));
+  // Üretim betiğinin yarıda kesilmesinden (kill -9) kalan geçici klip: dist'e ve precache'e sızar → CI kırmızı.
+  for (const g of orphans.filter((f) => f.endsWith(GECICI_KLIP_SONEKI))) {
+    problems.push(`GEÇİCİ     ${g} (yarım kalmış üretim; silin ve \`npm run audio -- --yeniden-dogrula\` çalıştırın)`);
+  }
 
   // Manifest ile içerik aynı klip kümesini tanımlamalı.
   const manifestAnahtarlari = new Set(entries.map((e) => e.key));
