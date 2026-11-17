@@ -48,9 +48,17 @@
  *   npm run audio -- --zorla            (özetleri yoksay, hepsini yeniden üret; --force eşanlamlı)
  *   npm run audio -- --en-cok 60        (en çok 60 klip üret ve dur; özetler her klipten sonra
  *                                        yazıldığı için kesilen çalışma kaldığı yerden sürer)
+ * ÇIKTI DOĞRULAMASI (matematik + Türkçe, aynı kod: scripts/ses/turDogrulama.ts): üretilen her klip ölçülür (süre,
+ *   max_volume). Geçmeyen klip "Bir." biçimiyle (ilk harf büyük + nokta) en çok 3 kez yeniden denenir. Sentez GEÇİCİ
+ *   `<ad>.yeni.m4a` yoluna yazılır, doğrulanınca atomik rename; hata anında eski dosya ve özeti korunur. Hece/sözcük
+ *   üst süre sınırı yalnız Türkçede (`tur.hece.*`, `tur.sozcuk.*`); matematikte üst sınır YOKTUR. `--prototip` ölçülmez.
+ *   MATEMATİKTE 4 denemede de geçmeyen klip: eski dosya SİLİNMEZ (manifest o dosyayı bekler), özeti düşürülür
+ *   (audio:audit ÖZETSİZ der), çıkış kodu 1.
+ *   npm run audio -- --yeniden-dogrula [--kuru]
+ *                                       (diskteki MEVCUT matematik klipleri istek atmadan ölçer, geçmeyenleri listeler;
+ *                                        --kuru yalnız listeler, bayrak tek başına geçmeyenleri yeniden üretir)
  *   npm run audio -- --ders tur [--kuru|--en-cok N|--zorla]
- *       Türkçe klipler üretimden sonra ÖLÇÜLÜR (süre, max_volume; scripts/ses/turDogrulama.ts). Geçmeyen klip
- *       "Ka." biçimiyle en çok 3 kez yeniden denenir; yine geçmezse dosya YAZILMAZ ve klip eksik kalır (UYARI).
+ *       Türkçe klipler de aynı doğrulamadan geçer; yine geçmezse dosya YAZILMAZ ve klip eksik kalır (UYARI).
  *       `ders-verisi/tur/ses/reddedilen.json` (kulakla reddedilen klipler) üretilmez.
  *                                       (Türkçe Okuma Yazma klipleri: ders-verisi/tur/ses/; aynı defter ve plan)
  *   npm run audio -- --ders tur --yeniden-dogrula [--kuru]
@@ -121,7 +129,7 @@ const ORNEK = process.argv.includes('--ornek');
  */
 const DERS = argDegeri('--ders');
 const TUR = DERS === 'tur';
-/** `--yeniden-dogrula` (yalnız `--ders tur`): mevcut klipleri ölç, yalnız geçmeyenleri yeniden üret. */
+/** `--yeniden-dogrula`: mevcut klipleri (matematik ya da `--ders tur`) ölç, yalnız geçmeyenleri yeniden üret. */
 const YENIDEN_DOGRULA = process.argv.includes('--yeniden-dogrula');
 const OUT_AUDIO = path.join(ROOT, TUR ? TUR_SES_DIZINI : PROTOTIP ? 'public/audio-prototip' : 'public/audio');
 const OUT_ORNEK = path.join(ROOT, 'public/audio-prototip/ornek');
@@ -415,7 +423,7 @@ async function main(): Promise<void> {
   vekilUyarisi();
   if (DERS !== undefined && DERS !== 'tur') throw new Error(`Bilinmeyen --ders değeri: "${DERS}" (yalnız "tur"; matematik için bayraksız).`);
   if (TUR && (PROTOTIP || ORNEK)) throw new Error('--ders tur, --prototip ve --ornek ile birlikte kullanılamaz.');
-  if (YENIDEN_DOGRULA && !TUR) throw new Error('--yeniden-dogrula yalnız --ders tur ile kullanılır.');
+  if (YENIDEN_DOGRULA && (PROTOTIP || ORNEK)) throw new Error('--yeniden-dogrula, --prototip ve --ornek ile birlikte kullanılamaz.');
   if (ORNEK) return ornekUret();
   const { kaynak, anahtarSesleri: tanimliAnahtarSesleri, provider } = await aktifKaynagiOku();
   const anahtarSesleri = provider === 'google' ? tanimliAnahtarSesleri : [];
@@ -457,11 +465,16 @@ async function main(): Promise<void> {
   let planKlipleri: readonly Clip[] = uretilebilir;
   /** `--yeniden-dogrula` ile ölçümde bozuk saptanan mevcut dosyalar (yalnız bunlar başarısızlıkta silinebilir). */
   const eskiBozuklar = new Set<string>();
-  if (TUR) {
+  // Prototip (macOS say, dağıtılmaz) ölçülmez; matematik ve Türkçe aynı doğrulamadan geçer.
+  const DOGRULA = !PROTOTIP;
+  if (DOGRULA) {
     console.log(
-      `doğrulama eşikleri: süre ≥ ${ESIKLER.ENAZ_SURE_SN} sn · max_volume ≥ ${ESIKLER.ENAZ_MAX_SES_DB} dB · hece/sözcük ≤ ${ESIKLER.HECE_SOZCUK_ENCOK_SURE_SN} sn · ` +
+      `doğrulama eşikleri: süre ≥ ${ESIKLER.ENAZ_SURE_SN} sn · max_volume ≥ ${ESIKLER.ENAZ_MAX_SES_DB} dB · ` +
+        (TUR ? `hece/sözcük ≤ ${ESIKLER.HECE_SOZCUK_ENCOK_SURE_SN} sn · ` : '') +
         `geçmeyene en çok ${YENIDEN_DENEME_SAYISI} yeniden deneme`,
     );
+  }
+  if (TUR) {
     if (reddedilen.length) {
       console.log(`reddedilen (üretilmez): ${reddedilen.length} klip — ${reddedilen.map((c) => c.key).join(', ')}`);
       for (const c of reddedilen) {
@@ -534,8 +547,8 @@ async function main(): Promise<void> {
     sentezle: async (clip) => {
       const out = path.join(OUT_AUDIO, clip.file);
       await mkdir(path.dirname(out), { recursive: true });
-      if (!TUR) return synth(provider, clip.text, out, klipSesi(clip.key));
-      // Türkçe: GEÇİCİ yola üret → ölç → geçerse atomik yerine koy; geçmezse "Ka." biçimiyle yeniden dene (turDogrulama.ts).
+      if (!DOGRULA) return synth(provider, clip.text, out, klipSesi(clip.key));
+      // Matematik + Türkçe: GEÇİCİ yola üret → ölç → geçerse atomik yerine koy; geçmezse "Ka." biçimiyle yeniden dene (turDogrulama.ts).
       // Hata/başarısızlıkta eski dosya ve özet korunur (yalnız --yeniden-dogrula ile bozuk saptanmış klip, tüm denemeler
       // doğrulamada düşerse silinir). Girdi biçimi YALNIZ sentezde değişir: özet klibin gerçek metninden hesaplanır.
       await turKlibiSentezle({
@@ -543,7 +556,8 @@ async function main(): Promise<void> {
         hedef: out,
         synth: (girdi, yol) => synth(provider, girdi, yol, klipSesi(clip.key)),
         olc,
-        eskiBozuk: eskiBozuklar.has(clip.key),
+        // Matematikte eski bozuk dosya silinmez (manifest o dosyayı bekler; çıkış kodu 1 + ÖZETSİZ yüksek sesle bildirir).
+        eskiBozuk: TUR && eskiBozuklar.has(clip.key),
         ozetler: hashes,
         gecmedi: (n, neden) => console.warn(`  doğrulama ${n}. deneme geçmedi: ${clip.key} — ${neden}`),
       });
@@ -583,6 +597,13 @@ async function main(): Promise<void> {
     console.warn(`\nUYARI: ${sonuc.dogrulanamayan.length} klip doğrulamadan geçmedi (dosya YAZILMADI, klip eksik kaldı; çıkış kodu 0 — kısmi başarı):`);
     for (const f of sonuc.dogrulanamayan) console.warn(`  ${f}`);
     console.warn('  Yeniden denemek için: npm run audio -- --ders tur   (eksik klipler yeniden üretilir). Kulakla kötü bulunanı reddedilen.json\'a ekleyin.');
+  }
+  if (!TUR && sonuc.dogrulanamayan.length) {
+    // Matematikte eksik/bozuk klip kısmi başarı DEĞİL: eski dosya duruyor ama bozuk olabilir, özeti düşürüldü → audit düşer.
+    console.error(`\n${sonuc.dogrulanamayan.length} matematik klibi doğrulamadan geçmedi (eski dosya silinmedi, özeti düşürüldü):`);
+    for (const f of sonuc.dogrulanamayan) console.error(`  ${f}`);
+    console.error('  Yeniden denemek için: npm run audio -- --yeniden-dogrula');
+    process.exitCode = 1;
   }
   if (!TUR) console.log(`manifesto: ${path.relative(ROOT, OUT_MANIFEST)}`);
 
