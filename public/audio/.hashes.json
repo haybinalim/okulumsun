@@ -19,11 +19,9 @@
     }
   ],
   "sayi.0": "f7d7370b35548d4f",
-  "sayi.1": "74eb97eccf9dbf25",
   "sayi.2": "28136c0276a2692f",
   "sayi.3": "443fec5476da7bdc",
   "sayi.4": "121eb59c1c542abe",
-  "sayi.5": "69b66b710d97bb5b",
   "sayi.6": "62c00f0cac932aba",
   "sayi.7": "0d2df4b625cbe1f1",
   "sayi.8": "4157a43a06720e19",
@@ -180,7 +178,6 @@
   "renk.pembe": "1394d207b0111048",
   "renk.sari": "4b00dccecb573e50",
   "nesne.elma": "f81da7b85a829802",
-  "nesne.top": "396aec6ccff6012e",
   "nesne.balon": "0e50a7e29e88f9eb",
   "nesne.araba": "7dbf49885b851c7a",
   "nesne.kalem": "267c062cff092d13",
@@ -381,5 +378,8 @@
   "hikaye.t6-3": "21f586bb023be608",
   "hikaye.t7-1": "8a66b659c4013475",
   "hikaye.t7-2": "9ddab7590efbe736",
-  "hikaye.t7-3": "529618728db39e7f"
+  "hikaye.t7-3": "529618728db39e7f",
+  "sayi.1": "74eb97eccf9dbf25",
+  "sayi.5": "69b66b710d97bb5b",
+  "nesne.top": "396aec6ccff6012e"
 }
