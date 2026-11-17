@@ -149,16 +149,21 @@ describe('geçici .yeni.m4a yayına sızmaz', () => {
     expect(readFileSync('.gitignore', 'utf8')).toMatch(/^\*\.yeni\.m4a$/m);
   });
 
-  it.skipIf(spawnSync('ffprobe', ['-version']).status !== 0)('audit: public/audio altında .yeni.m4a kalmışsa HATA (çıkış 1, GEÇİCİ)', () => {
-    const geciciDosya = 'public/audio/sayi/zz-test.yeni.m4a';
-    copyFileSync('public/audio/sayi/2.m4a', geciciDosya);
-    try {
-      const r = spawnSync('npx', ['tsx', 'scripts/audit-audio.ts'], { encoding: 'utf8' });
-      expect(r.status).toBe(1);
-      expect(r.stderr).toContain('GEÇİCİ     sayi/zz-test.yeni.m4a');
-    } finally {
-      rmSync(geciciDosya, { force: true });
+  it.skipIf(spawnSync('ffprobe', ['-version']).status !== 0)('audit: .yeni.m4a kalmışsa HATA (çıkış 1, GEÇİCİ); yoksa GEÇİCİ yok', () => {
+    // GEÇİCİ AĞAÇ: depodaki gerçek public/audio'ya hiçbir şey yazılmaz (paralel testler dosya sayar: durum.spec).
+    for (const f of ['src/audio/audioManifest.generated.ts', 'src/content/tr.json', 'src/content/sesKaynagi.json']) {
+      mkdirSync(path.dirname(yol(f)), { recursive: true });
+      copyFileSync(f, yol(f));
     }
+    mkdirSync(yol('public/audio/sayi'), { recursive: true });
+    const calistir = () =>
+      spawnSync('npx', ['tsx', 'scripts/audit-audio.ts'], { encoding: 'utf8', env: { ...process.env, OKULUMSUN_DENETIM_KOKU: dizin } });
+    expect(calistir().stderr).not.toContain('GEÇİCİ');
+    copyFileSync('public/audio/sayi/2.m4a', yol('public/audio/sayi/zz-test.yeni.m4a'));
+    const r = calistir();
+    expect(r.status).toBe(1);
+    expect(r.stderr).toContain('GEÇİCİ     sayi/zz-test.yeni.m4a');
+    expect(existsSync('public/audio/sayi/zz-test.yeni.m4a')).toBe(false);
   }, 120_000);
 });
 

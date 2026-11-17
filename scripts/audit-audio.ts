@@ -29,7 +29,10 @@ import { kokenDenetle, ozetDosyasiniOku, sesKaynagiDosyasiniAyir } from './ses/s
 import { TUR_SES_DIZINI, retListesiniOku, turKlipDosyasi, turKlipleriniAyir } from './ses/turKlipleri.ts';
 
 const exec = promisify(execFile);
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+/** Depo kökü. `OKULUMSUN_DENETIM_KOKU` yalnız testler içindir (geçici ağaç; depodaki gerçek klasörlere dokunulmaz). */
+const ROOT = process.env.OKULUMSUN_DENETIM_KOKU
+  ? path.resolve(process.env.OKULUMSUN_DENETIM_KOKU)
+  : path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const AUDIO = path.join(ROOT, 'public/audio');
 const MANIFEST = path.join(ROOT, 'src/audio/audioManifest.generated.ts');
 const CONTENT = path.join(ROOT, 'src/content/tr.json');
