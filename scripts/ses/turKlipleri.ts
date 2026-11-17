@@ -13,7 +13,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { z } from 'zod';
 import { harfMi, unluMu, yalnizUnsuzMu } from '../../src/content/dersler/tur/alfabe';
-import type { Clip } from './klipler.ts';
+import type { Clip, Telaffuz } from './klipler.ts';
 
 export const TUR_SES_DIZINI = 'ders-verisi/tur/ses';
 export const TUR_KLIP_MANIFESTI = `${TUR_SES_DIZINI}/klipler.json`;
@@ -101,4 +101,88 @@ export function retListesiniUygula(klipler: readonly Clip[], ret: RetListesi): {
 export function turKlipDiskteVarMi(kok: string): (dosya: string) => boolean {
   const reddedilenDosyalar = new Set(Object.keys(retListesiniOku(kok)).map(turKlipDosyasi));
   return (dosya) => !reddedilenDosyalar.has(dosya) && existsSync(path.join(kok, TUR_SES_DIZINI, dosya));
+}
+
+export const TUR_TELAFFUZ_DOSYASI = `${TUR_SES_DIZINI}/telaffuz.json`;
+
+/** SSML'de izin verilen etiketler (başkası hata: sessiz bozuk girdi yerine açık ret). */
+export const SSML_IZINLI_ETIKETLER: readonly string[] = ['speak', 'phoneme', 'prosody', 'break'];
+
+/**
+ * SSML'i doğrular ve GÖRÜNEN metni (etiketsiz) döner. `<speak>` ile başlayıp `</speak>` ile bitmeli; yalnız
+ * `SSML_IZINLI_ETIKETLER`; kapanmamış `<`/`>` yasak. Hata iletisi ayrıntılı atılır (çağıran anahtarı ekler).
+ */
+export function ssmlGorunenMetin(ssml: string): string {
+  const t = ssml.trim();
+  if (!/^<speak[\s>]/.test(t) || !t.endsWith('</speak>')) throw new Error('SSML <speak> ... </speak> ile sarılı olmalı');
+  for (const [, ic] of t.matchAll(/<([^<>]*)>/g)) {
+    const ad = /^\/?([A-Za-z][A-Za-z0-9:-]*)/.exec(ic.trim())?.[1];
+    if (ad === undefined || !SSML_IZINLI_ETIKETLER.includes(ad)) {
+      throw new Error(`SSML etiketi izinli değil: <${ic.trim().slice(0, 20)}> (izinli: ${SSML_IZINLI_ETIKETLER.join(', ')})`);
+    }
+  }
+  const gorunen = t.replace(/<[^<>]*>/g, ' ');
+  if (/[<>]/.test(gorunen)) throw new Error('SSML içinde eşleşmeyen < ya da >');
+  return gorunen.replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Klip bazında sentez girdisi ayarı. Biçim: `{ "tur.hece.en": { "metin": "En.", "neden": "...", "tarih": "2026-11-17" } }`
+ * ya da `metin` yerine `ssml` (ikisinden TAM biri). Klibin kendi metni/manifesti/çalıcısı değişmez; yalnız sağlayıcıya
+ * giden girdi. D-11: ayardaki (SSML'de etiketsiz görünen) metin de tek ünsüz/ünlüsüz olamaz.
+ */
+export const TelaffuzListesiSemasi = z.record(
+  z.string().regex(ANAHTAR, 'geçersiz Türkçe klip anahtarı'),
+  z
+    .object({
+      metin: z.string().optional(),
+      ssml: z.string().optional(),
+      neden: z.string().trim().min(1),
+      tarih: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    })
+    .strict()
+    .superRefine((v, ctx) => {
+      if ((v.metin === undefined) === (v.ssml === undefined)) {
+        ctx.addIssue({ code: 'custom', message: '"metin" ya da "ssml" — ikisinden tam biri olmalı' });
+        return;
+      }
+      let gorunen: string;
+      try {
+        gorunen = v.ssml !== undefined ? ssmlGorunenMetin(v.ssml) : v.metin!;
+      } catch (e) {
+        ctx.addIssue({ code: 'custom', message: (e as Error).message });
+        return;
+      }
+      if (!turKlipMetniUretilebilirMi(gorunen)) {
+        ctx.addIssue({ code: 'custom', message: `D-11: ayar metni tek ünsüz / ünlüsüz olamaz ("${gorunen}")` });
+      }
+    }),
+);
+export type TelaffuzListesi = z.infer<typeof TelaffuzListesiSemasi>;
+
+/** Ham JSON'u doğrular; bozuk biçim hata verir (sessizce yok sayılırsa yanlış telaffuz geri gelir). */
+export function telaffuzListesiniAyir(ham: unknown): TelaffuzListesi {
+  const s = TelaffuzListesiSemasi.safeParse(ham);
+  if (!s.success) throw new Error(`${TUR_TELAFFUZ_DOSYASI}: ${s.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ')}`);
+  return s.data;
+}
+
+/** Depo köküne göre telaffuz ayarları; dosya yoksa boş (isteğe bağlı), bozuksa hata. */
+export function telaffuzListesiniOku(kok: string): TelaffuzListesi {
+  const yol = path.join(kok, TUR_TELAFFUZ_DOSYASI);
+  return existsSync(yol) ? telaffuzListesiniAyir(JSON.parse(readFileSync(yol, 'utf8')) as unknown) : {};
+}
+
+/** Ayarları kliplere işler. Manifestte olmayan anahtar yazım hatasıdır → hata (sessizce yok sayılmaz). */
+export function telaffuzUygula(klipler: readonly Clip[], liste: TelaffuzListesi): readonly Clip[] {
+  const bilinen = new Set(klipler.map((c) => c.key));
+  for (const k of Object.keys(liste)) {
+    if (!bilinen.has(k)) throw new Error(`${TUR_TELAFFUZ_DOSYASI}: "${k}" klipler.json'da yok.`);
+  }
+  return klipler.map((c) => {
+    const v = liste[c.key];
+    if (!v) return c;
+    const telaffuz: Telaffuz = v.ssml !== undefined ? { ssml: v.ssml } : { metin: v.metin! };
+    return { ...c, telaffuz };
+  });
 }

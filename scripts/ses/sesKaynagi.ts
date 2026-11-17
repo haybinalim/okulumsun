@@ -9,6 +9,7 @@
  */
 
 import { createHash } from 'node:crypto';
+import type { Telaffuz } from './klipler.ts';
 
 export type Saglayici =
   | 'piper'
@@ -176,6 +177,16 @@ export function anahtarliKlipOzeti(
   return sha16(`${kaynak.saglayici}:${kaynak.modelKimligi}${hizEki}:${metin}`);
 }
 
+/**
+ * Telaffuz ayarlı klibin özeti: temel özet + kullanılan girdi (tür + içerik). Ayar yoksa temel özet AYNEN döner
+ * (ayarsız klipler yeniden üretilmez); ayar eklenince/değişince özet değişir.
+ */
+export function telaffuzluOzet(temelOzet: string, telaffuz: Telaffuz | undefined): string {
+  if (!telaffuz) return temelOzet;
+  const [tur, deger] = 'ssml' in telaffuz ? (['ssml', telaffuz.ssml] as const) : (['metin', telaffuz.metin] as const);
+  return sha16(`${temelOzet}:telaffuz:${tur}:${deger}`);
+}
+
 /** Mevcut 287 klibin kaynağı: önek `piper:` olarak kanıtlı, model kimliği bilinmiyor (KG-15). */
 export const ESKI_KAYNAK: SesKaynagi = {
   saglayici: 'piper',
@@ -260,7 +271,7 @@ export interface KokenSonucu {
  */
 export function kokenDenetle(
   aktif: SesKaynagi,
-  klipler: readonly { readonly key: string; readonly text: string }[],
+  klipler: readonly { readonly key: string; readonly text: string; readonly telaffuz?: Telaffuz }[],
   ozetler: Readonly<Record<string, string>>,
   anahtarSesleri: readonly AnahtarSesi[] = [],
 ): KokenSonucu {
@@ -270,11 +281,11 @@ export function kokenDenetle(
   let yeniEslesen = 0;
   const eskiyiKabulEt = aktif.saglayici === ESKI_KAYNAK.saglayici && aktif.modelKimligi === ESKI_KAYNAK.modelKimligi;
 
-  for (const { key, text } of klipler) {
+  for (const { key, text, telaffuz } of klipler) {
     const ozet = ozetler[key];
     if (ozet === undefined) {
       ozetsiz.push(key);
-    } else if (ozet === anahtarliKlipOzeti(aktif, anahtarSesleri, key, text)) {
+    } else if (ozet === telaffuzluOzet(anahtarliKlipOzeti(aktif, anahtarSesleri, key, text), telaffuz)) {
       yeniEslesen++;
     } else if (eskiyiKabulEt && ozet === eskiOzet('piper', text)) {
       eskiEslesen++;

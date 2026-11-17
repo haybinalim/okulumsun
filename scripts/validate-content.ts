@@ -48,7 +48,7 @@ import { turIcerikDosyasiniAyristir } from '../src/content/schema/turIcerik';
 import { hamleDosyasiniAyristir } from '../src/content/schema/turHamle';
 import { hamleVerisiniDenetle, teyitBekleyenler } from '../src/content/dersler/tur/hamleTablosu';
 import { gorselDiziniAyristir, type TurGorselDizini } from '../src/content/schema/turGorsel';
-import { retListesiniOku } from './ses/turKlipleri';
+import { retListesiniOku, telaffuzListesiniOku } from './ses/turKlipleri';
 import { klipManifestiBeklenen, KLIP_MANIFESTI_YOLU, type TurKlipManifesti } from './tur/klip-manifesti';
 import { klipMetniGecerliMi } from '../src/content/dersler/tur/sablonlar/klipler';
 import { veliKartiAyristir } from '../src/content/dersler/tur/veliKarti';
@@ -486,6 +486,12 @@ sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLE
       if (!kayit) hata(`${rel}: reddedilen.json "${k}" klipler.json'da yok.`);
       else if (kayit.durum === 'var') hata(`${rel}: reddedilen "${k}" manifestte "var" — \`npm run tur:klip\` çalıştırın.`);
     }
+    // Telaffuz ayarı (sentez girdisi, ders-verisi/tur/ses/telaffuz.json): şema (etiket izni, D-11) okuma sırasında doğrulanır; anahtar manifestte olmalı.
+    const telaffuzAnahtarlari = Object.keys(telaffuzListesiniOku(ROOT));
+    for (const k of telaffuzAnahtarlari) {
+      if (!m.klipler.some((c) => c.anahtar === k)) hata(`${rel}: telaffuz.json "${k}" klipler.json'da yok.`);
+    }
+    if (telaffuzAnahtarlari.length > 0) sonuc.istatistik.push(`Türkçe telaffuz ayarı: ${telaffuzAnahtarlari.length} klip`);
     const eksik = m.klipler.filter((k) => k.durum !== 'var').length;
     if (eksik > 0) {
       const mesaj = `${rel}: ${eksik}/${m.klipler.length} klibin ses dosyası yok (\`npm run audio -- --ders tur\`).`;

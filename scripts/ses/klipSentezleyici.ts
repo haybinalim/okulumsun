@@ -5,7 +5,7 @@
  */
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
-import type { Clip } from './klipler.ts';
+import { sentezGirdisi, type Clip } from './klipler.ts';
 import { turKlibiSentezle, type OlcumFn } from './turDogrulama.ts';
 
 /** Sentez ayarı: komut satırından TEK yerde türer; kapanış ve günlük aynı nesneyi kullanır. */
@@ -43,7 +43,7 @@ export function klipSentezleyici(g: KlipSentezleyiciGirdisi): (clip: Clip) => Pr
   return async (clip) => {
     const out = path.join(g.cikisDizini, clip.file);
     await mkdir(path.dirname(out), { recursive: true });
-    if (!g.ayar.dogrula) return g.synth(clip, clip.text, out);
+    if (!g.ayar.dogrula) return g.synth(clip, sentezGirdisi(clip), out);
     // GEÇİCİ yola üret → ölç → geçerse atomik yerine koy; geçmezse "Bir." biçimiyle yeniden dene (turDogrulama.ts).
     // Hata/başarısızlıkta eski dosya ve özet korunur. Girdi biçimi YALNIZ sentezde değişir: özet gerçek metinden.
     await turKlibiSentezle({

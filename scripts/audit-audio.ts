@@ -26,7 +26,7 @@ import { promisify } from 'node:util';
 import { klipleriTopla } from './ses/klipler.ts';
 import { GECICI_KLIP_SONEKI } from './ses/geciciAd.ts';
 import { kokenDenetle, ozetDosyasiniOku, sesKaynagiDosyasiniAyir } from './ses/sesKaynagi.ts';
-import { TUR_SES_DIZINI, retListesiniOku, turKlipDosyasi, turKlipleriniAyir } from './ses/turKlipleri.ts';
+import { TUR_SES_DIZINI, retListesiniOku, telaffuzListesiniOku, turKlipDosyasi, turKlipleriniAyir } from './ses/turKlipleri.ts';
 
 const exec = promisify(execFile);
 /** Depo kökü. `OKULUMSUN_DENETIM_KOKU` yalnız testler içindir (geçici ağaç; depodaki gerçek klasörlere dokunulmaz). */
@@ -151,6 +151,11 @@ async function turDenetle(problems: string[], durationDiagnostics: string[]): Pr
     if (!metin.has(k)) problems.push(`TÜRKÇE REDDEDİLEN ${k} — reddedilen.json'da ama klipler.json'da yok`);
     if (sesli.some((s) => s.anahtar === k)) problems.push(`TÜRKÇE REDDEDİLEN ${k} — reddedilmiş ama manifestte "var" (\`npm run tur:klip\`)`);
   }
+  // Telaffuz ayarı (sentez girdisi): anahtar manifestte olmalı; ayarlı klipler raporda sayılır, köken özeti ayarı da içerir.
+  const telaffuz = telaffuzListesiniOku(ROOT);
+  for (const k of Object.keys(telaffuz)) {
+    if (!metin.has(k)) problems.push(`TÜRKÇE TELAFFUZ ${k} — telaffuz.json'da ama klipler.json'da yok`);
+  }
   const yetim = (await walk(dizin)).filter((f) => !bilinen.has(f));
   for (const y of yetim.slice(0, 10)) {
     problems.push(
@@ -163,11 +168,15 @@ async function turDenetle(problems: string[], durationDiagnostics: string[]): Pr
     const { aktif, anahtarSesleri } = sesKaynagiDosyasiniAyir(JSON.parse(await readFile(SES_KAYNAGI, 'utf8')) as Record<string, unknown>);
     const hashYolu = path.join(dizin, '.hashes.json');
     const ozetler = existsSync(hashYolu) ? ozetDosyasiniOku(JSON.parse(await readFile(hashYolu, 'utf8'))).ozetler : {};
-    const koken = kokenDenetle(aktif, clips.filter((c) => bilinen.has(c.file)), ozetler, anahtarSesleri);
+    const ayarli = clips.map((c) => {
+      const v = telaffuz[c.key];
+      return v ? { ...c, telaffuz: v.ssml !== undefined ? { ssml: v.ssml } : { metin: v.metin! } } : c;
+    });
+    const koken = kokenDenetle(aktif, ayarli.filter((c) => bilinen.has(c.file)), ozetler, anahtarSesleri);
     for (const k of koken.ozetsiz) problems.push(`TÜRKÇE ÖZETSİZ ${k} (ders-verisi/tur/ses/.hashes.json'da yok)`);
     for (const k of koken.eslesmeyen) problems.push(`TÜRKÇE KÖKEN ${k} — özet klibin kaynağıyla eşleşmiyor (metin/ses değişti: \`npm run audio -- --ders tur\`)`);
   }
-  console.log(`Türkçe: ${sesli.length}/${ham.klipler.length} klip sesli · eksik ${ham.klipler.length - sesli.length} · reddedildi ${Object.keys(ret).length} · ${(bayt / 1048576).toFixed(2)} MB`);
+  console.log(`Türkçe: ${sesli.length}/${ham.klipler.length} klip sesli · eksik ${ham.klipler.length - sesli.length} · reddedildi ${Object.keys(ret).length} · telaffuz ayarlı ${Object.keys(telaffuz).length} · ${(bayt / 1048576).toFixed(2)} MB`);
 }
 
 async function main(): Promise<void> {

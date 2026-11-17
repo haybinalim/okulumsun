@@ -11,11 +11,29 @@
  */
 import maskotHam from '../../src/content/maskot.json' with { type: 'json' };
 
+/**
+ * Klip bazında SENTEZ GİRDİSİ ayarı (yalnız Türkçe yol; `ders-verisi/tur/ses/telaffuz.json`): düz metin ya da SSML.
+ * Klibin `text`i (manifest/çalıcı/D-11) DEĞİŞMEZ; yalnız sağlayıcıya giden girdi değişir.
+ */
+export type Telaffuz = { readonly metin: string } | { readonly ssml: string };
+
 export interface Clip {
   readonly key: string;
   readonly text: string;
   readonly file: string;
   readonly core: boolean;
+  /** Varsa ilk (ve her yeniden) sentez girdisi budur; "Ka." dönüşümü uygulanmaz. */
+  readonly telaffuz?: Telaffuz;
+}
+
+/** Klibin sağlayıcıya gidecek girdi dizesi (ayar yoksa klibin kendi metni). Kota bu dizenin tamamı üzerinden sayılır. */
+export function sentezGirdisi(clip: Clip): string {
+  if (!clip.telaffuz) return clip.text;
+  return 'ssml' in clip.telaffuz ? clip.telaffuz.ssml : clip.telaffuz.metin;
+}
+
+export function girdiBicimi(clip: Clip): 'text' | 'ssml' {
+  return clip.telaffuz !== undefined && 'ssml' in clip.telaffuz ? 'ssml' : 'text';
 }
 
 /** Service worker'ın önden önbelleğe alacağı ad alanları. */

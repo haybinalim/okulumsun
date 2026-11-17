@@ -76,10 +76,11 @@ import { mkdir, readFile, writeFile, rm, rename } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { klipleriTopla, type Clip } from './ses/klipler.ts';
+import { girdiBicimi, klipleriTopla, sentezGirdisi, type Clip } from './ses/klipler.ts';
 import {
   anahtarinSesi,
   anahtarliKlipOzeti,
+  telaffuzluOzet,
   ozetDosyasiniOku,
   sesKaynagiDosyasiniAyir,
   type AnahtarSesi,
@@ -99,8 +100,11 @@ import {
   TUR_KLIP_MANIFESTI,
   TUR_RET_LISTESI,
   TUR_SES_DIZINI,
+  TUR_TELAFFUZ_DOSYASI,
   retListesiniOku,
   retListesiniUygula,
+  telaffuzListesiniOku,
+  telaffuzUygula,
   turKlipleriniAyir,
 } from './ses/turKlipleri.ts';
 import { ESIKLER, ffmpegOlcum, mevcutlariDogrula, YENIDEN_DENEME_SAYISI } from './ses/turDogrulama.ts';
@@ -303,10 +307,10 @@ function butceYaz(etiket: string): void {
   );
 }
 
-async function synthGoogle(text: string, out: string, sesAdi: string, hiz?: number): Promise<void> {
+async function synthGoogle(text: string, out: string, sesAdi: string, hiz?: number, bicim: 'text' | 'ssml' = 'text'): Promise<void> {
   sayac.istek++;
   sayac.karakter += karakterSay(text);
-  const wav = await googleSentezle(googleIstegi(text, sesAdi, hiz), await googleAnahtari(), { koruma: defter() });
+  const wav = await googleSentezle(googleIstegi(text, sesAdi, hiz, bicim), await googleAnahtari(), { koruma: defter() });
   await wavdanM4a(wav, out);
   await bekle(350);
 }
@@ -317,7 +321,8 @@ interface KlipSesi {
   readonly hiz: number;
 }
 
-async function synth(provider: Provider, text: string, out: string, ses: KlipSesi): Promise<void> {
+async function synth(provider: Provider, text: string, out: string, ses: KlipSesi, bicim: 'text' | 'ssml' = 'text'): Promise<void> {
+  if (bicim === 'ssml' && provider !== 'google') throw new Error('SSML telaffuz ayarı yalnız Google sağlayıcısıyla kullanılabilir.');
   switch (provider) {
     case 'say':
       return synthSay(text, out);
@@ -326,7 +331,7 @@ async function synth(provider: Provider, text: string, out: string, ses: KlipSes
     case 'eleven':
       throw new Error('ElevenLabs kullanılmaz (KG-01, ADR-0004).');
     case 'google':
-      return synthGoogle(text, out, ses.googleSesi, ses.hiz);
+      return synthGoogle(text, out, ses.googleSesi, ses.hiz, bicim);
   }
 }
 
@@ -445,8 +450,12 @@ async function main(): Promise<void> {
   for (const k of Object.keys(ret)) {
     if (!bilinenAnahtarlar.has(k)) throw new Error(`${TUR_RET_LISTESI}: "${k}" klipler.json'da yok.`);
   }
-  const { uretilebilir, reddedilen } = retListesiniUygula(tumKlipler, ret);
-  const clips = tumKlipler;
+  // Telaffuz ayarı (sentez girdisi): yalnız Türkçe; klibin metni/manifesti değişmez. Anahtar manifestte yoksa hata.
+  const telaffuzluKlipler = TUR ? telaffuzUygula(tumKlipler, telaffuzListesiniOku(ROOT)) : tumKlipler;
+  const { uretilebilir, reddedilen } = retListesiniUygula(telaffuzluKlipler, ret);
+  const clips = telaffuzluKlipler;
+  const telaffuzluSayi = clips.filter((c) => c.telaffuz).length;
+  if (telaffuzluSayi > 0) console.log(`telaffuz ayarlı klip: ${telaffuzluSayi} (sentez girdisi ${TUR_TELAFFUZ_DOSYASI}'dan)`);
   console.log(
     `${TUR ? 'Türkçe ' : ''}${clips.length} klip · kaynak: ${kaynak.modelKimligi}${PROTOTIP ? ' · --prototip' : ''}${TUR ? ' · --ders tur' : ''}${FORCE ? ' · --zorla' : ''}${KURU ? ' · --kuru' : ''}`,
   );
@@ -503,13 +512,13 @@ async function main(): Promise<void> {
   const plan = uretimPlani(
     planKlipleri,
     hashes,
-    (metin, clip) => anahtarliKlipOzeti(kaynak, anahtarSesleri, clip.key, metin),
+    (metin, clip) => telaffuzluOzet(anahtarliKlipOzeti(kaynak, anahtarSesleri, clip.key, metin), clip.telaffuz),
     (dosya) => existsSync(path.join(OUT_AUDIO, dosya)),
     { zorla: FORCE, enCok: Number.isFinite(EN_COK) ? EN_COK : undefined },
   );
   const skipped = plan.atlanan;
   const kalan = plan.kalan;
-  const planMetinleri = plan.uretilecek.map((u) => u.clip.text);
+  const planMetinleri = plan.uretilecek.map((u) => sentezGirdisi(u.clip));
   const planKarakter = planMetinleri.reduce((t, m) => t + karakterSay(m), 0);
   console.log(
     `plan: üretilecek ${plan.uretilecek.length} klip · ${planKarakter} karakter · atlanan ${skipped}` +
@@ -523,7 +532,7 @@ async function main(): Promise<void> {
     for (const { clip } of plan.uretilecek) {
       const d = dokum.get(klipSesi(clip.key).googleSesi)!;
       d.klip++;
-      d.karakter += karakterSay(clip.text);
+      d.karakter += karakterSay(sentezGirdisi(clip));
     }
     console.log(
       'ses dökümü: ' +
@@ -549,7 +558,7 @@ async function main(): Promise<void> {
     sentezle: klipSentezleyici({
       ayar,
       cikisDizini: OUT_AUDIO,
-      synth: (clip, girdi, yol) => synth(provider, girdi, yol, klipSesi(clip.key)),
+      synth: (clip, girdi, yol) => synth(provider, girdi, yol, klipSesi(clip.key), girdiBicimi(clip)),
       olc,
       eskiBozuklar,
       ozetler: hashes,
