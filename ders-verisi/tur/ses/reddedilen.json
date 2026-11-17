@@ -1,0 +1,26 @@
+{
+ "tur.sozcuk.ok": {
+  "neden": "\"oke\" diye söyleniyor (fazladan ünlü); ölçümle yakalanmaz, kulakla reddedildi",
+  "tarih": "2026-11-16"
+ },
+ "tur.hece.en": {
+  "neden": "\"an\" diye okunuyor; kulakla reddedildi (Chirp 3 HD 'Ka.' yeniden denemesi sonrası)",
+  "tarih": "2026-11-16"
+ },
+ "tur.hece.mon": {
+  "neden": "garip/anlaşılmaz bir ses var; kulakla reddedildi (Chirp 3 HD 'Ka.' yeniden denemesi sonrası)",
+  "tarih": "2026-11-16"
+ },
+ "tur.hece.te": {
+  "neden": "\"ti\" gibi okunuyor; kulakla reddedildi (Chirp 3 HD 'Ka.' yeniden denemesi sonrası)",
+  "tarih": "2026-11-16"
+ },
+ "tur.sozcuk.ton": {
+  "neden": "\"tun\" diye okunuyor; kulakla reddedildi (Chirp 3 HD 'Ka.' yeniden denemesi sonrası)",
+  "tarih": "2026-11-16"
+ },
+ "tur.hece.li2n": {
+  "neden": "\"tılın\" gibi okunuyor; kulakla reddedildi (Chirp 3 HD 'Ka.' yeniden denemesi sonrası)",
+  "tarih": "2026-11-16"
+ }
+}

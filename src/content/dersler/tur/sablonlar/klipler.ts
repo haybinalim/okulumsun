@@ -47,6 +47,7 @@ export function heceKlibi(hece: string): TurKlipKimligi {
  */
 export const TUR_YONERGELERI = {
   't02': 'Dinle. Bu sözcüklerin hepsinde aynı ses var. O sesin harfini bul.',
+  't02-bas': 'Dinle. Bu sözcüklerin hepsi aynı sesle başlıyor. O sesin harfini bul.',
   't03': 'Yukarıdaki harfin aynısını bul.',
   't04': 'Yukarıdaki heceyi harf kartlarıyla oluştur.',
   't05': 'Heceleri birleştir. Anlamlı bir sözcük oluştur.',
@@ -88,6 +89,38 @@ export const TUR_GERI_BILDIRIMLERI = {
 
 export function geriBildirimKlibi(anahtar: keyof typeof TUR_GERI_BILDIRIMLERI): TurKlipKimligi {
   return `tur.geri.${anahtar}`;
+}
+
+/**
+ * T-02 doğru cevap KAPANIŞ cümleleri (neden doğru): "Aferin!" → sözcükler → kapanış. Hedef ünlüyse ünlü adıyla
+ * söylenir (MEB K-OY-03: ünlü tek başına sesletilebilir); hedef ünsüzse harf ADI geçmez, "bu harf" denir (ünsüz asla
+ * tek başına seslendirilmez, D-11) ve ekranda doğru kart büyütülüp vurgulanır. `bas`: ses sözcüklerin başında (z1–z2).
+ * Anahtar: `tur.geri.<bas|her>-<ünlü | harf>` (ı→i2, ö→o2, ü→u2).
+ */
+export type T02Konum = 'bas' | 'her';
+
+export const T02_UNLULERI = ['a', 'e', 'ı', 'i', 'o', 'ö', 'u', 'ü'] as const;
+
+function t02KapanisMetni(konum: T02Konum, unlu: string | null): string {
+  if (unlu === null) return konum === 'bas' ? 'Hepsi bu harfle başlıyor.' : 'Hepsinde bu harf var.';
+  const u = unlu.toLocaleLowerCase('tr-TR');
+  return konum === 'bas' ? `Hepsi ${u} sesiyle başlıyor.` : `Hepsinde ${u} sesi var.`;
+}
+
+/** `hedef` T-02'nin harfi; ünlü değilse harf adsız kapanış seçilir. */
+export function t02KapanisKlibi(konum: T02Konum, hedef: string): TurKlipKimligi {
+  const unlu = (T02_UNLULERI as readonly string[]).includes(hedef) ? hedef : null;
+  return `tur.geri.${konum}-${unlu === null ? 'harf' : klipParcasi(unlu)}`;
+}
+
+/** Bütün T-02 kapanış klipleri (8 ünlü × 2 + ünsüz 2 = 18), manifest için. */
+export function t02KapanisKlipleri(): { anahtar: TurKlipKimligi; metin: string }[] {
+  return (['bas', 'her'] as const).flatMap((konum) =>
+    [...T02_UNLULERI, null].map((u) => ({
+      anahtar: t02KapanisKlibi(konum, u ?? 'harf'),
+      metin: t02KapanisMetni(konum, u),
+    })),
+  );
 }
 
 /** Klip metni seslendirilebilir mi: boş değil ve tek başına ünsüz değil (D-11). */

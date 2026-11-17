@@ -48,7 +48,8 @@ import { turIcerikDosyasiniAyristir } from '../src/content/schema/turIcerik';
 import { hamleDosyasiniAyristir } from '../src/content/schema/turHamle';
 import { hamleVerisiniDenetle, teyitBekleyenler } from '../src/content/dersler/tur/hamleTablosu';
 import { gorselDiziniAyristir, type TurGorselDizini } from '../src/content/schema/turGorsel';
-import { klipManifestiMetni, KLIP_MANIFESTI_YOLU, type TurKlipManifesti } from './tur/klip-manifesti';
+import { retListesiniOku } from './ses/turKlipleri';
+import { klipManifestiBeklenen, KLIP_MANIFESTI_YOLU, type TurKlipManifesti } from './tur/klip-manifesti';
 import { klipMetniGecerliMi } from '../src/content/dersler/tur/sablonlar/klipler';
 import { veliKartiAyristir } from '../src/content/dersler/tur/veliKarti';
 import {
@@ -471,7 +472,7 @@ sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLE
 {
   const rel = KLIP_MANIFESTI_YOLU;
   try {
-    const beklenen = klipManifestiMetni(read('ders-verisi/tur/icerik/sozcukler.json'), read('ders-verisi/tur/icerik/cumleler.json'));
+    const beklenen = klipManifestiBeklenen(ROOT);
     const mevcut = readFileSync(path.join(ROOT, rel), 'utf8');
     if (mevcut !== beklenen) hata(`${rel}: şablonlarla eş değil — \`npm run tur:klip\` çalıştırın.`);
     const m = JSON.parse(mevcut) as TurKlipManifesti;
@@ -479,9 +480,15 @@ sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLE
       if (!klipMetniGecerliMi(k.metin)) hata(`${rel}: D-11 ${k.anahtar}: klip tek başına ünsüz ("${k.metin}").`);
       if (/^tur\.harf\./.test(k.anahtar)) hata(`${rel}: D-11 ${k.anahtar}: harf klibi olamaz.`);
     }
+    // Ret listesi (kulakla reddedilen, ders-verisi/tur/ses/reddedilen.json): her anahtar manifestte olmalı ve `var` olamaz.
+    for (const k of Object.keys(retListesiniOku(ROOT))) {
+      const kayit = m.klipler.find((c) => c.anahtar === k);
+      if (!kayit) hata(`${rel}: reddedilen.json "${k}" klipler.json'da yok.`);
+      else if (kayit.durum === 'var') hata(`${rel}: reddedilen "${k}" manifestte "var" — \`npm run tur:klip\` çalıştırın.`);
+    }
     const eksik = m.klipler.filter((k) => k.durum !== 'var').length;
     if (eksik > 0) {
-      const mesaj = `${rel}: ${eksik}/${m.klipler.length} klibin ses dosyası yok (Adım 67).`;
+      const mesaj = `${rel}: ${eksik}/${m.klipler.length} klibin ses dosyası yok (\`npm run audio -- --ders tur\`).`;
       if (process.argv.includes('--yayin')) hata(`${mesaj} D-21: yayında her klibin sesi olmalı.`);
       else sonuc.uyarilar.push(mesaj);
     }

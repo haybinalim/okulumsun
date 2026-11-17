@@ -132,8 +132,11 @@ describe('Türkçe arayüz paketi kuralları (src/ui/tur)', () => {
   const dosyalar = (readdirSync('src/ui/tur', { recursive: true }) as string[])
     .filter((f) => /\.(ts|tsx|css)$/.test(f))
     .map((f) => [f, readFileSync(`src/ui/tur/${f}`, 'utf8')] as const);
-  it('ses yok: konuşma/klip çağrısı içe aktarılmaz (tek başına ünsüz sesi yok, K-OY-03)', () => {
-    for (const [f, s] of dosyalar) expect(s, f).not.toMatch(/useSpeak|speech|speechSynthesis|\.m4a|\bAudio\(/);
+  it('ses: konuşma servisine YALNIZ turSes.ts dokunur (matematikle aynı `speech`); başka dosyada ses/klip çağrısı yok (K-OY-03)', () => {
+    for (const [f, s] of dosyalar) {
+      expect(s, f).not.toMatch(/speechSynthesis|\.m4a|\bAudio\(/);
+      if (!f.endsWith('turSes.ts')) expect(s, f).not.toMatch(/useSpeak|audio\/speech/);
+    }
   });
   it('depolama ve süre ölçümü yok (öğrenci verisi saklanmaz; D-13)', () => {
     for (const [f, s] of dosyalar) {
