@@ -37,6 +37,19 @@ export const KALEM_MM = { ornek: 0.8, izle: 0.45, nokta: 0.75, noktaAraligi: 2.2
  */
 export const EVE_KAREKOD_MM = 20;
 
+/** Kısa bağlantı satırının sol ucu ve karekoda kadar kullanılabilir genişlik (mm). */
+export const KISA_X = A4.kenar + 10 + 3;
+export const KISA_GENISLIK_MM = A4.en - A4.kenar - EVE_KAREKOD_MM - 2 - KISA_X;
+const KISA_PUNTO = 2.6;
+/** Karakter başına en kötü genişlik oranı (punto başına; temkinli). */
+const KARAKTER_ORANI = 0.62;
+
+/** Yazı alana sığmazsa `textLength` ile alana sıkıştırılır; sığıyorsa özellik eklenmez (doğal görünüm). */
+export function kisaMetinSigdirma(kisa: string): { textLength?: number; lengthAdjust?: 'spacingAndGlyphs' } {
+  const tahmin = [...kisa].length * KISA_PUNTO * KARAKTER_ORANI;
+  return tahmin > KISA_GENISLIK_MM ? { textLength: KISA_GENISLIK_MM, lengthAdjust: 'spacingAndGlyphs' } : {};
+}
+
 export const ICERIK = {
   x: A4.kenar,
   y: A4.kenar + UST_BANT_MM,

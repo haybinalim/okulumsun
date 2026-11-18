@@ -17,6 +17,9 @@ import {
   A4,
   EVE_KAREKOD_MM,
   ICERIK,
+  KISA_GENISLIK_MM,
+  KISA_X,
+  kisaMetinSigdirma,
   KALIBRASYON_MM,
   sayfaTasmasi,
   turKagitKodu,
@@ -133,5 +136,33 @@ describe('kâğıt alt bilgisi', () => {
     const k = eveKarekodu(LINK);
     if (k.durum !== 'hazir') throw new Error('karekod üretilemedi');
     expect(isaretle({ tur: 'dikte' }, k)).toContain('Gerçek boyut (%100) yazdırın; kare 1 cm olmalı.');
+  });
+});
+
+describe('kısa bağlantı karekodla çakışmaz', () => {
+  const EN_UZUN = turEveLink('https://okulumsun-tc.vercel.app/', 'zengin', 999, resmiKume('z', true));
+
+  it('alan karekodun solunda biter (kısa bağlantı + sağdaki karekod arası pay var)', () => {
+    expect(KISA_X + KISA_GENISLIK_MM).toBeLessThanOrEqual(A4.en - A4.kenar - EVE_KAREKOD_MM - 2);
+    expect(KISA_GENISLIK_MM).toBeGreaterThan(80);
+  });
+
+  it('en uzun küme koduyla bile yazı alana sığar: ya doğal sığar ya textLength alanla sınırlanır', () => {
+    const k = eveKarekodu(EN_UZUN);
+    if (k.durum !== 'hazir') throw new Error('karekod üretilemedi');
+    const g = kisaMetinSigdirma(k.kisa);
+    if (g.textLength !== undefined) expect(g.textLength).toBeLessThanOrEqual(KISA_GENISLIK_MM);
+    else expect([...k.kisa].length * 2.6 * 0.62).toBeLessThanOrEqual(KISA_GENISLIK_MM);
+    // Çok uzun bir alan adı (okul sunucusu) için de sıkıştırma devreye girer ve sınırı aşmaz.
+    const uzun = kisaMetinSigdirma(`${'a'.repeat(200)}/?ders=tur`);
+    expect(uzun.textLength).toBe(KISA_GENISLIK_MM);
+    // Kısa bağlantıda doğal görünüm (sıkıştırma yok).
+    expect(kisaMetinSigdirma('okulumsun-tc.vercel.app/?ders=tur&ev=s1&tur=1z')).toEqual({});
+  });
+
+  it('sayfada kısa bağlantı satırı bu sınırla çizilir', () => {
+    const k = eveKarekodu(`https://${'a'.repeat(200)}.test/?ders=tur&ev=s1&tur=1z`);
+    if (k.durum !== 'hazir') throw new Error('karekod üretilemedi');
+    expect(isaretle({ tur: 'dikte' }, k)).toContain(`textLength="${KISA_GENISLIK_MM}"`);
   });
 });

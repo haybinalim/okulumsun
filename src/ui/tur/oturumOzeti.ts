@@ -2,7 +2,7 @@
  * OTURUM ÖZETİ (öğretmen; Okuma Yazma Adım 81, E5) — YALNIZ `VITE_DERS_TUR=1` derlemesinde. SAF + yalnız bellek.
  *
  * Tahtada bir set bitince öğretmen ekranında "Bu derste ne yaptık": hangi harfler, hangi etkinlik türleri, kaç etkinlik
- * açıldı, hangi etkinlikte sınıf birlikte çözdü ya da yardım istendi. NİTEL: puan, yüzde, süre, deneme sayısı ve
+ * açıldı, hangi etkinlikte yanlış denemeden sonra düzeltildi ya da soru yeniden dinlendi. NİTEL: puan, yüzde, süre, deneme sayısı ve
  * öğrenci adı YOKTUR (matematikteki tema sonu nitel düzey deseni). Kayıt bu modülün değişkeninde durur; set ekranından
  * çıkınca silinir (`ozetSil`); hiçbir depoya (yerel depo, veritabanı, çerez, ağ) yazılmaz. Yazdırma tarayıcının
  * yazdırma penceresidir (ağ yok).
@@ -14,9 +14,9 @@ import type { TurSablonKodu } from '../../content/dersler/tur/sablonlar/turSoru'
 
 export interface EtkinlikKaydi {
   readonly sablon: TurSablonKodu;
-  /** Yanlış denemeden sonra düzeltilerek çözüldü: "sınıf birlikte çözdü". */
+  /** Yanlış denemeden sonra düzeltilerek çözüldü (sınıfın "birlikte çözdüğü" anlamına gelmez; yalnız bu gözlenir). */
   readonly birlikte: boolean;
-  /** "Tekrar dinle" istendi: "yardım istendi, soru yeniden dinlendi". */
+  /** "Tekrar dinle" basıldı: soru yeniden dinlendi (kimin dinlettiği, çocuk ya da öğretmen, bilinmez; "yardım istendi" denmez). */
   readonly yardim: boolean;
   readonly cozuldu: boolean;
 }
@@ -72,10 +72,10 @@ export function etkinlikDuzeyi(k: EtkinlikKaydi): EtkinlikDuzeyi {
 }
 
 export const DUZEY_METNI: Readonly<Record<EtkinlikDuzeyi, string>> = {
-  hemen: 'Sınıf hemen çözdü',
-  birlikte: 'Sınıf birlikte çözdü',
-  yardim: 'Yardım istendi, soru yeniden dinlendi',
-  birlikteVeYardim: 'Sınıf birlikte çözdü, yardım istendi',
+  hemen: 'İlk denemede çözüldü',
+  birlikte: 'Yanlış denemeden sonra düzeltilerek çözüldü',
+  yardim: 'Soru yeniden dinlendi',
+  birlikteVeYardim: 'Yanlış denemeden sonra düzeltilerek çözüldü, soru yeniden dinlendi',
   cozulmedi: 'Çözülmeden geçildi',
 };
 
@@ -87,9 +87,9 @@ export interface OturumOzeti {
   /** Açılan etkinlik sayısı (olgu; başarı ölçüsü değildir). */
   readonly acilan: number;
   readonly satirlar: readonly { readonly sira: number; readonly sablon: TurSablonKodu; readonly duzey: EtkinlikDuzeyi }[];
-  /** Sınıfın birlikte çözdüğü etkinlik türleri. */
+  /** Yanlış denemeden sonra düzeltilerek çözülen etkinlik türleri. */
   readonly birlikteCozulen: readonly TurSablonKodu[];
-  /** Yardım istenen etkinlik türleri. */
+  /** Sorusu yeniden dinlenen etkinlik türleri. */
   readonly yardimIstenen: readonly TurSablonKodu[];
 }
 

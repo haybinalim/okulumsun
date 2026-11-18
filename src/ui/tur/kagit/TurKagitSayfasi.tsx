@@ -8,10 +8,12 @@ import {
   DIZGE_MM,
   EVE_KAREKOD_MM,
   ICERIK,
+  KISA_X,
   KALEM_MM,
   KALIBRASYON_MM,
   KALIBRASYON_NOTU,
   glifEniMm,
+  kisaMetinSigdirma,
   type KagitSatiri,
   type TurKagitSayfasi as Sayfa,
 } from './turKagidi';
@@ -381,7 +383,15 @@ function AltBilgi({ kod, eve }: { readonly kod: string; readonly eve?: EveKareko
           <text x={ICERIK.x + KALIBRASYON_MM + 3} y={y + 12.6} fontSize={2.8} fill={MUREKKEP}>
             Evde aç: karekodu telefonla okutun ya da bağlantıyı yazın.
           </text>
-          <text x={ICERIK.x + KALIBRASYON_MM + 3} y={y + 16.2} fontSize={2.6} fill={MUREKKEP} data-eve-kisa="">
+          <text
+            x={KISA_X}
+            y={y + 16.2}
+            fontSize={2.6}
+            fill={MUREKKEP}
+            data-eve-kisa=""
+            // Karekodla çakışmaz: yazı kısa bağlantı alanına sığmıyorsa sıkıştırılır (en uzun küme kodunda da).
+            {...kisaMetinSigdirma(eve.kisa)}
+          >
             {eve.kisa}
           </text>
         </g>

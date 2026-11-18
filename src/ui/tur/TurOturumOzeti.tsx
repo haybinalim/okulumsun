@@ -29,10 +29,10 @@ function OzetGovdesi({ ozet }: { ozet: Ozet }) {
         <strong>Açılan etkinlik:</strong> {ozet.acilan}
       </p>
       <p style={{ margin: '0 0 0.2em' }} data-ozet="birlikte">
-        <strong>Sınıfın birlikte çözdüğü:</strong> {ozet.birlikteCozulen.length ? liste(ozet.birlikteCozulen) : 'yok'}
+        <strong>Yanlış denemeden sonra düzeltilen:</strong> {ozet.birlikteCozulen.length ? liste(ozet.birlikteCozulen) : 'yok'}
       </p>
       <p style={{ margin: '0 0 0.3em' }} data-ozet="yardim">
-        <strong>Yardım istenen:</strong> {ozet.yardimIstenen.length ? liste(ozet.yardimIstenen) : 'yok'}
+        <strong>Soru yeniden dinlenen:</strong> {ozet.yardimIstenen.length ? liste(ozet.yardimIstenen) : 'yok'}
       </p>
       <ol aria-label="Etkinlikler" style={{ margin: 0, paddingLeft: '1.4em', columns: 2, columnGap: '2em' }}>
         {ozet.satirlar.map((s) => (

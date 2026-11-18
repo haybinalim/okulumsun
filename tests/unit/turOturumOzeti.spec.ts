@@ -122,8 +122,8 @@ describe('set sonu ekranı', () => {
     const metin = ozet!.textContent!;
     expect(metin).toContain('Harfler:');
     expect(metin).toContain('Etkinlik türleri:');
-    expect(metin).toContain('Sınıf birlikte çözdü');
-    expect(metin).toContain('Yardım istendi');
+    expect(metin).toContain('Yanlış denemeden sonra düzeltilerek çözüldü');
+    expect(metin).toContain('Soru yeniden dinlendi');
     expect(metin).not.toMatch(/%|puan|yüzde|saniye|dakika|doğru sayısı/i);
     expect(document.querySelectorAll('[data-oz-ekran] li').length).toBe(3);
     const yaz = vi.fn();

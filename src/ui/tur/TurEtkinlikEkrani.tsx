@@ -175,7 +175,7 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
     });
   };
   const soruSesi = () => {
-    ozetTekrarDinlendi(); // Oturum özeti (Adım 81): "Tekrar dinle" = yardım istendi (yalnız bellek).
+    ozetTekrarDinlendi(); // Oturum özeti (Adım 81): "Tekrar dinle" = soru yeniden dinlendi (yalnız bellek).
     iste([soru.yonerge, ...soru.soruKlipleri], true);
   };
   // Açılışta bir kez (soru `useMemo` ile sabit; soru değişince bileşen `key` ile yeniden kurulur). Geliştirmede

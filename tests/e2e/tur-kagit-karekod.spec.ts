@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { TUR_URL } from '../../playwright.config';
 import { geometriTemiz, sesKilidiniAc } from './yardimci/akis';
+import { kumeKodla, resmiKume } from '../../src/content/dersler/tur/ogretilenKume';
 import { BAYRAKLI_IZINLI_ANAHTARLAR, IZINLI_ANAHTARLAR } from '../../src/persistence/depolamaIzinListesi';
 
 /**
@@ -85,6 +86,25 @@ test('set kâğıdında eve karekodu: kalibrasyon 1 cm bozulmaz, karekod aynı s
   await expect(p3.locator('.tk-kok--onizleme [data-tur-kagit="tur-dikte"]')).toBeVisible();
   await expect(p3.locator('[data-eve-karekod]')).toHaveCount(0);
   await c2.close();
+});
+
+test('kısa bağlantı karekodla çakışmaz (en uzun küme koduyla, baskıda ölçülür)', async ({ browser }, bilgi) => {
+  test.skip(bilgi.project.name !== 'tablet', 'tek proje yeter');
+  const ctx = await browser.newContext({ baseURL: TUR_URL, viewport: { width: 1080, height: 810 }, hasTouch: true });
+  const page = await ctx.newPage();
+  await sesKilidiniAc(page, `/?ders=tur&device=tablet&ekran=setHazirla&tur=${kumeKodla(resmiKume('z', true))}`);
+  await page.getByRole('button', { name: 'Dikte kâğıdı, eve karekodlu' }).click();
+  await expect(page.locator('.tk-kok--onizleme [data-eve-karekod="hazir"]')).toHaveCount(1);
+  await page.emulateMedia({ media: 'print' });
+  const o = await page.evaluate(() => {
+    const kisa = document.querySelector('.tk-kok--baski [data-eve-kisa]')!.getBoundingClientRect();
+    const qr = document.querySelector('.tk-kok--baski [data-eve-karekod="hazir"] svg')!.getBoundingClientRect();
+    return { kisaSag: kisa.right, kisaSol: kisa.left, qrSol: qr.left, uzunluk: document.querySelector('.tk-kok--baski [data-eve-kisa]')!.textContent!.length };
+  });
+  await page.emulateMedia({ media: 'screen' });
+  expect(o.uzunluk).toBeGreaterThan(40);
+  expect(o.kisaSag).toBeLessThanOrEqual(o.qrSol - 1);
+  await ctx.close();
 });
 
 test('karekodlu kâğıt telefon (390) ve masaüstü (1280) genişliğinde taşmaz', async ({ browser }, bilgi) => {
