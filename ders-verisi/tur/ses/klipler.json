@@ -679,7 +679,7 @@
   },
   {
    "anahtar": "tur.cumle.m206s2",
-   "metin": "Tekne mor.",
+   "metin": "Tekne ak.",
    "durum": "eksik"
   },
   {
@@ -689,17 +689,17 @@
   },
   {
    "anahtar": "tur.cumle.m207s1",
-   "metin": "Orman ılık.",
-   "durum": "eksik"
-  },
-  {
-   "anahtar": "tur.cumle.m207s2",
    "metin": "Okan mantar arar.",
    "durum": "eksik"
   },
   {
-   "anahtar": "tur.cumle.m207s3",
+   "anahtar": "tur.cumle.m207s2",
    "metin": "Okan mantarı alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m207s3",
+   "metin": "Okan mutlu.",
    "durum": "eksik"
   },
   {
@@ -744,7 +744,7 @@
   },
   {
    "anahtar": "tur.cumle.m303s3",
-   "metin": "Ömer ile ördek mutlu.",
+   "metin": "Ömer mutlu.",
    "durum": "eksik"
   },
   {
@@ -759,7 +759,7 @@
   },
   {
    "anahtar": "tur.cumle.m304s3",
-   "metin": "Saat dört.",
+   "metin": "Deniz mutlu.",
    "durum": "eksik"
   },
   {
@@ -769,7 +769,7 @@
   },
   {
    "anahtar": "tur.cumle.m305s2",
-   "metin": "Okulda Ali ile oynar.",
+   "metin": "Okulda Selim ile Ali oynar.",
    "durum": "eksik"
   },
   {
@@ -863,6 +863,11 @@
    "durum": "eksik"
   },
   {
+   "anahtar": "tur.cumle.m404s3",
+   "metin": "Cem trene bakar.",
+   "durum": "eksik"
+  },
+  {
    "anahtar": "tur.cumle.m405s1",
    "metin": "Şeker tatlı.",
    "durum": "eksik"
@@ -889,7 +894,7 @@
   },
   {
    "anahtar": "tur.cumle.m406s3",
-   "metin": "Orada Gül ile oynar.",
+   "metin": "Orada Gökçe ile Gül oynar.",
    "durum": "eksik"
   },
   {

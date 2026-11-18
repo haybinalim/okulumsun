@@ -4,7 +4,7 @@
  * determinizmi); hamle verisi açılamazsa T-09 adımı atlanır ve bildirilir. Hiçbir şey saklanmaz.
  */
 import { useMemo } from 'react';
-import { turSetiKur, type SetDuzeyi, type TurSeti } from '../../content/dersler/tur/turSet';
+import { turSetiKur, TurSetiVeriHatasi, type SetDuzeyi, type TurSeti } from '../../content/dersler/tur/turSet';
 import { useTurKume } from './turKume';
 import { useTurHavuzu } from './useTurHavuzu';
 import { useHamleVerisi } from './useHamleVerisi';
@@ -40,6 +40,11 @@ export function useTurSeti(duzey: SetDuzeyi, tohum: number): TurSetiDurumu {
     if (cumleHatasi !== null) return { durum: 'hata', mesaj: `Cümle verisi açılamadı: ${cumleHatasi}` };
     if (metinHatasi !== null) return { durum: 'hata', mesaj: `Metin verisi açılamadı: ${metinHatasi}` };
     if (h.durum !== 'hazir' || !hamleBitti || !cumleBitti || !metinBitti) return { durum: 'yukleniyor' };
-    return { durum: 'hazir', set: turSetiKur({ havuz: h.havuz, kume, duzey, tohum, hamleler, cumleler, metinler }) };
+    try {
+      return { durum: 'hazir', set: turSetiKur({ havuz: h.havuz, kume, duzey, tohum, hamleler, cumleler, metinler }) };
+    } catch (e) {
+      if (e instanceof TurSetiVeriHatasi) return { durum: 'hata', mesaj: e.message };
+      throw e;
+    }
   }, [h, hamleBitti, hamleler, cumleBitti, cumleler, cumleHatasi, metinBitti, metinler, metinHatasi, kume, duzey, tohum]);
 }

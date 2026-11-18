@@ -240,3 +240,12 @@ test.describe('metin verisi yüklenemezse açık hata (sessiz boş ekran yok)', 
     await expect(page.getByRole('button', { name: 'Başla' })).toBeDisabled();
   });
 });
+
+test('cümle verisi yüklenemezse de set sessizce yedeğe düşmez (tek davranış: veri yok, görünür hata)', async ({ page }, bilgi) => {
+  test.skip(bilgi.project.name !== 'tablet', 'bir kez');
+  await page.route('**/tur/icerik/cumleler.json', (rota) => rota.fulfill({ status: 404, body: 'yok' }));
+  await sesKilidiniAc(page, `/?ders=tur&ekran=setHazirla&device=tablet&tur=${HEPSI}`);
+  await page.getByRole('button', { name: 'Sınıf', exact: true }).click();
+  await expect(page.getByRole('main', { name: 'Set hazırla' })).toContainText('Cümle verisi açılamadı');
+  await expect(page.getByRole('list', { name: 'Setteki etkinlikler' })).toHaveCount(0);
+});

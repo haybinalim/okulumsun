@@ -63,6 +63,20 @@ geçersizdir.
 | K-OY-19 | Sol el zorlanmaz; sol el ayarı arayüzü aynalar, harf ve hamle yönünü **aynalamaz** | "Sol elini kullanan öğrenci sağ ele zorlanmaz" | D-19 |
 | K-OY-20 | Yeni sese geçişi öğretmen yönetir; takvim yalnız öneridir (öğretilen harf kümesi öğretmenin seçimi) | Esaslar; Şekil 1 süreleri | Öğretilen küme modeli |
 
+### 3.1 Okuma öğrenme çıktısı kodları (Ek 1, program PDF s. 203; Adım 80 doğrulaması)
+
+Kaynak: aynı PDF, "OKUMA" başlığı, Ek 1 çıktı tablosu. Alıntılar birebirdir:
+
+| Kod | Alıntı | Kullanan |
+|---|---|---|
+| T.O.1.1.b | "Sözcükleri doğru okur." | T-08 |
+| T.O.1.1.c | "Basit ve kısa cümleleri doğru okur." | T-10, koro okuma (M-3), "Metni oku" (E2), T-13 (okuma tarafı) |
+| T.O.1.1.h | "Noktalama işaretlerine dikkat ederek okur." | T-11 |
+| T.O.1.2 | "Okudukları ile ilgili anlam oluşturabilme" (alt bileşenler: a ön bilgi, b ön bilgiyle bağlantı, c başlık/görselden tahmin, ç yönerge uygulama) | T-13 (anlama) |
+| T.O.1.3.a | "Okuduğu metnin konusunu bulur." | — |
+
+**Doğrulanmadı:** "metinde geçen nesne/kişiyi bulma" için birebir bir alt bileşen programda yoktur; T-13 çıktı düzeyinde T.O.1.2'ye eşlenir, alt bileşen kodu yazılmaz (uydurma yok). Öğretmen/E6 araştırması bu eşlemeyi teyit etmelidir.
+
 ## 4. Plan kararlarıyla eklenen kurallar (programın doğal sonucu)
 
 | Kod | Kural | Gerekçe |

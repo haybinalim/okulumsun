@@ -29,7 +29,7 @@ import { metinCumleKlibi, TUR_YONERGELERI } from '../../src/content/dersler/tur/
 import { cumleGovdeleri } from '../../src/content/dersler/tur/sablonlar/cumle/ortakCumle';
 import { resmiKume } from '../../src/content/dersler/tur/ogretilenKume';
 import { HARF_GRUPLARI, PROGRAM_SURUMU } from '../../src/content/dersler/tur/alfabe';
-import { turSetiKur, SET_ADIM_SAYISI } from '../../src/content/dersler/tur/turSet';
+import { turSetiKur, SET_ADIM_SAYISI, TurSetiVeriHatasi } from '../../src/content/dersler/tur/turSet';
 import { AKIS_BASAMAKLARI } from '../../src/content/dersler/tur/gununAkisi';
 import { turAcilisEkrani } from '../../src/ui/tur/turEkraniDurumu';
 import type { TurHamleDosyasi } from '../../src/content/schema/turHamle';
@@ -151,12 +151,12 @@ describe('D-27 tuzakları — her kural kırmızı olmalı (öğretilmemiş harf
     { ad: 'soru cümlesi soru işaretiyle bitmiyor', kural: 'D-27', boz: (h) => (sorular(ilk(h, 2))[0].soru = 'Annem ne alır.') },
     { ad: 'öğretilmemiş harfli soru', kural: 'D-02', boz: (h) => (sorular(ilk(h, 2))[0].soru = 'Annem ne alır göz?') },
     { ad: 'özel ad metinde yok', kural: 'D-27', boz: (h) => (ilk(h, 2).ozelAdlar = ['Ali', 'Nil']) },
-    { ad: 'cevap belirtilen cümlede yok (sözcük)', kural: 'D-27', boz: (h) => (sozcukSorusu(h).cumleNo = 2) },
+    { ad: 'cevap belirtilen cümlede yok (sözcük)', kural: 'D-27', boz: (h) => (sozcukSorusu(h).cumleNo = 1) },
     { ad: 'cumleNo metin dışında', kural: 'D-27', boz: (h) => (sozcukSorusu(h).cumleNo = 5) },
     { ad: 'soru cevabı söylüyor (sözcük)', kural: 'D-27', boz: (h) => (sozcukSorusu(h).soru = `Kim ${sozcukSorusu(h).cevap} alır?`) },
     { ad: 'yanlış seçenek metinde geçiyor', kural: 'D-27', boz: (h) => (sozcukSorusu(h).celdiriciler = [sozcukSorusu(h).cevap, 'Nil', 'Okan']) },
     { ad: 'yanlış seçenek öğretilmemiş harf', kural: 'D-27', boz: (h) => ((sozcukSorusu(h).celdiriciler as string[])[0] = 'Özlem') },
-    { ad: 'yanlış seçenek cevapla aynı büyük/küçük biçimde değil', kural: 'D-27', boz: (h) => ((sozcukSorusu(h).celdiriciler as string[])[0] = 'ali') },
+    { ad: 'yanlış seçenek cevapla aynı büyük/küçük biçimde değil', kural: 'D-27', boz: (h) => ((sozcukSorusu(h).celdiriciler as string[])[0] = 'Ali') },
     { ad: 'yanlış seçenek 3\'ten az', kural: 'D-27', boz: (h) => (sozcukSorusu(h).celdiriciler = ['Ali', 'Nil']) },
     { ad: 'görsel cevapta yazılı yanlış seçenek', kural: 'D-27', boz: (h) => (sorular(ilk(h, 2))[0].celdiriciler = ['ot', 'at', 'et']) },
     { ad: 'kimlik tekil değil', kural: 'D-20', boz: (h) => (ilk(h, 3).id = ilk(h, 2).id as string) },
@@ -325,7 +325,7 @@ describe('klip manifesti ve set/akış bağları (karşı parça)', () => {
     expect(harita.get('tur.yonerge.t13')?.metin).toBe(TUR_YONERGELERI.t13);
   });
 
-  it('set hazırla: zenginleştirme tarifinde T-13; 1. grupta yedek T-08; metin verisi yoksa yedek; yine 8 adım', async () => {
+  it('set hazırla: zenginleştirme tarifinde T-13; 1. grupta yedek T-08; metin verisi yüklenemezse hata (sessiz yedek yok); yine 8 adım', async () => {
     const m = await metinParcasiniYukle();
     metinUreticileriniKaydet(m.TUR_METIN_URETICILERI);
     await cumleParcasiniYukle();
@@ -337,8 +337,10 @@ describe('klip manifesti ve set/akış bağları (karşı parça)', () => {
     const g1 = kur(resmiKume('l', true), { metinler });
     expect(g1.adimlar.some((a) => a.sablon === 'T-13')).toBe(false);
     expect(g1.adimlar.some((a) => a.sablon === 'T-08' && a.zorluk === 4)).toBe(true);
-    const yok = kur(resmiKume('z', true));
-    expect(yok.adimlar.some((a) => a.sablon === 'T-13')).toBe(false);
+    // Veri yüklenemedi (undefined) sessizce T-08'e düşmez: görünür hata. Yüklü ama boş ([]) bilinçli yedektir.
+    expect(() => kur(resmiKume('z', true))).toThrow(TurSetiVeriHatasi);
+    expect(kur(resmiKume('z', true), { metinler: [] }).adimlar.some((a) => a.sablon === 'T-13')).toBe(false);
+    expect(() => turSetiKur({ havuz, kume: resmiKume('z', true), duzey: 'sinif', tohum: 3, hamleler, cumleler })).not.toThrow();
     // Aynı tohum aynı set (eve link: öğretmen ve ev cihazı aynı veriyle aynı seti kurar).
     expect(kur(resmiKume('z', true), { metinler })).toEqual(g3);
   });

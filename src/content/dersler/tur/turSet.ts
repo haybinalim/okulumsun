@@ -102,6 +102,17 @@ export interface TurSeti {
 
 const DENEME = 4;
 
+/**
+ * Set verisi yüklenemedi (ör. metin havuzu `undefined`): set sessizce yedek adıma DÜŞMEZ, görünür hata olur. Yedek adım
+ * yalnız bilinçli durumda kullanılır: veri yüklü ama bu kümeyle kurulamıyor (ör. 1. grupta metin yok, D-08).
+ */
+export class TurSetiVeriHatasi extends Error {
+  constructor(mesaj: string) {
+    super(mesaj);
+    this.name = 'TurSetiVeriHatasi';
+  }
+}
+
 export function turSetiKur(girdi: {
   readonly havuz: readonly TurHavuzSozcugu[];
   readonly kume: ReadonlySet<string>;
@@ -111,7 +122,7 @@ export function turSetiKur(girdi: {
   readonly hamleler?: readonly TurHamleGlifi[];
   /** Cümle havuzu (T-10, T-11, T-12; cümle parçası yüklü olmalı); yoksa cümle adımı yedeğiyle kurulur. */
   readonly cumleler?: readonly TurHavuzCumlesi[];
-  /** Okuma metinleri (T-13; metin parçası yüklü olmalı); yoksa metin adımı yedeğiyle kurulur. */
+  /** Okuma metinleri (T-13; metin parçası yüklü olmalı). `undefined` = yüklenemedi → `TurSetiVeriHatasi`; `[]` = yüklü ama boş. */
   readonly metinler?: readonly TurHavuzMetni[];
 }): TurSeti {
   const adimlar: SetAdimi[] = [];
@@ -126,6 +137,7 @@ export function turSetiKur(girdi: {
 
   /** Adımı kurar (aynı hedef tekrarı olmadan); kurulamazsa `false`. */
   function adimiKur(t: Omit<SetAdimi, 'tohum'>, i: number): boolean {
+    if (t.sablon === 'T-13' && girdi.metinler === undefined) throw new TurSetiVeriHatasi('Metin verisi yüklenemedi: T-13 kurulamaz.');
     let yedek: number | null = null;
     for (let d = 0; d < DENEME; d++) {
       const tohum = girdi.tohum * 10 + i + d * 100;
