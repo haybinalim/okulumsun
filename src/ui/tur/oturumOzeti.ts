@@ -4,7 +4,7 @@
  * Tahtada bir set bitince öğretmen ekranında "Bu derste ne yaptık": hangi harfler, hangi etkinlik türleri, kaç etkinlik
  * açıldı, hangi etkinlikte sınıf birlikte çözdü ya da yardım istendi. NİTEL: puan, yüzde, süre, deneme sayısı ve
  * öğrenci adı YOKTUR (matematikteki tema sonu nitel düzey deseni). Kayıt bu modülün değişkeninde durur; set ekranından
- * çıkınca silinir (`ozetSil`); hiçbir depoya (localStorage, IndexedDB, çerez, ağ) yazılmaz. Yazdırma tarayıcının
+ * çıkınca silinir (`ozetSil`); hiçbir depoya (yerel depo, veritabanı, çerez, ağ) yazılmaz. Yazdırma tarayıcının
  * yazdırma penceresidir (ağ yok).
  *
  * Olay işlevleri oturum açık değilse (set akışı dışındaki tek etkinlik, eve link cihazı) hiçbir şey yapmaz.

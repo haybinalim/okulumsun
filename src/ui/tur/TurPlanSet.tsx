@@ -134,7 +134,7 @@ export function SetHazirla({ ekAraclar }: { ekAraclar?: (duzey: SetDuzeyi, tohum
   };
   const ses = bugunkuSes(kume);
   return (
-    <main data-yetiskin="" aria-label="Set hazırla" style={{ ...ekranStili, justifyContent: 'flex-start', gap: 'var(--size-gap-tight)' }}>
+    <main data-yetiskin="" aria-label="Set hazırla" style={{ ...ekranStili, justifyContent: 'flex-start', gap: 'var(--size-gap-tight)', overflowY: 'auto' }}>
       <Baslik baslik={`Set hazırla: ${ses}`} alt={`Öğretilen harflerle ${SET_ADIM_SAYISI} etkinlik. Set saklanmaz.`} />
       <div role="group" aria-label="Düzey" style={{ display: 'flex', gap: '0.4em', flexWrap: 'wrap', justifyContent: 'center' }}>
         {SET_DUZEYLERI.map((d) => (

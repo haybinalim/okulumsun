@@ -87,7 +87,7 @@ describe('kâğıt alt bilgisi', () => {
 
   it('karekod yokken alt bilgi eskisiyle birebir aynı (yalnız bayraklı parametre eklendi)', () => {
     const i: TurKagitIstegi = { tur: 'dikte' };
-    expect(isaretle(i)).toBe(isaretle(i, undefined));
+    expect(isaretle(i)).toMatch(/<text x="198" [^>]*data-kagit-kodu/); // kâğıt kodu eski yerinde (sağ kenar)
     expect(isaretle(i)).not.toContain('data-eve-karekod');
   });
 
