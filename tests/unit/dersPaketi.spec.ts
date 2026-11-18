@@ -220,7 +220,8 @@ describe('ders verisi yayını ve bütçe', () => {
       kodBayt: 120 * 1024,
       // KG-156: ek parçalar (yalnız gerektiğinde indirilir) ayrı tavanla; temel tavan değişmedi.
       ekParcaBayt: 40 * 1024,
-      ekParcalar: ['turCumle', 'KoroOkuma'],
+      // Adım 80: metin parçası (T-13) ve "Metni oku" ekranı aynı ek parça kuralıyla.
+      ekParcalar: ['turCumle', 'KoroOkuma', 'turMetin', 'MetinOkuma'],
     });
   });
 

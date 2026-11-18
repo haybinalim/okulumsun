@@ -1,0 +1,1030 @@
+{
+ "programSurumu": "tymm-turkce-2026-09-02",
+ "teyit": {
+  "durum": "bekliyor",
+  "kaynak": "Okuma Yazma okuma metinleri (Adım 80, 2.–5. grup); cümle havuzundaki istisnayla (KG-155) öğretmen onayı beklenmeden kuruldu. İki öğretmen anlam ve doğallık teyidi yayından önce zorunlu."
+ },
+ "metinler": [
+  {
+   "id": "m2.01",
+   "cumleler": [
+    "Annem elma alır.",
+    "Elma tatlı.",
+    "Ali ekmek alır."
+   ],
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "anetilkrım",
+   "ozelAdlar": [
+    "Ali"
+   ],
+   "sorular": [
+    {
+     "id": "m2.01.q1",
+     "soru": "Annem ne alır?",
+     "cevapTuru": "gorsel",
+     "cevap": "elma",
+     "cumleNo": 1
+    },
+    {
+     "id": "m2.01.q2",
+     "soru": "Ali ne alır?",
+     "cevapTuru": "gorsel",
+     "cevap": "ekmek",
+     "cumleNo": 3
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m2.02",
+   "cumleler": [
+    "Mert kalem alır.",
+    "Kalem mor.",
+    "Mert kutu alır."
+   ],
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "aetlokurım",
+   "ozelAdlar": [
+    "Mert"
+   ],
+   "sorular": [
+    {
+     "id": "m2.02.q1",
+     "soru": "Ne mor?",
+     "cevapTuru": "gorsel",
+     "cevap": "kalem",
+     "cumleNo": 2
+    },
+    {
+     "id": "m2.02.q2",
+     "soru": "Kim kutu alır?",
+     "cevapTuru": "sozcuk",
+     "cevap": "Mert",
+     "cumleNo": 3,
+     "celdiriciler": [
+      "Ali",
+      "Nil",
+      "Okan"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m2.03",
+   "cumleler": [
+    "Kemal inek alır.",
+    "İnek otlar.",
+    "Kemal mutlu."
+   ],
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "anetilokurım",
+   "ozelAdlar": [
+    "Kemal"
+   ],
+   "sorular": [
+    {
+     "id": "m2.03.q1",
+     "soru": "Kemal ne alır?",
+     "cevapTuru": "gorsel",
+     "cevap": "inek",
+     "cumleNo": 1
+    },
+    {
+     "id": "m2.03.q2",
+     "soru": "Kim mutlu?",
+     "cevapTuru": "sozcuk",
+     "cevap": "Kemal",
+     "cumleNo": 3,
+     "celdiriciler": [
+      "Ali",
+      "Mert",
+      "Nil"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m2.04",
+   "cumleler": [
+    "Ninem ekmek alır.",
+    "Ekmek ılık.",
+    "Ninem mutlu."
+   ],
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "anetilkurım",
+   "sorular": [
+    {
+     "id": "m2.04.q1",
+     "soru": "Ne ılık?",
+     "cevapTuru": "gorsel",
+     "cevap": "ekmek",
+     "cumleNo": 2
+    },
+    {
+     "id": "m2.04.q2",
+     "soru": "Kim mutlu?",
+     "cevapTuru": "sozcuk",
+     "cevap": "Ninem",
+     "cumleNo": 3,
+     "celdiriciler": [
+      "Annem",
+      "Mine",
+      "Ali"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m2.05",
+   "cumleler": [
+    "Tuna lale alır.",
+    "Lale mor.",
+    "Tuna lale ile mutlu."
+   ],
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "anetilourım",
+   "ozelAdlar": [
+    "Tuna"
+   ],
+   "sorular": [
+    {
+     "id": "m2.05.q1",
+     "soru": "Tuna ne alır?",
+     "cevapTuru": "gorsel",
+     "cevap": "lale",
+     "cumleNo": 1
+    },
+    {
+     "id": "m2.05.q2",
+     "soru": "Lale ne renk?",
+     "cevapTuru": "sozcuk",
+     "cevap": "mor",
+     "cumleNo": 2,
+     "celdiriciler": [
+      "ak",
+      "kara",
+      "altın"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m2.06",
+   "cumleler": [
+    "Mine tekne alır.",
+    "Tekne mor.",
+    "Tekne ilerler."
+   ],
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "anetilokrım",
+   "ozelAdlar": [
+    "Mine"
+   ],
+   "sorular": [
+    {
+     "id": "m2.06.q1",
+     "soru": "Mine ne alır?",
+     "cevapTuru": "gorsel",
+     "cevap": "tekne",
+     "cumleNo": 1
+    },
+    {
+     "id": "m2.06.q2",
+     "soru": "Tekne ne renk?",
+     "cevapTuru": "sozcuk",
+     "cevap": "mor",
+     "cumleNo": 2,
+     "celdiriciler": [
+      "ak",
+      "kara",
+      "altın"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m2.07",
+   "cumleler": [
+    "Orman ılık.",
+    "Okan mantar arar.",
+    "Okan mantarı alır."
+   ],
+   "girisHarfi": "m",
+   "grup": 2,
+   "harfler": "antlokrım",
+   "ozelAdlar": [
+    "Okan"
+   ],
+   "sorular": [
+    {
+     "id": "m2.07.q1",
+     "soru": "Okan ne arar?",
+     "cevapTuru": "gorsel",
+     "cevap": "mantar",
+     "cumleNo": 2
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m3.01",
+   "cumleler": [
+    "Dede ekmek alır.",
+    "Dede süt ister.",
+    "Süt ılık."
+   ],
+   "girisHarfi": "d",
+   "grup": 3,
+   "harfler": "aetilkrımüsd",
+   "sorular": [
+    {
+     "id": "m3.01.q1",
+     "soru": "Dede ne alır?",
+     "cevapTuru": "gorsel",
+     "cevap": "ekmek",
+     "cumleNo": 1
+    },
+    {
+     "id": "m3.01.q2",
+     "soru": "Dede ne ister?",
+     "cevapTuru": "sozcuk",
+     "cevap": "süt",
+     "cumleNo": 2,
+     "celdiriciler": [
+      "kek",
+      "limon",
+      "un"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m3.02",
+   "cumleler": [
+    "Deniz yüzük arar.",
+    "Yüzük masada.",
+    "Deniz mutlu."
+   ],
+   "girisHarfi": "z",
+   "grup": 3,
+   "harfler": "anetilkurmüsydz",
+   "ozelAdlar": [
+    "Deniz"
+   ],
+   "sorular": [
+    {
+     "id": "m3.02.q1",
+     "soru": "Deniz ne arar?",
+     "cevapTuru": "sozcuk",
+     "cevap": "yüzük",
+     "cumleNo": 1,
+     "celdiriciler": [
+      "kalem",
+      "kutu",
+      "tarak"
+     ]
+    },
+    {
+     "id": "m3.02.q2",
+     "soru": "Yüzük nerede?",
+     "cevapTuru": "sozcuk",
+     "cevap": "masada",
+     "cumleNo": 2,
+     "celdiriciler": [
+      "okulda",
+      "kutuda",
+      "sandalyede"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m3.03",
+   "cumleler": [
+    "Ömer ördek arar.",
+    "Ördek suda yüzer.",
+    "Ömer ile ördek mutlu."
+   ],
+   "girisHarfi": "z",
+   "grup": 3,
+   "harfler": "aetilkurmüsöydz",
+   "ozelAdlar": [
+    "Ömer"
+   ],
+   "sorular": [
+    {
+     "id": "m3.03.q1",
+     "soru": "Ömer ne arar?",
+     "cevapTuru": "sozcuk",
+     "cevap": "ördek",
+     "cumleNo": 1,
+     "celdiriciler": [
+      "kalem",
+      "kutu",
+      "tarak"
+     ]
+    },
+    {
+     "id": "m3.03.q2",
+     "soru": "Ördek nerede yüzer?",
+     "cevapTuru": "sozcuk",
+     "cevap": "suda",
+     "cumleNo": 2,
+     "celdiriciler": [
+      "okulda",
+      "masada",
+      "tarlada"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m3.04",
+   "cumleler": [
+    "Deniz saat alır.",
+    "Saat yeni.",
+    "Saat dört."
+   ],
+   "girisHarfi": "z",
+   "grup": 3,
+   "harfler": "anetilrısöydz",
+   "ozelAdlar": [
+    "Deniz"
+   ],
+   "sorular": [
+    {
+     "id": "m3.04.q1",
+     "soru": "Kim saat alır?",
+     "cevapTuru": "sozcuk",
+     "cevap": "Deniz",
+     "cumleNo": 1,
+     "celdiriciler": [
+      "Selim",
+      "Ali",
+      "Zeki"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m3.05",
+   "cumleler": [
+    "Selim okula yürür.",
+    "Okulda Ali ile oynar.",
+    "Selim mutlu."
+   ],
+   "girisHarfi": "z",
+   "grup": 3,
+   "harfler": "anetilokurmüsyd",
+   "ozelAdlar": [
+    "Selim",
+    "Ali"
+   ],
+   "sorular": [
+    {
+     "id": "m3.05.q1",
+     "soru": "Selim nereye yürür?",
+     "cevapTuru": "sozcuk",
+     "cevap": "okula",
+     "cumleNo": 1,
+     "celdiriciler": [
+      "masaya",
+      "tarlaya",
+      "ormana"
+     ]
+    },
+    {
+     "id": "m3.05.q2",
+     "soru": "Selim kim ile oynar?",
+     "cevapTuru": "sozcuk",
+     "cevap": "Ali",
+     "cumleNo": 2,
+     "celdiriciler": [
+      "Zeki",
+      "Deniz",
+      "Okan"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m3.06",
+   "cumleler": [
+    "Ninem yumurta alır.",
+    "Yumurta taze.",
+    "Ninem mutlu."
+   ],
+   "girisHarfi": "z",
+   "grup": 3,
+   "harfler": "anetilurımyz",
+   "sorular": [
+    {
+     "id": "m3.06.q1",
+     "soru": "Ninem ne alır?",
+     "cevapTuru": "sozcuk",
+     "cevap": "yumurta",
+     "cumleNo": 1,
+     "celdiriciler": [
+      "elma",
+      "limon",
+      "un"
+     ]
+    },
+    {
+     "id": "m3.06.q2",
+     "soru": "Kim mutlu?",
+     "cevapTuru": "sozcuk",
+     "cevap": "Ninem",
+     "cumleNo": 3,
+     "celdiriciler": [
+      "Annem",
+      "Dedem",
+      "Mine"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m3.07",
+   "cumleler": [
+    "Kedi süt ister.",
+    "Mine süt alır.",
+    "Kedi mutlu."
+   ],
+   "girisHarfi": "z",
+   "grup": 3,
+   "harfler": "anetilkurımüsd",
+   "ozelAdlar": [
+    "Mine"
+   ],
+   "sorular": [
+    {
+     "id": "m3.07.q1",
+     "soru": "Kim süt alır?",
+     "cevapTuru": "sozcuk",
+     "cevap": "Mine",
+     "cumleNo": 2,
+     "celdiriciler": [
+      "Selim",
+      "Deniz",
+      "Okan"
+     ]
+    },
+    {
+     "id": "m3.07.q2",
+     "soru": "Kedi ne ister?",
+     "cevapTuru": "sozcuk",
+     "cevap": "süt",
+     "cumleNo": 1,
+     "celdiriciler": [
+      "ekmek",
+      "limon",
+      "un"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m4.01",
+   "cumleler": [
+    "Baba çay alır.",
+    "Çay sıcak.",
+    "Baba çay içer."
+   ],
+   "girisHarfi": "c",
+   "grup": 4,
+   "harfler": "aeilkrısyçbc",
+   "sorular": [
+    {
+     "id": "m4.01.q1",
+     "soru": "Baba ne içer?",
+     "cevapTuru": "sozcuk",
+     "cevap": "çay",
+     "cumleNo": 3,
+     "celdiriciler": [
+      "süt",
+      "su",
+      "ayran"
+     ]
+    },
+    {
+     "id": "m4.01.q2",
+     "soru": "Çay nasıl?",
+     "cevapTuru": "sozcuk",
+     "cevap": "sıcak",
+     "cumleNo": 2,
+     "celdiriciler": [
+      "mor",
+      "kalın",
+      "tatlı"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m4.02",
+   "cumleler": [
+    "Gül çiçek alır.",
+    "Çiçek sarı.",
+    "Gül çiçekle mutlu."
+   ],
+   "girisHarfi": "ş",
+   "grup": 4,
+   "harfler": "aetilkurımüsçg",
+   "ozelAdlar": [
+    "Gül"
+   ],
+   "sorular": [
+    {
+     "id": "m4.02.q1",
+     "soru": "Gül ne alır?",
+     "cevapTuru": "sozcuk",
+     "cevap": "çiçek",
+     "cumleNo": 1,
+     "celdiriciler": [
+      "kalem",
+      "kutu",
+      "tarak"
+     ]
+    },
+    {
+     "id": "m4.02.q2",
+     "soru": "Çiçek ne renk?",
+     "cevapTuru": "sozcuk",
+     "cevap": "sarı",
+     "cumleNo": 2,
+     "celdiriciler": [
+      "mor",
+      "kara",
+      "yeşil"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m4.03",
+   "cumleler": [
+    "Berk balık tutar.",
+    "Balık büyük.",
+    "Berk mutlu."
+   ],
+   "girisHarfi": "ş",
+   "grup": 4,
+   "harfler": "aetlkurımüyb",
+   "ozelAdlar": [
+    "Berk"
+   ],
+   "sorular": [
+    {
+     "id": "m4.03.q1",
+     "soru": "Berk ne tutar?",
+     "cevapTuru": "sozcuk",
+     "cevap": "balık",
+     "cumleNo": 1,
+     "celdiriciler": [
+      "kedi",
+      "kuş",
+      "tilki"
+     ]
+    },
+    {
+     "id": "m4.03.q2",
+     "soru": "Kim mutlu?",
+     "cevapTuru": "sozcuk",
+     "cevap": "Berk",
+     "cumleNo": 3,
+     "celdiriciler": [
+      "Can",
+      "Ece",
+      "Bora"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m4.04",
+   "cumleler": [
+    "Cem tren alır.",
+    "Tren çok güzel."
+   ],
+   "girisHarfi": "c",
+   "grup": 4,
+   "harfler": "anetlokrımüzçgc",
+   "ozelAdlar": [
+    "Cem"
+   ],
+   "sorular": [
+    {
+     "id": "m4.04.q1",
+     "soru": "Cem ne alır?",
+     "cevapTuru": "gorsel",
+     "cevap": "tren",
+     "cumleNo": 1
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m4.05",
+   "cumleler": [
+    "Şeker tatlı.",
+    "Ceren şeker alır.",
+    "Ceren kalem de alır."
+   ],
+   "girisHarfi": "ş",
+   "grup": 4,
+   "harfler": "anetlkrımdcş",
+   "ozelAdlar": [
+    "Ceren"
+   ],
+   "sorular": [
+    {
+     "id": "m4.05.q1",
+     "soru": "Ne tatlı?",
+     "cevapTuru": "sozcuk",
+     "cevap": "Şeker",
+     "cumleNo": 1,
+     "celdiriciler": [
+      "Limon",
+      "Ekmek",
+      "Mantar"
+     ]
+    },
+    {
+     "id": "m4.05.q2",
+     "soru": "Kim kalem alır?",
+     "cevapTuru": "sozcuk",
+     "cevap": "Ceren",
+     "cumleNo": 3,
+     "celdiriciler": [
+      "Cem",
+      "Burak",
+      "Gül"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m4.06",
+   "cumleler": [
+    "Gökçe okula gelir.",
+    "Okul büyük.",
+    "Orada Gül ile oynar."
+   ],
+   "girisHarfi": "c",
+   "grup": 4,
+   "harfler": "aneilokurüöydçbg",
+   "ozelAdlar": [
+    "Gökçe",
+    "Gül"
+   ],
+   "sorular": [
+    {
+     "id": "m4.06.q1",
+     "soru": "Gökçe nereye gelir?",
+     "cevapTuru": "sozcuk",
+     "cevap": "okula",
+     "cumleNo": 1,
+     "celdiriciler": [
+      "ormana",
+      "göle",
+      "kuleye"
+     ]
+    },
+    {
+     "id": "m4.06.q2",
+     "soru": "Gökçe kim ile oynar?",
+     "cevapTuru": "sozcuk",
+     "cevap": "Gül",
+     "cumleNo": 3,
+     "celdiriciler": [
+      "Cem",
+      "Berk",
+      "Ela"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m4.07",
+   "cumleler": [
+    "Bebek uyur.",
+    "Anne bebek için şarkı söyler."
+   ],
+   "girisHarfi": "ş",
+   "grup": 4,
+   "harfler": "aneilkurısöyçbş",
+   "sorular": [
+    {
+     "id": "m4.07.q1",
+     "soru": "Anne ne söyler?",
+     "cevapTuru": "sozcuk",
+     "cevap": "şarkı",
+     "cumleNo": 2,
+     "celdiriciler": [
+      "soru",
+      "sayı",
+      "not"
+     ]
+    },
+    {
+     "id": "m4.07.q2",
+     "soru": "Kim uyur?",
+     "cevapTuru": "sozcuk",
+     "cevap": "Bebek",
+     "cumleNo": 1,
+     "celdiriciler": [
+      "Kedi",
+      "Dede",
+      "Ördek"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m5.01",
+   "cumleler": [
+    "Hasan fırına gider.",
+    "Fırın sıcak.",
+    "Hasan ekmek alır."
+   ],
+   "girisHarfi": "f",
+   "grup": 5,
+   "harfler": "aneilkrımsdgchf",
+   "ozelAdlar": [
+    "Hasan"
+   ],
+   "sorular": [
+    {
+     "id": "m5.01.q1",
+     "soru": "Hasan ne alır?",
+     "cevapTuru": "gorsel",
+     "cevap": "ekmek",
+     "cumleNo": 3
+    },
+    {
+     "id": "m5.01.q2",
+     "soru": "Hasan nereye gider?",
+     "cevapTuru": "sozcuk",
+     "cevap": "fırına",
+     "cumleNo": 1,
+     "celdiriciler": [
+      "okula",
+      "ormana",
+      "göle"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m5.02",
+   "cumleler": [
+    "Pelin uçurtma alır.",
+    "Hava güzel.",
+    "Uçurtma yükselir."
+   ],
+   "girisHarfi": "ğ",
+   "grup": 5,
+   "harfler": "anetilkurımüsyzçgphv",
+   "ozelAdlar": [
+    "Pelin"
+   ],
+   "sorular": [
+    {
+     "id": "m5.02.q1",
+     "soru": "Pelin ne alır?",
+     "cevapTuru": "sozcuk",
+     "cevap": "uçurtma",
+     "cumleNo": 1,
+     "celdiriciler": [
+      "kitap",
+      "şapka",
+      "çanta"
+     ]
+    },
+    {
+     "id": "m5.02.q2",
+     "soru": "Hava nasıl?",
+     "cevapTuru": "sozcuk",
+     "cevap": "güzel",
+     "cumleNo": 2,
+     "celdiriciler": [
+      "soğuk",
+      "yağmurlu",
+      "kapalı"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m5.03",
+   "cumleler": [
+    "Hakan havuza gider.",
+    "Havuz büyük.",
+    "Hakan yüzer."
+   ],
+   "girisHarfi": "v",
+   "grup": 5,
+   "harfler": "aneikurüydzbghv",
+   "ozelAdlar": [
+    "Hakan"
+   ],
+   "sorular": [
+    {
+     "id": "m5.03.q1",
+     "soru": "Hakan nereye gider?",
+     "cevapTuru": "sozcuk",
+     "cevap": "havuza",
+     "cumleNo": 1,
+     "celdiriciler": [
+      "okula",
+      "parka",
+      "pazara"
+     ]
+    },
+    {
+     "id": "m5.03.q2",
+     "soru": "Hakan ne yapar?",
+     "cevapTuru": "sozcuk",
+     "cevap": "yüzer",
+     "cumleNo": 3,
+     "celdiriciler": [
+      "yürür",
+      "oynar",
+      "uyur"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m5.04",
+   "cumleler": [
+    "Fatma kitap okur.",
+    "Kitap çok güzel.",
+    "Fatma mutlu."
+   ],
+   "girisHarfi": "f",
+   "grup": 5,
+   "harfler": "aetilokurmüzçgpf",
+   "ozelAdlar": [
+    "Fatma"
+   ],
+   "sorular": [
+    {
+     "id": "m5.04.q1",
+     "soru": "Fatma ne okur?",
+     "cevapTuru": "sozcuk",
+     "cevap": "kitap",
+     "cumleNo": 1,
+     "celdiriciler": [
+      "gazete",
+      "soru",
+      "not"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m5.05",
+   "cumleler": [
+    "Bahçede büyük bir ağaç var.",
+    "Ağaçta kuş var.",
+    "Kuş şarkı söyler."
+   ],
+   "girisHarfi": "f",
+   "grup": 5,
+   "harfler": "aetilkurıüsöydçbşhvğ",
+   "sorular": [
+    {
+     "id": "m5.05.q1",
+     "soru": "Ağaçta ne var?",
+     "cevapTuru": "sozcuk",
+     "cevap": "kuş",
+     "cumleNo": 2,
+     "celdiriciler": [
+      "kedi",
+      "fil",
+      "balık"
+     ]
+    },
+    {
+     "id": "m5.05.q2",
+     "soru": "Kuş ne söyler?",
+     "cevapTuru": "sozcuk",
+     "cevap": "şarkı",
+     "cumleNo": 3,
+     "celdiriciler": [
+      "masal",
+      "soru",
+      "sayı"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m5.06",
+   "cumleler": [
+    "Öğretmen sınıfa gelir.",
+    "Öğrenciler harf okur.",
+    "Öğretmen mutlu."
+   ],
+   "girisHarfi": "f",
+   "grup": 5,
+   "harfler": "anetilokurımsögchğf",
+   "sorular": [
+    {
+     "id": "m5.06.q1",
+     "soru": "Öğrenciler ne okur?",
+     "cevapTuru": "sozcuk",
+     "cevap": "harf",
+     "cumleNo": 2,
+     "celdiriciler": [
+      "kitap",
+      "not",
+      "soru"
+     ]
+    },
+    {
+     "id": "m5.06.q2",
+     "soru": "Kim sınıfa gelir?",
+     "cevapTuru": "sozcuk",
+     "cevap": "Öğretmen",
+     "cumleNo": 1,
+     "celdiriciler": [
+      "Hakan",
+      "Pelin",
+      "Fatma"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  },
+  {
+   "id": "m5.07",
+   "cumleler": [
+    "Ah, elim acıdı!",
+    "Annem hemen geldi.",
+    "Elim iyi oldu."
+   ],
+   "girisHarfi": "ğ",
+   "grup": 5,
+   "harfler": "aneilouımydgch",
+   "sorular": [
+    {
+     "id": "m5.07.q1",
+     "soru": "Kim hemen geldi?",
+     "cevapTuru": "sozcuk",
+     "cevap": "Annem",
+     "cumleNo": 2,
+     "celdiriciler": [
+      "Babam",
+      "Dedem",
+      "Ninem"
+     ]
+    },
+    {
+     "id": "m5.07.q2",
+     "soru": "Neresi acıdı?",
+     "cevapTuru": "sozcuk",
+     "cevap": "elim",
+     "cumleNo": 1,
+     "celdiriciler": [
+      "kolum",
+      "ayağım",
+      "başım"
+     ]
+    }
+   ],
+   "teyit": "bekliyor"
+  }
+ ]
+}

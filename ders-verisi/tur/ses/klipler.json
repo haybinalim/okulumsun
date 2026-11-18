@@ -598,6 +598,416 @@
    "dosya": "cumle/c525.m4a"
   },
   {
+   "anahtar": "tur.cumle.m201s1",
+   "metin": "Annem elma alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m201s2",
+   "metin": "Elma tatlı.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m201s3",
+   "metin": "Ali ekmek alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m202s1",
+   "metin": "Mert kalem alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m202s2",
+   "metin": "Kalem mor.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m202s3",
+   "metin": "Mert kutu alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m203s1",
+   "metin": "Kemal inek alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m203s2",
+   "metin": "İnek otlar.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m203s3",
+   "metin": "Kemal mutlu.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m204s1",
+   "metin": "Ninem ekmek alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m204s2",
+   "metin": "Ekmek ılık.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m204s3",
+   "metin": "Ninem mutlu.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m205s1",
+   "metin": "Tuna lale alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m205s2",
+   "metin": "Lale mor.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m205s3",
+   "metin": "Tuna lale ile mutlu.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m206s1",
+   "metin": "Mine tekne alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m206s2",
+   "metin": "Tekne mor.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m206s3",
+   "metin": "Tekne ilerler.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m207s1",
+   "metin": "Orman ılık.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m207s2",
+   "metin": "Okan mantar arar.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m207s3",
+   "metin": "Okan mantarı alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m301s1",
+   "metin": "Dede ekmek alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m301s2",
+   "metin": "Dede süt ister.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m301s3",
+   "metin": "Süt ılık.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m302s1",
+   "metin": "Deniz yüzük arar.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m302s2",
+   "metin": "Yüzük masada.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m302s3",
+   "metin": "Deniz mutlu.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m303s1",
+   "metin": "Ömer ördek arar.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m303s2",
+   "metin": "Ördek suda yüzer.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m303s3",
+   "metin": "Ömer ile ördek mutlu.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m304s1",
+   "metin": "Deniz saat alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m304s2",
+   "metin": "Saat yeni.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m304s3",
+   "metin": "Saat dört.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m305s1",
+   "metin": "Selim okula yürür.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m305s2",
+   "metin": "Okulda Ali ile oynar.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m305s3",
+   "metin": "Selim mutlu.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m306s1",
+   "metin": "Ninem yumurta alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m306s2",
+   "metin": "Yumurta taze.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m306s3",
+   "metin": "Ninem mutlu.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m307s1",
+   "metin": "Kedi süt ister.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m307s2",
+   "metin": "Mine süt alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m307s3",
+   "metin": "Kedi mutlu.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m401s1",
+   "metin": "Baba çay alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m401s2",
+   "metin": "Çay sıcak.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m401s3",
+   "metin": "Baba çay içer.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m402s1",
+   "metin": "Gül çiçek alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m402s2",
+   "metin": "Çiçek sarı.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m402s3",
+   "metin": "Gül çiçekle mutlu.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m403s1",
+   "metin": "Berk balık tutar.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m403s2",
+   "metin": "Balık büyük.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m403s3",
+   "metin": "Berk mutlu.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m404s1",
+   "metin": "Cem tren alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m404s2",
+   "metin": "Tren çok güzel.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m405s1",
+   "metin": "Şeker tatlı.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m405s2",
+   "metin": "Ceren şeker alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m405s3",
+   "metin": "Ceren kalem de alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m406s1",
+   "metin": "Gökçe okula gelir.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m406s2",
+   "metin": "Okul büyük.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m406s3",
+   "metin": "Orada Gül ile oynar.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m407s1",
+   "metin": "Bebek uyur.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m407s2",
+   "metin": "Anne bebek için şarkı söyler.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m501s1",
+   "metin": "Hasan fırına gider.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m501s2",
+   "metin": "Fırın sıcak.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m501s3",
+   "metin": "Hasan ekmek alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m502s1",
+   "metin": "Pelin uçurtma alır.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m502s2",
+   "metin": "Hava güzel.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m502s3",
+   "metin": "Uçurtma yükselir.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m503s1",
+   "metin": "Hakan havuza gider.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m503s2",
+   "metin": "Havuz büyük.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m503s3",
+   "metin": "Hakan yüzer.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m504s1",
+   "metin": "Fatma kitap okur.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m504s2",
+   "metin": "Kitap çok güzel.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m504s3",
+   "metin": "Fatma mutlu.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m505s1",
+   "metin": "Bahçede büyük bir ağaç var.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m505s2",
+   "metin": "Ağaçta kuş var.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m505s3",
+   "metin": "Kuş şarkı söyler.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m506s1",
+   "metin": "Öğretmen sınıfa gelir.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m506s2",
+   "metin": "Öğrenciler harf okur.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m506s3",
+   "metin": "Öğretmen mutlu.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m507s1",
+   "metin": "Ah, elim acıdı!",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m507s2",
+   "metin": "Annem hemen geldi.",
+   "durum": "eksik"
+  },
+  {
+   "anahtar": "tur.cumle.m507s3",
+   "metin": "Elim iyi oldu.",
+   "durum": "eksik"
+  },
+  {
    "anahtar": "tur.geri.bas-a",
    "metin": "Hepsi a sesiyle başlıyor.",
    "durum": "var",
@@ -2237,6 +2647,11 @@
    "metin": "Doğru yazılmış cümleyi bul. Cümle başına ve özel adlara dikkat.",
    "durum": "var",
    "dosya": "yonerge/t12-ozel.m4a"
+  },
+  {
+   "anahtar": "tur.yonerge.t13",
+   "metin": "Yukarıdaki metni içinden okuyup alttaki soruya doğru cevabı bul.",
+   "durum": "eksik"
   },
   {
    "anahtar": "tur.yonerge.t16",

@@ -29,6 +29,45 @@ export interface KoroOkumaOzellikleri {
 
 type Kip = 'koro' | 'yanki';
 
+/** Vurgulu sözcüğün stili: altı kalın çizgili, zemini açık (renk tek ipucu değil). */
+const SOZCUK_VURGUSU: CSSProperties = {
+  background: 'var(--color-correct-soft)',
+  boxShadow: 'inset 0 -0.09em 0 var(--color-ink)',
+  borderRadius: '0.12em',
+};
+
+/**
+ * Sözcük sözcük vurgulanan tek satır (M-3 koro okuma ve "Metni oku" ekranı, Adım 80, aynı bileşen): `vurgu` vurgulu sözcüğün
+ * sırasıdır (−1: hiçbiri). Sözcük bölünmez (tek satır, D-22); `veri` satırın `data-uyaran-metni` değeridir.
+ */
+export function SozcukSatiri({
+  metin,
+  vurgu,
+  veri,
+  stil,
+  canli = false,
+}: {
+  metin: string;
+  vurgu: number;
+  veri: string;
+  stil?: CSSProperties;
+  canli?: boolean;
+}) {
+  const sozcukler = metin.split(' ');
+  return (
+    <p data-uyaran-metni={veri} aria-live={canli ? 'polite' : undefined} style={{ margin: 0, lineHeight: 1.25, whiteSpace: 'nowrap', ...stil }}>
+      {sozcukler.map((s, i) => (
+        <span key={i}>
+          <span data-koro-sozcuk={i} data-vurgulu={i === vurgu || undefined} style={{ padding: '0 0.06em', ...(i === vurgu ? SOZCUK_VURGUSU : {}) }}>
+            {s}
+          </span>
+          {i < sozcukler.length - 1 ? ' ' : ''}
+        </span>
+      ))}
+    </p>
+  );
+}
+
 /** Kümeyle okunabilen cümleler (cümle parçasındaki süzgecin aynısı; bu parça onu içe aktarmaz). */
 function okunabilir(cumleler: readonly TurHavuzCumlesi[], kume: ReadonlySet<string>): TurHavuzCumlesi[] {
   return cumleler.filter((c) => c.grup >= 2 && kume.has(c.girisHarfi) && dekodlanabilirMi(c.metin, kume));
@@ -89,14 +128,6 @@ export default function KoroOkuma({ kume, cv, ekranStili, Baslik }: KoroOkumaOze
       : asama === 'ogretmen'
         ? 'Yankı: öğretmen okur.'
         : 'Yankı: sınıf tekrar eder.';
-  const sozcukStili = (i: number): CSSProperties =>
-    i === sozcukSira
-      ? {
-          background: 'var(--color-correct-soft)',
-          boxShadow: 'inset 0 -0.09em 0 var(--color-ink)',
-          borderRadius: '0.12em',
-        }
-      : {};
   return (
     <main
       aria-label="Koro okuma"
@@ -108,25 +139,13 @@ export default function KoroOkuma({ kume, cv, ekranStili, Baslik }: KoroOkumaOze
     >
       <Baslik baslik="Koro ve yankılayıcı okuma" alt="Sözcük sözcük ilerleyin; ses gerekmez, model okumayı siz yaparsınız." />
       <div style={{ flex: '1 1 auto', minHeight: 0, width: '100%', containerType: 'size', display: 'grid', placeItems: 'center' }}>
-        <p
-          data-uyaran-metni="koro"
-          aria-live="polite"
-          style={{
-            margin: 0,
-            fontSize: `min(42cqh, calc(100cqw / ${Math.max(4, [...cumle.metin].length) * 0.62}))`,
-            lineHeight: 1.25,
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {sozcukler.map((s, i) => (
-            <span key={i}>
-              <span data-koro-sozcuk={i} data-vurgulu={i === sozcukSira || undefined} style={{ padding: '0 0.06em', ...sozcukStili(i) }}>
-                {s}
-              </span>
-              {i < son ? ' ' : ''}
-            </span>
-          ))}
-        </p>
+        <SozcukSatiri
+          metin={cumle.metin}
+          vurgu={sozcukSira}
+          veri="koro"
+          canli
+          stil={{ fontSize: `min(42cqh, calc(100cqw / ${Math.max(4, [...cumle.metin].length) * 0.62}))`, lineHeight: 1.25 }}
+        />
       </div>
       <p data-yetiskin="" data-koro-durum="" style={{ margin: 0, fontSize: 'var(--text-adult)', textAlign: 'center', flex: '0 0 auto' }}>
         {durum} {bitti ? 'Cümle bitti.' : ''}

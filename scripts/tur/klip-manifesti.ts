@@ -2,7 +2,7 @@
  * Türkçe ses klibi manifesti üreticisi (Okuma Yazma Adım 69; Adım 67'nin girdisi). `npm run tur:klip`
  *
  * Şablonların isteyebileceği BÜTÜN klipleri (yönerge, geri bildirim, havuz sözcükleri, sözcüklerden gelen
- * en az iki harfli heceler, cümle havuzunun cümleleri — Adım 74) `ders-verisi/tur/ses/klipler.json`'a yazar. Ses dosyası yoksa `durum: "eksik"`, `ders-verisi/tur/ses/<tür>/<ad>.m4a` varsa `durum: "var"` + `dosya`.
+ * en az iki harfli heceler, cümle havuzunun cümleleri — Adım 74, okuma metinlerinin cümleleri — Adım 80) `ders-verisi/tur/ses/klipler.json`'a yazar. Ses dosyası yoksa `durum: "eksik"`, `ders-verisi/tur/ses/<tür>/<ad>.m4a` varsa `durum: "var"` + `dosya`.
  * TTS bu adımda ÜRETİLMEZ. Tek ünsüz klibi yoktur (D-11); `npm run validate` manifestin şablonlarla eş olduğunu,
  * her metnin ünlü taşıdığını denetler; `--yayin` eksik klipte kırmızıdır (D-21).
  *
@@ -15,6 +15,7 @@ import { PROGRAM_SURUMU } from '../../src/content/dersler/tur/alfabe';
 import { havuzuAyristir } from '../../src/content/dersler/tur/sablonlar/havuz';
 import { turKlipManifesti } from '../../src/content/dersler/tur/sablonlar/denetim';
 import { cumleHavuzunuAyristir } from '../../src/content/dersler/tur/sablonlar/cumle/cumleHavuzu';
+import { metinHavuzunuAyristir } from '../../src/content/dersler/tur/sablonlar/metin/metinHavuzu';
 import { turKlipDiskteVarMi, turKlipDosyasi } from '../ses/turKlipleri';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -31,26 +32,45 @@ export interface TurKlipManifesti {
  * `dosyaVarMi` verilirse (ses dosyasının `ders-verisi/tur/ses/` altında varlığı) o klip `durum: "var"` +
  * `dosya` (köke göre yol) olur; verilmezse hepsi `eksik`. Durum elle yazılmaz, diskten türetilir.
  */
-export function klipManifestiUret(havuzHam: unknown, cumleHam?: unknown, dosyaVarMi?: (dosya: string) => boolean): TurKlipManifesti {
+export function klipManifestiUret(
+  havuzHam: unknown,
+  cumleHam?: unknown,
+  dosyaVarMi?: (dosya: string) => boolean,
+  metinHam?: unknown,
+): TurKlipManifesti {
   return {
     surum: 1,
     programSurumu: PROGRAM_SURUMU,
     not: 'Ses dosyaları `npm run audio -- --ders tur` ile üretilir (Puck, hız 0,9); durum diskten türetilir. Tek ünsüz klibi yok (D-11).',
-    klipler: turKlipManifesti(havuzuAyristir(havuzHam), cumleHam === undefined ? [] : cumleHavuzunuAyristir(cumleHam)).map((k) => {
+    klipler: turKlipManifesti(
+      havuzuAyristir(havuzHam),
+      cumleHam === undefined ? [] : cumleHavuzunuAyristir(cumleHam),
+      metinHam === undefined ? [] : metinHavuzunuAyristir(metinHam),
+    ).map((k) => {
       const dosya = turKlipDosyasi(k.anahtar);
       return dosyaVarMi?.(dosya) ? { ...k, durum: 'var' as const, dosya } : { ...k, durum: 'eksik' as const };
     }),
   };
 }
 
-export function klipManifestiMetni(havuzHam: unknown, cumleHam?: unknown, dosyaVarMi?: (dosya: string) => boolean): string {
-  return `${JSON.stringify(klipManifestiUret(havuzHam, cumleHam, dosyaVarMi), null, 1)}\n`;
+export function klipManifestiMetni(
+  havuzHam: unknown,
+  cumleHam?: unknown,
+  dosyaVarMi?: (dosya: string) => boolean,
+  metinHam?: unknown,
+): string {
+  return `${JSON.stringify(klipManifestiUret(havuzHam, cumleHam, dosyaVarMi, metinHam), null, 1)}\n`;
 }
 
 /** Depo köküne göre beklenen manifest metni (ses durumu diskten). `validate` ve testler bunu karşılaştırır. */
 export function klipManifestiBeklenen(kok: string): string {
   const oku = (g: string): unknown => JSON.parse(readFileSync(path.join(kok, g), 'utf8')) as unknown;
-  return klipManifestiMetni(oku('ders-verisi/tur/icerik/sozcukler.json'), oku('ders-verisi/tur/icerik/cumleler.json'), turKlipDiskteVarMi(kok));
+  return klipManifestiMetni(
+    oku('ders-verisi/tur/icerik/sozcukler.json'),
+    oku('ders-verisi/tur/icerik/cumleler.json'),
+    turKlipDiskteVarMi(kok),
+    oku('ders-verisi/tur/icerik/metinler.json'),
+  );
 }
 
 /** Manifesti diskten türetilen durumla yazar; `{ toplam, var }` döner. */

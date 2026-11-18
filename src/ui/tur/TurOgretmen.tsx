@@ -281,6 +281,7 @@ function basamakEylemleri(b: AkisBasamagi, ses: string): { ad: string; ekran: Tu
         ekran: { ekran: 'etkinlik' as const, sablon: s, zorluk: 1 as const, tohum: 1, geri },
       })),
       ...(h.koro ? [{ ad: 'Koro', ekran: { ekran: 'koro' as const, geri } }] : []),
+      ...(h.metin ? [{ ad: 'Metni oku', ekran: { ekran: 'metin' as const, geri } }] : []),
     ];
   if (h.tur === 'yazilis')
     return [

@@ -4,7 +4,8 @@
  * ayrıştırılmış dosyadır). `npm run validate` ders verisini bununla denetler; ihlal CI'ı kırmızı yapar.
  *
  * Kapsanan otomatik kurallar: D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10, D-11, D-12, D-13,
- * D-14, D-15, D-20, D-23, D-26 (cümle havuzu etiketleri, Adım 74). Kâğıt/yerleşim/ses dosyası kuralları (D-17, D-18, D-19, D-21, D-22, D-24) kendi
+ * D-14, D-15, D-20, D-23, D-26 (cümle havuzu etiketleri, Adım 74), D-27 (okuma metinleri ve anlama soruları, Adım 80;
+ * metin cümleleri cümle havuzuyla AYNI `cumleKurallariniDenetle` yolundan geçer). Kâğıt/yerleşim/ses dosyası kuralları (D-17, D-18, D-19, D-21, D-22, D-24) kendi
  * adımlarında; D-16 insan denetimidir.
  */
 import {
@@ -24,11 +25,11 @@ import {
 import { hecele, heceTuru } from './heceleme';
 import { TUR_TANI_ETIKETI_LISTESI } from './sablonlar/celdiriciler';
 import { dekodlanabilirMi, girisNoktasi, harfSirasi, resmiKume } from './ogretilenKume';
-import type { TurCumle, TurEtkinlik, TurHece, TurIcerikDosyasi, TurSozcuk } from '../../schema/turIcerik';
+import type { TurCumle, TurEtkinlik, TurHece, TurIcerikDosyasi, TurMetin, TurSozcuk } from '../../schema/turIcerik';
 
 export type KuralKodu =
   | 'D-01' | 'D-02' | 'D-03' | 'D-04' | 'D-05' | 'D-06' | 'D-07' | 'D-08' | 'D-09' | 'D-10'
-  | 'D-11' | 'D-12' | 'D-13' | 'D-14' | 'D-15' | 'D-20' | 'D-23' | 'D-26'; // prettier-ignore
+  | 'D-11' | 'D-12' | 'D-13' | 'D-14' | 'D-15' | 'D-20' | 'D-23' | 'D-26' | 'D-27'; // prettier-ignore
 
 export interface Ihlal {
   readonly kural: KuralKodu;
@@ -114,8 +115,11 @@ function karakterDenetle(id: string, metin: string, hatalar: Ihlal[]): void {
   }
 }
 
+/** Cümle kurallarının baktığı alanlar: cümle havuzu öğesi ve metin cümlesi/sorusu aynı biçime çevrilir (Adım 80). */
+type CumleBicimi = Pick<TurCumle, 'id' | 'metin' | 'girisHarfi'> & Partial<Pick<TurCumle, 'ozelAdlar' | 'siraliSozcukler'>>;
+
 /** Noktalama izin tablosu (D-09; K-OY-12, K-OY-13). */
-function noktalamaDenetle(c: TurCumle, grup: number, hatalar: Ihlal[]): void {
+function noktalamaDenetle(c: CumleBicimi, grup: number, hatalar: Ihlal[]): void {
   const h = (mesaj: string) => hatalar.push({ kural: 'D-09', oge: c.id, mesaj: `"${c.metin}": ${mesaj}` });
   const son = c.metin.at(-1) ?? '';
   if (!['.', '?', '!'].includes(son)) h('cümle nokta, soru veya ünlem işaretiyle biter.');
@@ -135,9 +139,23 @@ function noktalamaDenetle(c: TurCumle, grup: number, hatalar: Ihlal[]): void {
     if (!c.siraliSozcukler && !(unlemVirgulu && virguller === 1))
       h('virgül yalnız sıralı sözcükleri ayırır (siraliSozcukler) ya da ünlem sözcüğünden sonra.');
   }
-  const ozel = new Set(c.ozelAdlar);
+  const ozel = new Set(c.ozelAdlar ?? []);
   for (const s of sozcukleri(c.metin))
     if (s.includes("'") && !ozel.has(s.split("'")[0])) h(`kesme işareti yalnız özel ad + ek ("${s}").`);
+}
+
+/**
+ * Bir cümlenin biçim kuralları: karakterler (D-07, D-09), giriş harfi (D-02), 2. gruptan itibaren (D-08), büyük harf
+ * (D-10) ve noktalama (D-09). Cümle havuzu da metin cümleleri/soruları da BURADAN geçer (kural kopyası yok, Adım 80).
+ */
+function cumleKurallariniDenetle(c: CumleBicimi, hatalar: Ihlal[]): void {
+  karakterDenetle(c.id, c.metin, hatalar);
+  girisDenetle(c.id, c.metin, c.girisHarfi, hatalar);
+  const grup = Math.max(harfGrubu(c.girisHarfi), girisNoktasi(c.metin)?.grup ?? 1);
+  if (harfGrubu(c.girisHarfi) < 2)
+    hatalar.push({ kural: 'D-08', oge: c.id, mesaj: 'cümle ve metin 2. harf grubundan itibaren.' });
+  buyukHarfDenetle(c.id, c.metin, new Set(c.ozelAdlar ?? []), true, hatalar);
+  noktalamaDenetle(c, grup, hatalar);
 }
 
 const TUR_NOKTALAMA = { '.': 'bildirme', '?': 'soru', '!': 'unlem' } as const;
@@ -162,6 +180,88 @@ function cumleEtiketleriniDenetle(c: TurCumle, hatalar: Ihlal[]): void {
   if (n < 2 || n > 5) h(`${n} sözcük; havuz cümlesi 2–5 sözcük.`);
   const govdeler = new Set(sozcukleri(c.metin).map((x) => x.split("'")[0]));
   for (const o of c.ozelAdlar) if (!govdeler.has(o)) h(`özel ad "${o}" cümlede yok.`);
+}
+
+/** Cümlenin sözcük gövdeleri (kesmeden önce), büyük/küçük harfi korunarak. */
+function govdeSozcukleri(metin: string): string[] {
+  return sozcukleri(metin).map((x) => x.split("'")[0]);
+}
+
+/**
+ * Okuma metinleri ve anlama soruları (D-27, Adım 80; K-OY-02, 08–12, 14): cümleler cümle havuzuyla aynı kurallardan
+ * geçer; etiketler hesaplananla aynı; her soru yazılı bir soru cümlesidir ve cevabı söylemez; cevap belirtilen
+ * cümlede geçer; sözcük cevabında yanlış seçenekler öğretilmiş harflerden, metinde geçmeyen ve cevapla aynı biçimde
+ * (büyük/küçük) olur. Görsel cevabın görsele bağı `gorselDenetimi.ts`'tedir (D-25).
+ */
+function metinleriDenetle(metinler: readonly TurMetin[], kimlikler: Set<string>, yayin: boolean, s: DogrulamaSonucu): void {
+  let teyitsiz = 0;
+  for (const m of metinler) {
+    const h = (mesaj: string) => s.hatalar.push({ kural: 'D-27', oge: m.id, mesaj });
+    const n = m.cumleler.length;
+    m.cumleler.forEach((metin, i) => {
+      const id = `${m.id}.c${i + 1}`;
+      cumleKurallariniDenetle({ id, metin, girisHarfi: m.girisHarfi, ozelAdlar: m.ozelAdlar }, s.hatalar);
+      const say = sozcukleri(metin).length;
+      if (say < 2 || say > 5) h(`"${metin}": ${say} sözcük; metin cümlesi 2–5 sözcük.`);
+    });
+    // Giriş harfi: bütün cümlelerin, soruların ve yanlış seçeneklerin (kartlarda görünür) giriş noktalarının en geçidir
+    // (ünlem cümlesinde en erken `p`).
+    let giris = 0;
+    for (const metin of [...m.cumleler, ...m.sorular.flatMap((q) => [q.soru, ...q.celdiriciler])]) {
+      const g = girisNoktasi(metin);
+      if (!g) continue;
+      const unlem = metin.at(-1) === '!' && g.grup < 5;
+      giris = Math.max(giris, harfSirasi(unlem ? UNLEM_GIRIS_HARFI : g.harf));
+    }
+    const beklenenGiris = OGRETIM_SIRASI[giris];
+    if (m.girisHarfi !== beklenenGiris) h(`girisHarfi '${m.girisHarfi}', hesaplanan '${beklenenGiris}'.`);
+    if (m.grup !== harfGrubu(m.girisHarfi)) h(`grup ${m.grup}, giriş harfinin grubu ${harfGrubu(m.girisHarfi)}.`);
+    const tum = trKucuk(m.cumleler.join(' '));
+    const harfler = OGRETIM_SIRASI.filter((x) => tum.includes(x)).join('');
+    if (m.harfler !== harfler) h(`harfler "${m.harfler}", hesaplanan "${harfler}".`);
+    const govdeler = new Set(m.cumleler.flatMap(govdeSozcukleri));
+    for (const o of m.ozelAdlar) if (!govdeler.has(o)) h(`özel ad "${o}" metinde yok.`);
+    if (m.teyit !== 'tamam') teyitsiz++;
+
+    const kume = resmiKume(m.girisHarfi);
+    const metinSozcukleri = new Set(m.cumleler.flatMap((c) => sozcukleri(trKucuk(c)).map((x) => x.split("'")[0])));
+    for (const q of m.sorular) {
+      const hq = (mesaj: string) => s.hatalar.push({ kural: 'D-27', oge: q.id, mesaj: `"${q.soru}": ${mesaj}` });
+      if (kimlikler.has(q.id)) hq('kimlik tekil değil.');
+      kimlikler.add(q.id);
+      if (!q.soru.endsWith('?')) hq('soru cümlesi soru işaretiyle biter.');
+      cumleKurallariniDenetle({ id: q.id, metin: q.soru, girisHarfi: m.girisHarfi, ozelAdlar: m.ozelAdlar }, s.hatalar);
+      if (q.cumleNo > n) {
+        hq(`cumleNo ${q.cumleNo}, metinde ${n} cümle var.`);
+        continue;
+      }
+      const hedefCumle = m.cumleler[q.cumleNo - 1];
+      const soruSozcukleri = new Set(sozcukleri(trKucuk(q.soru)));
+      if (q.cevapTuru === 'sozcuk') {
+        if (!govdeSozcukleri(hedefCumle).includes(q.cevap)) hq(`cevap "${q.cevap}" ${q.cumleNo}. cümlede yok.`);
+        if (soruSozcukleri.has(trKucuk(q.cevap))) hq(`soru cevabı söylüyor ("${q.cevap}").`);
+        if (q.celdiriciler.length < 3) hq('en az 3 yanlış seçenek gerekir.');
+        const gorulen = new Set<string>();
+        for (const c of q.celdiriciler) {
+          if (!dekodlanabilirMi(c, kume)) hq(`yanlış seçenek "${c}" öğretilmemiş harf içeriyor (D-23).`);
+          if (metinSozcukleri.has(trKucuk(c)) || soruSozcukleri.has(trKucuk(c))) hq(`yanlış seçenek "${c}" metinde geçiyor.`);
+          if (trKucuk(c) === trKucuk(q.cevap)) hq(`yanlış seçenek cevapla aynı ("${c}").`);
+          if (buyukMu(c[0]) !== buyukMu(q.cevap[0])) hq(`yanlış seçenek "${c}" cevapla aynı büyük/küçük biçimde değil.`);
+          if (/[ .,?!']/.test(c)) hq(`yanlış seçenek "${c}" tek sözcük olmalı.`);
+          if (gorulen.has(c)) hq(`yanlış seçenek "${c}" iki kez.`);
+          gorulen.add(c);
+        }
+      } else if (q.celdiriciler.length > 0) hq('görsel cevapta yazılı yanlış seçenek olmaz (seçenekler görsellerden gelir).');
+    }
+  }
+  if (teyitsiz > 0) {
+    const ihlal: Ihlal = {
+      kural: 'D-14',
+      oge: 'metinler',
+      mesaj: `${teyitsiz} metinde öğretmen teyidi yok (cümle havuzundaki istisna; yayından önce iki öğretmen teyidi zorunlu).`,
+    };
+    (yayin ? s.hatalar : s.uyarilar).push(ihlal);
+  }
 }
 
 function heceleriDenetle(
@@ -305,8 +405,10 @@ export function turIceriginiDogrula(d: TurIcerikDosyasi, secenekler: DogrulamaSe
     s.hatalar.push({ kural: 'D-20', oge: 'dosya', mesaj: `programSurumu ${d.programSurumu} ≠ ${PROGRAM_SURUMU}.` });
   s.hatalar.push(...harfEnvanteriniDenetle());
 
+  // Şemadan geçmemiş (ham) dosya `metinler` taşımayabilir (varsayılan şemada []): eski testler ve araçlar için.
+  const metinler = d.metinler ?? [];
   const kimlikler = new Set<string>();
-  for (const o of [...d.harfler, ...d.heceler, ...d.sozcukler, ...d.cumleler, ...d.etkinlikler]) {
+  for (const o of [...d.harfler, ...d.heceler, ...d.sozcukler, ...d.cumleler, ...metinler, ...d.etkinlikler]) {
     if (kimlikler.has(o.id)) s.hatalar.push({ kural: 'D-20', oge: o.id, mesaj: 'kimlik tekil değil.' });
     kimlikler.add(o.id);
   }
@@ -345,15 +447,7 @@ export function turIceriginiDogrula(d: TurIcerikDosyasi, secenekler: DogrulamaSe
     (secenekler.yayin ? s.hatalar : s.uyarilar).push(ihlal);
   }
 
-  for (const c of d.cumleler) {
-    karakterDenetle(c.id, c.metin, s.hatalar);
-    girisDenetle(c.id, c.metin, c.girisHarfi, s.hatalar);
-    const grup = Math.max(harfGrubu(c.girisHarfi), girisNoktasi(c.metin)?.grup ?? 1);
-    if (harfGrubu(c.girisHarfi) < 2)
-      s.hatalar.push({ kural: 'D-08', oge: c.id, mesaj: 'cümle ve metin 2. harf grubundan itibaren.' });
-    buyukHarfDenetle(c.id, c.metin, new Set(c.ozelAdlar), true, s.hatalar);
-    noktalamaDenetle(c, grup, s.hatalar);
-  }
+  for (const c of d.cumleler) cumleKurallariniDenetle(c, s.hatalar);
 
   let cumleTeyitsiz = 0;
   for (const c of d.cumleler) {
@@ -370,6 +464,8 @@ export function turIceriginiDogrula(d: TurIcerikDosyasi, secenekler: DogrulamaSe
     (secenekler.yayin ? s.hatalar : s.uyarilar).push(ihlal);
   }
 
+  metinleriDenetle(metinler, kimlikler, secenekler.yayin === true, s);
+
   for (const e of d.etkinlikler) etkinligiDenetle(e, gorselSozcukleri, s);
 
   // D-11: hiçbir klip tek başına ünsüz değildir.
@@ -378,6 +474,7 @@ export function turIceriginiDogrula(d: TurIcerikDosyasi, secenekler: DogrulamaSe
     ...d.heceler.flatMap((x) => (x.klip ? [[x.id, x.klip] as const] : [])),
     ...d.sozcukler.flatMap((x) => (x.klip ? [[x.id, x.klip] as const] : [])),
     ...d.cumleler.flatMap((x) => (x.klip ? [[x.id, x.klip] as const] : [])),
+    ...metinler.flatMap((x) => (x.klip ? [[x.id, x.klip] as const] : [])),
   ];
   for (const [id, k] of klipler)
     if (yalnizUnsuzMu(k.metin))

@@ -174,6 +174,11 @@ function EvSeti({ duzey, tohum, kod }: { duzey: SetDuzeyi; tohum: number; kod: s
       <div data-yetiskin="" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4em', minHeight: 0, overflowY: 'auto', width: '100%' }}>
         <Baslik baslik="Evde okuma yazma" alt={set ? `${set.adimlar.length} etkinlik: ${[...new Set(set.adimlar.map((a) => TUR_SABLONLARI[a.sablon].ad))].join(', ')}.` : undefined} />
         <VeliKartiGovdesi kucuk />
+        {sd.durum === 'hata' && (
+          <p role="alert" data-ev-set-hatasi="" style={{ margin: 0, fontSize: 'var(--text-adult)', textAlign: 'center' }}>
+            {sd.mesaj} Öğretmeninizden bağlantıyı yeniden isteyin.
+          </p>
+        )}
       </div>
       <BigButton
         label="Başla"
