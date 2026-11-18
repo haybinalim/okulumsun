@@ -19,7 +19,7 @@ import { useTurSeti } from './useTurSeti';
 import { VELI_KARTI_DOSYASI, veliKartiAyristir, type VeliKarti } from '../../content/dersler/tur/veliKarti';
 import { turVerisiniOku } from '../../content/dersler/tur/veriYukleyici';
 import { TUR_SABLONLARI } from '../../content/dersler/tur/sablonlar';
-import { qrMatrisi, qrSvgYolu } from '../../ogretmen/qrMatrisi';
+import { eveKarekodu, type EveKarekodu } from './kagit/eveKarekodu';
 import { eveLinkKoku } from '../../platform/kanonikKok';
 import { UCUNCU_TARAF_VARLIKLAR } from '../../content/ucuncuTarafVarliklar';
 import { BigButton } from '../primitives/BigButton';
@@ -82,7 +82,7 @@ export function VeliKartiGovdesi({ kucuk = false }: { kucuk?: boolean }) {
 }
 
 /** Baskı kopyası `#root` dışında: yazdırmada yalnız veli kartı çıkar (veliKarti.css). */
-function VeliKartiBaskisi() {
+function VeliKartiBaskisi({ eve }: { eve: EveKarekodu }) {
   const [kap, setKap] = useState<HTMLElement | null>(null);
   useEffect(() => {
     const el = document.createElement('div');
@@ -92,13 +92,38 @@ function VeliKartiBaskisi() {
     setKap(el);
     return () => el.remove();
   }, []);
-  return kap ? createPortal(<VeliKartiGovdesi />, kap) : null;
+  return kap
+    ? createPortal(
+        <>
+          <VeliKartiGovdesi />
+          {/* Kâğıttan dijitale (Adım 81): basılı kartta da aynı setin karekodu ve kısa bağlantısı. */}
+          {eve.durum === 'hazir' ? (
+            <div className="vk-karekod" data-eve-karekod="hazir" data-eve-baglanti={eve.baglanti}>
+              <svg viewBox={`0 0 ${eve.boyut} ${eve.boyut}`} shapeRendering="crispEdges" role="img" aria-label="Evde açmak için karekod">
+                <rect width={eve.boyut} height={eve.boyut} fill="#fff" />
+                <path d={eve.yol} fill="#000" />
+              </svg>
+              <p>
+                Evde aç: karekodu telefonla okutun ya da bağlantıyı yazın.
+                <br />
+                <span data-eve-kisa="">{eve.kisa}</span>
+              </p>
+            </div>
+          ) : (
+            <p className="vk-karekod" data-eve-karekod="hata">
+              Karekod üretilemedi: eve bağlantısı bu kartta yok.
+            </p>
+          )}
+        </>,
+        kap,
+      )
+    : null;
 }
 
 export function TurEveGonder({ duzey, tohum }: { duzey: SetDuzeyi; tohum: number }) {
   const kume = useTurKume();
   const link = useMemo(() => turEveLink(eveLinkKoku(window.location, import.meta.env.BASE_URL ?? '/'), duzey, tohum, kume), [duzey, tohum, kume]);
-  const qr = useMemo(() => qrSvgYolu(qrMatrisi(link)), [link]);
+  const qr = useMemo(() => eveKarekodu(link), [link]);
   const [kopya, setKopya] = useState<'bos' | 'kopyalandi' | 'elle'>('bos');
   const linkRef = useRef<HTMLParagraphElement>(null);
   const kopyala = async () => {
@@ -115,16 +140,22 @@ export function TurEveGonder({ duzey, tohum }: { duzey: SetDuzeyi; tohum: number
     <main data-yetiskin="" aria-label="Eve gönder" style={{ ...ekranStili, flexDirection: 'row', alignItems: 'stretch', gap: 'var(--size-gap)' }}>
       <section style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', gap: '0.5em', alignItems: 'center', justifyContent: 'center', maxWidth: '50%' }}>
         <h1 style={{ margin: 0, fontSize: 'calc(var(--text-ui) * 1.1)' }}>Eve gönder</h1>
-        <svg
-          role="img"
-          aria-label="Eve link QR kodu"
-          data-testid="tur-eve-qr"
-          viewBox={`0 0 ${qr.boyut} ${qr.boyut}`}
-          shapeRendering="crispEdges"
-          style={{ width: 'min(26vw, 28vh, 420px)', aspectRatio: '1', flexShrink: 0, background: '#FFFFFF' }}
-        >
-          <path d={qr.yol} fill="#000000" />
-        </svg>
+        {qr.durum === 'hazir' ? (
+          <svg
+            role="img"
+            aria-label="Eve link QR kodu"
+            data-testid="tur-eve-qr"
+            viewBox={`0 0 ${qr.boyut} ${qr.boyut}`}
+            shapeRendering="crispEdges"
+            style={{ width: 'min(26vw, 28vh, 420px)', aspectRatio: '1', flexShrink: 0, background: '#FFFFFF' }}
+          >
+            <path d={qr.yol} fill="#000000" />
+          </svg>
+        ) : (
+          <p role="alert" data-testid="tur-eve-qr-hata" style={{ margin: 0, fontSize: 'var(--text-adult)' }}>
+            Karekod üretilemedi: {qr.neden}. Bağlantıyı kopyalayın.
+          </p>
+        )}
         <p
           ref={linkRef}
           data-testid="tur-eve-link"
@@ -153,7 +184,7 @@ export function TurEveGonder({ duzey, tohum }: { duzey: SetDuzeyi; tohum: number
           <VeliKartiGovdesi kucuk />
         </div>
       </section>
-      <VeliKartiBaskisi />
+      <VeliKartiBaskisi eve={qr} />
     </main>
   );
 }

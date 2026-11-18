@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useHamleVerisi } from '../useHamleVerisi';
+import { eveKarekodu } from './eveKarekodu';
 import { TurKagitSayfasi } from './TurKagitSayfasi';
 import { turKagitKoduCoz, turKagitSayfalari, type TurKagitIstegi } from './turKagidi';
 
@@ -8,7 +9,15 @@ import { turKagitKoduCoz, turKagitSayfalari, type TurKagitIstegi } from './turKa
  * Türkçe kâğıt görünümü (Adım 65): `?arsiv=tur-…` YALNIZ bayraklı derlemede (`main.tsx`). Önizleme (ekran) ve
  * yazdırma kopyası (portal, `#root` dışında) aynı SVG sayfalar. Uygulama kabuğu, ses ve depolama yok.
  */
-export function TurKagitlari({ istek }: { readonly istek: TurKagitIstegi }) {
+export function TurKagitlari({
+  istek,
+  eveBaglantisi,
+}: {
+  readonly istek: TurKagitIstegi;
+  /** Set bağlamında açılan kâğıt (Adım 81): aynı setin eve bağlantısı alt bilgiye karekod olur. */
+  readonly eveBaglantisi?: string;
+}) {
+  const eve = useMemo(() => (eveBaglantisi ? eveKarekodu(eveBaglantisi) : undefined), [eveBaglantisi]);
   const veri = useHamleVerisi();
   const sayfalar = useMemo(
     () => (veri.durum === 'hazir' ? turKagitSayfalari(istek, veri.veri.glifler) : null),
@@ -28,12 +37,17 @@ export function TurKagitlari({ istek }: { readonly istek: TurKagitIstegi }) {
   const ciz = (kopya: 'onizleme' | 'baski') => (
     <div className={`tk-kok tk-kok--${kopya}`} data-tur-kagit-sayfa-sayisi={sayfalar.length}>
       {sayfalar.map(({ sayfa, glif, glifler }, k) => (
-        <TurKagitSayfasi key={k} sayfa={sayfa} glif={glif} glifler={glifler} />
+        <TurKagitSayfasi key={k} sayfa={sayfa} glif={glif} glifler={glifler} eve={eve} />
       ))}
     </div>
   );
   return (
     <>
+      {eve?.durum === 'hata' && (
+        <p role="alert" data-eve-karekod-hata="" data-yetiskin="">
+          Karekod üretilemedi: {eve.neden}. Kâğıt karekodsuz basılır.
+        </p>
+      )}
       <div data-tur-kagit-hazir="">{ciz('onizleme')}</div>
       {kap && createPortal(ciz('baski'), kap)}
     </>

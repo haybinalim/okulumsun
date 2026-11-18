@@ -17,7 +17,7 @@ import { glifAdi, glifAnahtari, HIZ_ADI, HIZLAR, sekmeGlifleri, type Hiz } from 
 import { turEkraniAc, turEkraniKapat, type TurEkrani as TurEkraniDurumu } from './turEkraniDurumu';
 import { useHamleVerisi } from './useHamleVerisi';
 import { YazilisGlifi } from './YazilisGlifi';
-import { KagitMenusu, KagitOnizleme, KagitSecimi } from './TurKagitEkranlari';
+import { KagitMenusu, KagitOnizleme, KagitSecimi, SetKagitDugmeleri } from './TurKagitEkranlari';
 import { Baslik, ekranStili, SEKME_SAYISI } from './turOrtak';
 import { GorselKatalogu } from './TurGorselEkrani';
 import { TurEtkinlikEkrani } from './TurEtkinlikEkrani';
@@ -87,9 +87,12 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
         ) : ekran.ekran === 'setHazirla' ? (
           <SetHazirla
             ekAraclar={(duzey, tohum) => (
-              <BigButton label="Eve gönder" data-yetiskin="" style={sikDugme} onPress={() => turEkraniAc({ ekran: 'eveGonder', duzey, tohum })}>
-                <span>Eve gönder</span>
-              </BigButton>
+              <>
+                <BigButton label="Eve gönder" data-yetiskin="" style={sikDugme} onPress={() => turEkraniAc({ ekran: 'eveGonder', duzey, tohum })}>
+                  <span>Eve gönder</span>
+                </BigButton>
+                <SetKagitDugmeleri duzey={duzey} tohum={tohum} />
+              </>
             )}
           />
         ) : ekran.ekran === 'eveGonder' ? (
@@ -111,7 +114,7 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
         ) : ekran.ekran === 'koro' ? (
           <KoroKabugu />
         ) : ekran.ekran === 'kagit' ? (
-          <KagitOnizleme istek={ekran.istek} />
+          <KagitOnizleme istek={ekran.istek} eve={ekran.eve} />
         ) : (
           <VeriIle>
             {(glifler) =>

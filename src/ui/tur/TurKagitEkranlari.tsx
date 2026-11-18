@@ -7,11 +7,16 @@
  */
 import type { TurHamleGlifi } from '../../content/schema/turHamle';
 import { HARF_GRUPLARI } from '../../content/dersler/tur/alfabe';
+import type { SetDuzeyi } from '../../content/dersler/tur/turSet';
 import { BigButton } from '../primitives/BigButton';
+import { bugunkuSes, sikDugme } from './ogretmenOrtak';
 import { glifAdi, glifAnahtari, sekmeGlifleri } from './hamleCizim';
 import { TurKagitlari } from './kagit/TurArsivKagidi';
 import { DESTEK_EN_COK, turKagitKodu, type DestekGlifi, type TurKagitIstegi } from './kagit/turKagidi';
+import { eveLinkKoku } from '../../platform/kanonikKok';
 import { turEkraniAc, type TurEkrani } from './turEkraniDurumu';
+import { turEveLink } from './turEveLink';
+import { useTurKume } from './turKume';
 import { Baslik, ekranStili, SEKME_SAYISI } from './turOrtak';
 import { YazilisGlifi } from './YazilisGlifi';
 
@@ -148,16 +153,47 @@ export function KagitSecimi({ glifler, durum }: { glifler: readonly TurHamleGlif
   );
 }
 
-export function KagitOnizleme({ istek }: { istek: TurKagitIstegi }) {
+/**
+ * Set hazırla ekindeki kâğıt düğmeleri (Adım 81, E4): dikte sayfası ve bugünkü sesin harf kâğıdı, alt bilgisinde aynı
+ * setin eve bağlantısının karekodu ile. Kâğıt kodu (`tur-dikte`, `tur-harf-<harf>`) değişmez.
+ */
+export function SetKagitDugmeleri({ duzey, tohum }: { duzey: SetDuzeyi; tohum: number }) {
+  const ses = bugunkuSes(useTurKume());
+  const ac = (istek: TurKagitIstegi) =>
+    turEkraniAc({ ekran: 'kagit', istek, geri: { ekran: 'setHazirla' }, eve: { duzey, tohum } });
+  return (
+    <>
+      <BigButton label="Dikte kâğıdı, eve karekodlu" data-yetiskin="" style={sikDugme} onPress={() => ac({ tur: 'dikte' })}>
+        <span>Dikte kâğıdı</span>
+      </BigButton>
+      <BigButton
+        label={`${ses} harf kâğıdı, eve karekodlu`}
+        data-yetiskin=""
+        style={sikDugme}
+        onPress={() => ac({ tur: 'harf', bicim: 'kucuk', glif: ses })}
+      >
+        <span>{ses} harf kâğıdı</span>
+      </BigButton>
+    </>
+  );
+}
+
+export function KagitOnizleme({ istek, eve }: { istek: TurKagitIstegi; eve?: { duzey: SetDuzeyi; tohum: number } }) {
   const kod = turKagitKodu(istek);
+  const kume = useTurKume();
+  // Adım 71'in tek bağlantı üreticisi (`turEveLink`); yalnız set bağlamından açılan kâğıtta.
+  const eveBaglantisi = eve
+    ? turEveLink(eveLinkKoku(window.location, import.meta.env.BASE_URL ?? '/'), eve.duzey, eve.tohum, kume)
+    : undefined;
   return (
     <main
       aria-label="Kâğıt önizlemesi"
       data-kagit-onizleme={kod}
+      data-kagit-eve={eve ? '' : undefined}
       style={{ ...ekranStili, justifyContent: 'space-between' }}
     >
       <div className="tk-uygulama" style={{ flex: '1 1 auto', minHeight: 0, width: '100%' }}>
-        <TurKagitlari istek={istek} />
+        <TurKagitlari istek={istek} eveBaglantisi={eveBaglantisi} />
       </div>
       <div
         className="alt-cubuk"
