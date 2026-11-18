@@ -75,8 +75,8 @@ describe('set hazırla (§2.4.11 madde 5)', () => {
       for (const duzey of SET_DUZEYLERI)
         for (const tohum of [1, 2, 7]) {
           const kume = resmiKume(harf, false);
-          const s = turSetiKur({ havuz, kume, duzey, tohum, hamleler });
-          expect(turSetiKur({ havuz, kume, duzey, tohum, hamleler })).toEqual(s);
+          const s = turSetiKur({ havuz, kume, duzey, tohum, hamleler, metinler: [] });
+          expect(turSetiKur({ havuz, kume, duzey, tohum, hamleler, metinler: [] })).toEqual(s);
           expect(s.adimlar.length + s.atlanan.length).toBe(SET_ADIM_SAYISI);
           for (const a of s.adimlar)
             expect(() => TUR_SABLONLARI[a.sablon].uret({ havuz, kume, zorluk: a.zorluk, tohum: a.tohum, hamleler })).not.toThrow();
@@ -87,7 +87,7 @@ describe('set hazırla (§2.4.11 madde 5)', () => {
       for (const duzey of SET_DUZEYLERI)
         for (const tohum of [1, 3, 9]) {
           const kume = resmiKume(harf, false);
-          const s = turSetiKur({ havuz, kume, duzey, tohum, hamleler });
+          const s = turSetiKur({ havuz, kume, duzey, tohum, hamleler, metinler: [] });
           const anahtarlar = s.adimlar.map((a) => `${a.sablon}|${TUR_SABLONLARI[a.sablon].uret({ havuz, kume, zorluk: a.zorluk, tohum: a.tohum, hamleler }).hedefMetin}`);
           expect(new Set(anahtarlar).size).toBe(anahtarlar.length);
         }

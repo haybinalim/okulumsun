@@ -15,6 +15,7 @@ import type { TurEtkinlik } from '../../../schema/turIcerik';
 import {
   cumleKlibi,
   geriBildirimKlibi,
+  metinCumleKlibi,
   heceKlibi,
   klipMetniGecerliMi,
   sozcukKlibi,
@@ -25,15 +26,29 @@ import {
   type TurYonergeAnahtari,
 } from './klipler';
 import { TUR_TANI_ETIKETI_LISTESI } from './celdiriciler';
-import { METINSIZ_KARTLAR, TUR_EN_COK_KART, type TurHavuzCumlesi, type TurHavuzSozcugu, type TurSoru } from './turSoru';
+import {
+  METINSIZ_KARTLAR,
+  TUR_EN_COK_KART,
+  type TurHavuzCumlesi,
+  type TurHavuzMetni,
+  type TurHavuzSozcugu,
+  type TurSoru,
+} from './turSoru';
 
 export interface TurKlip {
   readonly anahtar: string;
   readonly metin: string;
 }
 
-/** Şablonların isteyebileceği bütün klipler, kimliğe göre sıralı (cümle havuzu verilirse cümle klipleri de, Adım 74). */
-export function turKlipManifesti(havuz: readonly TurHavuzSozcugu[], cumleler: readonly TurHavuzCumlesi[] = []): TurKlip[] {
+/**
+ * Şablonların isteyebileceği bütün klipler, kimliğe göre sıralı (cümle havuzu verilirse cümle klipleri de, Adım 74;
+ * metin havuzu verilirse metinlerin cümle klipleri de, Adım 80).
+ */
+export function turKlipManifesti(
+  havuz: readonly TurHavuzSozcugu[],
+  cumleler: readonly TurHavuzCumlesi[] = [],
+  metinler: readonly TurHavuzMetni[] = [],
+): TurKlip[] {
   const m = new Map<string, string>();
   for (const [k, metin] of Object.entries(TUR_YONERGELERI)) m.set(yonergeKlibi(k as TurYonergeAnahtari), metin);
   for (const [k, metin] of Object.entries(TUR_GERI_BILDIRIMLERI))
@@ -44,6 +59,7 @@ export function turKlipManifesti(havuz: readonly TurHavuzSozcugu[], cumleler: re
     for (const h of hecele(s.metin)) if ([...h].length >= 2) m.set(heceKlibi(h), h);
   }
   for (const c of cumleler) m.set(cumleKlibi(c.id), c.metin);
+  for (const t of metinler) t.cumleler.forEach((c, i) => m.set(metinCumleKlibi(t.id, i + 1), c));
   return [...m.entries()].map(([anahtar, metin]) => ({ anahtar, metin })).sort((a, b) => (a.anahtar < b.anahtar ? -1 : 1));
 }
 
@@ -51,11 +67,11 @@ function klipMetni(anahtar: string, manifest: ReadonlyMap<string, string>): stri
   return manifest.get(anahtar) ?? '';
 }
 
-const OKUMA_HEDEFLI = new Set(['T-03', 'T-04', 'T-05', 'T-06', 'T-08', 'T-09', 'T-10', 'T-11', 'T-12', 'T-16', 'T-20']);
+const OKUMA_HEDEFLI = new Set(['T-03', 'T-04', 'T-05', 'T-06', 'T-08', 'T-09', 'T-10', 'T-11', 'T-12', 'T-13', 'T-16', 'T-20']);
 /** Seçenekleri yalnız sözcük görselleri olan şablonlar. */
 const GORSELLI = new Set(['T-01', 'T-08', 'T-10']);
 /** Görsel kart ile başka kartı karışık taşıyan şablonlar (T-19 z1–2 resim–harf). */
-const GORSEL_KARISIK = new Set(['T-19']);
+const GORSEL_KARISIK = new Set(['T-19', 'T-13']);
 
 export function turSoruEtkinligi(s: TurSoru, manifest: ReadonlyMap<string, string>): TurEtkinlik {
   const uyaran: TurEtkinlik['uyaran'] =
@@ -68,7 +84,9 @@ export function turSoruEtkinligi(s: TurSoru, manifest: ReadonlyMap<string, strin
             metin:
               s.uyaran.tur === 'yazi' || s.uyaran.tur === 'noktalama'
                 ? s.uyaran.metin
-                : s.uyaran.tur === 'parca'
+                : s.uyaran.tur === 'metin'
+                  ? [...s.uyaran.cumleler, s.uyaran.soru].join(' ')
+                  : s.uyaran.tur === 'parca'
                   ? s.uyaran.glif
                   : s.hedefMetin,
           };
@@ -127,7 +145,9 @@ export function turSoruIhlalleri(
     s.hedefMetin,
     ...(s.uyaran.tur === 'yazi' || s.uyaran.tur === 'noktalama'
       ? [s.uyaran.metin]
-      : s.uyaran.tur === 'bosluklu'
+      : s.uyaran.tur === 'metin'
+        ? [...s.uyaran.cumleler, s.uyaran.soru]
+        : s.uyaran.tur === 'bosluklu'
         ? [s.uyaran.once, s.uyaran.sonra]
         : s.uyaran.tur === 'parca'
           ? [s.uyaran.glif]

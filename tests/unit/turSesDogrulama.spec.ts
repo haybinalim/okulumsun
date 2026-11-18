@@ -375,7 +375,7 @@ describe('ret listesi (kulakla reddedilen)', () => {
     const kok = path.join(dizin, 'depo');
     const ses = path.join(kok, 'ders-verisi/tur/ses');
     mkdirSync(path.join(kok, 'ders-verisi/tur/icerik'), { recursive: true });
-    for (const f of ['sozcukler.json', 'cumleler.json']) copyFileSync(`ders-verisi/tur/icerik/${f}`, path.join(kok, 'ders-verisi/tur/icerik', f));
+    for (const f of ['sozcukler.json', 'cumleler.json', 'metinler.json']) copyFileSync(`ders-verisi/tur/icerik/${f}`, path.join(kok, 'ders-verisi/tur/icerik', f));
     mkdirSync(path.join(ses, 'sozcuk'), { recursive: true });
     writeFileSync(path.join(ses, 'sozcuk/ok.m4a'), 'x');
     writeFileSync(path.join(ses, 'sozcuk/kale.m4a'), 'x');

@@ -17,11 +17,13 @@ import {
   TUR_ZORLUKLARI,
   TurUretimHatasi,
   type TurHavuzCumlesi,
+  type TurHavuzMetni,
   type TurHavuzSozcugu,
   type TurSablonKodu,
   type TurZorluk,
 } from '../../content/dersler/tur/sablonlar/turSoru';
 import { useCumleVerisi } from './useCumleVerisi';
+import { useMetinVerisi } from './useMetinVerisi';
 import { BigButton } from '../primitives/BigButton';
 import { turEkraniAc } from './turEkraniDurumu';
 import { useTurKume } from './turKume';
@@ -40,10 +42,11 @@ function kurulabilirMi(
   zorluk: TurZorluk,
   hamleler: readonly TurHamleGlifi[] | undefined,
   cumleler: readonly TurHavuzCumlesi[] | undefined,
+  metinler: readonly TurHavuzMetni[] | undefined,
 ) {
   for (let tohum = 1; tohum <= 4; tohum++) {
     try {
-      TUR_SABLONLARI[sablon].uret({ havuz, kume, zorluk, tohum, hamleler, cumleler });
+      TUR_SABLONLARI[sablon].uret({ havuz, kume, zorluk, tohum, hamleler, cumleler, metinler });
       return true;
     } catch (e) {
       if (!(e instanceof TurUretimHatasi)) throw e;
@@ -61,6 +64,9 @@ export function EtkinlikSecimi() {
   // Katalog cümle şablonlarının bu kümeyle kurulup kurulamadığını gösterir: cümle parçası burada yüklenir (Adım 74).
   const cv = useCumleVerisi(true);
   const cumleler = cv.durum === 'hazir' ? cv.cumleler : undefined;
+  // Aynı şekilde metin şablonu (T-13, Adım 80): metin parçası + havuzu burada yüklenir.
+  const mv = useMetinVerisi(true);
+  const metinler = mv.durum === 'hazir' ? mv.metinler : undefined;
   const [secim, setSecim] = useState(sonSecim);
   const sec = (s: typeof secim) => {
     sonSecim = s;
@@ -90,7 +96,8 @@ export function EtkinlikSecimi() {
                   h.durum === 'hazir' &&
                   hv.durum !== 'yukleniyor' &&
                   cv.durum !== 'yukleniyor' &&
-                  !kurulabilirMi(kod, h.havuz, kume, secim.zorluk, hamleler, cumleler);
+                  mv.durum !== 'yukleniyor' &&
+                  !kurulabilirMi(kod, h.havuz, kume, secim.zorluk, hamleler, cumleler, metinler);
                 return (
                   <BigButton
                     key={kod}

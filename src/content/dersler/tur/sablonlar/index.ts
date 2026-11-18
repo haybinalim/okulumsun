@@ -4,6 +4,8 @@
  *   Dalga 2, görselli (Adım 70): T-01 Sesi duy resmi seç, T-08 Sözcüğü oku resmini bul (seçenekler sözcük görselleri).
  *   Çeşitlilik (Adım 79, kullanıcı isteği 2026-11-06): T-09 Harfi parçalardan kur, T-16 Hatalı sözcüğü bul,
  *   T-17 Hece say, T-18 Sesin yeri, T-19 Aynı sesle eşleştir, T-20 Harf avı.
+ *   Okuma metni (Adım 80): T-13 Metni oku, soruyu cevapla (okuduğunu anlama) — üreticisi ayrı tembel parçada
+ *   (`metin/turMetin.ts`), kayıt `metinKayit.ts`.
  *   Cümle ve noktalama (Adım 74): T-10 Cümleyi oku resmini bul, T-11 Noktalama işaretini seç, T-12 Büyük harf yerinde mi — üreticileri ayrı tembel
  *   parçada (`cumle/turCumle.ts`, KG-156); kayıt eşzamanlı, parça yüklenmeden çağrılırsa `TurUretimHatasi`.
  *
@@ -25,16 +27,18 @@ import { uretT18 } from './t18SesinYeri';
 import { uretT19 } from './t19AyniSesEslestir';
 import { uretT20 } from './t20HarfAvi';
 import { cumleUreticisi } from './cumleKayit';
+import { metinUreticisi } from './metinKayit';
 import type { TurSablonKodu, TurSoru, TurUretimGirdisi } from './turSoru';
 
 /** Etkinlik kataloğundaki beceri kümesi (öğretmen ekranı). */
-export type TurBeceri = 'ses' | 'harf' | 'hece' | 'sozcuk' | 'cumle' | 'yazma';
+export type TurBeceri = 'ses' | 'harf' | 'hece' | 'sozcuk' | 'cumle' | 'metin' | 'yazma';
 export const TUR_BECERILERI: readonly { readonly kod: TurBeceri; readonly ad: string }[] = [
   { kod: 'ses', ad: 'Ses farkındalığı' },
   { kod: 'harf', ad: 'Harf' },
   { kod: 'hece', ad: 'Hece' },
   { kod: 'sozcuk', ad: 'Sözcük' },
   { kod: 'cumle', ad: 'Cümle' },
+  { kod: 'metin', ad: 'Metin' },
   { kod: 'yazma', ad: 'Yazma' },
 ];
 
@@ -61,6 +65,7 @@ export const TUR_SABLONLARI: Readonly<Record<TurSablonKodu, TurSablonTanimi>> = 
   'T-10': { kod: 'T-10', ad: 'Cümleyi oku, resmini bul', meb: 'T.O.1.1.c', beceri: 'cumle', etkilesim: 'secim', uret: cumleUreticisi('T-10') },
   'T-11': { kod: 'T-11', ad: 'Noktalama işaretini seç', meb: 'T.Y.1.3.k', beceri: 'cumle', etkilesim: 'secim', uret: cumleUreticisi('T-11') },
   'T-12': { kod: 'T-12', ad: 'Büyük harf yerinde mi', meb: 'T.Y.1.3.d', beceri: 'cumle', etkilesim: 'secim', uret: cumleUreticisi('T-12') },
+  'T-13': { kod: 'T-13', ad: 'Metni oku, soruyu cevapla', meb: 'T.O.1.2 (alt bileşen doğrulanmadı; T.O.1.1.c okuma)', beceri: 'metin', etkilesim: 'secim', uret: metinUreticisi('T-13') },
   'T-16': { kod: 'T-16', ad: 'Hatalı sözcüğü bul', meb: 'T.Y.1.4.a', beceri: 'sozcuk', etkilesim: 'secim', uret: uretT16 },
   'T-17': { kod: 'T-17', ad: 'Hece say', meb: 'T.D.1.2.d', beceri: 'hece', etkilesim: 'secim', uret: uretT17 },
   'T-18': { kod: 'T-18', ad: 'Sesin yeri', meb: 'T.D.1.1.a', beceri: 'ses', etkilesim: 'secim', uret: uretT18 },

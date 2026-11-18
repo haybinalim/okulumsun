@@ -30,6 +30,8 @@ import { evKipiMi } from './sinifAyariDepo';
 import { sikDugme } from './ogretmenOrtak';
 import { useTurKume } from './turKume';
 import { useCumleVerisi } from './useCumleVerisi';
+import { useMetinVerisi } from './useMetinVerisi';
+import { turKlipleriniIste, turSesiniDurdur } from './turSes';
 
 /** M-3 koro / yankılayıcı okuma: ayrı tembel parça (`KoroOkuma-*.js`, KG-156). */
 const KoroOkuma = lazy(() => import('./cumle/KoroOkuma'));
@@ -42,6 +44,25 @@ function KoroKabugu() {
   return (
     <Suspense fallback={null}>
       <KoroOkuma kume={useTurKume()} cv={useCumleVerisi(true)} ekranStili={ekranStili} Baslik={Baslik} />
+    </Suspense>
+  );
+}
+
+/** "Metni oku" model okuma (E2, Adım 80): ayrı tembel parça (`MetinOkuma-*.js`); koro okumanın sözcük vurgusunu paylaşır. */
+const MetinOkuma = lazy(() => import('./cumle/MetinOkuma'));
+
+/** Metin kabuğu: küme, metin verisi, başlık ve ses buradan geçer (parça ortak modül içe aktarmaz; bkz. KoroKabugu). */
+function MetinKabugu() {
+  return (
+    <Suspense fallback={null}>
+      <MetinOkuma
+        kume={useTurKume()}
+        mv={useMetinVerisi(true)}
+        ekranStili={ekranStili}
+        Baslik={Baslik}
+        sesIste={turKlipleriniIste}
+        sesiDurdur={turSesiniDurdur}
+      />
     </Suspense>
   );
 }
@@ -60,7 +81,7 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
     else if (ekran.ekran === 'eveGonder') turEkraniAc({ ekran: 'setHazirla' });
     else if (ekran.ekran === 'kagitSecimi') turEkraniAc({ ekran: 'kagitlar' });
     else if (ekran.ekran === 'etkinlik') turEkraniAc(ekran.geri ?? { ekran: 'etkinlikler' });
-    else if (ekran.ekran === 'koro') turEkraniAc(ekran.geri ?? { ekran: 'giris' });
+    else if (ekran.ekran === 'koro' || ekran.ekran === 'metin') turEkraniAc(ekran.geri ?? { ekran: 'giris' });
     else if (ekran.ekran === 'giris') turEkraniKapat();
     else turEkraniAc({ ekran: 'giris' });
   };
@@ -113,6 +134,8 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
           <TurEtkinlikEkrani sablon={ekran.sablon} zorluk={ekran.zorluk} tohum={ekran.tohum} geri={ekran.geri} />
         ) : ekran.ekran === 'koro' ? (
           <KoroKabugu />
+        ) : ekran.ekran === 'metin' ? (
+          <MetinKabugu />
         ) : ekran.ekran === 'kagit' ? (
           <KagitOnizleme istek={ekran.istek} eve={ekran.eve} />
         ) : (

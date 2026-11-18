@@ -25,10 +25,20 @@ export const TUR_SABLON_KODLARI = [
  */
 export const TUR_CUMLE_SABLON_KODLARI = ['T-10', 'T-11', 'T-12'] as const;
 export type TurCumleSablonKodu = (typeof TUR_CUMLE_SABLON_KODLARI)[number];
-export type TurSablonKodu = (typeof TUR_SABLON_KODLARI)[number] | TurCumleSablonKodu;
+/**
+ * Metin şablonu (Adım 80): T-13 Metni oku, soruyu cevapla. Üreticisi ayrı tembel parçada (`metin/turMetin.ts`);
+ * metin havuzu ister (`TurUretimGirdisi.metinler`) ve 2. gruptan önce kurulmaz (D-08).
+ */
+export const TUR_METIN_SABLON_KODLARI = ['T-13'] as const;
+export type TurMetinSablonKodu = (typeof TUR_METIN_SABLON_KODLARI)[number];
+export type TurSablonKodu = (typeof TUR_SABLON_KODLARI)[number] | TurCumleSablonKodu | TurMetinSablonKodu;
 
-/** Katalog sırasıyla bütün şablonlar (sözcük düzeyi + cümle). */
-export const TUR_TUM_SABLON_KODLARI: readonly TurSablonKodu[] = [...TUR_SABLON_KODLARI, ...TUR_CUMLE_SABLON_KODLARI];
+/** Katalog sırasıyla bütün şablonlar (sözcük düzeyi + cümle + metin). */
+export const TUR_TUM_SABLON_KODLARI: readonly TurSablonKodu[] = [
+  ...TUR_SABLON_KODLARI,
+  ...TUR_CUMLE_SABLON_KODLARI,
+  ...TUR_METIN_SABLON_KODLARI,
+];
 
 export type TurZorluk = 1 | 2 | 3 | 4 | 5;
 
@@ -103,6 +113,8 @@ interface TurSoruTemeli {
     | { readonly tur: 'parca'; readonly glif: string; readonly genislik: number }
     /** T-11: bitiş işaretsiz cümle + sonunda boş yuva (dokunulmaz); doğru cevaptan sonra cümle işaretiyle. */
     | { readonly tur: 'noktalama'; readonly metin: string }
+    /** T-13: okunacak metin (cümle başına bir satır, sözcük bölünmez) + altında yazılı soru; doğru cevaptan sonra cevabın cümlesi vurgulanır. */
+    | { readonly tur: 'metin'; readonly cumleler: readonly string[]; readonly soru: string }
     | { readonly tur: 'yok' };
   /** Doğru cevaptan SONRA okunacak klipler (bütün sözcük ya da hece; D-11). */
   readonly geriBildirim: readonly TurKlipKimligi[];
@@ -173,6 +185,30 @@ export interface TurHavuzCumlesi {
   readonly gorselId?: string;
 }
 
+/**
+ * Okuma metni havuzu öğesi (Adım 80; çalışma anında `ders-verisi/tur/icerik/metinler.json`'dan). Metin 2–5 cümledir,
+ * en az 2. gruptadır (D-08); her soruda cevap metindendir (`cevapTuru`: `gorsel` → cevap görsel kimliği, `sozcuk` → metindeki sözcük).
+ */
+export interface TurHavuzMetinSorusu {
+  readonly id: string;
+  readonly soru: string;
+  readonly cevapTuru: 'gorsel' | 'sozcuk';
+  readonly cevap: string;
+  /** Cevabın geçtiği cümle (1'den başlar). */
+  readonly cumleNo: number;
+  /** Yalnız `sozcuk`: yanlış seçenekler. */
+  readonly celdiriciler: readonly string[];
+}
+
+export interface TurHavuzMetni {
+  readonly id: string;
+  readonly cumleler: readonly string[];
+  readonly girisHarfi: string;
+  readonly grup: number;
+  readonly ozelAdlar: readonly string[];
+  readonly sorular: readonly TurHavuzMetinSorusu[];
+}
+
 export interface TurUretimGirdisi {
   readonly havuz: readonly TurHavuzSozcugu[];
   /** Öğretmenin seçtiği öğretilen glif kümesi (öğrenci verisi değil). */
@@ -183,6 +219,8 @@ export interface TurUretimGirdisi {
   readonly hamleler?: readonly TurHamleGlifi[];
   /** Cümle havuzu (`ders-verisi/tur/icerik/cumleler.json`); yalnız cümle şablonları (T-10, T-11, T-12) ister. */
   readonly cumleler?: readonly TurHavuzCumlesi[];
+  /** Okuma metni havuzu (`ders-verisi/tur/icerik/metinler.json`); yalnız T-13 ister (Adım 80). */
+  readonly metinler?: readonly TurHavuzMetni[];
 }
 
 /** Bu kümeyle şablon kurulamıyorsa (yeterli harf/sözcük yok) fırlatılır; arayüz öğretmene açıklar. */

@@ -154,7 +154,7 @@ export function SetHazirla({ ekAraclar }: { ekAraclar?: (duzey: SetDuzeyi, tohum
       <p style={{ margin: 0, fontSize: 'var(--text-adult)', textAlign: 'center' }}>{DUZEY_ACIKLAMASI[duzey]}</p>
       {!set ? (
         <p data-yetiskin="" style={{ fontSize: 'var(--text-adult)' }}>
-          {sd.durum === 'hata' ? `Sözcük havuzu açılamadı: ${sd.mesaj}` : 'Yükleniyor'}
+          {sd.durum === 'hata' ? sd.mesaj : 'Yükleniyor'}
         </p>
       ) : (
         <>
