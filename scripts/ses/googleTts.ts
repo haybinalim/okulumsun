@@ -15,6 +15,8 @@
  * Kaynak: https://docs.cloud.google.com/text-to-speech/docs/chirp3-hd (12 Eki 2026'da okundu).
  */
 
+import { karakterSay } from './ucretsizKatman.ts';
+
 /** Chirp 3 HD ses adları (belge, 12 Eki 2026). Tam ad: `tr-TR-Chirp3-HD-<ad>`. */
 export const CHIRP3_HD_SESLERI = [
   'Achernar', 'Achird', 'Algenib', 'Algieba', 'Alnilam', 'Aoede', 'Autonoe', 'Callirrhoe',
@@ -58,7 +60,8 @@ export function modelKimligindenSes(modelKimligi: string): string {
 }
 
 export interface GoogleIstegi {
-  readonly input: { readonly text: string };
+  /** Düz metin ya da SSML (Türkçe telaffuz ayarı, `telaffuz.json`). */
+  readonly input: { readonly text: string } | { readonly ssml: string };
   readonly voice: { readonly languageCode: 'tr-TR'; readonly name: string };
   readonly audioConfig: {
     readonly audioEncoding: 'LINEAR16';
@@ -67,14 +70,17 @@ export interface GoogleIstegi {
   };
 }
 
-/** `text:synthesize` istek gövdesi. Yalnız metin gider; SSML/markup kullanılmaz. */
-export function googleIstegi(metin: string, sesAdi: string, hiz = VARSAYILAN_HIZ): GoogleIstegi {
+/**
+ * `text:synthesize` istek gövdesi. Varsayılan düz metin; `bicim: 'ssml'` yalnız Türkçe telaffuz ayarlı kliplerde
+ * (etiket izni `turKlipleri.ts` şemasında: speak/phoneme/prosody/break) `input.ssml` ile gider.
+ */
+export function googleIstegi(metin: string, sesAdi: string, hiz = VARSAYILAN_HIZ, bicim: 'text' | 'ssml' = 'text'): GoogleIstegi {
   if (metin.trim() === '') throw new Error('Boş metin seslendirilemez.');
   // Belge: istek başına en çok 5.000 bayt.
   if (new TextEncoder().encode(metin).length > 5000) throw new Error('Metin 5.000 baytı aşıyor.');
   if (!(hiz >= 0.25 && hiz <= 2)) throw new Error(`Konuşma hızı 0.25–2 arasında olmalı: ${hiz}`);
   return {
-    input: { text: metin },
+    input: bicim === 'ssml' ? { ssml: metin } : { text: metin },
     voice: { languageCode: 'tr-TR', name: googleSesAdi(sesAdi) },
     audioConfig: { audioEncoding: 'LINEAR16', sampleRateHertz: 24000, speakingRate: hiz },
   };
@@ -153,8 +159,8 @@ export async function googleSentezle(
   if (!koruma) throw new Error('Ücretsiz katman koruması olmadan Google TTS isteği gönderilmez (KG-109).');
   if (!anahtar) throw new Error('GOOGLE_TTS_API_KEY tanımlı değil (.env.local veya ortam değişkeni).');
   const adres = ucNokta();
-  // Google kuralı: girdi metnindeki tüm karakterler (boşluk dahil); UTF-16 sayımı temkinli.
-  const karakter = istek.input.text.length;
+  // Google kuralı: girdideki tüm karakterler (boşluk dahil; SSML'de etiketler dahil, tüm dize); UTF-16 sayımı temkinli.
+  const karakter = karakterSay('ssml' in istek.input ? istek.input.ssml : istek.input.text);
   for (let deneme = 0; ; deneme++) {
     koruma.istekOncesi(karakter, deneme === 0 ? 'İstek' : `Yeniden deneme ${deneme}`);
     let yanit: Response;

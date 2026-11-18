@@ -12,7 +12,7 @@
 import { execFile } from 'node:child_process';
 import { rename, rm } from 'node:fs/promises';
 import { promisify } from 'node:util';
-import type { Clip } from './klipler.ts';
+import { sentezGirdisi, type Clip } from './klipler.ts';
 import { geciciKlipYolu } from './geciciAd.ts';
 
 const exec = promisify(execFile);
@@ -107,7 +107,9 @@ export async function klibiUretVeDogrula(g: KlipUretimi): Promise<number> {
   const sorunlar: string[] = [];
   try {
     for (let deneme = 0; deneme <= YENIDEN_DENEME_SAYISI; deneme++) {
-      await g.sentezle(deneme === 0 ? g.clip.text : yenidenDenemeMetni(g.clip.text), g.gecici);
+      // Telaffuz ayarlı klipte ayarlı girdi HER denemede korunur ("Ka." dönüşümü uygulanmaz).
+      const girdi = deneme === 0 || g.clip.telaffuz ? sentezGirdisi(g.clip) : yenidenDenemeMetni(g.clip.text);
+      await g.sentezle(girdi, g.gecici);
       const neden = olcumSorunu(g.clip.key, await g.olc(g.gecici));
       if (neden === null) {
         await g.yerlestir(g.gecici);

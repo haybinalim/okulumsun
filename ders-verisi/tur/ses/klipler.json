@@ -756,7 +756,8 @@
   {
    "anahtar": "tur.hece.en",
    "metin": "en",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "hece/en.m4a"
   },
   {
    "anahtar": "tur.hece.et",
@@ -971,7 +972,8 @@
   {
    "anahtar": "tur.hece.li2n",
    "metin": "lın",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "hece/li2n.m4a"
   },
   {
    "anahtar": "tur.hece.lik",
@@ -2089,7 +2091,8 @@
   {
    "anahtar": "tur.sozcuk.ton",
    "metin": "ton",
-   "durum": "eksik"
+   "durum": "var",
+   "dosya": "sozcuk/ton.m4a"
   },
   {
    "anahtar": "tur.sozcuk.tren",

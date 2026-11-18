@@ -4,7 +4,7 @@
  */
 import { onTahmin, type ButceDurumu } from './ucretsizKatman.ts';
 import type { UretimPlani } from './uretimPlani.ts';
-import type { Clip } from './klipler.ts';
+import { sentezGirdisi, type Clip } from './klipler.ts';
 
 export interface DongaGirdisi {
   readonly plan: UretimPlani;
@@ -33,7 +33,7 @@ export interface DongaSonucu {
 export async function planiCalistir(g: DongaGirdisi): Promise<DongaSonucu> {
   const { plan } = g;
   if (g.butce && plan.uretilecek.length > 0) {
-    onTahmin(plan.uretilecek.map((u) => u.clip.text), g.butce());
+    onTahmin(plan.uretilecek.map((u) => sentezGirdisi(u.clip)), g.butce());
   }
   let made = 0;
   let ardisikHata = 0;
