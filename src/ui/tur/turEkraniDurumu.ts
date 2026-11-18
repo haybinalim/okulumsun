@@ -61,8 +61,16 @@ export type TurEkrani =
       /** Etkinliği açan ekran (ör. günün akışı); yoksa etkinlik seçimi. */
       readonly geri?: TurEkrani;
     }
-  /** Kâğıt önizlemesi + Yazdır; `geri` önizlemeyi açan ekran. */
-  | { readonly ekran: 'kagit'; readonly istek: TurKagitIstegi; readonly geri: TurEkrani };
+  /**
+   * Kâğıt önizlemesi + Yazdır; `geri` önizlemeyi açan ekran. `eve` (Adım 81): set hazırla'dan açılan kâğıt; alt bilgiye
+   * aynı setin eve bağlantısı karekod olur (yalnız düzey + tohum; küme `turKume`den, ad/sınıf/cevap yok).
+   */
+  | {
+      readonly ekran: 'kagit';
+      readonly istek: TurKagitIstegi;
+      readonly geri: TurEkrani;
+      readonly eve?: { readonly duzey: 'destek' | 'sinif' | 'zengin'; readonly tohum: number };
+    };
 
 /** `undefined`: henüz okunmadı — ilk okumada açılış adresinden (`?ders=tur`) alınır. */
 let durum: TurEkrani | null | undefined;

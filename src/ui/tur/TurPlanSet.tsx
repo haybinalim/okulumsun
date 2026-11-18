@@ -7,7 +7,7 @@
  *  · Set hazırla: öğretilen kümeyle 8 adımlık set (Adım 79), destek / sınıf / zenginleştirme düzeyi; Başlat → etkinlikler sırayla.
  * Yetişkin yüzeyi (Andika); set akışındaki etkinlik ekranları çocuk yüzeyi (TemelYazi). Ses yok; hiçbir şey saklanmaz.
  */
-import { useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { resmiKume } from '../../content/dersler/tur/ogretilenKume';
 import { haftaAraligi, haftaBul, haftalikSesPlani, sonOnerilenSes, type SesHaftasi } from '../../content/dersler/tur/sesPlani';
 import { DUZEY_ACIKLAMASI, DUZEY_ADI, SET_ADIM_SAYISI, SET_DUZEYLERI, type SetAdimi, type SetDuzeyi } from '../../content/dersler/tur/turSet';
@@ -19,6 +19,9 @@ import { turKumeYaz, useTurKume } from './turKume';
 import { Baslik, ekranStili } from './turOrtak';
 import { bugunkuSes, sikDugme } from './ogretmenOrtak';
 import { TurEtkinlikEkrani } from './TurEtkinlikEkrani';
+import { OturumOzetiBolumu } from './TurOturumOzeti';
+import { ozetBaslat, ozetEtkinlikAcildi, ozetSil } from './oturumOzeti';
+import { evKipiMi } from './sinifAyariDepo';
 
 const TUR_ADI: Readonly<Record<SesHaftasi['tur'], string>> = {
   hazirlik: 'Hazırlık haftası',
@@ -131,7 +134,7 @@ export function SetHazirla({ ekAraclar }: { ekAraclar?: (duzey: SetDuzeyi, tohum
   };
   const ses = bugunkuSes(kume);
   return (
-    <main data-yetiskin="" aria-label="Set hazırla" style={{ ...ekranStili, justifyContent: 'flex-start', gap: 'var(--size-gap-tight)' }}>
+    <main data-yetiskin="" aria-label="Set hazırla" style={{ ...ekranStili, justifyContent: 'flex-start', gap: 'var(--size-gap-tight)', overflowY: 'auto' }}>
       <Baslik baslik={`Set hazırla: ${ses}`} alt={`Öğretilen harflerle ${SET_ADIM_SAYISI} etkinlik. Set saklanmaz.`} />
       <div role="group" aria-label="Düzey" style={{ display: 'flex', gap: '0.4em', flexWrap: 'wrap', justifyContent: 'center' }}>
         {SET_DUZEYLERI.map((d) => (
@@ -205,6 +208,14 @@ export function SetHazirla({ ekAraclar }: { ekAraclar?: (duzey: SetDuzeyi, tohum
 /** Set akışı: adımlar sırayla; son adımdan sonra set sonu. Etkinliklerin Geri'si `geri` ekranına döner. */
 export function SetAkisi({ adimlar, sira, geri }: { adimlar: readonly SetAdimi[]; sira: number; geri: TurEkrani }) {
   const a = adimlar[sira];
+  // Oturum özeti (Adım 81, E5): yalnız bellekte; set ekranından çıkınca silinir. Eve link cihazında (veli) tutulmaz.
+  useEffect(() => {
+    if (!evKipiMi()) ozetBaslat();
+    return ozetSil;
+  }, []);
+  useEffect(() => {
+    if (a) ozetEtkinlikAcildi(sira, a.sablon);
+  }, [sira, a]);
   if (!a) return <SetSonu adimlar={adimlar} geri={geri} />;
   return (
     <div data-set-sira={`${sira + 1}/${adimlar.length}`} style={{ height: '100%' }}>
@@ -222,10 +233,19 @@ export function SetAkisi({ adimlar, sira, geri }: { adimlar: readonly SetAdimi[]
 
 function SetSonu({ adimlar, geri }: { adimlar: readonly SetAdimi[]; geri: TurEkrani }) {
   return (
-    <main data-yetiskin="" aria-label="Set bitti" data-set-bitti="" style={{ ...ekranStili, justifyContent: 'center' }}>
+    <main data-yetiskin="" aria-label="Set bitti" data-set-bitti="" style={{ ...ekranStili, justifyContent: 'center', minHeight: 0 }}>
       <Baslik baslik="Set bitti" alt={`${adimlar.length} etkinlik tamamlandı.`} />
+      <OturumOzetiBolumu />
       <div style={{ display: 'flex', gap: '0.5em', flexWrap: 'wrap', justifyContent: 'center' }}>
-        <BigButton label="Baştan" data-yetiskin="" style={sikDugme} onPress={() => turEkraniAc({ ekran: 'set', adimlar, sira: 0, geri })}>
+        <BigButton
+          label="Baştan"
+          data-yetiskin=""
+          style={sikDugme}
+          onPress={() => {
+            if (!evKipiMi()) ozetBaslat();
+            turEkraniAc({ ekran: 'set', adimlar, sira: 0, geri });
+          }}
+        >
           <span>Baştan</span>
         </BigButton>
         <BigButton label="Bitir" data-yetiskin="" variant="accent" style={sikDugme} onPress={() => turEkraniAc(geri)}>

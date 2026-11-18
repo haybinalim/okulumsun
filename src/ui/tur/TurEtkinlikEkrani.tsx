@@ -59,6 +59,7 @@ import type { TurKart, TurParca } from '../../content/dersler/tur/sablonlar/turS
 import { unluMu } from '../../content/dersler/tur/alfabe';
 import { hecele } from '../../content/dersler/tur/heceleme';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
+import { ozetCozuldu, ozetTekrarDinlendi, ozetYanlisDenendi } from './oturumOzeti';
 import './tur.css';
 
 export function TurEtkinlikEkrani({
@@ -189,7 +190,10 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
       if (no === istek.current) setSesYok(!calindi);
     });
   };
-  const soruSesi = () => iste([soru.yonerge, ...soru.soruKlipleri], true);
+  const soruSesi = () => {
+    ozetTekrarDinlendi(); // Oturum özeti (Adım 81): "Tekrar dinle" = soru yeniden dinlendi (yalnız bellek).
+    iste([soru.yonerge, ...soru.soruKlipleri], true);
+  };
   // Açılışta bir kez (soru `useMemo` ile sabit; soru değişince bileşen `key` ile yeniden kurulur). Geliştirmede
   // StrictMode etkiyi iki kez çalıştırır: temizlik konuşmayı keser ve işareti sıfırlar, ikinci çalıştırma yönergeyi
   // yeniden ister (iptal edilen ilk istek hiç çalmaz / kancaya yazılmaz).
@@ -211,6 +215,7 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
   }, [soru]);
 
   const dogruOldu = () => {
+    ozetCozuldu();
     setDurum('dogru');
     iste(soru.geriBildirim);
   };
@@ -222,6 +227,7 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
       if (i === soru.dogru) dogruOldu();
       else {
         setYanlislar(new Set([...yanlislar, i]));
+        ozetYanlisDenendi();
         iste([geriBildirimKlibi('tekrar')]);
       }
       return;
@@ -242,6 +248,7 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
       if (!cift) {
         // Yanlış eş: iki kart kısa süre işaretlenir, sonra yeniden seçilebilir.
         setYanlislar(new Set([acik, i]));
+        ozetYanlisDenendi();
         iste([geriBildirimKlibi('tekrar')]);
         window.clearTimeout(zamanlayici.current);
         zamanlayici.current = window.setTimeout(() => setYanlislar(new Set()), 800);
@@ -271,6 +278,7 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
       return;
     }
     setDurum('tekrar');
+    ozetYanlisDenendi();
     iste([geriBildirimKlibi('tekrar')]);
     zamanlayici.current = window.setTimeout(() => {
       setYerlesim([]);

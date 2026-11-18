@@ -28,3 +28,24 @@
     max-width: none !important;
   }
 }
+
+/* Eve karekodu (Adım 81): basılı kartın altında aynı setin karekodu ve kısa bağlantısı; siyah beyaz, gri baskıda okunur. */
+@media print {
+  .vk-baski .vk-karekod {
+    display: flex;
+    align-items: center;
+    gap: 6mm;
+    margin-top: 8mm;
+    break-inside: avoid;
+    font-size: 11pt;
+  }
+  .vk-baski .vk-karekod svg {
+    width: 36mm;
+    height: 36mm;
+    flex: none;
+  }
+  .vk-baski .vk-karekod p {
+    margin: 0;
+    word-break: break-all;
+  }
+}
