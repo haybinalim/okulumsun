@@ -198,10 +198,10 @@ test('etkinlik seçimi: öğretilen küme adreste (?tur=), kartlar yalnız öğr
   for (const g of ['a', 'n', 'e', 't'])
     await expect(page.getByRole('button', { name: `${g} öğretildi`, exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'i öğretilmedi', exact: true })).toBeVisible();
-  // Adım 79: katalog beceriye göre gruplu; Adım 74: "Cümle" grubu (T-10, T-11, T-12) — 17 şablonun hepsi bir grupta.
-  await expect(page.locator('[data-katalog] section[data-beceri]')).toHaveCount(6);
-  await expect(page.locator('[data-katalog] section[data-beceri] button')).toHaveCount(17);
-  for (const [beceri, kod] of [['ses', 'T-18'], ['harf', 'T-20'], ['hece', 'T-17'], ['sozcuk', 'T-16'], ['cumle', 'T-10'], ['yazma', 'T-09']] as const)
+  // Adım 79: katalog beceriye göre gruplu; Adım 74: "Cümle" grubu (T-10, T-11, T-12); Adım 80: "Metin" grubu (T-13) — 18 şablonun hepsi bir grupta.
+  await expect(page.locator('[data-katalog] section[data-beceri]')).toHaveCount(7);
+  await expect(page.locator('[data-katalog] section[data-beceri] button')).toHaveCount(18);
+  for (const [beceri, kod] of [['ses', 'T-18'], ['harf', 'T-20'], ['hece', 'T-17'], ['sozcuk', 'T-16'], ['cumle', 'T-10'], ['metin', 'T-13'], ['yazma', 'T-09']] as const)
     await expect(page.locator(`section[data-beceri="${beceri}"]`).getByRole('button', { name: new RegExp(`^${kod} `) })).toBeVisible();
   await geometriTemiz(page, 'etkinlik kataloğu tablet');
   await page.getByRole('button', { name: /^T-03 / }).click();

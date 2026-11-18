@@ -55,15 +55,14 @@ export const AKIS_BASAMAKLARI: readonly AkisBasamagi[] = [
   {
     kod: '6',
     ad: 'Hece ve sözcük',
-    aciklama:
-      'T-04 hece kur, T-05 heceleri birleştir, T-17 hece say; 2. gruptan cümle T-10, koro okuma (M-3), metni oku ve soru T-13',
-    hedef: { tur: 'etkinlik', sablonlar: ['T-04', 'T-05', 'T-17', 'T-10', 'T-13'], koro: true, metin: true },
+    aciklama: 'T-04 hece kur, T-05 heceleri birleştir, T-17 hece say; 2. gruptan cümle T-10, koro okuma (M-3) ve metni oku (E2)',
+    hedef: { tur: 'etkinlik', sablonlar: ['T-04', 'T-05', 'T-17', 'T-10'], koro: true, metin: true },
   },
   {
     kod: '7',
     ad: 'Dikte',
-    aciklama: 'T-07; hatalı sözcüğü bul T-16; 2. gruptan noktalama T-11, büyük harf T-12',
-    hedef: { tur: 'etkinlik', sablonlar: ['T-07', 'T-16', 'T-11', 'T-12'] },
+    aciklama: 'T-07; hatalı sözcüğü bul T-16; 2. gruptan noktalama T-11, büyük harf T-12, metni oku soruyu cevapla T-13',
+    hedef: { tur: 'etkinlik', sablonlar: ['T-07', 'T-16', 'T-11', 'T-12', 'T-13'] },
   },
   {
     kod: '8',

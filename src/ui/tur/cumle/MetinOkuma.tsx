@@ -11,12 +11,12 @@
  *
  * Parça `turKume`, `useMetinVerisi`, `turOrtak`, `turSes` modüllerini içe aktarmaz (küme, metin verisi, başlık ve ses
  * kabuktan özellik olarak gelir); aksi hâlde paketleyici onları ortak parçalara böler ve Türkçe temel JS büyür (KG-156).
+ * Okunabilirlik süzgeci metin parçasıyla AYNI işlevdir (`okunabilirMetinler`): kural kopyası yok.
  */
 import { useEffect, useMemo, useRef, useState, type ComponentType, type CSSProperties } from 'react';
 import { BigButton } from '../../primitives/BigButton';
-import { dekodlanabilirMi } from '../../../content/dersler/tur/ogretilenKume';
 import { metinCumleKlibi } from '../../../content/dersler/tur/sablonlar/klipler';
-import type { TurHavuzMetni } from '../../../content/dersler/tur/sablonlar/turSoru';
+import { okunabilirMetinler } from '../../../content/dersler/tur/sablonlar/metin/metinHavuzu';
 import type { MetinVerisiDurumu } from '../useMetinVerisi';
 import { SozcukSatiri } from './KoroOkuma';
 
@@ -31,20 +31,10 @@ export interface MetinOkumaOzellikleri {
   readonly sesiDurdur: () => void;
 }
 
-/** Kümeyle okunabilen metinler (metin parçasındaki süzgecin aynısı; bu parça onu içe aktarmaz — testle eşitlik denetlenir). */
-function okunabilir(metinler: readonly TurHavuzMetni[], kume: ReadonlySet<string>): TurHavuzMetni[] {
-  return metinler.filter(
-    (m) =>
-      m.grup >= 2 &&
-      kume.has(m.girisHarfi) &&
-      [...m.cumleler, ...m.sorular.flatMap((q) => [q.soru, ...q.celdiriciler])].every((s) => dekodlanabilirMi(s, kume)),
-  );
-}
-
 export default function MetinOkuma({ kume, mv, ekranStili, Baslik, sesIste, sesiDurdur }: MetinOkumaOzellikleri) {
   const liste = useMemo(() => {
     if (mv.durum !== 'hazir') return [];
-    const l = okunabilir(mv.metinler, kume);
+    const l = okunabilirMetinler(mv.metinler, kume);
     // En son açılan grubun metinleri önce (bugünkü dersin metinleri), sonra öncekiler.
     const enYeni = Math.max(0, ...l.map((m) => m.grup));
     return [...l.filter((m) => m.grup === enYeni), ...l.filter((m) => m.grup !== enYeni)];
@@ -83,7 +73,7 @@ export default function MetinOkuma({ kume, mv, ekranStili, Baslik, sesIste, sesi
   const son = toplam - 1;
   const bitti = sozcukSira >= son;
   const enUzun = Math.max(...metin.cumleler.map((c) => [...c].length));
-  const yazi = `min(${(80 / (metin.cumleler.length + 0.4) / 1.3).toFixed(2)}cqh, calc(100cqw / ${(enUzun * 0.66).toFixed(2)}))`;
+  const yazi = `min(${(90 / (metin.cumleler.length * 1.25)).toFixed(2)}cqh, calc(100cqw / ${(enUzun * 0.66).toFixed(2)}))`;
   const durdur = () => {
     iptal.current?.abort();
     iptal.current = null;
