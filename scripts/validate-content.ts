@@ -58,6 +58,7 @@ import {
   gorselTeyitBekleyenler,
   icerikGorselBaglariniDenetle,
   cumleGorselBaglariniDenetle,
+  metinGorselBaglariniDenetle,
 } from '../src/content/dersler/tur/gorselDenetimi';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -358,7 +359,7 @@ sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLE
       const ham = read(rel);
       for (const yol of renkAlaniBul(ham)) hata(`${rel}: D-06 parça rengi alanı yasak (${yol}).`);
       const d = turIcerikDosyasiniAyristir(ham);
-      oge += d.harfler.length + d.heceler.length + d.sozcukler.length + d.cumleler.length + d.etkinlikler.length;
+      oge += d.harfler.length + d.heceler.length + d.sozcukler.length + d.cumleler.length + d.metinler.length + d.etkinlikler.length;
       const r = turIceriginiDogrula(d, { yayin });
       for (const h of r.hatalar) hata(`${rel}: ${h.kural} ${h.oge}: ${h.mesaj}`);
       for (const u of r.uyarilar) sonuc.uyarilar.push(`${rel}: ${u.kural} ${u.oge}: ${u.mesaj}`);
@@ -463,6 +464,9 @@ sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLE
           hata(`ders-verisi/tur/icerik/${ad}: ${i.kural} ${i.oge}: ${i.mesaj}`);
         // Cümle havuzu (Adım 74): hedef görsel var ve sözcüğü cümlede geçer (rebus yok, D-07; D-25).
         for (const i of cumleGorselBaglariniDenetle(d.cumleler, dizinler))
+          hata(`ders-verisi/tur/icerik/${ad}: ${i.kural} ${i.oge}: ${i.mesaj}`);
+        // Okuma metinleri (Adım 80): görsel cevaplar var, sözcükleri belirtilen cümlede geçer, soru cevabı söylemez.
+        for (const i of metinGorselBaglariniDenetle(d.metinler, dizinler))
           hata(`ders-verisi/tur/icerik/${ad}: ${i.kural} ${i.oge}: ${i.mesaj}`);
       } catch {
         // şema hatası yukarıdaki içerik döngüsünde raporlandı

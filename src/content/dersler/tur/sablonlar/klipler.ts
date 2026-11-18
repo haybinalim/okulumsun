@@ -35,6 +35,14 @@ export function cumleKlibi(cumleId: string): TurKlipKimligi {
   return `tur.cumle.${klipParcasi(cumleId.replace(/[.-]/g, ''))}`;
 }
 
+/**
+ * Okuma metni cümle klibi (Adım 80): metnin `no`. cümlesi (1'den başlar), `tur.cumle.<metin id><s><no>`
+ * (`m2.01`, 1 → `tur.cumle.m201s1`). "Metni oku" ekranındaki "Dinle" ve T-13 doğru cevap geri bildirimi bunu ister.
+ */
+export function metinCumleKlibi(metinId: string, no: number): TurKlipKimligi {
+  return `tur.cumle.${klipParcasi(`${metinId.replace(/[.-]/g, '')}s${no}`)}`;
+}
+
 /** Hece klibi; hece tek ünsüz olamaz (D-11). */
 export function heceKlibi(hece: string): TurKlipKimligi {
   if (yalnizUnsuzMu(hece)) throw new Error(`Tek ünsüz klibi yok (D-11): "${hece}"`);
@@ -42,7 +50,7 @@ export function heceKlibi(hece: string): TurKlipKimligi {
 }
 
 /**
- * Yönerge ve geri bildirim metinleri. Okuma hedefli öğede (T-03, T-04, T-05, T-06, T-08, T-09, T-10, T-11, T-12, T-16) yönerge hedef metni
+ * Yönerge ve geri bildirim metinleri. Okuma hedefli öğede (T-03, T-04, T-05, T-06, T-08, T-09, T-10, T-11, T-12, T-13, T-16) yönerge hedef metni
  * İÇERMEZ (D-12); bu metinler sabit olduğu için hiçbir sözcük veya hece taşımazlar.
  */
 export const TUR_YONERGELERI = {
@@ -63,6 +71,7 @@ export const TUR_YONERGELERI = {
   't11': 'Cümleyi içinden okuyup sonuna gelen işareti bul.',
   't12': 'Doğru yazılmış cümleyi bul. Harflerin büyüklüğüne dikkat.',
   't12-ozel': 'Doğru yazılmış cümleyi bul. Cümle başına ve özel adlara dikkat.',
+  't13': 'Yukarıdaki metni içinden okuyup alttaki soruya doğru cevabı bul.',
   't09-sira': 'Yukarıdaki harfi parçalarla oluştur. Parçaları yazılış sırasıyla seç.',
   't16': 'Yanlış yazılmış sözcüğü bul.',
   't17': 'Resmin adını söyle. Her hecede bir kez alkışla. Kaç hece var?',

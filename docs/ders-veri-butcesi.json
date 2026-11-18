@@ -1,5 +1,5 @@
 {
-  "karar": "ADR-0016 (Okuma Yazma planı K-2, KG-133); ek parçalar KG-156 (Adım 74, kullanıcı teyidi bekliyor)",
+  "karar": "ADR-0016 (Okuma Yazma planı K-2, KG-133); ek parçalar KG-156 (Adım 74, kullanıcı teyidi bekliyor); Adım 80: turMetin, MetinOkuma ve iki ek parçanın ortak paylaştığı küçük modüller (metinHavuzu, ortakCumle) aynı ek parça kuralıyla",
   "zorunlu": false,
   "dersler": {
     "tur": {
@@ -9,7 +9,11 @@
       "ekParcaBayt": 40960,
       "ekParcalar": [
         "turCumle",
-        "KoroOkuma"
+        "KoroOkuma",
+        "turMetin",
+        "MetinOkuma",
+        "metinHavuzu",
+        "ortakCumle"
       ]
     }
   }

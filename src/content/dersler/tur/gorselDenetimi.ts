@@ -159,3 +159,48 @@ export function cumleGorselBaglariniDenetle(
   }
   return sonuc;
 }
+
+/**
+ * Okuma metinlerinin görsel cevapları (Adım 80, D-25/D-27): `cevap` bir görsel kimliğidir; görsel var, sözcüğünün bütün
+ * harfleri metinde öğretilmiş ve sözcük belirtilen cümlede geçer (görsel yalnız seçenek alanında, metinde değil — rebus
+ * yok, D-07). Soru cümlesi görselin sözcüğünü söylemez (cevabı ele vermez).
+ */
+export function metinGorselBaglariniDenetle(
+  metinler: readonly {
+    readonly id: string;
+    readonly cumleler: readonly string[];
+    readonly sorular: readonly {
+      readonly id: string;
+      readonly soru: string;
+      readonly cevapTuru: string;
+      readonly cevap: string;
+      readonly cumleNo: number;
+    }[];
+  }[],
+  dizinler: readonly TurGorselDizini[],
+): GorselIhlali[] {
+  const gorseller = new Map(dizinler.flatMap((d) => d.gorseller.map((g) => [g.id, g] as const)));
+  const sonuc: GorselIhlali[] = [];
+  const sozcukleri = (metin: string) =>
+    metin
+      .toLocaleLowerCase('tr-TR')
+      .split(/[ ,.?!]+/)
+      .filter(Boolean)
+      .map((w) => w.split("'")[0]);
+  for (const m of metinler) {
+    for (const q of m.sorular) {
+      if (q.cevapTuru !== 'gorsel') continue;
+      const g = gorseller.get(q.cevap);
+      if (!g) {
+        sonuc.push({ kural: 'D-25', oge: q.id, mesaj: `görsel yok: ${q.cevap}` });
+        continue;
+      }
+      const cumle = m.cumleler[q.cumleNo - 1] ?? '';
+      if (!sozcukleri(cumle).some((w) => w.startsWith(g.sozcuk)))
+        sonuc.push({ kural: 'D-25', oge: q.id, mesaj: `${q.cevap} "${g.sozcuk}" görseli, ${q.cumleNo}. cümlede bu sözcük yok` });
+      if (sozcukleri(q.soru).some((w) => w.startsWith(g.sozcuk)))
+        sonuc.push({ kural: 'D-25', oge: q.id, mesaj: `soru cümlesi "${g.sozcuk}" sözcüğünü söylüyor (cevap ele verilir)` });
+    }
+  }
+  return sonuc;
+}

@@ -2,7 +2,7 @@
 
 Bu belge, Türkçe ders paketinin üreteceği HİÇBİR içeriğin aşamayacağı sınırları kaydeder. Matematikteki
 [`mufredat-kisitlari.md`](mufredat-kisitlari.md) disipliniyle aynıdır: her madde resmî programdan alıntılanır ve
-mümkün olan her madde CI'da otomatik denetlenir (Okuma Yazma planı Adım 62, doğrulayıcı kuralları D-01…D-24).
+mümkün olan her madde CI'da otomatik denetlenir (Okuma Yazma planı Adım 62, doğrulayıcı kuralları D-01…D-27).
 
 - **Kaynak:** MEB Türkiye Yüzyılı Maarif Modeli, İlkokul Türkçe Dersi Öğretim Programı (2026 baskısı),
   https://tymm.meb.gov.tr/assets/pdf/ilkokul-turkce-dersi_20260902_111433_940.pdf
@@ -63,6 +63,20 @@ geçersizdir.
 | K-OY-19 | Sol el zorlanmaz; sol el ayarı arayüzü aynalar, harf ve hamle yönünü **aynalamaz** | "Sol elini kullanan öğrenci sağ ele zorlanmaz" | D-19 |
 | K-OY-20 | Yeni sese geçişi öğretmen yönetir; takvim yalnız öneridir (öğretilen harf kümesi öğretmenin seçimi) | Esaslar; Şekil 1 süreleri | Öğretilen küme modeli |
 
+### 3.1 Okuma öğrenme çıktısı kodları (Ek 1, program PDF s. 203; Adım 80 doğrulaması)
+
+Kaynak: aynı PDF, "OKUMA" başlığı, Ek 1 çıktı tablosu. Alıntılar birebirdir:
+
+| Kod | Alıntı | Kullanan |
+|---|---|---|
+| T.O.1.1.b | "Sözcükleri doğru okur." | T-08 |
+| T.O.1.1.c | "Basit ve kısa cümleleri doğru okur." | T-10, koro okuma (M-3), "Metni oku" (E2), T-13 (okuma tarafı) |
+| T.O.1.1.h | "Noktalama işaretlerine dikkat ederek okur." | T-11 |
+| T.O.1.2 | "Okudukları ile ilgili anlam oluşturabilme" (alt bileşenler: a ön bilgi, b ön bilgiyle bağlantı, c başlık/görselden tahmin, ç yönerge uygulama) | T-13 (anlama) |
+| T.O.1.3.a | "Okuduğu metnin konusunu bulur." | — |
+
+**Doğrulanmadı:** "metinde geçen nesne/kişiyi bulma" için birebir bir alt bileşen programda yoktur; T-13 çıktı düzeyinde T.O.1.2'ye eşlenir, alt bileşen kodu yazılmaz (uydurma yok). Öğretmen/E6 araştırması bu eşlemeyi teyit etmelidir.
+
 ## 4. Plan kararlarıyla eklenen kurallar (programın doğal sonucu)
 
 | Kod | Kural | Gerekçe |
@@ -106,6 +120,7 @@ Kod karşılığı Adım 62'de; "Otomatik" sütunu ✓ olanlar `npm run validate
 | D-24 | Tahtada üst %35'te etkileşim yok | — | Mevcut e2e | Hata |
 | D-25 | Sözcük görselleri (Adım 68): her resimli sözcüğün tek görseli var; görsel yalnız sözcüğün bütün harfleri öğretilmiş grupta (öğretilmemiş harfli sözcüğe görsel yok); kimlik tek; SVG kendi çizimimiz — `<mask>`, metin, raster/dış kaynak, gradyan yok, renkler paletten, ≤ 6 KB, koyu kontur (gri baskı); içerikteki `gorselId` aynı sözcüğün görseli; teyit bekleyen görsel yayında hata | 02, 08, 09 | ✓ (`gorselDenetimi.ts`) | Hata (teyit: geliştirmede uyarı) |
 | D-26 | Cümle havuzu (Adım 74, `ders-verisi/tur/icerik/cumleler.json`): `grup`, `harfler`, `tur`, `noktalama` etiketleri hesaplananla aynı; giriş harfi hesaplanan giriş noktası (ünlem cümlesinde en erken `p`, 5. grup); 2–5 sözcük; özel adlar cümlede; `gorselId` var ve sözcüğü cümlede (D-07, D-25); öğe teyidi `bekliyor` geliştirmede uyarı, `--yayin` hata (KG-155: havuz öğretmen onayı beklenmeden kuruldu) | 02, 08, 10–13 | ✓ | Hata |
+| D-27 | Okuma metinleri (Adım 80, `ders-verisi/tur/icerik/metinler.json`): metin 2–5 cümle, her cümle 2–5 sözcük; cümle ve soru cümleleri cümle havuzuyla AYNI kurallardan geçer (D-02, D-07…D-10: karakter, öğretilmiş harf, 2. gruptan itibaren, büyük harf, noktalama); `girisHarfi` cümleler, sorular ve yanlış seçeneklerin hesaplanan giriş noktası (ünlemde en erken `p`), `grup` ve `harfler` hesaplananla aynı; `ozelAdlar` metinde; 1–2 soru, soru işaretiyle biter ve cevabı söylemez; cevap belirtilen cümlede geçer; görsel cevap görseli D-25'e uyar; sözcük cevabında en az 3 yanlış seçenek öğretilmiş harflerden, metinde geçmeyen ve cevapla aynı büyük/küçük biçimde (cevabı biçimden ele vermez); öğe teyidi `bekliyor` geliştirmede uyarı (D-14), `--yayin` hata | 02, 08, 10–14 | ✓ | Hata |
 
 ## 6. Hece kuralı (hece ayırıcı)
 

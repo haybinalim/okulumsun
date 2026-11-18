@@ -16,6 +16,7 @@ import { TUR_SABLONLARI } from './sablonlar';
 import {
   TurUretimHatasi,
   type TurHavuzCumlesi,
+  type TurHavuzMetni,
   type TurHavuzSozcugu,
   type TurSablonKodu,
   type TurZorluk,
@@ -34,7 +35,7 @@ export const DUZEY_ADI: Readonly<Record<SetDuzeyi, string>> = {
 export const DUZEY_ACIKLAMASI: Readonly<Record<SetDuzeyi, string>> = {
   destek: 'Aynı harfler, az seçenek, çok tekrar; sesin yeri, harf avı, hece sayma.',
   sinif: 'Günün dersinin tekrarı: resim, eşleştirme, hece, eksik harf, okuma.',
-  zengin: 'Daha uzun hece ve sözcük, hatalı sözcük, harfi parçalardan kurma, dikte.',
+  zengin: 'Daha uzun hece ve sözcük, hatalı sözcük, metin okuyup soru cevaplama, harfi parçalardan kurma, dikte.',
 };
 
 export interface SetAdimi {
@@ -85,7 +86,8 @@ export const SET_TARIFLERI: Readonly<Record<SetDuzeyi, readonly TarifAdimi[]>> =
     { sablon: 'T-04', zorluk: 5 },
     { sablon: 'T-12', zorluk: 4, yedek: { sablon: 'T-05', zorluk: 4 } },
     { sablon: 'T-16', zorluk: 4 },
-    { sablon: 'T-11', zorluk: 4, yedek: { sablon: 'T-08', zorluk: 4 } },
+    // Adım 80: okuduğunu anlama (metin 1. grupta kurulamaz → sözcük okuma); noktalama T-11 günün akışında ve katalogda kalır.
+    { sablon: 'T-13', zorluk: 4, yedek: { sablon: 'T-08', zorluk: 4 } },
     { sablon: 'T-09', zorluk: 4 },
     { sablon: 'T-07', zorluk: 5 },
   ],
@@ -100,6 +102,17 @@ export interface TurSeti {
 
 const DENEME = 4;
 
+/**
+ * Set verisi yüklenemedi (ör. metin havuzu `undefined`): set sessizce yedek adıma DÜŞMEZ, görünür hata olur. Yedek adım
+ * yalnız bilinçli durumda kullanılır: veri yüklü ama bu kümeyle kurulamıyor (ör. 1. grupta metin yok, D-08).
+ */
+export class TurSetiVeriHatasi extends Error {
+  constructor(mesaj: string) {
+    super(mesaj);
+    this.name = 'TurSetiVeriHatasi';
+  }
+}
+
 export function turSetiKur(girdi: {
   readonly havuz: readonly TurHavuzSozcugu[];
   readonly kume: ReadonlySet<string>;
@@ -109,6 +122,8 @@ export function turSetiKur(girdi: {
   readonly hamleler?: readonly TurHamleGlifi[];
   /** Cümle havuzu (T-10, T-11, T-12; cümle parçası yüklü olmalı); yoksa cümle adımı yedeğiyle kurulur. */
   readonly cumleler?: readonly TurHavuzCumlesi[];
+  /** Okuma metinleri (T-13; metin parçası yüklü olmalı). `undefined` = yüklenemedi → `TurSetiVeriHatasi`; `[]` = yüklü ama boş. */
+  readonly metinler?: readonly TurHavuzMetni[];
 }): TurSeti {
   const adimlar: SetAdimi[] = [];
   const atlanan: Omit<SetAdimi, 'tohum'>[] = [];
@@ -122,6 +137,7 @@ export function turSetiKur(girdi: {
 
   /** Adımı kurar (aynı hedef tekrarı olmadan); kurulamazsa `false`. */
   function adimiKur(t: Omit<SetAdimi, 'tohum'>, i: number): boolean {
+    if (t.sablon === 'T-13' && girdi.metinler === undefined) throw new TurSetiVeriHatasi('Metin verisi yüklenemedi: T-13 kurulamaz.');
     let yedek: number | null = null;
     for (let d = 0; d < DENEME; d++) {
       const tohum = girdi.tohum * 10 + i + d * 100;
@@ -133,6 +149,7 @@ export function turSetiKur(girdi: {
           tohum,
           hamleler: girdi.hamleler,
           cumleler: girdi.cumleler,
+          metinler: girdi.metinler,
         });
         // Aynı şablonda aynı hedef setde ikinci kez gelmesin (çeşitlilik); yoksa ilk kurulan tohum kalır.
         const anahtar = `${t.sablon}|${soru.hedefMetin}`;

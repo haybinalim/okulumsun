@@ -85,6 +85,37 @@ export const CumleSema = z.strictObject({
   teyit: z.enum(['bekliyor', 'tamam']).optional(),
 });
 
+/**
+ * Seviyeli okuma metni (Adım 80, E1; `ders-verisi/tur/icerik/metinler.json`): 2–5 kısa cümle, yalnız o ana dek
+ * öğretilmiş harflerle. Cümle kuralları (D-02, D-08…D-10) cümle havuzuyla AYNI kod yoluyla denetlenir; metin düzeyi
+ * etiketler ve anlama soruları D-27. `girisHarfi` bütün cümlelerin ve soruların öğretilmiş olduğu ilk harftir.
+ */
+export const MetinSorusuSema = z.strictObject({
+  id: Kimlik,
+  /** Yazılı soru cümlesi ("Annem ne alır?"): cevabı söylemez; sonu soru işareti. */
+  soru: z.string().min(1),
+  /** `gorsel`: cevap bir görsel kimliğidir (resimli seçenekler); `sozcuk`: cevap metindeki sözcüktür (sözcük kartları). */
+  cevapTuru: z.enum(['gorsel', 'sozcuk']),
+  cevap: z.string().min(1),
+  /** Cevabın geçtiği cümle (1'den başlar); doğru cevaptan sonra vurgulanır ve okunur. */
+  cumleNo: z.number().int().min(1).max(5),
+  /** Yalnız `sozcuk`: yanlış seçenekler (metinde geçmez, öğretilmiş harflerden; cevapla aynı büyük/küçük biçimde). */
+  celdiriciler: z.array(z.string().min(1)).default([]),
+});
+
+export const MetinSema = z.strictObject({
+  id: Kimlik,
+  cumleler: z.array(z.string().min(1)).min(2).max(5),
+  girisHarfi: GirisHarfi,
+  grup: z.number().int().min(1).max(5),
+  /** Metnin (sorular hariç) küçük harfleri öğretim sırasıyla. */
+  harfler: z.string(),
+  ozelAdlar: z.array(z.string()).default([]),
+  sorular: z.array(MetinSorusuSema).min(1).max(2),
+  klip: KlipSema.optional(),
+  teyit: z.enum(['bekliyor', 'tamam']).optional(),
+});
+
 export const SABLON_KODLARI = [
   'T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07', 'T-08',
   'T-09', 'T-10', 'T-11', 'T-12', 'T-13', 'T-14', 'T-15', 'T-16',
@@ -126,6 +157,7 @@ export const TurIcerikDosyasiSema = z.strictObject({
   heceler: z.array(HeceSema).default([]),
   sozcukler: z.array(SozcukSema).default([]),
   cumleler: z.array(CumleSema).default([]),
+  metinler: z.array(MetinSema).default([]),
   etkinlikler: z.array(EtkinlikSema).default([]),
 });
 
@@ -133,6 +165,7 @@ export type TurHarf = z.infer<typeof HarfSema>;
 export type TurHece = z.infer<typeof HeceSema>;
 export type TurSozcuk = z.infer<typeof SozcukSema>;
 export type TurCumle = z.infer<typeof CumleSema>;
+export type TurMetin = z.infer<typeof MetinSema>;
 export type TurEtkinlik = z.infer<typeof EtkinlikSema>;
 export type TurIcerikDosyasi = z.infer<typeof TurIcerikDosyasiSema>;
 

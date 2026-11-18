@@ -14,14 +14,17 @@ export type AkisBasamakKodu = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8';
  * cümle, noktalama ve büyük harf eklendi — cümleler 2. gruptan, 1. grupta öğretmene "kurulamıyor" açıklanır).
  */
 export type AkisSablonu =
-  | 'T-01' | 'T-04' | 'T-05' | 'T-07' | 'T-09' | 'T-10' | 'T-11' | 'T-12' | 'T-16' | 'T-17' | 'T-18' | 'T-19' | 'T-20'; // prettier-ignore
+  | 'T-01' | 'T-04' | 'T-05' | 'T-07' | 'T-09' | 'T-10' | 'T-11' | 'T-12' | 'T-13' | 'T-16' | 'T-17' | 'T-18' | 'T-19' | 'T-20'; // prettier-ignore
 
 /** Basamağın açtığı ekran türü (ekran durumu kullanıcı arayüzünde kurulur; burada yalnız tür). */
 export type AkisHedefi =
   | { readonly tur: 'dalgaC' }
   | { readonly tur: 'ogretmen' }
-  /** `koro`: aynı basamakta koro / yankılayıcı okuma (M-3, Adım 74) da açılır. */
-  | { readonly tur: 'etkinlik'; readonly sablonlar: readonly AkisSablonu[]; readonly koro?: true }
+  /**
+   * `koro`: aynı basamakta koro / yankılayıcı okuma (M-3, Adım 74) da açılır; `metin`: "Metni oku" model okuma
+   * (E2, Adım 80) da açılır.
+   */
+  | { readonly tur: 'etkinlik'; readonly sablonlar: readonly AkisSablonu[]; readonly koro?: true; readonly metin?: true }
   /** Yazılış gösterimi; `ekSablonlar` aynı basamakta açılabilen etkinlikler (Adım 79: harfi parçalardan kur, harf avı). */
   | { readonly tur: 'yazilis'; readonly ekSablonlar?: readonly AkisSablonu[] }
   | { readonly tur: 'kagit'; readonly kagitlar: readonly ('harf' | 'dikte' | 'gozlem')[] };
@@ -52,14 +55,14 @@ export const AKIS_BASAMAKLARI: readonly AkisBasamagi[] = [
   {
     kod: '6',
     ad: 'Hece ve sözcük',
-    aciklama: 'T-04 hece kur, T-05 heceleri birleştir, T-17 hece say; 2. gruptan cümle T-10 ve koro okuma (M-3)',
-    hedef: { tur: 'etkinlik', sablonlar: ['T-04', 'T-05', 'T-17', 'T-10'], koro: true },
+    aciklama: 'T-04 hece kur, T-05 heceleri birleştir, T-17 hece say; 2. gruptan cümle T-10, koro okuma (M-3) ve metni oku (E2)',
+    hedef: { tur: 'etkinlik', sablonlar: ['T-04', 'T-05', 'T-17', 'T-10'], koro: true, metin: true },
   },
   {
     kod: '7',
     ad: 'Dikte',
-    aciklama: 'T-07; hatalı sözcüğü bul T-16; 2. gruptan noktalama T-11, büyük harf T-12',
-    hedef: { tur: 'etkinlik', sablonlar: ['T-07', 'T-16', 'T-11', 'T-12'] },
+    aciklama: 'T-07; hatalı sözcüğü bul T-16; 2. gruptan noktalama T-11, büyük harf T-12, metni oku soruyu cevapla T-13',
+    hedef: { tur: 'etkinlik', sablonlar: ['T-07', 'T-16', 'T-11', 'T-12', 'T-13'] },
   },
   {
     kod: '8',

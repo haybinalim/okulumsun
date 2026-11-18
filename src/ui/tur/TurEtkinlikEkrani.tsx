@@ -26,6 +26,10 @@
  * JS, KG-156). T-10 üstte yazılı cümle (tek satır, sözcük bölünmez D-22) + resim kartları; T-11 bitiş işaretsiz cümle +
  * boş yuva, kartlar . ? ! (sabit sıra; erişilebilir ad "Nokta", "Soru işareti", "Ünlem işareti"); doğru cevaptan sonra
  * cümle işaretiyle üstte.
+ *
+ * Adım 80: T-13 (Metni oku, soruyu cevapla) metin parçasını ve metin havuzunu bekler (`useMetinVerisi`, ayrı tembel JS).
+ * Üstte kısa metin (cümle başına bir satır, sözcük bölünmez) ve altında yazılı soru; kartlar resim ya da sözcük; doğru
+ * cevaptan sonra cevabın cümlesi vurgulanır ve cümle klibi istenir. Metin yüklenemezse ekran açıkça hata yazar.
  */
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react';
 import { BigButton } from '../primitives/BigButton';
@@ -48,12 +52,14 @@ import { ekranStili } from './turOrtak';
 import { TUR_VERI_KOKU } from '../../content/dersler/tur/veriYukleyici';
 import { useHamleVerisi } from './useHamleVerisi';
 import { useCumleVerisi } from './useCumleVerisi';
+import { useMetinVerisi } from './useMetinVerisi';
 import { TUR_CUMLE_SABLON_KODLARI } from '../../content/dersler/tur/sablonlar/turSoru';
 import { KALEM, SATIR, yolVerisi } from './hamleCizim';
 import type { TurKart, TurParca } from '../../content/dersler/tur/sablonlar/turSoru';
 import { unluMu } from '../../content/dersler/tur/alfabe';
 import { hecele } from '../../content/dersler/tur/heceleme';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
+import { ozetCozuldu, ozetTekrarDinlendi, ozetYanlisDenendi } from './oturumOzeti';
 import './tur.css';
 
 export function TurEtkinlikEkrani({
@@ -81,16 +87,27 @@ export function TurEtkinlikEkrani({
   const cumleGerekli = (TUR_CUMLE_SABLON_KODLARI as readonly string[]).includes(sablon);
   const cv = useCumleVerisi(cumleGerekli);
   const cumleler = cv.durum === 'hazir' ? cv.cumleler : undefined;
-  const havuz = h.durum === 'hazir' && (!hamleGerekli || hamleler) && (!cumleGerekli || cumleler) ? h.havuz : null;
+  // Metin parçası ve havuzu yalnız T-13'te (Adım 80) yüklenir.
+  const metinGerekli = sablon === 'T-13';
+  const mv = useMetinVerisi(metinGerekli);
+  const metinler = mv.durum === 'hazir' ? mv.metinler : undefined;
+  const havuz =
+    h.durum === 'hazir' && (!hamleGerekli || hamleler) && (!cumleGerekli || cumleler) && (!metinGerekli || metinler) ? h.havuz : null;
   const sonuc = useMemo((): { soru: TurSoru } | { hata: string } | null => {
     if (!havuz) return null;
     try {
-      return { soru: turSoruUret(sablon, { havuz, kume, zorluk, tohum, hamleler, cumleler }) };
+      return { soru: turSoruUret(sablon, { havuz, kume, zorluk, tohum, hamleler, cumleler, metinler }) };
     } catch (e) {
       if (e instanceof TurUretimHatasi) return { hata: e.message };
       throw e;
     }
-  }, [havuz, kume, sablon, zorluk, tohum, hamleler, cumleler]);
+  }, [havuz, kume, sablon, zorluk, tohum, hamleler, cumleler, metinler]);
+  if (mv.durum === 'hata')
+    return (
+      <main aria-label="Etkinlik" style={{ ...ekranStili, justifyContent: 'center' }}>
+        <p data-yetiskin="">{`Metin verisi açılamadı: ${mv.mesaj}`}</p>
+      </main>
+    );
   if (cv.durum === 'hata')
     return (
       <main aria-label="Etkinlik" style={{ ...ekranStili, justifyContent: 'center' }}>
@@ -131,7 +148,7 @@ export function TurEtkinlikEkrani({
             ekran: 'etkinlik',
             sablon,
             zorluk,
-            tohum: sonrakiTohum(sablon, { havuz: havuz!, kume, zorluk, tohum, hamleler, cumleler }, sonuc.soru.hedefMetin),
+            tohum: sonrakiTohum(sablon, { havuz: havuz!, kume, zorluk, tohum, hamleler, cumleler, metinler }, sonuc.soru.hedefMetin),
             ...(geri ? { geri } : {}),
           }))
       }
@@ -173,7 +190,10 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
       if (no === istek.current) setSesYok(!calindi);
     });
   };
-  const soruSesi = () => iste([soru.yonerge, ...soru.soruKlipleri], true);
+  const soruSesi = () => {
+    ozetTekrarDinlendi(); // Oturum özeti (Adım 81): "Tekrar dinle" = soru yeniden dinlendi (yalnız bellek).
+    iste([soru.yonerge, ...soru.soruKlipleri], true);
+  };
   // Açılışta bir kez (soru `useMemo` ile sabit; soru değişince bileşen `key` ile yeniden kurulur). Geliştirmede
   // StrictMode etkiyi iki kez çalıştırır: temizlik konuşmayı keser ve işareti sıfırlar, ikinci çalıştırma yönergeyi
   // yeniden ister (iptal edilen ilk istek hiç çalmaz / kancaya yazılmaz).
@@ -195,6 +215,7 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
   }, [soru]);
 
   const dogruOldu = () => {
+    ozetCozuldu();
     setDurum('dogru');
     iste(soru.geriBildirim);
   };
@@ -206,6 +227,7 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
       if (i === soru.dogru) dogruOldu();
       else {
         setYanlislar(new Set([...yanlislar, i]));
+        ozetYanlisDenendi();
         iste([geriBildirimKlibi('tekrar')]);
       }
       return;
@@ -226,6 +248,7 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
       if (!cift) {
         // Yanlış eş: iki kart kısa süre işaretlenir, sonra yeniden seçilebilir.
         setYanlislar(new Set([acik, i]));
+        ozetYanlisDenendi();
         iste([geriBildirimKlibi('tekrar')]);
         window.clearTimeout(zamanlayici.current);
         zamanlayici.current = window.setTimeout(() => setYanlislar(new Set()), 800);
@@ -255,6 +278,7 @@ function EtkinlikGovdesi({ soru, onSonraki }: { soru: TurSoru; onSonraki: () => 
       return;
     }
     setDurum('tekrar');
+    ozetYanlisDenendi();
     iste([geriBildirimKlibi('tekrar')]);
     zamanlayici.current = window.setTimeout(() => {
       setYerlesim([]);
@@ -685,6 +709,7 @@ function Uyaran({
       {u.tur === 'yazi' && (
         <Metin metin={u.metin} yukseklik={satir} stil={!yuvaVar ? vurgu : undefined} veri="model" />
       )}
+      {u.tur === 'metin' && <MetinUyaran cumleler={u.cumleler} soru={u.soru} vurgulu={dogru ? soru.hedefMetin : null} vurgu={vurgu} />}
       {u.tur === 'yok' && dogru && <Metin metin={soru.hedefMetin} yukseklik={60} stil={vurgu} veri="dogru-yazilis" />}
       {u.tur === 'noktalama' &&
         (dogru ? (
@@ -801,6 +826,51 @@ function Uyaran({
         </div>
       )}
     </>
+  );
+}
+
+/**
+ * T-13 üst alanı: metin (cümle başına bir satır, sözcük bölünmez D-22) ve altında yazılı soru. Yazı boyu satır sayısına ve
+ * en uzun satıra göre ölçülür (üst %35'e sığar, dokunulabilir öğe yok D-24). Doğru cevaptan sonra cevabın cümlesi
+ * açık zemin + koyu çerçeveyle vurgulanır (renk tek ipucu değil).
+ */
+function MetinUyaran({
+  cumleler,
+  soru,
+  vurgulu,
+  vurgu,
+}: {
+  cumleler: readonly string[];
+  soru: string;
+  vurgulu: string | null;
+  vurgu: CSSProperties;
+}) {
+  const satirlar = [...cumleler, soru];
+  const enUzun = Math.max(...satirlar.map((x) => [...x].length));
+  const yazi = `min(${(90 / (satirlar.length + 0.6) / 1.3).toFixed(2)}cqh, calc(100cqw / ${(enUzun * 0.72).toFixed(2)}))`;
+  return (
+    <div
+      data-uyaran-metin={cumleler.length}
+      style={{ width: '100%', height: '94cqh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', fontSize: yazi, lineHeight: 1.3 }}
+    >
+      {cumleler.map((c, i) => (
+        <div
+          key={i}
+          data-uyaran-metni="model"
+          data-metin-satir={i}
+          data-vurgulu={c === vurgulu || undefined}
+          style={{ whiteSpace: 'nowrap', padding: '0 0.3em', borderRadius: 'calc(12px * var(--scale))', ...(c === vurgulu ? vurgu : {}) }}
+        >
+          {c}
+        </div>
+      ))}
+      <div
+        data-uyaran-metni="soru"
+        style={{ whiteSpace: 'nowrap', marginTop: '0.3em', padding: '0.1em 0.4em 0', borderTop: 'calc(3px * var(--scale)) dashed var(--color-ink-soft)' }}
+      >
+        {soru}
+      </div>
+    </div>
   );
 }
 

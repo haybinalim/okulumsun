@@ -78,6 +78,8 @@ describe('görsel verisi', () => {
     boyutlar.set('ses/klipler.json', 1);
     // Adım 74: cümle havuzu çekirdekte.
     boyutlar.set('icerik/cumleler.json', 1);
+    // Adım 80: okuma metinleri çekirdekte.
+    boyutlar.set('icerik/metinler.json', 1);
     // Adım 71: veli kartı çekirdekte.
     boyutlar.set('veli-karti.json', 1);
     const o = veriyiOlc(boyutlar, manifest);
