@@ -76,9 +76,11 @@ test('bugünkü ses tek dokunuş; K-7 sınıf ayarı yeniden açılışta korunu
   await turGiris(page, cihaz);
   const ses = page.locator('[data-bugunku-ses]');
   await expect(ses).toHaveAttribute('data-bugunku-ses', 'l');
+  await expect(ses.locator('[data-meb-kitap]')).toHaveText("MEB kitabı: Kitap 1, s. 134 · Tema 2 Mustafa Kemal'den Atatürk'e");
   expect((await anahtarlar(page)).sinif, 'açılışta yazım yok').toBeNull();
   await page.getByRole('button', { name: 'Sonraki ses: o' }).click();
   await expect(ses).toHaveAttribute('data-bugunku-ses', 'o');
+  await expect(ses.locator('[data-meb-kitap]')).toContainText('Kitap 1, s. 152');
   const a = await anahtarlar(page);
   expect(a.oturum).toEqual([]);
   for (const k of a.yerel) expect(IZINLI.has(k), `izinli anahtar: ${k}`).toBe(true);
@@ -173,6 +175,7 @@ test('haftalık ses planı: bu hafta işaretli, "Bu haftayı uygula" bugünkü s
     await expect(bu).toHaveCount(1);
     await expect(bu).toHaveAttribute('data-hafta', hafta.pazartesi);
     await expect(bu).toBeInViewport();
+    await expect(bu.locator('[data-meb-kitap]')).toContainText('MEB kitabı: Kitap');
     await geometriTemiz(page, `${g.ad} haftalık ses planı`);
     // Öneri yalnız tek dokunuşla uygulanır; başka bir şey değişmez.
     const uygula = page.getByRole('button', { name: `Bu haftayı uygula: ${oneri}` });

@@ -26,6 +26,7 @@ import type { TurKagitIstegi } from './kagit/turKagidi';
 import { turKumeYaz, useTurKume } from './turKume';
 import { sinifAyariGuncelle, sinifAyariOku } from './sinifAyariDepo';
 import { Baslik, ekranStili } from './turOrtak';
+import { mebKitapMetni } from '../../content/dersler/tur/mebKitap';
 import { bugunkuSes, sikDugme } from './ogretmenOrtak';
 
 /** Harf düğmesi (öğretilen harfler): bir grubun 12 glifi 1080 px tahtada tek satıra sığar. */
@@ -103,6 +104,7 @@ export function AnaEkranDersSecimi() {
 export function BugunkuSes() {
   const kume = useTurKume();
   const ses = bugunkuSes(kume);
+  const kitap = mebKitapMetni(ses);
   const i = OGRETIM_SIRASI.indexOf(ses as (typeof OGRETIM_SIRASI)[number]);
   const sec = (j: number) => turKumeYaz(resmiKume(OGRETIM_SIRASI[j], false));
   const onceki = i > 0 ? OGRETIM_SIRASI[i - 1] : null;
@@ -128,6 +130,11 @@ export function BugunkuSes() {
         <strong data-glif={ses} style={{ fontSize: 'calc(var(--text-adult) * 1.6)' }}>
           {ses}
         </strong>
+        {kitap && (
+          <small data-meb-kitap="" style={{ display: 'block', fontSize: '0.7em', fontWeight: 400 }}>
+            {kitap}
+          </small>
+        )}
       </p>
       <BigButton
         label={sonraki ? `Sonraki ses: ${sonraki}` : 'Sonraki ses yok'}
