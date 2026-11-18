@@ -1,11 +1,11 @@
 {
-  "karar": "ADR-0016 (Okuma Yazma planı K-2, KG-133); ek parçalar KG-156 (Adım 74, kullanıcı teyidi bekliyor); Adım 80: turMetin, MetinOkuma ve iki ek parçanın ortak paylaştığı küçük modüller (metinHavuzu, ortakCumle) aynı ek parça kuralıyla",
+  "karar": "ADR-0016 (Okuma Yazma planı K-2, KG-133); ek parçalar KG-156 (Adım 74, kullanıcı teyidi bekliyor); KG-157 (kullanıcı kararı 2026-11-19): Türkçe temel JS tavanı 120 → 140 KB; Adım 80: turMetin, MetinOkuma ve iki ek parçanın ortak paylaştığı küçük modüller (metinHavuzu, ortakCumle) aynı ek parça kuralıyla",
   "zorunlu": false,
   "dersler": {
     "tur": {
       "cekirdekBayt": 1048576,
       "grupBayt": 6291456,
-      "kodBayt": 122880,
+      "kodBayt": 143360,
       "ekParcaBayt": 40960,
       "ekParcalar": [
         "turCumle",

@@ -311,18 +311,20 @@ describe('E3 T-13 Metni oku, soruyu cevapla', () => {
 });
 
 describe('klip manifesti ve set/akış bağları (karşı parça)', () => {
-  it('her metin cümlesinin klibi manifestte; klipler.json commitli ve durumu "eksik" (ses üretilmedi)', () => {
+  it('her metin cümlesinin klibi manifestte ve "var" (ya da kulakla reddedilenler listesinde)', () => {
     const json = oku('ders-verisi/tur/ses/klipler.json') as { klipler: { anahtar: string; metin: string; durum: string }[] };
+    const reddedilen = oku('ders-verisi/tur/ses/reddedilen.json') as Record<string, unknown>;
     const harita = new Map(json.klipler.map((k) => [k.anahtar, k]));
     for (const m of metinler)
       m.cumleler.forEach((c, i) => {
         const k = harita.get(metinCumleKlibi(m.id, i + 1));
         expect(k, `${m.id} cümle ${i + 1}`).toBeDefined();
         expect(k!.metin).toBe(c);
-        expect(k!.durum).toBe('eksik');
+        if (!(k!.anahtar in reddedilen)) expect(k!.durum, `${k!.anahtar} sesi üretilmemiş`).toBe('var');
       });
     expect(metinCumleKlibi('m2.01', 1)).toBe('tur.cumle.m201s1');
     expect(harita.get('tur.yonerge.t13')?.metin).toBe(TUR_YONERGELERI.t13);
+    if (!('tur.yonerge.t13' in reddedilen)) expect(harita.get('tur.yonerge.t13')?.durum).toBe('var');
   });
 
   it('set hazırla: zenginleştirme tarifinde T-13; 1. grupta yedek T-08; metin verisi yüklenemezse hata (sessiz yedek yok); yine 8 adım', async () => {
