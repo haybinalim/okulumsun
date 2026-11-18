@@ -6,6 +6,7 @@ import {
   BIRIM_MM,
   CIZGI_MM,
   DIZGE_MM,
+  EVE_KAREKOD_MM,
   ICERIK,
   KALEM_MM,
   KALIBRASYON_MM,
@@ -14,6 +15,7 @@ import {
   type KagitSatiri,
   type TurKagitSayfasi as Sayfa,
 } from './turKagidi';
+import type { EveKarekodu } from './eveKarekodu';
 import './turKagit.css';
 
 /**
@@ -29,8 +31,11 @@ export function TurKagitSayfasi({
   sayfa,
   glif,
   glifler,
+  eve,
 }: {
   readonly sayfa: Sayfa;
+  /** Aynı setin eve bağlantısı (Adım 81); yoksa alt bilgi eskisi gibi. `hata` ise görünür uyarı. */
+  readonly eve?: EveKarekodu;
   readonly glif?: TurHamleGlifi;
   /** Destek kâğıdı: satırın `glifSirasi` buradan seçer. */
   readonly glifler?: readonly TurHamleGlifi[];
@@ -53,7 +58,7 @@ export function TurKagitSayfasi({
         <Satir key={k} satir={s} glif={s.glifSirasi !== undefined ? glifler?.[s.glifSirasi] : glif} />
       ))}
       {sayfa.gozlem.length > 0 && <GozlemTablosu sayfa={sayfa} />}
-      <AltBilgi kod={sayfa.kod} />
+      <AltBilgi kod={sayfa.kod} eve={eve} />
     </svg>
   );
 }
@@ -326,9 +331,10 @@ function GozlemTablosu({ sayfa }: { readonly sayfa: Sayfa }) {
   return <g data-gozlem-tablosu="">{parcalar}</g>;
 }
 
-/** Alt bilgi: 10 × 10 mm kalibrasyon karesi + not + kâğıt kodu. */
-function AltBilgi({ kod }: { readonly kod: string }) {
+/** Alt bilgi: 10 × 10 mm kalibrasyon karesi + not + kâğıt kodu (+ eve karekodu ve kısa bağlantı, Adım 81). */
+function AltBilgi({ kod, eve }: { readonly kod: string; readonly eve?: EveKarekodu }) {
   const y = A4.boy - A4.kenar - ALT_BANT_MM + 2;
+  const kx = A4.en - A4.kenar - EVE_KAREKOD_MM;
   return (
     <g data-alt-bilgi="">
       <rect
@@ -347,9 +353,51 @@ function AltBilgi({ kod }: { readonly kod: string }) {
       <text x={ICERIK.x + KALIBRASYON_MM + 3} y={y + 8.6} fontSize={2.8} fill={MUREKKEP}>
         Okulumsun, MEB TYMM 2026 Türkçe 1. sınıf. Ücretsiz, çoğaltılabilir.
       </text>
-      <text x={ICERIK.x + ICERIK.en} y={y + 4.2} fontSize={2.8} fill={MUREKKEP} textAnchor="end" data-kagit-kodu="">
+      <text
+        x={eve ? kx - 2 : ICERIK.x + ICERIK.en}
+        y={y + 4.2}
+        fontSize={2.8}
+        fill={MUREKKEP}
+        textAnchor="end"
+        data-kagit-kodu=""
+      >
         {kod}
       </text>
+      {eve?.durum === 'hazir' && (
+        <g data-eve-karekod="hazir" data-eve-baglanti={eve.baglanti}>
+          <svg
+            x={kx}
+            y={y - 1.4}
+            width={EVE_KAREKOD_MM}
+            height={EVE_KAREKOD_MM}
+            viewBox={`0 0 ${eve.boyut} ${eve.boyut}`}
+            shapeRendering="crispEdges"
+            role="img"
+            aria-label="Evde açmak için karekod"
+          >
+            <rect width={eve.boyut} height={eve.boyut} fill="#fff" />
+            <path d={eve.yol} fill="#000" />
+          </svg>
+          <text x={ICERIK.x + KALIBRASYON_MM + 3} y={y + 12.6} fontSize={2.8} fill={MUREKKEP}>
+            Evde aç: karekodu telefonla okutun ya da bağlantıyı yazın.
+          </text>
+          <text x={ICERIK.x + KALIBRASYON_MM + 3} y={y + 16.2} fontSize={2.6} fill={MUREKKEP} data-eve-kisa="">
+            {eve.kisa}
+          </text>
+        </g>
+      )}
+      {eve?.durum === 'hata' && (
+        <text
+          x={ICERIK.x + KALIBRASYON_MM + 3}
+          y={y + 12.6}
+          fontSize={2.8}
+          fontWeight={700}
+          fill={MUREKKEP}
+          data-eve-karekod="hata"
+        >
+          Karekod üretilemedi: eve bağlantısı bu kâğıtta yok.
+        </text>
+      )}
     </g>
   );
 }

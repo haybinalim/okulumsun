@@ -31,6 +31,12 @@ export const ALT_BANT_MM = 14;
 /** Kalem: örnek glif, izleme kesiği, birleştirme noktası (mm). */
 export const KALEM_MM = { ornek: 0.8, izle: 0.45, nokta: 0.75, noktaAraligi: 2.2, izleKesik: [1.1, 0.9] } as const;
 
+/**
+ * Eve karekodu (Adım 81): alt bilginin sağında 20 × 20 mm (sessiz bölge dahil, modül ≈ 0,5 mm). İçerik alanının altına
+ * ve sağ kenara oturur; içerik alanı, kalibrasyon karesi ve satır düzeni değişmez.
+ */
+export const EVE_KAREKOD_MM = 20;
+
 export const ICERIK = {
   x: A4.kenar,
   y: A4.kenar + UST_BANT_MM,
