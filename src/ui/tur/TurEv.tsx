@@ -12,6 +12,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import './veliKarti.css';
 import { kumeCoz } from '../../content/dersler/tur/ogretilenKume';
+import { MEB_KITAPLARI } from '../../content/dersler/tur/mebKitap';
 import { PROGRAM_ADRESI, turEveLink } from './turEveLink';
 import { PROGRAM_SURUMU } from '../../content/dersler/tur/alfabe';
 import { setKoduCoz, DUZEY_ADI, type SetDuzeyi } from '../../content/dersler/tur/turSet';
@@ -251,6 +252,18 @@ export function TurKaynaklar() {
           <p style={{ margin: '0.2em 0 0', wordBreak: 'break-all' }} data-program-adresi="">
             {PROGRAM_ADRESI}
           </p>
+        </section>
+        <section aria-label="MEB ders kitapları" data-kaynak="meb-kitap">
+          <h2 style={{ fontSize: '1.1em', margin: '0.6em 0 0.2em' }}>MEB ders kitapları</h2>
+          <p style={{ margin: 0 }}>
+            Öğretmen ekranlarındaki "MEB kitabı" satırları (kitap, sayfa, tema) MEB Türkiye Yüzyılı Maarif Modeli ilk okuma yazma
+            kitaplarına işaret eder; kitap metni ve görseli uygulamada yoktur. Sayfa ve tema eşleşmesi öğretmen teyidi bekliyor.
+          </p>
+          {([1, 2] as const).map((n) => (
+            <p key={n} style={{ margin: '0.2em 0 0', wordBreak: 'break-all' }} data-meb-kitap-adresi={n}>
+              {MEB_KITAPLARI[n].ad}: {MEB_KITAPLARI[n].adres}
+            </p>
+          ))}
         </section>
         <section aria-label="Yazı tipi" data-kaynak="temelyazi">
           <h2 style={{ fontSize: '1.1em', margin: '0.6em 0 0.2em' }}>Yazı tipi</h2>

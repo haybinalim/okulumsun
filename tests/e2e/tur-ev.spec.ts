@@ -110,6 +110,8 @@ test('Kaynaklar: program sürümü ve adresi, TemelYazi, özgün içerik, ses ka
     await expect(k.locator('[data-kaynak="temelyazi"]')).toContainText('TemelYazi');
     await expect(k.locator('[data-kaynak="ozgun"]')).toContainText('özgün');
     await expect(k.locator('[data-kaynak="ses"]')).toContainText('henüz üretilmedi');
+    await expect(k.locator('[data-meb-kitap-adresi="1"]')).toContainText('https://tymm.meb.gov.tr/kitap/31');
+    await expect(k.locator('[data-meb-kitap-adresi="2"]')).toContainText('https://tymm.meb.gov.tr/kitap/32');
     await geometriTemiz(page, `${g.ad} Kaynaklar`);
     await page.getByRole('button', { name: 'Geri' }).click();
     await expect(page.getByRole('main', { name: 'Okuma Yazma' })).toBeVisible();

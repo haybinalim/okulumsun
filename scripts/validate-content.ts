@@ -52,6 +52,7 @@ import { retListesiniOku, telaffuzListesiniOku } from './ses/turKlipleri';
 import { klipManifestiBeklenen, KLIP_MANIFESTI_YOLU, type TurKlipManifesti } from './tur/klip-manifesti';
 import { klipMetniGecerliMi } from '../src/content/dersler/tur/sablonlar/klipler';
 import { veliKartiAyristir } from '../src/content/dersler/tur/veliKarti';
+import { MEB_KITAP_ESLEMESI, MEB_KITAP_TEYIDI, mebKitapDogrula } from '../src/content/dersler/tur/mebKitap';
 import {
   gorselDizinleriniDenetle,
   gorselTeyitBekleyenler,
@@ -415,6 +416,20 @@ sonuc.istatistik.push(`ders paketleri: ${DERS_KODLARI.map((k) => `${k} (${DERSLE
   } catch (e) {
     hata(`${rel}: ${(e as Error).message}`);
   }
+}
+
+// ------------------------------------------------ Türkçe MEB kitabı eşlemesi (Okuma Yazma Adım 82)
+// 29 harf birer kez, sıra öğretim sırasıyla aynı, sayfalar kitap içinde artan. Teyit bekleyen eşleme geliştirmede
+// uyarı, `--yayin` ile hata (numara–başlık eşleşmesi görsel kontrol edilmedi).
+{
+  const rel = 'src/content/dersler/tur/mebKitap.ts';
+  for (const m of mebKitapDogrula()) hata(`${rel}: ${m}`);
+  if (MEB_KITAP_TEYIDI !== 'onaylandi') {
+    const mesaj = `${rel}: MEB kitabı sayfa/tema eşlemesi teyit bekliyor.`;
+    if (process.argv.includes('--yayin')) hata(`${mesaj} Yayın için teyit gerekir.`);
+    else sonuc.uyarilar.push(mesaj);
+  }
+  sonuc.istatistik.push(`Türkçe MEB kitabı eşlemesi: ${MEB_KITAP_ESLEMESI.length} harf · ${MEB_KITAP_TEYIDI}`);
 }
 
 // ------------------------------------------------ Türkçe sözcük görselleri (Okuma Yazma Adım 68, §2.4.8, D-25)

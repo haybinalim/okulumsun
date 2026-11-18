@@ -9,6 +9,7 @@
  */
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { resmiKume } from '../../content/dersler/tur/ogretilenKume';
+import { mebKitapHaftaMetni } from '../../content/dersler/tur/mebKitap';
 import { haftaAraligi, haftaBul, haftalikSesPlani, sonOnerilenSes, type SesHaftasi } from '../../content/dersler/tur/sesPlani';
 import { DUZEY_ACIKLAMASI, DUZEY_ADI, SET_ADIM_SAYISI, SET_DUZEYLERI, type SetAdimi, type SetDuzeyi } from '../../content/dersler/tur/turSet';
 import { useTurSeti } from './useTurSeti';
@@ -85,6 +86,7 @@ export function SesPlani({ gun = bugun() }: { gun?: string }) {
       >
         {gorunen.map((h) => {
           const bu = buHafta?.pazartesi === h.pazartesi;
+          const kitap = mebKitapHaftaMetni(h.yeniSesler);
           const ozet = h.tur === 'bagimsiz' ? `${haftaAraligi(h.pazartesi).split(/ ?\u2013/)[0]} ve sonrası` : haftaAraligi(h.pazartesi);
           return (
             <li
@@ -110,6 +112,11 @@ export function SesPlani({ gun = bugun() }: { gun?: string }) {
               <span style={{ flex: '1 1 auto', minWidth: 0 }}>
                 {[h.grup ? `${h.grup}. grup` : TUR_ADI[h.tur], h.not].filter(Boolean).join(', ')}
                 {bu ? ', bu hafta' : ''}
+                {kitap && (
+                  <small data-meb-kitap="" style={{ display: 'block', fontSize: '0.78em', opacity: 0.85 }}>
+                    {kitap}
+                  </small>
+                )}
               </span>
             </li>
           );

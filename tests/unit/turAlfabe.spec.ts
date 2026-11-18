@@ -3,6 +3,16 @@
  */
 import { describe, expect, it } from 'vitest';
 import {
+  MEB_KITAP_ESLEMESI,
+  MEB_KITAPLARI,
+  MEB_TEMALARI,
+  mebKitapDogrula,
+  mebKitapHaftaMetni,
+  mebKitapMetni,
+  type MebKitapSatiri,
+} from '../../src/content/dersler/tur/mebKitap';
+import { haftalikSesPlani } from '../../src/content/dersler/tur/sesPlani';
+import {
   ALFABE,
   buyukMu,
   harfGrubu,
@@ -111,5 +121,59 @@ describe('öğretilen küme ve ?tur= kodu', () => {
     expect(kumeGecerliMi(new Set(['a', 'A']))).toBe(true);
     expect(kumeGecerliMi(new Set(['x']))).toBe(false);
     expect(() => kumeKodla(new Set(['q']))).toThrow();
+  });
+});
+
+/** Okuma Yazma Adım 82 — MEB TYMM ilk okuma yazma kitabı eşlemesi (teyit: bekliyor). */
+describe('MEB kitabı eşlemesi', () => {
+  it('depodaki eşleme geçerli; 29 harf, sıra sesPlani ile aynı', () => {
+    expect(mebKitapDogrula()).toEqual([]);
+    expect(MEB_KITAP_ESLEMESI.map((s) => s.harf)).toEqual([...OGRETIM_SIRASI]);
+    expect(haftalikSesPlani().flatMap((h) => h.yeniSesler)).toEqual(MEB_KITAP_ESLEMESI.map((s) => s.harf));
+  });
+
+  it('Kitap 1 = 1.–2. grup, Kitap 2 = 3.–5. grup; tema grupla karıştırılmaz', () => {
+    const g12 = HARF_GRUPLARI.slice(0, 2).flat();
+    for (const s of MEB_KITAP_ESLEMESI) expect(s.kitap).toBe(g12.includes(s.harf) ? 1 : 2);
+    const tema = (h: string) => MEB_KITAP_ESLEMESI.find((s) => s.harf === h)!.tema;
+    // Tema sınırı grup sınırı değil: 1. grubun i-l harfleri Tema 2'de, 4.–5. grup tek temada.
+    expect(['a', 'n', 'e', 't'].map(tema)).toEqual([1, 1, 1, 1]);
+    expect(['i', 'l'].map(tema)).toEqual([2, 2]);
+    expect(new Set(HARF_GRUPLARI[0].map(tema)).size).toBe(2);
+    expect(new Set([...HARF_GRUPLARI[3], ...HARF_GRUPLARI[4]].map(tema))).toEqual(new Set([4]));
+  });
+
+  it('metin biçimi ve adresler', () => {
+    expect(mebKitapMetni('a')).toBe('MEB kitabı: Kitap 1, s. 52 · Tema 1 Güzel Davranışlarımız');
+    expect(mebKitapMetni('J')).toBe('MEB kitabı: Kitap 2, s. 216 · Tema 4 Yol Arkadaşımız Kitaplar');
+    expect(mebKitapMetni('İ')).toContain('s. 120');
+    expect(mebKitapMetni('x')).toBeNull();
+    expect(mebKitapHaftaMetni([])).toBeNull();
+    expect(mebKitapHaftaMetni(['i', 'l'])).toBe("MEB kitabı: Kitap 1, i s. 120, l s. 134 · Tema 2 Mustafa Kemal'den Atatürk'e");
+    expect(MEB_KITAPLARI[1].adres).toBe('https://tymm.meb.gov.tr/kitap/31');
+    expect(MEB_KITAPLARI[2].adres).toBe('https://tymm.meb.gov.tr/kitap/32');
+  });
+
+  it('doğrulayıcı bozuk eşlemeyi yakalar', () => {
+    const e = [...MEB_KITAP_ESLEMESI];
+    expect(mebKitapDogrula(e.slice(1)).join()).toMatch(/29/);
+    expect(mebKitapDogrula([e[1], e[0], ...e.slice(2)]).join()).toMatch(/sırası/);
+    expect(mebKitapDogrula([e[0], { ...e[0] } as MebKitapSatiri, ...e.slice(2)]).join()).toMatch(/2 kez/);
+    expect(mebKitapDogrula(e.map((s) => (s.harf === 'k' ? { ...s, sayfa: 100 } : s))).join()).toMatch(/artan değil/);
+  });
+
+  it('29 satır kaynak tabloyla birebir: harf, kitap, sayfa, tema no, tema adı', () => {
+    const G = 'Güzel Davranışlarımız';
+    const M = "Mustafa Kemal'den Atatürk'e";
+    const Ç = 'Çevremizdeki Yaşam';
+    const Y = 'Yol Arkadaşımız Kitaplar';
+    expect(MEB_KITAP_ESLEMESI.map((s) => [s.harf, s.kitap, s.sayfa, s.tema, MEB_TEMALARI[s.tema]])).toEqual([
+      ['a', 1, 52, 1, G], ['n', 1, 64, 1, G], ['e', 1, 80, 1, G], ['t', 1, 98, 1, G],
+      ['i', 1, 120, 2, M], ['l', 1, 134, 2, M], ['o', 1, 152, 2, M], ['k', 1, 164, 2, M],
+      ['u', 1, 180, 2, M], ['r', 1, 198, 2, M], ['ı', 1, 210, 2, M], ['m', 1, 224, 2, M],
+      ['ü', 2, 14, 3, Ç], ['s', 2, 26, 3, Ç], ['ö', 2, 42, 3, Ç], ['y', 2, 54, 3, Ç], ['d', 2, 68, 3, Ç], ['z', 2, 80, 3, Ç],
+      ['ç', 2, 98, 4, Y], ['b', 2, 110, 4, Y], ['g', 2, 122, 4, Y], ['c', 2, 136, 4, Y], ['ş', 2, 146, 4, Y],
+      ['p', 2, 158, 4, Y], ['h', 2, 170, 4, Y], ['v', 2, 182, 4, Y], ['ğ', 2, 194, 4, Y], ['f', 2, 206, 4, Y], ['j', 2, 216, 4, Y],
+    ]); // prettier-ignore
   });
 });
