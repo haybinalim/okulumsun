@@ -17,7 +17,7 @@ import type { CumleVerisiDurumu } from '../useCumleVerisi';
 /**
  * Küme, cümle verisi, başlık ve ekran stili kabuktan (`TurEkrani`) gelir: bu parça `turKume`, `useCumleVerisi`,
  * `turOrtak` modüllerini içe aktarmaz; aksi hâlde paketleyici onları ortak parçalara böler ve Türkçe temel JS büyür
- * (KG-156 temel ≤ 120 KB).
+ * (KG-156 temel ≤ 140 KB).
  */
 export interface KoroOkumaOzellikleri {
   readonly kume: ReadonlySet<string>;

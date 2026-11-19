@@ -36,7 +36,7 @@ ayrıştırılmaz, önbelleğe alınır. Ayrıca Y9 gereği Türkçe, matematik 
 - Ders verisi depoda `ders-verisi/<ders>/` altında durur (`public/` değil — `public/` her derlemeye ve precache'e kopyalanır);
   bayrak açık derlemede `dist/<ders>/` altına kopyalanır, geliştirme sunucusu aynı yoldan sunar.
 - **Ayrı veri bütçesi** (`docs/ders-veri-butcesi.json`, `npm run boyut:ders`): çekirdek precache ≤ 1 MB (ünlüler, yönergeler,
-  hamle verisi), harf grubu başına ≤ 6 MB, Türkçe tembel JS ≤ 120 KB. **Yayına kadar yalnız rapor**; Adım 73'te sert hata olur.
+  hamle verisi), harf grubu başına ≤ 6 MB, Türkçe tembel JS ≤ 140 KB (başta 120 KB; KG-157, kullanıcı kararı 2026-11-19; ek parça ≤ 40 KB aynı). **Yayına kadar yalnız rapor**; Adım 73'te sert hata olur.
   K5 (`npm run boyut`) yalnız JS kodunu ölçmeye devam eder; 0.3.0'dan itibaren sert hata (mevcut kural).
 - İçerik ve doğrulayıcı kuralları `docs/mufredat-kisitlari-turkce.md`'dedir; doğrulayıcı `scripts/` ve test tarafında koşar,
   zod üretim paketine girmez.

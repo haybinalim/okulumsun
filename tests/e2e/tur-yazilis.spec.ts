@@ -29,7 +29,16 @@ async function konusmaSayaci(page: Page): Promise<void> {
 }
 
 /** Oynatılmak üzere istenen klipler (geliştirme kancası; önbellekten çalınsa da sayılır, KG-127). */
-const istenenKlipler = (page: Page) => page.evaluate(() => [...(window.__okulumsunE2E?.istenenKlipler ?? [])]);
+const istenenKlipler = (page: Page) =>
+  page.evaluate(() => [...(window.__okulumsunE2E?.istenenKlipler ?? [])]).then((l) => l.filter((k) => !KABUK_KLIPLERI.has(k)));
+
+/**
+ * Kabuğun kendi klipleri: karşılama (`ui.hosgeldin`) ve tembel Türkçe parça 800 ms'den uzun yüklenirse bekleme ekranının
+ * `ui.hazirlaniyor` klibi (KG-110). İkincisi `speak` zaman uyumsuz olduğundan yavaş (yüklü CI) açılışta "giriş görünür"
+ * kontrolünden SONRA kayda geçer; yazılış ekranının isteği değildir (tur-etkinlik.spec.ts aynı kümeyi tanır).
+ * Başka her klip (özellikle `tur.*`) hâlâ başarısızlıktır.
+ */
+const KABUK_KLIPLERI = new Set(['ui.hosgeldin', 'ui.hazirlaniyor']);
 
 async function turGirisi(page: Page, cihaz: string): Promise<void> {
   await sesKilidiniAc(page, `/?ders=tur${cihaz}`);

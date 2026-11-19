@@ -217,7 +217,7 @@ describe('ders verisi yayını ve bütçe', () => {
     expect(b.dersler.tur).toEqual({
       cekirdekBayt: 1024 * 1024,
       grupBayt: 6 * 1024 * 1024,
-      kodBayt: 120 * 1024,
+      kodBayt: 140 * 1024,
       // KG-156: ek parçalar (yalnız gerektiğinde indirilir) ayrı tavanla; temel tavan değişmedi.
       ekParcaBayt: 40 * 1024,
       // Adım 80: metin parçası (T-13), "Metni oku" ekranı ve iki parçanın ortak küçük modülleri (tembel indirilir) aynı ek parça kuralıyla.
