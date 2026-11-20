@@ -14,6 +14,7 @@
  */
 import { TUR_SABLONLARI } from './sablonlar';
 import {
+  TUR_CUMLE_SABLON_KODLARI,
   TurUretimHatasi,
   type TurHavuzCumlesi,
   type TurHavuzMetni,
@@ -120,7 +121,10 @@ export function turSetiKur(girdi: {
   readonly tohum: number;
   /** Hamle verisi (T-09 için); yoksa T-09 adımı atlanır. */
   readonly hamleler?: readonly TurHamleGlifi[];
-  /** Cümle havuzu (T-10, T-11, T-12; cümle parçası yüklü olmalı); yoksa cümle adımı yedeğiyle kurulur. */
+  /**
+   * Cümle havuzu (T-10, T-11, T-12; cümle parçası yüklü olmalı). `undefined` = yüklenemedi → `TurSetiVeriHatasi`
+   * (sessiz yedek yok). `[]` ya da bu kümeyle kurulamayan havuz (1. grup, D-08) = yedek adım.
+   */
   readonly cumleler?: readonly TurHavuzCumlesi[];
   /** Okuma metinleri (T-13; metin parçası yüklü olmalı). `undefined` = yüklenemedi → `TurSetiVeriHatasi`; `[]` = yüklü ama boş. */
   readonly metinler?: readonly TurHavuzMetni[];
@@ -137,6 +141,8 @@ export function turSetiKur(girdi: {
 
   /** Adımı kurar (aynı hedef tekrarı olmadan); kurulamazsa `false`. */
   function adimiKur(t: Omit<SetAdimi, 'tohum'>, i: number): boolean {
+    if ((TUR_CUMLE_SABLON_KODLARI as readonly string[]).includes(t.sablon) && girdi.cumleler === undefined)
+      throw new TurSetiVeriHatasi(`Cümle verisi yüklenemedi: ${t.sablon} kurulamaz.`);
     if (t.sablon === 'T-13' && girdi.metinler === undefined) throw new TurSetiVeriHatasi('Metin verisi yüklenemedi: T-13 kurulamaz.');
     let yedek: number | null = null;
     for (let d = 0; d < DENEME; d++) {
