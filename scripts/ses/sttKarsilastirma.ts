@@ -5,7 +5,7 @@
  *  1. Normalleştirme: tr-TR küçük harf, rakam → yazı (`turkishNumber`), noktalama/boşluk atılır; ç ğ ı ö ş ü AYRI
  *     harf kalır (yanlış harf = yanlış söyleniş), yalnız â î û düz harfe indirilir.
  *  2. Benzerlik: 1 - Levenshtein / uzun olanın uzunluğu (boşluksuz harf dizisi üzerinde).
- *  3. Karar: çok kısa beklenen metin → `kulak` (STT güvenilmez; BAŞARISIZ değil); aksi halde benzerlik >= eşik → `gecti`,
+ *  3. Karar: çok kısa beklenen metin → tam eşleşirse `gecti`, eşleşmezse `kulak` (STT güvenilmez; BAŞARISIZ değil); aksi halde benzerlik >= eşik → `gecti`,
  *     değilse `supheli`. Boş transkript hiçbir zaman `gecti` olmaz.
  */
 import { turkishNumber } from './klipler.ts';
@@ -13,7 +13,7 @@ import { turkishNumber } from './klipler.ts';
 export type Durum = 'gecti' | 'supheli' | 'kulak';
 
 /** Beklenen metinde (boşluksuz) bu kadar ya da daha az harf varsa klip "kulak gerekli" sayılır (tek harf / tek hece). */
-export const KISA_HARF_ESIGI = 2;
+export const KISA_HARF_ESIGI = 4;
 /** Varsayılan benzerlik eşiği; `--esik` ile değişir. */
 export const VARSAYILAN_ESIK = 0.85;
 
@@ -78,13 +78,44 @@ export function levenshtein(a: string, b: string): number {
   return onceki[y.length];
 }
 
-/** 0..1; iki dizi de boşsa 1 değil 0 döner (boş = karşılaştırılacak bir şey yok, "aynı" sayılmaz). */
-export function benzerlik(beklenen: string, duyulan: string): number {
-  const a = harfDizisi(beklenen);
-  const b = harfDizisi(duyulan);
+const SIRA_SOZCUKLERI: Readonly<Record<string, string>> = {
+  bir: 'birinci', iki: 'ikinci', üç: 'üçüncü', dört: 'dördüncü', beş: 'beşinci', altı: 'altıncı', yedi: 'yedinci',
+  sekiz: 'sekizinci', dokuz: 'dokuzuncu', on: 'onuncu', yirmi: 'yirminci', otuz: 'otuzuncu', kırk: 'kırkıncı',
+  elli: 'ellinci', altmış: 'altmışıncı', yetmiş: 'yetmişinci', seksen: 'sekseninci', doksan: 'doksanıncı',
+  yüz: 'yüzüncü', bin: 'bininci',
+};
+
+/** 4 → "dördüncü", 13 → "on üçüncü". Tanımsızsa rakam olduğu gibi kalır. */
+export function sayiyiSiraYaziyaCevir(n: number): string {
+  const sozcukler = sayiyiYaziyaCevir(n).split(' ');
+  const son = SIRA_SOZCUKLERI[sozcukler[sozcukler.length - 1]];
+  return son === undefined ? String(n) : [...sozcukler.slice(0, -1), son].join(' ');
+}
+
+/**
+ * Whisper rakamı iki biçimde yazabilir; hangisi kastedildiği metinden bilinmez, bu yüzden duyulan metnin ADAYLARI
+ * üretilir ve en iyi eşleşen alınır: (a) olduğu gibi, (b) "1 6" → "16" (bitişik rakamlar), (c) "4." → "dördüncü"
+ * (rakam + nokta sıra sayısı). Yalnız rakam içeren duyulan metinde aday çoğalır.
+ */
+export function duyulanAdaylari(duyulan: string): string[] {
+  const adaylar = new Set<string>([duyulan]);
+  const bitisik = duyulan.replace(/(\d)\s+(?=\d)/g, '$1');
+  for (const t of [duyulan, bitisik]) {
+    adaylar.add(t.replace(/(\d+)\.(?!\d)/g, (_, d: string) => ` ${sayiyiSiraYaziyaCevir(Number(d))} `));
+  }
+  return [...adaylar];
+}
+
+function harfBenzerligi(a: string, b: string): number {
   const uzun = Math.max([...a].length, [...b].length);
   if (uzun === 0) return 0;
   return 1 - levenshtein(a, b) / uzun;
+}
+
+/** 0..1; iki dizi de boşsa 1 değil 0 döner (boş = karşılaştırılacak bir şey yok, "aynı" sayılmaz). */
+export function benzerlik(beklenen: string, duyulan: string): number {
+  const a = harfDizisi(beklenen);
+  return Math.max(...duyulanAdaylari(duyulan).map((d) => harfBenzerligi(a, harfDizisi(d))));
 }
 
 /** Beklenen metin STT ile güvenilir sınanamayacak kadar kısa mı (harf sayısı <= `KISA_HARF_ESIGI`)? */
@@ -99,9 +130,20 @@ export interface Karar {
   readonly neden?: string;
 }
 
-export function karar(beklenen: string, duyulan: string, esik = VARSAYILAN_ESIK, kisaHarf = KISA_HARF_ESIGI): Karar {
+/**
+ * `kisaTamEslesmeGecer` (varsayılan açık): kısa klipte STT'nin YANLIŞ duyması zayıf kanıttır (kulak gerekir) ama
+ * beklenenle HARFİ HARFİNE aynı duyması güçlü kanıttır → `gecti`. Kapalıyken kısa klibin hepsi `kulak` olur.
+ */
+export function karar(
+  beklenen: string,
+  duyulan: string,
+  esik = VARSAYILAN_ESIK,
+  kisaHarf = KISA_HARF_ESIGI,
+  kisaTamEslesmeGecer = true,
+): Karar {
   const b = benzerlik(beklenen, duyulan);
   if (cokKisaMi(beklenen, kisaHarf)) {
+    if (kisaTamEslesmeGecer && b === 1) return { durum: 'gecti', benzerlik: b, neden: 'kısa klip, tam eşleşme' };
     return { durum: 'kulak', benzerlik: b, neden: `beklenen metinde en çok ${kisaHarf} harf var; STT güvenilmez` };
   }
   if (harfDizisi(duyulan).length === 0) return { durum: 'supheli', benzerlik: 0, neden: 'boş transkript' };

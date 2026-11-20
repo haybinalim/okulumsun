@@ -9,6 +9,8 @@
  *   --yalniz <desen>   anahtar bu metni içerenler (ya da `*` joker: `tur.hece.*`, `ui.*`); birden çok kez verilebilir
  *   --esik <0..1>      benzerlik eşiği (varsayılan 0.85)
  *   --model <ad>       ggml modeli (varsayılan small): <OKULUMSUN_STT_DIZIN>/ggml-<ad>.bin
+ *   --ipucu <metin>   whisper başlangıç ipucu (varsayılan "Türkçe kısa cümle."); --ipucu-yok kapatır
+ *   --kisa-hepsi-kulak  kısa klipte tam eşleşme bile `gecti` sayılmaz (hepsi kulak listesine)
  *   --onbellek-yok     önbelleği okuma/yazma
  *   --rapor <yol>      JSON rapor yolu (varsayılan test-results/ses-icerik-raporu.json)
  *   --es-zamanli <n>   aynı anda en çok n whisper süreci (varsayılan 3)
@@ -32,6 +34,8 @@ import { retListesiniOku, turKlipleriniAyir, TUR_KLIP_MANIFESTI, TUR_SES_DIZINI 
 const exec = promisify(execFile);
 
 export const VARSAYILAN_MODEL = 'small';
+/** whisper `--prompt`: Türkçe kısa söz bekletir; kısa klipte dil/yazım sapmasını ve uydurma çıktıyı azaltır (deneyle ölçüldü). */
+export const VARSAYILAN_IPUCU = 'Türkçe kısa cümle.';
 export const VARSAYILAN_RAPOR = 'test-results/ses-icerik-raporu.json';
 
 export interface GirisKlip {
@@ -91,6 +95,8 @@ export interface DenetimSecenekleri {
   readonly model: string;
   readonly esik?: number;
   readonly kisaHarf?: number;
+  /** Kısa klipte tam eşleşme `gecti` sayılır (varsayılan true); false → kısa klibin hepsi `kulak`. */
+  readonly kisaTamEslesmeGecer?: boolean;
   /** Verilirse okunur ve doldurulur (çağıran diske yazar). */
   readonly onbellek?: Onbellek;
   readonly esZamanli?: number;
@@ -121,7 +127,7 @@ export async function denetle(klipler: readonly GirisKlip[], s: DenetimSecenekle
       // Boş sonuç önbelleğe GİRMEZ: geçici bir araç aksaklığı kalıcı hükme dönüşmesin.
       if (s.onbellek && duyulan !== '') s.onbellek[k.key] = { sha, model: s.model, duyulan };
     }
-    const r = karar(k.text, duyulan, esik, kisaHarf);
+    const r = karar(k.text, duyulan, esik, kisaHarf, s.kisaTamEslesmeGecer ?? true);
     sonuc[i] = { anahtar: k.key, beklenen: k.text, duyulan, benzerlik: r.benzerlik, durum: r.durum, neden: r.neden, onbellek: onbellekte };
   };
 
@@ -211,14 +217,14 @@ export async function sttHazirMi(model: string): Promise<{ whisper: string; ffmp
 }
 
 /** Gerçek STT: m4a → 16 kHz tek kanal wav (ffmpeg) → whisper-cli (Türkçe). Hata fırlatır; boş çıktı döndürebilir. */
-export async function whisperSttOlustur(model: string): Promise<SttFn> {
+export async function whisperSttOlustur(model: string, ipucu: string = VARSAYILAN_IPUCU): Promise<SttFn> {
   const { whisper, ffmpeg, modelDosyasi } = await sttHazirMi(model);
   return async (dosyaYolu) => {
     const gecici = await mkdtemp(path.join(os.tmpdir(), 'okulumsun-stt-'));
     try {
       const wav = path.join(gecici, 'k.wav');
       await exec(ffmpeg, ['-loglevel', 'error', '-y', '-i', dosyaYolu, '-ar', '16000', '-ac', '1', wav]);
-      const { stdout } = await exec(whisper, ['-m', modelDosyasi, '-l', 'tr', '-nt', '-np', '-f', wav], { maxBuffer: 8 * 1024 * 1024 });
+      const { stdout } = await exec(whisper, ['-m', modelDosyasi, '-l', 'tr', '-nt', '-np', ...(ipucu ? ['--prompt', ipucu] : []), '-f', wav], { maxBuffer: 8 * 1024 * 1024 });
       return stdout.replace(/\s+/g, ' ').trim();
     } finally {
       await rm(gecici, { recursive: true, force: true });
@@ -269,6 +275,9 @@ export async function main(argv: readonly string[]): Promise<number> {
   const esZamanli = Number.parseInt(secenek(argv, '--es-zamanli') ?? '3', 10);
   const raporYolu = path.resolve(kok, secenek(argv, '--rapor') ?? VARSAYILAN_RAPOR);
   const onbellekYok = argv.includes('--onbellek-yok');
+  const ipucu = argv.includes('--ipucu-yok') ? '' : (secenek(argv, '--ipucu') ?? VARSAYILAN_IPUCU);
+  // Önbellek anahtarı model + ipucu: ikisinden biri değişince eski çözümler geçersizdir.
+  const modelKimligi = ipucu ? `${model}+${createHash('sha256').update(ipucu).digest('hex').slice(0, 8)}` : model;
   const onbellekYolu = path.join(sttDizini(), `onbellek-${model}.json`);
 
   const tumu = denetlenecekKlipler(kok);
@@ -277,9 +286,9 @@ export async function main(argv: readonly string[]): Promise<number> {
 
   const onbellek: Onbellek | undefined = onbellekYok ? undefined : onbellekOku(onbellekYolu);
   const baslangic = Date.now();
-  const stt = await whisperSttOlustur(model);
-  console.log(`STT: model ${model} · ${klipler.length}/${tumu.length} klip · eşik ${esik} · önbellek ${onbellek ? onbellekYolu : 'kapalı'}`);
-  const satirlar = await denetle(klipler, { stt, model, esik, onbellek, esZamanli: Number.isFinite(esZamanli) ? esZamanli : 3 });
+  const stt = await whisperSttOlustur(model, ipucu);
+  console.log(`STT: model ${model} · ipucu "${ipucu}" · ${klipler.length}/${tumu.length} klip · eşik ${esik} · önbellek ${onbellek ? onbellekYolu : 'kapalı'}`);
+  const satirlar = await denetle(klipler, { stt, model: modelKimligi, esik, kisaTamEslesmeGecer: !argv.includes('--kisa-hepsi-kulak'), onbellek, esZamanli: Number.isFinite(esZamanli) ? esZamanli : 3 });
   if (onbellek) {
     await mkdir(path.dirname(onbellekYolu), { recursive: true });
     await writeFile(onbellekYolu, JSON.stringify(onbellek));
@@ -290,7 +299,7 @@ export async function main(argv: readonly string[]): Promise<number> {
   await mkdir(path.dirname(raporYolu), { recursive: true });
   await writeFile(
     raporYolu,
-    JSON.stringify({ olusturma: new Date().toISOString(), model, esik, kisaHarfEsigi: KISA_HARF_ESIGI, sureSn, ozet: o, klipler: satirlar }, null, 2),
+    JSON.stringify({ olusturma: new Date().toISOString(), model, ipucu, esik, kisaHarfEsigi: KISA_HARF_ESIGI, sureSn, ozet: o, klipler: satirlar }, null, 2),
   );
 
   const yaz = (baslik: string, d: SatirDurumu, sinir: number) => {
@@ -305,7 +314,7 @@ export async function main(argv: readonly string[]): Promise<number> {
   yaz('EKSİK DOSYA', 'eksik', 50);
   yaz('ŞÜPHELİ', 'supheli', 50);
   console.log(
-    `\nKULAK GEREKLİ: ${o.kulak} klip (beklenen metinde en çok ${KISA_HARF_ESIGI} harf; STT güvenilmez, başarısız sayılmaz — listesi raporda).`,
+    `\nKULAK GEREKLİ: ${o.kulak} klip (beklenen metinde en çok ${KISA_HARF_ESIGI} harf ve STT tam eşleşmedi; STT güvenilmez, başarısız sayılmaz — listesi raporda).`,
   );
   console.log(
     `\n${o.toplam} klip · geçti ${o.gecti} · şüpheli ${o.supheli} · kulak ${o.kulak} · eksik ${o.eksik} · önbellekten ${o.onbellekten} · ${sureSn.toFixed(1)} sn`,
