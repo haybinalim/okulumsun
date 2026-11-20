@@ -5,8 +5,10 @@ import { HARF_GRUPLARI, OGRETIM_SIRASI } from '../../src/content/dersler/tur/alf
 import { TATIL_HAFTALARI, OGRETIM_HAFTALARI } from '../../src/content/okulTakvimi';
 import { resmiKume } from '../../src/content/dersler/tur/ogretilenKume';
 import { havuzuAyristir } from '../../src/content/dersler/tur/sablonlar/havuz';
+import { cumleHavuzunuAyristir } from '../../src/content/dersler/tur/sablonlar/cumle/cumleHavuzu';
+import { cumleParcasiniYukle } from '../../src/content/dersler/tur/sablonlar/cumleKayit';
 import { TUR_SABLONLARI } from '../../src/content/dersler/tur/sablonlar';
-import { SET_ADIM_SAYISI, SET_DUZEYLERI, SET_TARIFLERI, setKodu, setKoduCoz, turSetiKur } from '../../src/content/dersler/tur/turSet';
+import { SET_ADIM_SAYISI, SET_DUZEYLERI, SET_TARIFLERI, setKodu, setKoduCoz, turSetiKur, TurSetiVeriHatasi } from '../../src/content/dersler/tur/turSet';
 import { sonrakiTohum } from '../../src/content/dersler/tur/sonrakiTohum';
 import { TUR_SABLON_KODLARI } from '../../src/content/dersler/tur/sablonlar/turSoru';
 import type { TurHamleDosyasi } from '../../src/content/schema/turHamle';
@@ -57,7 +59,10 @@ describe('haftalık ses planı (§2.4.11 madde 4)', () => {
 });
 
 const havuz = havuzuAyristir(JSON.parse(readFileSync('ders-verisi/tur/icerik/sozcukler.json', 'utf8')) as unknown);
+const cumleler = cumleHavuzunuAyristir(JSON.parse(readFileSync('ders-verisi/tur/icerik/cumleler.json', 'utf8')) as unknown);
 const hamleler = (JSON.parse(readFileSync('ders-verisi/tur/hamleler.json', 'utf8')) as TurHamleDosyasi).glifler;
+/** Yüklü ama boş: cümle/metin adımı kurulamaz, yedek meşrudur (`undefined` değildir). */
+const bosVeri = { cumleler: [] as const, metinler: [] as const };
 
 describe('set hazırla (§2.4.11 madde 5)', () => {
   it('her düzey 8 adımlık tarif (Adım 79); destek kolay, zenginleştirme zor; yeni etkinlik türleri karışımda', () => {
@@ -75,8 +80,8 @@ describe('set hazırla (§2.4.11 madde 5)', () => {
       for (const duzey of SET_DUZEYLERI)
         for (const tohum of [1, 2, 7]) {
           const kume = resmiKume(harf, false);
-          const s = turSetiKur({ havuz, kume, duzey, tohum, hamleler, metinler: [] });
-          expect(turSetiKur({ havuz, kume, duzey, tohum, hamleler, metinler: [] })).toEqual(s);
+          const s = turSetiKur({ havuz, kume, duzey, tohum, hamleler, ...bosVeri });
+          expect(turSetiKur({ havuz, kume, duzey, tohum, hamleler, ...bosVeri })).toEqual(s);
           expect(s.adimlar.length + s.atlanan.length).toBe(SET_ADIM_SAYISI);
           for (const a of s.adimlar)
             expect(() => TUR_SABLONLARI[a.sablon].uret({ havuz, kume, zorluk: a.zorluk, tohum: a.tohum, hamleler })).not.toThrow();
@@ -87,7 +92,7 @@ describe('set hazırla (§2.4.11 madde 5)', () => {
       for (const duzey of SET_DUZEYLERI)
         for (const tohum of [1, 3, 9]) {
           const kume = resmiKume(harf, false);
-          const s = turSetiKur({ havuz, kume, duzey, tohum, hamleler, metinler: [] });
+          const s = turSetiKur({ havuz, kume, duzey, tohum, hamleler, ...bosVeri });
           const anahtarlar = s.adimlar.map((a) => `${a.sablon}|${TUR_SABLONLARI[a.sablon].uret({ havuz, kume, zorluk: a.zorluk, tohum: a.tohum, hamleler }).hedefMetin}`);
           expect(new Set(anahtarlar).size).toBe(anahtarlar.length);
         }
@@ -101,7 +106,7 @@ describe('set hazırla (§2.4.11 madde 5)', () => {
   it('1. grup sonunda (l) destek ve sınıf setleri en az 6 adım kurar', () => {
     const kume = resmiKume('l', false);
     expect(turSetiKur({ havuz, kume, duzey: 'destek', tohum: 1, hamleler }).adimlar.length).toBeGreaterThanOrEqual(6);
-    expect(turSetiKur({ havuz, kume, duzey: 'sinif', tohum: 1, hamleler }).adimlar.length).toBeGreaterThanOrEqual(6);
+    expect(turSetiKur({ havuz, kume, duzey: 'sinif', tohum: 1, hamleler, ...bosVeri }).adimlar.length).toBeGreaterThanOrEqual(6);
   });
   it('"Sonraki" aynı hedefi art arda getirmez (deterministik; kurulabilen her şablon)', () => {
     const kume = resmiKume('k', false);
@@ -129,6 +134,21 @@ describe('set hazırla (§2.4.11 madde 5)', () => {
           else expect(t).toBe(tohum + 1);
         }
     expect(degisti).toBeGreaterThan(20);
+  });
+  it('cümle verisi yoksa (undefined) açık hata; yüklü ama 1. grupta cümle yoksa yedek (D-08)', async () => {
+    await cumleParcasiniYukle();
+    const ortak = { havuz, tohum: 1, hamleler, metinler: [] as const };
+    expect(() => turSetiKur({ ...ortak, kume: resmiKume('k', false), duzey: 'sinif' })).toThrow(TurSetiVeriHatasi);
+    expect(() => turSetiKur({ ...ortak, kume: resmiKume('k', false), duzey: 'zengin' })).toThrow(TurSetiVeriHatasi);
+    expect(() => turSetiKur({ ...ortak, kume: resmiKume('l', false), duzey: 'destek' })).not.toThrow();
+    const g1 = turSetiKur({ ...ortak, kume: resmiKume('l', true), duzey: 'sinif', cumleler });
+    expect(g1.adimlar.some((a) => a.sablon === 'T-10')).toBe(false);
+    expect(g1.adimlar.some((a) => a.sablon === 'T-08' && a.zorluk === 2)).toBe(true);
+    const g2 = turSetiKur({ ...ortak, kume: resmiKume('m', true), duzey: 'sinif', cumleler });
+    expect(g2.adimlar.some((a) => a.sablon === 'T-10')).toBe(true);
+    const zengin = turSetiKur({ ...ortak, kume: resmiKume('m', true), duzey: 'zengin', cumleler });
+    expect(zengin.adimlar.some((a) => a.sablon === 'T-12')).toBe(true);
+    expect(turSetiKur({ ...ortak, kume: resmiKume('l', true), duzey: 'sinif', cumleler: [] }).adimlar.some((a) => a.sablon === 'T-08')).toBe(true);
   });
   it('set kodu gidiş-dönüş, katı çözücü', () => {
     expect(setKoduCoz(setKodu('sinif', 3))).toEqual({ duzey: 'sinif', tohum: 3 });

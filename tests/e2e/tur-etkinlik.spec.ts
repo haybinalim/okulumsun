@@ -194,6 +194,9 @@ test('etkinlik seçimi: öğretilen küme adreste (?tur=), kartlar yalnız öğr
   await expect(page.getByRole('main', { name: 'Etkinlikler' })).toBeVisible();
   // Bugünkü ses "t" → küme a n e t (küçük).
   await page.getByLabel('Bugünkü ses').selectOption('t');
+  await expect(page.locator('[data-tur-ekrani="etkinlikler"] [data-meb-kitap]')).toHaveText(
+    'MEB kitabı: Kitap 1, s. 98 · Tema 1 Güzel Davranışlarımız',
+  );
   await expect.poll(() => new URL(page.url()).searchParams.get('tur')).not.toBeNull();
   for (const g of ['a', 'n', 'e', 't'])
     await expect(page.getByRole('button', { name: `${g} öğretildi`, exact: true })).toBeVisible();
