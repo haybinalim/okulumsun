@@ -100,11 +100,21 @@ export function AnaEkranDersSecimi() {
   );
 }
 
+/** Yetişkin MEB satırı. Harf öğretim sırasında yoksa çizilmez. Etkinlik ve harf ekranı aynı bileşeni kullanır. */
+export function MebKitapNotu({ ses }: { ses: string }) {
+  const kitap = mebKitapMetni(ses);
+  if (!kitap) return null;
+  return (
+    <small data-meb-kitap="" style={{ display: 'block', fontSize: '0.7em', fontWeight: 400 }}>
+      {kitap}
+    </small>
+  );
+}
+
 /** "Bugünkü ses": resmî sırada bir önceki/sonraki ses tek dokunuşla (§2.4.5: o harfe kadar küçükler). */
 export function BugunkuSes() {
   const kume = useTurKume();
   const ses = bugunkuSes(kume);
-  const kitap = mebKitapMetni(ses);
   const i = OGRETIM_SIRASI.indexOf(ses as (typeof OGRETIM_SIRASI)[number]);
   const sec = (j: number) => turKumeYaz(resmiKume(OGRETIM_SIRASI[j], false));
   const onceki = i > 0 ? OGRETIM_SIRASI[i - 1] : null;
@@ -130,11 +140,7 @@ export function BugunkuSes() {
         <strong data-glif={ses} style={{ fontSize: 'calc(var(--text-adult) * 1.6)' }}>
           {ses}
         </strong>
-        {kitap && (
-          <small data-meb-kitap="" style={{ display: 'block', fontSize: '0.7em', fontWeight: 400 }}>
-            {kitap}
-          </small>
-        )}
+        <MebKitapNotu ses={ses} />
       </p>
       <BigButton
         label={sonraki ? `Sonraki ses: ${sonraki}` : 'Sonraki ses yok'}
@@ -209,21 +215,24 @@ export function KumeDuzenleyici() {
   return (
     <section aria-label="Öğretilen harfler" style={{ display: 'flex', flexDirection: 'column', gap: '0.4em', alignItems: 'center' }}>
       <div style={{ display: 'flex', gap: '0.6em', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-        <label style={{ fontSize: 'var(--text-adult)' }}>
-          Bugünkü ses:{' '}
-          <select
-            aria-label="Bugünkü ses"
-            value={enYeni}
-            onChange={(e) => turKumeYaz(resmiKume(e.target.value, false))}
-            style={{ fontSize: 'var(--text-adult)', minHeight: 'max(44px, calc(var(--size-tap-min) * 0.6))', minWidth: '3.2em' }}
-          >
-            {OGRETIM_SIRASI.map((x) => (
-              <option key={x} value={x}>
-                {x}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div style={{ textAlign: 'center' }}>
+          <label style={{ fontSize: 'var(--text-adult)' }}>
+            Bugünkü ses:{' '}
+            <select
+              aria-label="Bugünkü ses"
+              value={enYeni}
+              onChange={(e) => turKumeYaz(resmiKume(e.target.value, false))}
+              style={{ fontSize: 'var(--text-adult)', minHeight: 'max(44px, calc(var(--size-tap-min) * 0.6))', minWidth: '3.2em' }}
+            >
+              {OGRETIM_SIRASI.map((x) => (
+                <option key={x} value={x}>
+                  {x}
+                </option>
+              ))}
+            </select>
+          </label>
+          <MebKitapNotu ses={enYeni} />
+        </div>
         <BigButton
           label="Büyük harflere geçtik"
           data-yetiskin=""

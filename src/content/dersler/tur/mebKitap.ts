@@ -1,6 +1,6 @@
 /**
  * MEB TYMM İlk Okuma Yazma kitabı eşlemesi (Okuma Yazma planı "E6 sonucu", Adım 82). SAF; yalnız YETİŞKİN yüzeyi
- * (öğretmen "Bugünkü ses", haftalık ses planı, Kaynaklar) kullanır; çocuk yüzeyine girmez.
+ * (öğretmen "Bugünkü ses", harf düzenleme, etkinlik seçimi, haftalık ses planı, Kaynaklar) kullanır; çocuk yüzeyine girmez.
  *
  * Her harf için: hangi MEB kitabı (1 ya da 2), harf bölümünün baskı sayfası ve kitabın teması. TEK KAYNAK burasıdır.
  * TEMA ≠ HARF GRUBU: temalar program Şekil 1 gruplarıyla örtüşmez (Tema 1 = a n e t; Tema 2 = i l + 2. grup;

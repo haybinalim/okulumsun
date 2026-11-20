@@ -96,6 +96,9 @@ test('bugünkü ses tek dokunuş; K-7 sınıf ayarı yeniden açılışta korunu
   // Harfleri düzenle → gelişmiş düzenleme; "Büyük harflere geçtik" büyük harfleri ekler.
   await page.getByRole('button', { name: 'Harfleri düzenle' }).click();
   await expect(page.getByRole('main', { name: 'Öğretilen harfler' })).toBeVisible();
+  await expect(page.locator('[data-tur-ekrani="harfler"] [data-meb-kitap]')).toHaveText(
+    'MEB kitabı: Kitap 1, s. 64 · Tema 1 Güzel Davranışlarımız',
+  );
   await geometriTemiz(page, 'öğretilen harfler');
   await page.getByRole('button', { name: 'Büyük harflere geçtik' }).click();
   await expect(page.getByRole('button', { name: 'N öğretildi', exact: true })).toHaveAttribute('aria-pressed', 'true');
