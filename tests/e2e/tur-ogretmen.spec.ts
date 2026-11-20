@@ -42,6 +42,9 @@ test('ders seçimi: tahtada ana ekrandan Okuma Yazma açılır, Matematik geri d
     const page = await ctx.newPage();
     await sesKilidiniAc(page, `/?device=${g.cihaz}`);
     await page.getByRole('button', { name: 'Tahtada birlikte çalışalım.' }).click();
+    // Adım 83: ana ekrandan önce tam ekran ders seçimi. Matematik mevcut ana ekrana geçer.
+    await expect(page.getByRole('main', { name: 'Ders seç' })).toBeVisible();
+    await page.getByRole('main', { name: 'Ders seç' }).getByRole('button', { name: 'Matematik' }).click();
     const ders = page.getByRole('group', { name: 'Ders' });
     await expect(ders).toBeVisible();
     // Matematik ana ekranının kendi yerleşimi bu adımın kapsamı dışında (tahta 1080×810'da "Yardım" üst bölgede, Adım 71
@@ -63,10 +66,11 @@ test('ders seçimi: tahtada ana ekrandan Okuma Yazma açılır, Matematik geri d
     await page.getByRole('group', { name: 'Ders' }).getByRole('button', { name: 'Matematik' }).click();
     await expect(page.locator('[data-tur-ekrani]')).toHaveCount(0);
     await expect(page.getByRole('group', { name: 'Ders' })).toBeVisible();
-    // Ana menü de aynı yere döner (gezinme sözleşmesi).
+    // Ana menü tam ekran ders seçimine döner (Adım 83).
     await page.getByRole('group', { name: 'Ders' }).getByRole('button', { name: 'Okuma Yazma' }).click();
     await page.getByRole('button', { name: 'Ana menü' }).click();
     await expect(page.locator('[data-tur-ekrani]')).toHaveCount(0);
+    await expect(page.getByRole('main', { name: 'Ders seç' })).toBeVisible();
     await ctx.close();
   }
 });

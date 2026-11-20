@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { sinifAyariCoz, sinifAyariYaz } from '../../src/content/dersler/tur/sinifAyari';
 import { kumeKodla, resmiKume } from '../../src/content/dersler/tur/ogretilenKume';
 import {
@@ -14,6 +14,7 @@ import {
   IZINLI_ANAHTARLAR,
 } from '../../src/persistence/depolamaIzinListesi';
 import { tara, TUR_SINIF_AYARI_DOSYASI } from '../../scripts/gizlilik/kurallar';
+import { dersKapisiOku, dersKapisiSifirla, dersSecimiGorunsun, dersSecimineDon, matematikSec } from '../../src/ui/tur/dersKapisi';
 
 /** Okuma Yazma Adım 71 — günün akışı sırası ve K-7 sınıf ayarı (tek anahtar, öğrenci verisi değil; ADR-0002 Ek 1). */
 describe('günün akışı (§2.4.11 madde 3)', () => {
@@ -80,5 +81,27 @@ describe('K-7 sınıf ayarı', () => {
     expect(tara(TUR_SINIF_AYARI_DOSYASI, satir)).toEqual([]);
     expect(tara('src/ui/tur/TurOgretmen.tsx', satir)).toHaveLength(1);
     expect(tara(TUR_SINIF_AYARI_DOSYASI, 'localStorage.setItem("okulumsun.tur.ogrenci", x);')).toHaveLength(1);
+  });
+});
+
+describe('ders seçim kapısı (Adım 83, yalnız bellek)', () => {
+  afterEach(() => dersKapisiSifirla());
+
+  it('ana ekrandan önce kapalı; ana ekranda açılır; Matematik kapatır; dönüş yeniden açar', () => {
+    expect(dersKapisiOku()).toBe('bekle');
+    expect(dersSecimiGorunsun('bekle', 'modSecimi', false, false)).toBe(false);
+    expect(dersSecimiGorunsun('bekle', 'avatarSecimi', false, false)).toBe(false);
+    expect(dersSecimiGorunsun('bekle', 'anaEkran', false, false)).toBe(true);
+    expect(dersSecimiGorunsun('bekle', 'anaEkran', true, false)).toBe(false);
+    expect(dersSecimiGorunsun('bekle', 'audioUnlock', false, false)).toBe(false);
+    expect(dersSecimiGorunsun('bekle', 'evdeCalis', false, true)).toBe(false);
+    matematikSec();
+    expect(dersKapisiOku()).toBe('mat');
+    expect(dersSecimiGorunsun('mat', 'anaEkran', false, false)).toBe(false);
+    dersSecimineDon();
+    expect(dersKapisiOku()).toBe('sec');
+    expect(dersSecimiGorunsun('sec', 'modSecimi', false, false)).toBe(true);
+    expect(dersSecimiGorunsun('sec', 'anaEkran', true, false)).toBe(false);
+    expect(dersSecimiGorunsun(null, 'anaEkran', false, false)).toBe(false);
   });
 });

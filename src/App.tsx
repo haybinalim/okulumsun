@@ -54,12 +54,17 @@ import { setSorusu } from './ogretmen/gunlukSet';
 import { setSorusuUret, tahtaSorusuUret } from './ogretmen/tahtaSorusu';
 import { girisliSoru } from './audio/girisSesi';
 import { useTurEkrani } from './ui/tur/turEkraniDurumu';
+import { dersSecimiGorunsun, useDersKapisi } from './ui/tur/dersKapisi';
 // Türkçe (Okuma Yazma) önizlemesi (Adım 64, ADR-0016): YALNIZ `VITE_DERS_TUR=1` derlemesinde; üretimde ölü kod.
 const TurEkrani = import.meta.env.VITE_DERS_TUR === '1' ? lazy(() => import('./ui/tur/TurEkrani')) : null;
 const TurDersSecimi =
   import.meta.env.VITE_DERS_TUR === '1' ? lazy(() => import('./ui/tur/TurOgretmen').then((m) => ({ default: m.AnaEkranDersSecimi }))) : null;
+// Adım 83: tam ekran "Ders seç" ayrı tembel parça (ana pakete girmez).
+const DersSecimEkrani =
+  import.meta.env.VITE_DERS_TUR === '1' ? lazy(() => import('./ui/tur/DersSecimEkrani')) : null;
 // Bayrak derleme sabiti: kanca seçimi modül düzeyinde, çağrı koşulsuz (üretimde `() => null`).
 const useTurEkraniBayrakli = import.meta.env.VITE_DERS_TUR === '1' ? useTurEkrani : () => null;
+const useDersKapisiBayrakli = import.meta.env.VITE_DERS_TUR === '1' ? useDersKapisi : () => null;
 
 /**
  * Uygulama kabuğu — plan §11 ekran akışını yönetir.
@@ -106,6 +111,7 @@ export default function App() {
 
   const kisiselOturum = useKisiselOturum(ekran, mod);
   const turEkrani = useTurEkraniBayrakli();
+  const dersKapisi = useDersKapisiBayrakli();
   useKapsayicilikEtkileri();
   useUyanikTut(ekran);
   // KG-103: tarayıcı/Android geri tuşu = ekrandaki Geri; gömülü modda geçmişe dokunulmaz (üst portal).
@@ -146,6 +152,20 @@ export default function App() {
     return kabuk(
       <Suspense fallback={<OturumYukleniyor />}>
         <TurEkrani ekran={turEkrani} profil={profile} />
+      </Suspense>,
+    );
+  }
+
+  // Adım 83: tam ekran ders seçimi. Mod/cihaz seçimi bittikten sonra (ana ekran) ya da Okuma Yazma'dan
+  // dönüşte. Ses kilidi ve eve link çalışması bu dala gelmez (yukarıda / `dersSecimiGorunsun`).
+  if (
+    import.meta.env.VITE_DERS_TUR === '1' &&
+    DersSecimEkrani &&
+    dersSecimiGorunsun(dersKapisi, ekran, false, ekran === 'evdeCalis' && evSeti != null)
+  ) {
+    return kabuk(
+      <Suspense fallback={<OturumYukleniyor />}>
+        <DersSecimEkrani />
       </Suspense>,
     );
   }
@@ -264,12 +284,12 @@ export default function App() {
 
   // Okuma Yazma Adım 71 (§2.4.11 madde 1): tahtada ana ekranın üstünde ders seçimi (Matematik / Okuma Yazma).
   // YALNIZ `VITE_DERS_TUR=1` derlemesinde; üretimde bu dal bütünüyle ölü kod (ana ekran bayt bayt aynı).
-  if (import.meta.env.VITE_DERS_TUR === '1' && TurDersSecimi && ekran === 'anaEkran' && mod === 'tahta') {
+  if (import.meta.env.VITE_DERS_TUR === '1' && TurDersSecimi && ekran === 'anaEkran' && (mod === 'tahta' || mod === 'kisisel')) {
     return kabuk(
       <div style={{ position: 'relative', height: '100%' }}>
         <AnaEkran />
         <Suspense fallback={null}>
-          <TurDersSecimi />
+          <TurDersSecimi mod={mod} />
         </Suspense>
       </div>,
     );
