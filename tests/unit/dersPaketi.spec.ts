@@ -73,7 +73,7 @@ describe('üretim paketi korunur', () => {
           .filter((s) => /ui\/tur\//.test(s) && !/^\s*(\/\/|\*)/.test(s))
           .map((s) => [path.relative(KOK, f), s.trim()] as const),
       );
-    expect(bulunan.map(([d]) => d)).toEqual(['src/App.tsx', 'src/App.tsx', 'src/App.tsx', 'src/main.tsx']);
+    expect(bulunan.map(([d]) => d)).toEqual(['src/App.tsx', 'src/App.tsx', 'src/App.tsx', 'src/App.tsx', 'src/App.tsx', 'src/main.tsx']);
     const satirlar = bulunan.map(([, s]) => s);
     // Adım 65: Türkçe kâğıt görünümü (`?arsiv=tur-…`) main.tsx'te bayrak sabitine bağlı dalda, tembel.
     const main = oku('src/main.tsx');
@@ -82,18 +82,29 @@ describe('üretim paketi korunur', () => {
     );
     // Durum modülü yan etkisiz (tek içe aktarım); ekran tembel ve bayrak sabitine bağlı; kanca seçimi modül düzeyinde.
     expect(satirlar[0]).toBe("import { useTurEkrani } from './ui/tur/turEkraniDurumu';");
-    expect(satirlar[1]).toBe(
+    expect(satirlar[1]).toBe("import { dersSecimiGorunsun, useDersKapisi } from './ui/tur/dersKapisi';");
+    expect(satirlar[2]).toBe(
       "const TurEkrani = import.meta.env.VITE_DERS_TUR === '1' ? lazy(() => import('./ui/tur/TurEkrani')) : null;",
     );
     // Adım 71: tahta ana ekranındaki ders seçimi de tembel ve bayrak sabitine bağlı; dalı bütünüyle bayrak koşullu.
-    expect(satirlar[2]).toBe(
+    expect(satirlar[3]).toBe(
       "import.meta.env.VITE_DERS_TUR === '1' ? lazy(() => import('./ui/tur/TurOgretmen').then((m) => ({ default: m.AnaEkranDersSecimi }))) : null;",
     );
+    // Adım 83: tam ekran ders seçimi ayrı tembel parça.
+    expect(satirlar[4]).toBe(
+      "import.meta.env.VITE_DERS_TUR === '1' ? lazy(() => import('./ui/tur/DersSecimEkrani')) : null;",
+    );
     const app = oku('src/App.tsx');
-    expect(app).toMatch(/if \(import\.meta\.env\.VITE_DERS_TUR === '1' && TurDersSecimi && ekran === 'anaEkran' && mod === 'tahta'\) \{/);
+    expect(app).toMatch(
+      /if \(import\.meta\.env\.VITE_DERS_TUR === '1' && TurDersSecimi && ekran === 'anaEkran' && \(mod === 'tahta' \|\| mod === 'kisisel'\)\) \{/,
+    );
     expect(app).toContain(
       "const useTurEkraniBayrakli = import.meta.env.VITE_DERS_TUR === '1' ? useTurEkrani : () => null;",
     );
+    expect(app).toContain(
+      "const useDersKapisiBayrakli = import.meta.env.VITE_DERS_TUR === '1' ? useDersKapisi : () => null;",
+    );
+    expect(app).toMatch(/DersSecimEkrani &&\n\s*dersSecimiGorunsun\(dersKapisi,/);
     expect(app).toMatch(
       /if \(import\.meta\.env\.VITE_DERS_TUR === '1' && TurEkrani && turEkrani\) \{\n\s*return kabuk\(/,
     );
@@ -113,6 +124,18 @@ describe('üretim paketi korunur', () => {
     expect(existsSync(path.join(KOK, 'public/tur'))).toBe(false);
     expect(existsSync(path.join(KOK, 'ders-verisi/tur/manifest.json'))).toBe(true);
     expect(oku('vite.config.ts')).toMatch(/globIgnores: \[[^\]]*'tur\/\*\*'/);
+  });
+
+  it('Vercel önizlemesi bayrağı açar, üretim düz derler; çıktı klasörü ve CSP aynı kalır', () => {
+    const vercel = JSON.parse(oku('vercel.json')) as { buildCommand: string; outputDirectory: string; headers: unknown[] };
+    expect(vercel.buildCommand).toBe('sh scripts/yayin/vercel-derle.sh');
+    expect(vercel.outputDirectory).toBe('dist');
+    expect(vercel.headers).toHaveLength(3);
+    const betik = oku('scripts/yayin/vercel-derle.sh');
+    expect(betik).toContain('VERCEL_ENV:-');
+    expect(betik).toContain('export VITE_DERS_TUR=1');
+    expect(betik).toContain('unset VITE_DERS_TUR');
+    expect(betik).toContain('npm run build');
   });
 
   it('CI üretimde Türkçe imleci arar ve bayraklı derlemeyi ölçer', () => {

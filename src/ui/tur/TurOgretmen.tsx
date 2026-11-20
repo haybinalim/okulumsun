@@ -21,6 +21,7 @@ import {
 } from '../../content/dersler/tur/gununAkisi';
 import { BigButton } from '../primitives/BigButton';
 import { COLOR } from '../../design/tokens';
+import { dersSecimineDon, matematikSec } from './dersKapisi';
 import { turEkraniAc, turEkraniKapat, type TurEkrani } from './turEkraniDurumu';
 import type { TurKagitIstegi } from './kagit/turKagidi';
 import { turKumeYaz, useTurKume } from './turKume';
@@ -49,7 +50,10 @@ export function DersSecimi({ secili }: { secili: 'mat' | 'tur' }) {
         ariaPressed={secili === 'mat'}
         variant={secili === 'mat' ? 'accent' : 'solid'}
         style={aracDugmesi}
-        onPress={turEkraniKapat}
+        onPress={() => {
+          matematikSec();
+          turEkraniKapat();
+        }}
       >
         <span>Matematik</span>
       </BigButton>
@@ -71,7 +75,11 @@ export function DersSecimi({ secili }: { secili: 'mat' | 'tur' }) {
  * Matematik ana ekranının (tahta) üstünde ders seçimi — `App.tsx` yalnız bayraklı derlemede çizer. Yetişkin girişi:
  * "Öğretmen" düğmesiyle aynı ölçek, üst ortada (çocuk erişim bölgesi dışında; e2e geometri `data-yetiskin`i muaf tutar).
  */
-export function AnaEkranDersSecimi() {
+/**
+ * Matematik ana ekranının üstünde ders seçimi. Tahtada Matematik / Okuma Yazma + "Ders seç"
+ * (tam ekran kapıya döner). Kişiselde yalnız "Ders seç" (dar ekranda üçlü çubuk taşmasın).
+ */
+export function AnaEkranDersSecimi({ mod }: { mod: 'tahta' | 'kisisel' }) {
   const dugme = (secili: boolean): CSSProperties => ({
     minHeight: 44,
     padding: '0 14px',
@@ -90,11 +98,18 @@ export function AnaEkranDersSecimi() {
       data-ders-secimi=""
       style={{ position: 'absolute', top: 'var(--size-edge)', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 8 }}
     >
-      <button type="button" aria-pressed="true" style={dugme(true)}>
-        Matematik
-      </button>
-      <button type="button" aria-pressed="false" onClick={() => turEkraniAc({ ekran: 'giris' })} style={dugme(false)}>
-        Okuma Yazma
+      {mod === 'tahta' && (
+        <>
+          <button type="button" aria-pressed="true" style={dugme(true)}>
+            Matematik
+          </button>
+          <button type="button" aria-pressed="false" onClick={() => turEkraniAc({ ekran: 'giris' })} style={dugme(false)}>
+            Okuma Yazma
+          </button>
+        </>
+      )}
+      <button type="button" aria-label="Ders seç" onClick={dersSecimineDon} style={dugme(false)}>
+        Ders seç
       </button>
     </div>
   );

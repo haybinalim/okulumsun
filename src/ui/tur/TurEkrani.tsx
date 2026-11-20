@@ -3,7 +3,7 @@
  *
  * `App.tsx` bu parçayı tembel yükler ve ortak kabukla (`kabuk()`: tahta aracı, yazı yüzeyi, ekran çerçevesi) çizer.
  * Giriş `?ders=tur`. Gezinme ortak `GezinmeCubugu` ile (yerel "Geri" yazılmaz, KG-103): Geri bir önceki Türkçe
- * ekrana, Ana menü uygulamaya döner. Ses yok (tek başına ünsüz sesi hiç yok, K-OY-03; gösterimde değerlendirme ve
+ * ekrana, girişte Geri ve Ana menü tam ekran ders seçimine döner (Adım 83). Ses yok (tek başına ünsüz sesi hiç yok, K-OY-03; gösterimde değerlendirme ve
  * ses yok, §2.4.9). Hiçbir şey saklanmaz; süre ölçülmez (D-13). Tahtada etkileşim alt bölgede (D-24).
  */
 import { lazy, Suspense, useState, type ReactNode } from 'react';
@@ -14,6 +14,7 @@ import { BigButton } from '../primitives/BigButton';
 import { useHareketAzalt } from '../../design/useHareketAzalt';
 import type { TurHamleGlifi } from '../../content/schema/turHamle';
 import { glifAdi, glifAnahtari, HIZ_ADI, HIZLAR, sekmeGlifleri, type Hiz } from './hamleCizim';
+import { dersSecimineDon } from './dersKapisi';
 import { turEkraniAc, turEkraniKapat, type TurEkrani as TurEkraniDurumu } from './turEkraniDurumu';
 import { useHamleVerisi } from './useHamleVerisi';
 import { YazilisGlifi } from './YazilisGlifi';
@@ -82,14 +83,23 @@ export default function TurEkrani({ ekran, profil }: { ekran: TurEkraniDurumu; p
     else if (ekran.ekran === 'kagitSecimi') turEkraniAc({ ekran: 'kagitlar' });
     else if (ekran.ekran === 'etkinlik') turEkraniAc(ekran.geri ?? { ekran: 'etkinlikler' });
     else if (ekran.ekran === 'koro' || ekran.ekran === 'metin') turEkraniAc(ekran.geri ?? { ekran: 'giris' });
-    else if (ekran.ekran === 'giris') turEkraniKapat();
+    else if (ekran.ekran === 'giris') {
+      dersSecimineDon();
+      turEkraniKapat();
+    }
     else turEkraniAc({ ekran: 'giris' });
   };
   return (
     <div data-tur-ekrani={ekran.ekran} style={{ height: '100%', display: 'flex', flexDirection: 'row' }}>
       <GezinmeCubugu
         {...(evKodu === null
-          ? { onGeri: geri, onAnaMenu: turEkraniKapat }
+          ? {
+              onGeri: geri,
+              onAnaMenu: () => {
+                dersSecimineDon();
+                turEkraniKapat();
+              },
+            }
           : ekran.ekran === 'ev'
             ? {}
             : { onGeri: evDon, onAnaMenu: evDon })}

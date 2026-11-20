@@ -130,7 +130,7 @@ test('yazılış gösterimi: seçim, adım kipi, kesikli, sol el, gezinme; geome
   expect(await istenenKlipler(page), 'Türkçe ekranında klip istenmemeli').toEqual(klipOnce);
   expect(await page.evaluate(() => (window as unknown as { __turKonusma: number }).__turKonusma)).toBe(0);
 
-  // Gezinme: Geri → seçim (aynı sekme) → giriş; Ana menü → uygulama.
+  // Gezinme: Geri → seçim (aynı sekme) → giriş; Ana menü → tam ekran ders seçimi (Adım 83).
   await page.getByRole('button', { name: 'Geri' }).click();
   await expect(secim).toBeVisible();
   await expect(glifDugmeleri).toHaveCount(12);
@@ -138,7 +138,7 @@ test('yazılış gösterimi: seçim, adım kipi, kesikli, sol el, gezinme; geome
   await page.getByRole('button', { name: 'Geri' }).click();
   await expect(page.getByRole('main', { name: 'Okuma Yazma' })).toBeVisible();
   await page.getByRole('button', { name: 'Ana menü' }).click();
-  await expect(page.getByRole('button', { name: 'Tahtada birlikte çalışalım.' })).toBeVisible();
+  await expect(page.getByRole('main', { name: 'Ders seç' })).toBeVisible();
 
   expect(agIhlalleri(ag.istekler, new URL(baseURL!).origin)).toEqual([]);
   expect(await page.evaluate(() => localStorage.length + sessionStorage.length)).toBe(0);
