@@ -64,8 +64,8 @@ function hepsi(): { soru: TurSoru; kume: Set<string> }[] {
 const URETILEN = hepsi();
 
 describe('Türkçe şablonlar — üretim (Adım 69)', () => {
-  it('havuz: 125 sözcük, hepsi küçük ve kendi giriş harfinde okunabilir', () => {
-    expect(havuz).toHaveLength(125);
+  it('havuz: 124 sözcük, hepsi küçük ve kendi giriş harfinde okunabilir', () => {
+    expect(havuz).toHaveLength(124);
     for (const s of havuz) expect(dekodlanabilirMi(s.metin, resmiKume(s.girisHarfi, false)), s.metin).toBe(true);
   });
 

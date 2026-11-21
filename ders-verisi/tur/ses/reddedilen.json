@@ -1,8 +1,4 @@
 {
- "tur.sozcuk.ok": {
-  "neden": "\"oke\" diye söyleniyor ya da sessiz; 'Ok.' ve SSML de bozuk (2026-11-17 yeniden deneme); kulakla reddedildi",
-  "tarih": "2026-11-17"
- },
  "tur.hece.te": {
   "neden": "\"ti\" gibi okunuyor; 'Te.', SSML phoneme te/tɛ denendi: ti ya da \"te nokta\"; kulakla reddedildi",
   "tarih": "2026-11-17"

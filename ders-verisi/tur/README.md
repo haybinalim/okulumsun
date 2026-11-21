@@ -17,7 +17,7 @@ manifesti. `public/` altında değildir; yalnız `VITE_DERS_TUR=1` derlemesinde 
   (`scripts/tur/gorsel-uret.tsx`) üretir ve `manifest.json` → `gruplar` listesini günceller (grup açılınca önbelleğe
   alınacak dosyalar). Sözcük listesi iki öğretmen teyidini beklediği için her görsel `teyit: bekliyor`; yalnız sözcük
   ve görsel kimliği depoya girer, taslak liste girmez. Denetim: D-25 (`npm run validate`).
-- `icerik/sozcukler.json` (Adım 69): şablonların sözcük havuzu — 1.–2. grup sözcük listesi taslağının 125 sözcüğü
+- `icerik/sozcukler.json` (Adım 69): şablonların sözcük havuzu — 1.–2. grup sözcük listesi taslağının 124 sözcüğü (125'ten "ok" çıkarıldı)
   (kimlik, metin, giriş harfi, varsa görsel kimliği). Görsel ve hamle verisindeki gibi teyit gelmeden depoya girdi
   (kullanıcı kararı 1 Kasım 2026, KG-145: liste depoda `teyit: bekliyor` istisnasıyla kalır; geliştirme ve pilot
   önizlemesi kullanır, **genel yayın iki öğretmen teyidine bağlıdır**):
@@ -34,6 +34,13 @@ manifesti. `public/` altında değildir; yalnız `VITE_DERS_TUR=1` derlemesinde 
   Üretilen klip ölçülür (süre, ses seviyesi); geçmeyen "Ka." biçimiyle yeniden denenir, yine geçmezse dosya yazılmaz
   ve klip `eksik` kalır. `ses/reddedilen.json` kulakla reddedilen klipleri tutar (üretilmez, durum `eksik`, yayına girmez);
   bkz. `docs/ses/SES_KAYNAKLARI.md` §14.
+  **Resimli/seslendirilen sözcük kuralı:** şablonların istediği her klip `durum: "var"` olmalıdır
+  (`tests/unit/turGorsel.spec.ts`: görselli T-01/T-08/T-17/T-18/T-19 için her klip, diğer şablonlar için her sözcük klibi;
+  şablonlar saftır, klip durumunu bilmez). "ok" klibi kulakla reddedildi (2026-11-17: "oke" diye söyleniyor ya da sessiz;
+  `ses/reddedilen.json`'daki kaydı sözcük havuzdan çıkınca silindi), bu yüzden **"ok" sözcüğü `sozcukler.json` havuzunda yoktur**
+  (resimli olması yetmez: T-01 model sözcük, T-02, T-06, T-07 dikte, T-16 de onu seslendirir). `gorseller/ok.svg` ve
+  `gorseller/grup-2.json` kataloğu durur. "ok" klibi üretilip kabul edilince havuza
+  `{ "id": "ok", "metin": "ok", "girisHarfi": "k", "gorselId": "ok" }` geri eklenir, `npm run tur:klip` koşulur.
 - `veli-karti.json` (Adım 71): eve link ekranında ve eve giden bağlantının açılışında veliye gösterilen kısa metin
   (ses esaslı çalışma, harf adı yerine ses, ünsüzü tek başına söyletmeme, kalem tutuşu, sol el, kısa ve süresiz).
   Katı ayrıştırıcı `src/content/dersler/tur/veliKarti.ts` (altı madde birer kez). Taslak: `teyit: { durum: "bekliyor" }`,

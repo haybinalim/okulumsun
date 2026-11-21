@@ -1659,12 +1659,6 @@
    "dosya": "hece/nut.m4a"
   },
   {
-   "anahtar": "tur.hece.ok",
-   "metin": "ok",
-   "durum": "var",
-   "dosya": "hece/ok.m4a"
-  },
-  {
    "anahtar": "tur.hece.ol",
    "metin": "ol",
    "durum": "var",
@@ -2418,11 +2412,6 @@
    "metin": "nota",
    "durum": "var",
    "dosya": "sozcuk/nota.m4a"
-  },
-  {
-   "anahtar": "tur.sozcuk.ok",
-   "metin": "ok",
-   "durum": "eksik"
   },
   {
    "anahtar": "tur.sozcuk.oku",

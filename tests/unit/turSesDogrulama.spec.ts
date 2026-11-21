@@ -366,7 +366,7 @@ describe('ret listesi (kulakla reddedilen)', () => {
 
   it('depodaki reddedilen.json geçerli ve her anahtarı klipler.json içinde', () => {
     const ret = retListesiniOku(process.cwd());
-    expect(Object.keys(ret)).toContain('tur.sozcuk.ok');
+    expect(Object.keys(ret)).toContain('tur.hece.te');
     const anahtarlar = new Set((JSON.parse(readFileSync('ders-verisi/tur/ses/klipler.json', 'utf8')) as { klipler: { anahtar: string }[] }).klipler.map((c) => c.anahtar));
     for (const k of Object.keys(ret)) expect(anahtarlar.has(k)).toBe(true);
   });
@@ -377,17 +377,17 @@ describe('ret listesi (kulakla reddedilen)', () => {
     mkdirSync(path.join(kok, 'ders-verisi/tur/icerik'), { recursive: true });
     for (const f of ['sozcukler.json', 'cumleler.json', 'metinler.json']) copyFileSync(`ders-verisi/tur/icerik/${f}`, path.join(kok, 'ders-verisi/tur/icerik', f));
     mkdirSync(path.join(ses, 'sozcuk'), { recursive: true });
-    writeFileSync(path.join(ses, 'sozcuk/ok.m4a'), 'x');
+    writeFileSync(path.join(ses, 'sozcuk/okul.m4a'), 'x');
     writeFileSync(path.join(ses, 'sozcuk/kale.m4a'), 'x');
     const durumlar = () =>
       new Map((JSON.parse(klipManifestiBeklenen(kok)) as { klipler: { anahtar: string; durum: string }[] }).klipler.map((c) => [c.anahtar, c.durum]));
     // ret listesi yokken ikisi de var
-    expect(durumlar().get('tur.sozcuk.ok')).toBe('var');
-    writeFileSync(path.join(ses, 'reddedilen.json'), JSON.stringify({ 'tur.sozcuk.ok': { neden: 'oke', tarih: '2026-11-16' } }));
-    expect(durumlar().get('tur.sozcuk.ok')).toBe('eksik');
+    expect(durumlar().get('tur.sozcuk.okul')).toBe('var');
+    writeFileSync(path.join(ses, 'reddedilen.json'), JSON.stringify({ 'tur.sozcuk.okul': { neden: 'oke', tarih: '2026-11-16' } }));
+    expect(durumlar().get('tur.sozcuk.okul')).toBe('eksik');
     expect(durumlar().get('tur.sozcuk.kale')).toBe('var');
-    expect(turKlipDiskteVarMi(kok)('sozcuk/ok.m4a')).toBe(false);
-    expect(existsSync(path.join(ses, 'sozcuk/ok.m4a'))).toBe(true); // dosya silinmez, yalnız yok sayılır
+    expect(turKlipDiskteVarMi(kok)('sozcuk/okul.m4a')).toBe(false);
+    expect(existsSync(path.join(ses, 'sozcuk/okul.m4a'))).toBe(true); // dosya silinmez, yalnız yok sayılır
   });
 });
 

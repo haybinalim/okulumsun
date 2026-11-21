@@ -18,6 +18,12 @@ import {
 import { NESNE_TEMEL } from '../../src/content/dersler/tur/gorselPaleti';
 import { girisNoktasi } from '../../src/content/dersler/tur/ogretilenKume';
 import { veriyiOlc } from '../../scripts/ders-veri-butcesi';
+import { havuzuAyristir } from '../../src/content/dersler/tur/sablonlar/havuz';
+import { TUR_SABLON_KODLARI, TUR_ZORLUKLARI, TurUretimHatasi, turSoruUret, type TurSablonKodu } from '../../src/content/dersler/tur/sablonlar';
+import { OGRETIM_SIRASI } from '../../src/content/dersler/tur/alfabe';
+import { resmiKume } from '../../src/content/dersler/tur/ogretilenKume';
+import type { TurHamleGlifi } from '../../src/content/schema/turHamle';
+import { sozcukKlibi } from '../../src/content/dersler/tur/sablonlar/klipler';
 
 const KOK = 'ders-verisi/tur/';
 const dizinAdlari = readdirSync(`${KOK}gorseller`).filter((d) => /^grup-\d\.json$/.test(d)).sort();
@@ -43,6 +49,52 @@ describe('görsel verisi', () => {
     const manifest = readFileSync(`${KOK}manifest.json`, 'utf8');
     expect(manifestiGuncelle(manifest, dizinler)).toBe(manifest);
   });
+
+  it('görselli etkinliğe girebilen (gorselId taşıyan) her havuz sözcüğünün klibi manifestte "var" (T-01/T-08/T-18/T-19 sesi resimle eşleşir)', () => {
+    // Şablonlar saftır ve klip durumunu bilmez; resimli sözcük seçip adını çalamazsa "Ses yok" olur ya da
+    // T-19 bitiş okuması resimlerle hizasını kaybeder. Kural burada (CI) durur. Klip gelmeden gorselId EKLENMEZ.
+    const sozcukler = (JSON.parse(readFileSync(`${KOK}icerik/sozcukler.json`, 'utf8')) as { sozcukler: { id: string; metin: string; gorselId?: string }[] }).sozcukler;
+    const manifest = new Map(
+      (JSON.parse(readFileSync(`${KOK}ses/klipler.json`, 'utf8')) as { klipler: { anahtar: string; durum: string }[] }).klipler.map((k) => [k.anahtar, k.durum]),
+    );
+    const sessiz = sozcukler
+      .filter((s) => s.gorselId)
+      .filter((s) => manifest.get(sozcukKlibi(s.metin)) !== 'var')
+      .map((s) => `${s.metin} (${sozcukKlibi(s.metin)}: ${manifest.get(sozcukKlibi(s.metin)) ?? 'manifestte yok'})`);
+    expect(sessiz, `klibi "var" olmayan resimli sözcükler: gorselId'yi havuzdan kaldır ya da klibi üret`).toEqual([]);
+  });
+
+  it('görselli şablonlarda (T-01, T-08, T-17, T-18, T-19) istenen her klip "var"; resimsiz şablonlarda da istenen her sözcük klibi "var"', () => {
+    // Havuz bayrağı yetmez: sözcük SESLENDİRİLEN öğe olarak (model sözcük, dikte, hata bulma) de seçilebilir.
+    // Her resmî küme (OGRETIM_SIRASI, büyük harfsiz/dahil), zorluk 1-5, birkaç tohum taranır.
+    const havuz = havuzuAyristir(JSON.parse(readFileSync(`${KOK}icerik/sozcukler.json`, 'utf8')));
+    const hamleler = (JSON.parse(readFileSync(`${KOK}hamleler.json`, 'utf8')) as { glifler: TurHamleGlifi[] }).glifler;
+    const manifest = new Map(
+      (JSON.parse(readFileSync(`${KOK}ses/klipler.json`, 'utf8')) as { klipler: { anahtar: string; durum: string }[] }).klipler.map((k) => [k.anahtar, k.durum]),
+    );
+    const GORSELLI: readonly TurSablonKodu[] = ['T-01', 'T-08', 'T-17', 'T-18', 'T-19'];
+    const kumeler = OGRETIM_SIRASI.flatMap((h) => [resmiKume(h, false), resmiKume(h, true)]);
+    const eksik = new Map<string, Set<string>>();
+    for (const kume of kumeler)
+      for (const sablon of TUR_SABLON_KODLARI)
+        for (const zorluk of TUR_ZORLUKLARI)
+          for (const tohum of [1, 2, 3]) {
+            let soru;
+            try {
+              soru = turSoruUret(sablon, { havuz, hamleler, kume, zorluk, tohum });
+            } catch (e) {
+              if (e instanceof TurUretimHatasi) continue;
+              throw e;
+            }
+            const gorselli = GORSELLI.includes(sablon);
+            for (const k of [soru.yonerge, ...soru.soruKlipleri, ...soru.geriBildirim]) {
+              if (!gorselli && !k.startsWith('tur.sozcuk.')) continue;
+              if (manifest.get(k) !== 'var') (eksik.get(k) ?? eksik.set(k, new Set()).get(k)!).add(sablon);
+            }
+          }
+    const rapor = [...eksik].map(([k, s]) => `${k} (${manifest.get(k) ?? 'manifestte yok'}) <- ${[...s].sort().join(',')}`).sort();
+    expect(rapor, 'istenen ama klibi "var" olmayan klipler: sözcüğü havuzdan çıkar ya da klibi üret').toEqual([]);
+  }, 60_000);
 
   it('bütün denetimler temiz; her görsel teyit bekliyor (yayın kapısı)', () => {
     expect(gorselDizinleriniDenetle(DIZINLER, DOSYALAR)).toEqual([]);
