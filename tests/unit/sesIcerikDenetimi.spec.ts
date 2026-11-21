@@ -2,12 +2,15 @@
  * Ses içerik denetimi (STT) — SAHTE STT; gerçek whisper çağrısı YOK (CI'da whisper yok).
  * Normalleştirme, sayı eşleme, benzerlik/eşik kararı, kısa-klip ayrımı, önbellek, süzgeç, çıkış kodu, sessiz-hata.
  */
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, rmSync, statSync, utimesSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   anahtarSuz,
+  aracKimligi,
+  onbellekSec,
+  argumanlariAyir,
   cikisKodu,
   denetle,
   dosyaOzeti,
@@ -179,15 +182,58 @@ describe('denetle (sahte STT)', () => {
 
   it('boş transkript şüpheli (geçti DEĞİL) ve önbelleğe girmez', async () => {
     const onbellek: Onbellek = {};
-    const klipler = [klip('a', 'Annem elma alır.')];
-    const [s] = await denetle(klipler, { stt: sahte({}), model: 'm', onbellek });
-    expect(s.durum).toBe('supheli');
-    expect(onbellek).toEqual({});
+    const klipler = [klip('a', 'Annem elma alır.'), klip('b', 'Kar erir yavaşça.')];
+    const [a, b] = await denetle(klipler, { stt: sahte({ b: 'Kar erir yavaşça.' }), model: 'm', onbellek });
+    expect(a.durum).toBe('supheli');
+    expect(a.neden).toBe('boş transkript');
+    expect(b.durum).toBe('gecti');
+    expect(Object.keys(onbellek)).toEqual(['b']);
   });
 
-  it('tüm transkriptler boşsa araç bozuk sayılıp HATA verir (şüpheli yığını olarak gizlenmez)', async () => {
+  it('tüm transkriptler boşsa araç bozuk sayılıp HATA verir (tek klip bile)', async () => {
     const klipler = Array.from({ length: 12 }, (_, i) => klip(`k${i}`, 'Annem elma alır.'));
     await expect(denetle(klipler, { stt: sahte({}), model: 'm' })).rejects.toThrow(/boş metin/);
+    await expect(denetle([klip('tek', 'Annem elma alır.')], { stt: sahte({}), model: 'm' })).rejects.toThrow(/boş metin/);
+  });
+  it('önbellek seçimi: kimlik yoksa ya da kapalıysa kullanılmaz (dosyada geçerli girdi olsa bile)', () => {
+    const yol = path.join(dizin, 'onb.json');
+    writeFileSync(yol, JSON.stringify({ a: { sha: 's', model: 'm', duyulan: 'x' } }));
+    expect(onbellekSec(null, false, yol)).toBeUndefined();
+    expect(onbellekSec('kimlik', true, yol)).toBeUndefined();
+    expect(onbellekSec('kimlik', false, yol)).toHaveProperty('a');
+  });
+  it('bir kısmı boşsa hata yok (yalnız o klip şüpheli)', async () => {
+    const r = await denetle([klip('a', 'Annem elma alır.'), klip('b', 'Kar erir yavaşça.')], { stt: sahte({ a: 'Annem elma alır.' }), model: 'm' });
+    expect(r.map((x) => x.durum)).toEqual(['gecti', 'supheli']);
+  });
+  it('araç kimliği: ikili ya da model değişince değişir; okunamazsa null (önbellek kullanılmaz)', () => {
+    const ikili = path.join(dizin, 'whisper-cli');
+    const model = path.join(dizin, 'ggml-x.bin');
+    writeFileSync(ikili, 'v1');
+    writeFileSync(model, 'model-1');
+    const k1 = aracKimligi(ikili, model);
+    expect(k1).toMatch(/^[0-9a-f]{12}$/);
+    expect(aracKimligi(ikili, model)).toBe(k1);
+    writeFileSync(ikili, 'v2-daha-uzun'); // brew upgrade: boyut/mtime değişir
+    expect(aracKimligi(ikili, model)).not.toBe(k1);
+    writeFileSync(ikili, 'v1');
+    const t = statSync(model).mtime;
+    utimesSync(ikili, t, t);
+    utimesSync(model, t, t);
+    const k0 = aracKimligi(ikili, model);
+    expect(k0).not.toBe(k1); // ikili mtime'ı farklı kalmış olabilir; model sınaması aşağıda sabit mtime ile
+    writeFileSync(model, 'model-1');
+    utimesSync(model, t, t);
+    const kSabit = aracKimligi(ikili, model);
+    writeFileSync(model, 'model-2-farkli-boyut');
+    utimesSync(model, t, t);
+    expect(aracKimligi(ikili, model)).not.toBe(kSabit); // yalnız model BOYUTU değişti
+    writeFileSync(model, 'model-1');
+    utimesSync(model, new Date(t.getTime() + 5000), new Date(t.getTime() + 5000));
+    expect(aracKimligi(ikili, model)).not.toBe(kSabit); // yalnız model MTIME değişti
+    expect(aracKimligi(path.join(dizin, 'yok'), model)).toBeNull();
+    expect(aracKimligi(ikili, path.join(dizin, 'yok.bin'))).toBeNull();
+    expect(aracKimligi('whisper-cli-yok-boyle-bir-sey', model)).toBeNull();
   });
 
   it('STT hatası yutulmaz: fırlatır', async () => {
@@ -261,6 +307,30 @@ describe('süzgeç, özet, çıkış kodu', () => {
     expect(cikisKodu(ozetle([s('gecti'), s('supheli')]))).toBe(1);
     expect(cikisKodu(ozetle([s('gecti'), s('eksik')]))).toBe(1);
     expect(cikisKodu(ozetle([]))).toBe(1);
+  });
+});
+
+describe('komut satırı doğrulaması (açık hata, sessiz varsayılan yok)', () => {
+  it('geçerli girdi ve varsayılanlar', () => {
+    const a = argumanlariAyir(['--yalniz', 'ui.*', '--yalniz', 'tur.hece.*', '--esik', '0.9', '--model', 'base']);
+    expect(a).toMatchObject({ yalniz: ['ui.*', 'tur.hece.*'], esik: 0.9, model: 'base', esZamanli: 3 });
+    expect(argumanlariAyir([]).esik).toBe(0.95);
+  });
+  it.each([
+    [['--yalniz'], /değer ister/],
+    [['--yalniz', '--esik', '0.9'], /değer ister/],
+    [['--model'], /değer ister/],
+    [['--model', '../x'], /--model geçersiz/],
+    [['--esik'], /değer ister/],
+    [['--esik', 'abc'], /0 ile 1/],
+    [['--esik', '1.5'], /0 ile 1/],
+    [['--rapor'], /değer ister/],
+    [['--rapor', '--onbellek-yok'], /değer ister/],
+    [['--es-zamanli', '0'], /1\.\.16/],
+    [['--esik', '0.9', '--esik', '0.8'], /bir kez/],
+    [['--yalnis', 'x'], /Bilinmeyen seçenek/],
+  ])('%j → hata', (argv, mesaj) => {
+    expect(() => argumanlariAyir(argv)).toThrow(mesaj);
   });
 });
 

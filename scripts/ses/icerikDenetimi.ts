@@ -5,9 +5,9 @@
  * yerine "Mina…") bu betik sınar: her klip whisper ile yazıya çevrilir, beklenen `text` ile karşılaştırılır.
  * Beklenen metin üretimle AYNI kaynaktan gelir (`klipleriTopla` + Türkçe `turKlipleriniAyir`); ikinci liste yok.
  *
- * Kullanım:  npm run audio:stt [-- --yalniz <desen>] [--esik 0.85] [--model small] [--onbellek-yok]
+ * Kullanım:  npm run audio:stt [-- --yalniz <desen>] [--esik 0.95] [--model small] [--onbellek-yok]
  *   --yalniz <desen>   anahtar bu metni içerenler (ya da `*` joker: `tur.hece.*`, `ui.*`); birden çok kez verilebilir
- *   --esik <0..1>      benzerlik eşiği (varsayılan 0.85)
+ *   --esik <0..1>      benzerlik eşiği (varsayılan 0.95)
  *   --model <ad>       ggml modeli (varsayılan small): <OKULUMSUN_STT_DIZIN>/ggml-<ad>.bin
  *   --ipucu <metin>   whisper başlangıç ipucu (varsayılan "Türkçe kısa cümle."); --ipucu-yok kapatır
  *   --kisa-hepsi-kulak  kısa klipte tam eşleşme bile `gecti` sayılmaz (hepsi kulak listesine)
@@ -21,7 +21,7 @@
  */
 import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, realpathSync, statSync } from 'node:fs';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -80,6 +80,11 @@ export function onbellekten(onb: Onbellek, anahtar: string, sha: string, model: 
   return g !== undefined && g.sha === sha && g.model === model ? g.duyulan : undefined;
 }
 
+/** Önbellek kullanılacak mı? Araç kimliği okunamadıysa ya da kapatıldıysa `undefined` (eski sonuç sessizce kullanılmaz). */
+export function onbellekSec(kimlik: string | null, kapali: boolean, yol: string): Onbellek | undefined {
+  return kapali || kimlik === null ? undefined : onbellekOku(yol);
+}
+
 export function onbellekOku(yol: string): Onbellek {
   if (!existsSync(yol)) return {};
   try {
@@ -136,8 +141,8 @@ export async function denetle(klipler: readonly GirisKlip[], s: DenetimSecenekle
   };
   await Promise.all(Array.from({ length: Math.max(1, Math.min(s.esZamanli ?? 3, klipler.length)) }, isci));
 
-  // Hepsi boşsa araç sessizce bozuktur (yanlış model/dil, bozuk wav); "şüpheli yığını" diye gizlenmez.
-  if (cozulen >= 10 && bosCozulen === cozulen) {
+  // Yeni çözülenlerin HEPSİ boşsa (en az 1 klip) araç sessizce bozuktur (yanlış model/dil, bozuk wav); "şüpheli yığını" diye gizlenmez.
+  if (cozulen >= 1 && bosCozulen === cozulen) {
     throw new Error(`STT ${cozulen} kliptir yalnız boş metin döndürdü; whisper/model/ffmpeg çalışmıyor olabilir (sonuç güvenilmez).`);
   }
   return sonuc;
@@ -201,6 +206,28 @@ async function aracVarMi(komut: string, arg: string[]): Promise<boolean> {
   }
 }
 
+/**
+ * Önbellek anahtarına girecek araç kimliği: whisper ikilisinin gerçek yolu + boyutu + mtime'ı ve model dosyasının
+ * boyutu + mtime'ı. (whisper-cli sürüm bayrağı vermiyor; brew upgrade yeni Cellar yoluna, yeniden indirme yeni
+ * boyut/mtime'a yol açar.) Okunamazsa `null`: çağıran önbelleği KULLANMAZ (sessiz eski sonuç yok).
+ */
+export function aracKimligi(whisper: string, modelDosyasi: string): string | null {
+  try {
+    let ikili = whisper;
+    if (!whisper.includes('/')) {
+      const bulunan = (process.env.PATH ?? '').split(path.delimiter).map((d) => path.join(d, whisper)).find((y) => existsSync(y));
+      if (bulunan === undefined) return null;
+      ikili = bulunan;
+    }
+    const gercek = realpathSync(ikili);
+    const a = statSync(gercek);
+    const m = statSync(modelDosyasi);
+    return createHash('sha256').update(`${gercek}|${a.size}|${a.mtimeMs}|${m.size}|${m.mtimeMs}`).digest('hex').slice(0, 12);
+  } catch {
+    return null;
+  }
+}
+
 /** Whisper + ffmpeg + model hazır değilse açık, eyleme dönük hata fırlatır. */
 export async function sttHazirMi(model: string): Promise<{ whisper: string; ffmpeg: string; modelDosyasi: string }> {
   const whisper = process.env.WHISPER_CLI ?? 'whisper-cli';
@@ -257,38 +284,83 @@ export function denetlenecekKlipler(kok: string): GirisKlip[] {
 // CLI
 // ---------------------------------------------------------------------------------------------------------------
 
-function secenek(argv: readonly string[], ad: string): string | undefined {
-  const i = argv.indexOf(ad);
-  return i >= 0 ? argv[i + 1] : undefined;
+const DEGERLI = ['--yalniz', '--model', '--esik', '--rapor', '--es-zamanli', '--ipucu'] as const;
+const BAYRAK = ['--onbellek-yok', '--ipucu-yok', '--kisa-hepsi-kulak'] as const;
+
+export interface Arguman {
+  readonly yalniz: string[];
+  readonly model: string;
+  readonly esik: number;
+  readonly rapor: string;
+  readonly esZamanli: number;
+  readonly ipucu: string;
+  readonly onbellekYok: boolean;
+  readonly kisaHepsiKulak: boolean;
 }
 
-function cokluSecenek(argv: readonly string[], ad: string): string[] {
-  return argv.flatMap((a, i) => (a === ad && argv[i + 1] !== undefined ? [argv[i + 1]] : []));
+/** Komut satırını doğrular; değersiz/geçersiz/bilinmeyen seçenek AÇIK HATA verir (sessizce varsayılana düşmez). */
+export function argumanlariAyir(argv: readonly string[]): Arguman {
+  const deger = new Map<string, string[]>();
+  const bayrak = new Set<string>();
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if ((BAYRAK as readonly string[]).includes(a)) {
+      bayrak.add(a);
+    } else if ((DEGERLI as readonly string[]).includes(a)) {
+      const v = argv[++i];
+      if (v === undefined || v.trim() === '' || v.startsWith('--')) throw new Error(`${a} bir değer ister (ör. ${a} ${a === '--esik' ? '0.95' : '<değer>'}).`);
+      deger.set(a, [...(deger.get(a) ?? []), v]);
+    } else {
+      throw new Error(`Bilinmeyen seçenek: "${a}". Geçerliler: ${[...DEGERLI, ...BAYRAK].join(' ')}`);
+    }
+  }
+  const tek = (ad: string): string | undefined => {
+    const v = deger.get(ad);
+    if (v && v.length > 1) throw new Error(`${ad} yalnız bir kez verilebilir.`);
+    return v?.[0];
+  };
+  const model = tek('--model') ?? VARSAYILAN_MODEL;
+  if (!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(model)) throw new Error(`--model geçersiz: "${model}" (ör. small, base, medium).`);
+  const esikHam = tek('--esik');
+  const esik = esikHam === undefined ? VARSAYILAN_ESIK : Number(esikHam);
+  if (!Number.isFinite(esik) || esik < 0 || esik > 1) throw new Error(`--esik 0 ile 1 arasında bir sayı olmalı: "${esikHam}"`);
+  const esHam = tek('--es-zamanli') ?? '3';
+  const esZamanli = Number(esHam);
+  if (!Number.isInteger(esZamanli) || esZamanli < 1 || esZamanli > 16) throw new Error(`--es-zamanli 1..16 tam sayı olmalı: "${esHam}"`);
+  const ipucuAyar = tek('--ipucu');
+  if (bayrak.has('--ipucu-yok') && ipucuAyar !== undefined) throw new Error('--ipucu ile --ipucu-yok birlikte verilemez.');
+  return {
+    yalniz: deger.get('--yalniz') ?? [],
+    model,
+    esik,
+    rapor: tek('--rapor') ?? VARSAYILAN_RAPOR,
+    esZamanli,
+    ipucu: bayrak.has('--ipucu-yok') ? '' : (ipucuAyar ?? VARSAYILAN_IPUCU),
+    onbellekYok: bayrak.has('--onbellek-yok'),
+    kisaHepsiKulak: bayrak.has('--kisa-hepsi-kulak'),
+  };
 }
 
 export async function main(argv: readonly string[]): Promise<number> {
   const kok = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-  const model = secenek(argv, '--model') ?? VARSAYILAN_MODEL;
-  const esikHam = secenek(argv, '--esik');
-  const esik = esikHam === undefined ? VARSAYILAN_ESIK : Number(esikHam);
-  if (!Number.isFinite(esik) || esik < 0 || esik > 1) throw new Error(`--esik 0 ile 1 arasında olmalı: "${esikHam}"`);
-  const esZamanli = Number.parseInt(secenek(argv, '--es-zamanli') ?? '3', 10);
-  const raporYolu = path.resolve(kok, secenek(argv, '--rapor') ?? VARSAYILAN_RAPOR);
-  const onbellekYok = argv.includes('--onbellek-yok');
-  const ipucu = argv.includes('--ipucu-yok') ? '' : (secenek(argv, '--ipucu') ?? VARSAYILAN_IPUCU);
-  // Önbellek anahtarı model + ipucu: ikisinden biri değişince eski çözümler geçersizdir.
-  const modelKimligi = ipucu ? `${model}+${createHash('sha256').update(ipucu).digest('hex').slice(0, 8)}` : model;
+  const arg = argumanlariAyir(argv);
+  const { model, esik, ipucu } = arg;
+  const raporYolu = path.resolve(kok, arg.rapor);
   const onbellekYolu = path.join(sttDizini(), `onbellek-${model}.json`);
 
   const tumu = denetlenecekKlipler(kok);
-  const klipler = anahtarSuz(tumu, cokluSecenek(argv, '--yalniz'));
+  const klipler = anahtarSuz(tumu, arg.yalniz);
   if (klipler.length === 0) throw new Error(`Süzgeçle eşleşen klip yok (toplam ${tumu.length}).`);
 
-  const onbellek: Onbellek | undefined = onbellekYok ? undefined : onbellekOku(onbellekYolu);
   const baslangic = Date.now();
   const stt = await whisperSttOlustur(model, ipucu);
+  // Önbellek anahtarı: model + ipucu + araç kimliği (ikili/model dosyası). Kimlik okunamazsa önbellek KAPALI.
+  const kimlik = aracKimligi(process.env.WHISPER_CLI ?? 'whisper-cli', modelYolu(model));
+  if (kimlik === null && !arg.onbellekYok) console.warn('UYARI: whisper/model kimliği okunamadı; önbellek kullanılmıyor (her klip yeniden çözülür).');
+  const onbellek = onbellekSec(kimlik, arg.onbellekYok, onbellekYolu);
+  const modelKimligi = `${model}+${createHash('sha256').update(ipucu).digest('hex').slice(0, 8)}+${kimlik}`;
   console.log(`STT: model ${model} · ipucu "${ipucu}" · ${klipler.length}/${tumu.length} klip · eşik ${esik} · önbellek ${onbellek ? onbellekYolu : 'kapalı'}`);
-  const satirlar = await denetle(klipler, { stt, model: modelKimligi, esik, kisaTamEslesmeGecer: !argv.includes('--kisa-hepsi-kulak'), onbellek, esZamanli: Number.isFinite(esZamanli) ? esZamanli : 3 });
+  const satirlar = await denetle(klipler, { stt, model: modelKimligi, esik, kisaTamEslesmeGecer: !arg.kisaHepsiKulak, onbellek, esZamanli: arg.esZamanli });
   if (onbellek) {
     await mkdir(path.dirname(onbellekYolu), { recursive: true });
     await writeFile(onbellekYolu, JSON.stringify(onbellek));

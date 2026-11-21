@@ -22,10 +22,10 @@ verir ve çıkış kodu 2 döner; "geçti" denmez.
 ```
 npm run audio:stt                              # tüm klipler (matematik + Türkçe)
 npm run audio:stt -- --yalniz 'tur.hece.*'     # süzgeç (alt dize ya da * jokeri; birden çok kez verilebilir)
-npm run audio:stt -- --esik 0.9 --model base   # eşik / model
+npm run audio:stt -- --esik 0.9 --model base   # eşik / model (varsayılan eşik 0.95)
 ```
 
-Seçenekler: `--yalniz`, `--esik <0..1>` (varsayılan 0.85), `--model <ad>` (varsayılan `small`), `--ipucu <metin>` /
+Seçenekler: `--yalniz`, `--esik <0..1>` (varsayılan 0.95), `--model <ad>` (varsayılan `small`), `--ipucu <metin>` /
 `--ipucu-yok`, `--kisa-hepsi-kulak`, `--onbellek-yok`, `--rapor <yol>`, `--es-zamanli <n>` (varsayılan 3).
 
 Beklenen metin üretimle aynı kaynaktan gelir: `klipleriTopla` (`src/content/tr.json`, yer tutucular doldurulmuş) ve
@@ -36,22 +36,27 @@ Telaffuz/SSML girdisi KULLANILMAZ: klibin `text`i beklenendir.
 
 1. Normalleştirme: tr-TR küçük harf; noktalama atılır; kesme işareti silinir; rakam yazıya çevrilir
    (`turkishNumber`, 0-100 ve 200; ötesi yerel). ç ğ ı ö ş ü ayrı harf sayılır.
-2. Whisper rakamı farklı yazabildiği için duyulan metnin adayları denenir ve en iyisi alınır: olduğu gibi,
-   "1 6" → "16", "4." → "dördüncü" (sıra sayısı).
+2. Whisper rakamı farklı yazabildiği için duyulan metnin adayları denenir ve en iyisi alınır: olduğu gibi ve
+   "1 6" → "16". "4." yazımı BEKLENENE göre tek anlam alır: beklenen sıra sözcüğüyse ("dördüncü") sıra, değilse
+   ("dört") kardinal. Sınır: beklenen "dört" iken ses "dördüncü" söylese ve whisper "4." yazsa geçer; whisper
+   sözcük yazarsa ("dördüncü") yakalanır.
 3. Benzerlik = 1 - Levenshtein / uzun olanın uzunluğu (boşluksuz harf dizisi üzerinde).
 4. Durum:
    - `kulak`: beklenen metinde en çok 4 harf (tek harf/hece/çok kısa sözcük) VE STT tam eşleşmedi. Kısa klipte STT
      uydurma çıktı verir ("mor" → "Ne?"); bu BAŞARISIZ sayılmaz, insan dinler. Kısa klipte harfi harfine eşleşme
      `gecti` sayılır (`--kisa-hepsi-kulak` bunu kapatır).
-   - `gecti`: benzerlik >= eşik.
+   - `gecti`: benzerlik >= eşik (varsayılan 0,95; "Mine/Mina" gibi tek harflik fark şüpheli olur).
    - `supheli`: benzerlik < eşik ya da boş transkript. Çıkış kodu 1. Şüpheli = "kulakla bak"; STT hatası da olabilir.
-5. Çıkış: 0 şüpheli ve eksik dosya yok · 1 şüpheli ya da eksik dosya var · 2 araç/model/çalışma hatası.
+5. Yeni çözülen klip(ler)in HEPSİ boş transkript dönerse (1 klip bile) araç bozuk sayılır: hata, çıkış 2.
+6. Komut satırı: değersiz, geçersiz ya da bilinmeyen seçenek (`--yalniz`, `--model`, `--esik`, `--rapor` ...) açık hata, çıkış 2.
+7. Çıkış: 0 şüpheli ve eksik dosya yok · 1 şüpheli ya da eksik dosya var · 2 araç/model/çalışma hatası.
 
 ## Çıktı ve önbellek
 
 - Rapor: `test-results/ses-icerik-raporu.json` (git'e girmez): `anahtar, beklenen, duyulan, benzerlik, durum, neden, onbellek`.
 - Önbellek: `<OKULUMSUN_STT_DIZIN>/onbellek-<model>.json`. Anahtar = klip anahtarı + ses dosyasının sha256'sı + model
-  + ipucu. Üretim hattı klibi yeniden üretince (bayt değişir) o klip otomatik yeniden çözülür. Yalnız DUYULAN metin
+  + ipucu + araç kimliği (whisper ikilisinin gerçek yolu/boyutu/mtime'ı ve model dosyasının boyutu/mtime'ı; brew
+  upgrade ya da model değişince eski sonuçlar geçersiz). Kimlik okunamazsa önbellek KULLANILMAZ ve uyarı basılır. Üretim hattı klibi yeniden üretince (bayt değişir) o klip otomatik yeniden çözülür. Yalnız DUYULAN metin
   saklanır; eşik/beklenen değişince karar yeniden verilir. Boş sonuç önbelleğe girmez.
 
 ## Model seçimi ve ölçüm (828 klip, Apple Silicon, 3 eşzamanlı)
@@ -67,8 +72,12 @@ small'un şüphelilerinden 18/101'ini düzeltti; seyrek olarak ipucunu geri yaza
 
 ## Sınırlar
 
+- "ona" / "10" eşleşmesi: "10'a" beklenen metinde rakam yazıya çevrildiği için "ona" ile aynı harf dizisine iner;
+  gerçekten "ona" mı "10'a" mı denildiği ayırt edilmez (iki yönlü eşleme bilinçli kabul).
+- Klip listesi mantığı (`klipleriTopla` + Türkçe manifest) `audit-audio.ts` ile paralel kuruludur; ortak bir
+  "denetlenecek klipler" yardımcısına taşınmadı.
 - STT hata yapar: şüpheli listesi "kulakla bak" listesidir, kesin hata listesi değil. Gerçek hata örneği
   (`soru.eksik-sayi` "-6 sayıyı bul.") ile STT hatası (`sekil.yuvarlak` "You are luck.") ayrımını kulak yapar.
-- Tek harf farkı uzun cümlede eşiğin altına inmeyebilir (11 harflik "Mine/Mina" 0.91): hassasiyet için `--esik 0.95`.
+- Varsayılan eşik 0,95 tek harflik farkı ("Mine/Mina" 0,91) yakalar; ama whisper yanlış duyunca yanlış alarm da artar. Gevşetmek için `--esik 0.85`.
 - Whisper ünlü uzatma, fazladan ses, yanlış vurgu ya da kötü tonlamayı yakalamaz; yalnız ne söylendiğine bakar.
 - Şüpheli klipleri bu araç düzeltmez ya da yeniden üretmez; yalnız listeler.
