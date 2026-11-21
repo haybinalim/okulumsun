@@ -18,6 +18,7 @@ import {
 import { NESNE_TEMEL } from '../../src/content/dersler/tur/gorselPaleti';
 import { girisNoktasi } from '../../src/content/dersler/tur/ogretilenKume';
 import { veriyiOlc } from '../../scripts/ders-veri-butcesi';
+import { sozcukKlibi } from '../../src/content/dersler/tur/sablonlar/klipler';
 
 const KOK = 'ders-verisi/tur/';
 const dizinAdlari = readdirSync(`${KOK}gorseller`).filter((d) => /^grup-\d\.json$/.test(d)).sort();
@@ -42,6 +43,20 @@ describe('görsel verisi', () => {
     for (const d of dizinler) expect(readFileSync(`${KOK}gorseller/grup-${d.grup}.json`, 'utf8')).toBe(dizinJson(d));
     const manifest = readFileSync(`${KOK}manifest.json`, 'utf8');
     expect(manifestiGuncelle(manifest, dizinler)).toBe(manifest);
+  });
+
+  it('görselli etkinliğe girebilen (gorselId taşıyan) her havuz sözcüğünün klibi manifestte "var" (T-01/T-08/T-18/T-19 sesi resimle eşleşir)', () => {
+    // Şablonlar saftır ve klip durumunu bilmez; resimli sözcük seçip adını çalamazsa "Ses yok" olur ya da
+    // T-19 bitiş okuması resimlerle hizasını kaybeder. Kural burada (CI) durur. Klip gelmeden gorselId EKLENMEZ.
+    const sozcukler = (JSON.parse(readFileSync(`${KOK}icerik/sozcukler.json`, 'utf8')) as { sozcukler: { id: string; metin: string; gorselId?: string }[] }).sozcukler;
+    const manifest = new Map(
+      (JSON.parse(readFileSync(`${KOK}ses/klipler.json`, 'utf8')) as { klipler: { anahtar: string; durum: string }[] }).klipler.map((k) => [k.anahtar, k.durum]),
+    );
+    const sessiz = sozcukler
+      .filter((s) => s.gorselId)
+      .filter((s) => manifest.get(sozcukKlibi(s.metin)) !== 'var')
+      .map((s) => `${s.metin} (${sozcukKlibi(s.metin)}: ${manifest.get(sozcukKlibi(s.metin)) ?? 'manifestte yok'})`);
+    expect(sessiz, `klibi "var" olmayan resimli sözcükler: gorselId'yi havuzdan kaldır ya da klibi üret`).toEqual([]);
   });
 
   it('bütün denetimler temiz; her görsel teyit bekliyor (yayın kapısı)', () => {
