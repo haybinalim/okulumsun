@@ -25,8 +25,10 @@ import {
   karar,
   KISA_HARF_ESIGI,
   levenshtein,
+  VARSAYILAN_ESIK,
   normallestir,
   sayiyiSiraYaziyaCevir,
+  siraMi,
   sayiyiYaziyaCevir,
 } from '../../scripts/ses/sttKarsilastirma';
 
@@ -57,9 +59,18 @@ describe('sayı eşleme', () => {
     expect(benzerlik('dördüncü', '4.')).toBe(1);
     expect(benzerlik('on yedinci', '17.')).toBe(1);
     expect(benzerlik('on altı', '1 6')).toBe(1);
-    // sıra adayı kardinal klibi bozmaz: "dört" için "4." de "dört" ile eşleşir, "dördüncü" ile karıştırılmaz
-    expect(benzerlik('dört', '4.')).toBe(1);
     expect(benzerlik('dört', '5.')).toBeLessThan(0.5);
+  });
+  it("'4.' beklenene göre TEK anlam alır: kardinal 'dört' beklenirken 'dördüncü' sesi geçmez (sıra/kardinal karışması)", () => {
+    expect(siraMi('dördüncü')).toBe(true);
+    expect(siraMi('on üçüncü')).toBe(true);
+    expect(siraMi('dört')).toBe(false);
+    expect(benzerlik('dört', '4.')).toBe(1); // kardinal beklenen, "4." = dört
+    expect(benzerlik('dördüncü', '4')).toBeLessThan(0.7); // sıra beklenen, çıplak rakam = kardinal
+    // ses "dördüncü" söylüyor ama beklenen "dört": STT "dördüncü" yazarsa şüpheli
+    expect(benzerlik('dört', 'dördüncü')).toBeLessThan(0.7);
+    expect(karar('dört kalem', '4. kalem', 0.95).durum).toBe('gecti');
+    expect(karar('dördüncü kalem', '4 kalem', 0.95).durum).toBe('supheli');
   });
   it("'10'a' ile 'ona' aynı harf dizisine iner (iki yönlü eşleme)", () => {
     expect(harfDizisi("10'a tamamlamak")).toBe(harfDizisi('ona tamamlamak'));
@@ -92,6 +103,10 @@ describe('benzerlik / karar', () => {
     const duy = 'Mina süt alır.';
     expect(karar(bek, duy, 0.8).durum).toBe('gecti');
     expect(karar(bek, duy, 0.95).durum).toBe('supheli');
+  });
+  it('varsayılan eşik 0,95: tek harflik "Mine/Mina" hatası varsayılanda şüpheli', () => {
+    expect(VARSAYILAN_ESIK).toBe(0.95);
+    expect(karar('Mine süt alır.', 'Mina süt alır.').durum).toBe('supheli');
   });
   it('boş transkript hiçbir eşikte geçmez', () => {
     const k = karar('Annem elma alır.', '', 0);

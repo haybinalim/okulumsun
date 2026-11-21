@@ -15,7 +15,7 @@ export type Durum = 'gecti' | 'supheli' | 'kulak';
 /** Beklenen metinde (boşluksuz) bu kadar ya da daha az harf varsa klip "kulak gerekli" sayılır (tek harf / tek hece). */
 export const KISA_HARF_ESIGI = 4;
 /** Varsayılan benzerlik eşiği; `--esik` ile değişir. */
-export const VARSAYILAN_ESIK = 0.85;
+export const VARSAYILAN_ESIK = 0.95;
 
 const BASAMAK = ['', 'bir', 'iki', 'üç', 'dört', 'beş', 'altı', 'yedi', 'sekiz', 'dokuz'];
 const ONLAR = ['', 'on', 'yirmi', 'otuz', 'kırk', 'elli', 'altmış', 'yetmiş', 'seksen', 'doksan'];
@@ -92,16 +92,25 @@ export function sayiyiSiraYaziyaCevir(n: number): string {
   return son === undefined ? String(n) : [...sozcukler.slice(0, -1), son].join(' ');
 }
 
+const SIRA_DEGERLERI = new Set(Object.values(SIRA_SOZCUKLERI));
+
+/** Beklenen metin sıra sözcüğüyle mi bitiyor ("dördüncü", "on üçüncü")? */
+export function siraMi(beklenen: string): boolean {
+  const s = normallestir(beklenen).split(' ');
+  return SIRA_DEGERLERI.has(s[s.length - 1]);
+}
+
 /**
- * Whisper rakamı iki biçimde yazabilir; hangisi kastedildiği metinden bilinmez, bu yüzden duyulan metnin ADAYLARI
- * üretilir ve en iyi eşleşen alınır: (a) olduğu gibi, (b) "1 6" → "16" (bitişik rakamlar), (c) "4." → "dördüncü"
- * (rakam + nokta sıra sayısı). Yalnız rakam içeren duyulan metinde aday çoğalır.
+ * Whisper rakamı iki biçimde yazabilir; duyulan metnin ADAYLARI üretilir ve en iyi eşleşen alınır: (a) olduğu gibi,
+ * (b) "1 6" → "16" (bitişik rakamlar). "4." yazımı BEKLENENE göre tek anlam alır: beklenen sıra sözcüğüyse
+ * "dördüncü", değilse "dört" (kardinal). Böylece "dört" beklenirken "dördüncü" söyleyen klip "4." ile geçmez.
  */
-export function duyulanAdaylari(duyulan: string): string[] {
-  const adaylar = new Set<string>([duyulan]);
+export function duyulanAdaylari(duyulan: string, beklenen = ''): string[] {
+  const sira = siraMi(beklenen);
+  const adaylar = new Set<string>();
   const bitisik = duyulan.replace(/(\d)\s+(?=\d)/g, '$1');
   for (const t of [duyulan, bitisik]) {
-    adaylar.add(t.replace(/(\d+)\.(?!\d)/g, (_, d: string) => ` ${sayiyiSiraYaziyaCevir(Number(d))} `));
+    adaylar.add(sira ? t.replace(/(\d+)\.(?!\d)/g, (_, d: string) => ` ${sayiyiSiraYaziyaCevir(Number(d))} `) : t);
   }
   return [...adaylar];
 }
@@ -115,7 +124,7 @@ function harfBenzerligi(a: string, b: string): number {
 /** 0..1; iki dizi de boşsa 1 değil 0 döner (boş = karşılaştırılacak bir şey yok, "aynı" sayılmaz). */
 export function benzerlik(beklenen: string, duyulan: string): number {
   const a = harfDizisi(beklenen);
-  return Math.max(...duyulanAdaylari(duyulan).map((d) => harfBenzerligi(a, harfDizisi(d))));
+  return Math.max(...duyulanAdaylari(duyulan, beklenen).map((d) => harfBenzerligi(a, harfDizisi(d))));
 }
 
 /** Beklenen metin STT ile güvenilir sınanamayacak kadar kısa mı (harf sayısı <= `KISA_HARF_ESIGI`)? */
