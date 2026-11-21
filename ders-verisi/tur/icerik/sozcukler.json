@@ -2,7 +2,7 @@
  "programSurumu": "tymm-turkce-2026-09-02",
  "teyit": {
   "durum": "bekliyor",
-  "kaynak": "Okuma Yazma sözcük listesi taslağı (1.–2. grup, 125 sözcük); iki öğretmen anlam teyidi (D-14, Adım 66) bekliyor."
+  "kaynak": "Okuma Yazma sözcük listesi taslağı (1.–2. grup, 124 sözcük); iki öğretmen anlam teyidi (D-14, Adım 66) bekliyor."
  },
  "sozcukler": [
   {
@@ -286,11 +286,6 @@
   {
    "id": "ek",
    "metin": "ek",
-   "girisHarfi": "k"
-  },
-  {
-   "id": "ok",
-   "metin": "ok",
    "girisHarfi": "k"
   },
   {
