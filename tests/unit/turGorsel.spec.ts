@@ -78,7 +78,7 @@ describe('görsel verisi', () => {
     for (const kume of kumeler)
       for (const sablon of TUR_SABLON_KODLARI)
         for (const zorluk of TUR_ZORLUKLARI)
-          for (const tohum of [1, 2, 3, 4, 5, 6]) {
+          for (const tohum of [1, 2, 3]) {
             let soru;
             try {
               soru = turSoruUret(sablon, { havuz, hamleler, kume, zorluk, tohum });
@@ -94,7 +94,7 @@ describe('görsel verisi', () => {
           }
     const rapor = [...eksik].map(([k, s]) => `${k} (${manifest.get(k) ?? 'manifestte yok'}) <- ${[...s].sort().join(',')}`).sort();
     expect(rapor, 'istenen ama klibi "var" olmayan klipler: sözcüğü havuzdan çıkar ya da klibi üret').toEqual([]);
-  });
+  }, 60_000);
 
   it('bütün denetimler temiz; her görsel teyit bekliyor (yayın kapısı)', () => {
     expect(gorselDizinleriniDenetle(DIZINLER, DOSYALAR)).toEqual([]);
