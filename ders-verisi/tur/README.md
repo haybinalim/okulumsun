@@ -34,6 +34,10 @@ manifesti. `public/` altında değildir; yalnız `VITE_DERS_TUR=1` derlemesinde 
   Üretilen klip ölçülür (süre, ses seviyesi); geçmeyen "Ka." biçimiyle yeniden denenir, yine geçmezse dosya yazılmaz
   ve klip `eksik` kalır. `ses/reddedilen.json` kulakla reddedilen klipleri tutar (üretilmez, durum `eksik`, yayına girmez);
   bkz. `docs/ses/SES_KAYNAKLARI.md` §14.
+  **Resimli sözcük kuralı:** `gorselId` taşıyan her havuz sözcüğünün klibi `durum: "var"` olmalıdır
+  (`tests/unit/turGorsel.spec.ts`; şablonlar klip durumunu bilmez). "ok" klibi kulakla reddedildi (`eksik`), bu yüzden
+  `sozcukler.json`'da "ok"ta `gorselId` yoktur; görsel dosyası (`gorseller/ok.svg`) ve `gorseller/grup-2.json` kataloğu
+  durur. "ok" klibi üretilip `var` olunca `"gorselId": "ok"` geri eklenir.
 - `veli-karti.json` (Adım 71): eve link ekranında ve eve giden bağlantının açılışında veliye gösterilen kısa metin
   (ses esaslı çalışma, harf adı yerine ses, ünsüzü tek başına söyletmeme, kalem tutuşu, sol el, kısa ve süresiz).
   Katı ayrıştırıcı `src/content/dersler/tur/veliKarti.ts` (altı madde birer kez). Taslak: `teyit: { durum: "bekliyor" }`,
