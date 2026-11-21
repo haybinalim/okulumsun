@@ -122,6 +122,24 @@ describe('telaffuz.json şeması', () => {
       expect(ozetHesapla(c.text, c)).toBe(ozetler[k]);
     }
   });
+
+  it('aile/anne/nine: kulakla seçilen girdiler birebir; depodaki özet bu girdiyle üretilecek özetle aynı', () => {
+    const l = telaffuzListesiniOku(process.cwd());
+    expect(l['tur.sozcuk.aile']).toMatchObject({ metin: 'Aile' });
+    expect(l['tur.sozcuk.anne']).toMatchObject({
+      ssml: '<speak><prosody rate="slow"><phoneme alphabet="ipa" ph="anˈne">anne</phoneme></prosody></speak>',
+    });
+    expect(l['tur.sozcuk.nine']).toMatchObject({
+      ssml: '<speak><prosody rate="slow"><phoneme alphabet="ipa" ph="ˈni.ne">nine</phoneme></prosody></speak>',
+    });
+    const { ozetler } = ozetDosyasiniOku(JSON.parse(readFileSync('ders-verisi/tur/ses/.hashes.json', 'utf8')));
+    const manifest = turKlipleriniAyir(JSON.parse(readFileSync('ders-verisi/tur/ses/klipler.json', 'utf8')));
+    const uygulanmis = telaffuzUygula(manifest, l);
+    for (const k of ['tur.sozcuk.aile', 'tur.sozcuk.anne', 'tur.sozcuk.nine']) {
+      const c = uygulanmis.find((x) => x.key === k)!;
+      expect(ozetHesapla(c.text, c)).toBe(ozetler[k]);
+    }
+  });
 });
 
 describe('özet (hash) kararı', () => {

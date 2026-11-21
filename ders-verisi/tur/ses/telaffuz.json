@@ -2,5 +2,8 @@
   "tur.hece.en": { "metin": "En.", "neden": "Chirp 3 HD \"en\" ünlüsünü \"an\" söylüyordu; \"En.\" girdisi kulakla doğru bulundu.", "tarih": "2026-11-17" },
   "tur.hece.mon": { "metin": "Mon.", "neden": "Chirp 3 HD \"mon\" ünlüsünü \"mun\" söylüyordu; \"Mon.\" girdisi kulakla doğru bulundu.", "tarih": "2026-11-17" },
   "tur.sozcuk.ton": { "metin": "Ton.", "neden": "Chirp 3 HD \"ton\" ünlüsünü \"tun\" söylüyordu; \"Ton.\" girdisi kulakla doğru bulundu.", "tarih": "2026-11-17" },
-  "tur.sozcuk.ti2rti2l": { "metin": "Tırtıl", "neden": "Chirp 3 HD düz 'tırtıl'ı 'tültü' söylüyordu (iki STT modeli); 'Tırtıl' girdisi kulakla doğru bulundu.", "tarih": "2026-11-21" }
+  "tur.sozcuk.ti2rti2l": { "metin": "Tırtıl", "neden": "Chirp 3 HD düz 'tırtıl'ı 'tültü' söylüyordu (iki STT modeli); 'Tırtıl' girdisi kulakla doğru bulundu.", "tarih": "2026-11-21" },
+  "tur.sozcuk.aile": { "metin": "Aile", "neden": "Chirp 3 HD düz 'aile'yi yanlış söylüyordu; 'Aile' girdisi kulakla doğru bulundu.", "tarih": "2026-11-21" },
+  "tur.sozcuk.anne": { "ssml": "<speak><prosody rate=\"slow\"><phoneme alphabet=\"ipa\" ph=\"anˈne\">anne</phoneme></prosody></speak>", "neden": "Chirp 3 HD düz 'anne'yi 'an' gibi kısaltıyordu; yavaş + IPA anˈne SSML kulakla doğru bulundu.", "tarih": "2026-11-21" },
+  "tur.sozcuk.nine": { "ssml": "<speak><prosody rate=\"slow\"><phoneme alphabet=\"ipa\" ph=\"ˈni.ne\">nine</phoneme></prosody></speak>", "neden": "Chirp 3 HD düz 'nine'yi İngilizce 'nayn' okuyordu; yavaş + IPA ˈni.ne SSML kulakla doğru bulundu.", "tarih": "2026-11-21" }
 }
