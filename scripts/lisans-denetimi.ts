@@ -44,7 +44,7 @@ export function denetle(kok: string, liste: readonly UcuncuTarafVarlik[] = UCUNC
   const paket = json(path.join(kok, 'package.json')) as { license?: string; dependencies?: Record<string, string> };
   const adlar = new Set(liste.map((v) => v.ad));
 
-  if (!paket.license) sorunlar.push('package.json: "license" alanı yok (ADR-0013)');
+  if (!paket.license) sorunlar.push('package.json: "license" alanı yok (ADR-0017)');
 
   for (const dep of Object.keys(paket.dependencies ?? {})) {
     if (!adlar.has(dep)) sorunlar.push(`envanterde yok: bağımlılık "${dep}" (src/content/ucuncuTarafVarliklar.ts)`);

@@ -3,8 +3,8 @@
  *
  * İçerik: `okulumsun/` (derleme çıktısı; okul sunucusuna ya da alt klasöre olduğu gibi kopyalanır), `OKUBENI.txt`
  * (kurulum, `file://` sınırı), `LICENSE` + `LICENSES.md`, `SURUM.txt`, `SHA256SUMS.txt` (her dosyanın özeti).
- * ADR-0013: yazılım tüm hakları saklı; kurum/okul ağı dağıtımı ayrı yazılı izin ister. İzin metni kullanıcı
- * tarafından hazırlanana kadar paket yalnız CI artefaktıdır (GitHub Release eki yok — plan ⛔ O5).
+ * ADR-0017: yazılım MIT lisanslı; kurum/okul ağı dağıtımı serbesttir. Paket yalnız CI artefaktıdır
+ * (GitHub Release eki yok — plan ⛔ O5).
  * Zip girdileri sıralı ve tarihleri sabit (`zip -X`, sabit mtime) → aynı derleme, aynı zip.
  */
 import { spawnSync } from 'node:child_process';
@@ -55,8 +55,7 @@ GİZLİLİK
 Uygulama hiçbir sunucuya veri göndermez; çocuk verisi saklamaz. Ayrıntılar: gizlilik/index.html
 
 LİSANS
-Tüm hakları saklıdır (LICENSE). Bu paketin okul ya da kurum ağında dağıtımı telif hakkı sahibinin yazılı
-iznine bağlıdır. Üçüncü taraf bileşenler: LICENSES.md.
+MIT Lisansı (LICENSE). Bu paket okul ya da kurum ağında serbestçe dağıtılabilir. Üçüncü taraf bileşenler: LICENSES.md.
 
 Dosya bütünlüğü: SHA256SUMS.txt ("sha256sum -c SHA256SUMS.txt" ile denetlenebilir).
 `;

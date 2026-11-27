@@ -43,11 +43,11 @@ describe('belge tutarlılığı', () => {
     expect(durum.e2e_dosya).toBe(e2eDosya);
   });
 
-  it('LICENSE dosyası var ve package.json license alanı ile uyumlu (ADR-0013)', () => {
+  it('LICENSE dosyası var ve package.json license alanı ile uyumlu (ADR-0017)', () => {
     const paket = JSON.parse(oku('package.json')) as { license?: string; private?: boolean };
-    expect(paket.license).toBe('UNLICENSED');
+    expect(paket.license).toBe('MIT');
     expect(paket.private).toBe(true);
-    expect(oku('LICENSE')).toMatch(/Tüm hakları saklıdır/);
+    expect(oku('LICENSE')).toMatch(/MIT License/);
     expect(oku('CONTENT-LICENSE')).toMatch(/src\/content\//);
   });
 

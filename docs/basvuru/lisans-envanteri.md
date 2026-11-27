@@ -5,7 +5,7 @@ Tam liste: [`LICENSES.md`](../../LICENSES.md); makine envanteri `src/content/ucu
 
 | Konu | Durum | Kaynak |
 |---|---|---|
-| Uygulama kodu | Tescilli; okul/kurum dağıtımı yazılı izinle | ADR-0013, `LICENSE` |
+| Uygulama kodu | MIT; okul/kurum dağıtımı serbest | ADR-0017, `LICENSE` |
 | İçerik (soru metinleri, görseller) | `CONTENT-LICENSE` | `CONTENT-LICENSE` |
 | Üçüncü taraf varlıklar | Envanterdeki her varlığın lisansı ve ticari kullanım izni kayıtlı | K10 |
 | Ses klipleri | Bugünkü klipler geliştirme amaçlı; ticari kullanıma uygun kaynakla yeniden üretim planlandı (ADR-0004 `Önerildi`, Adım 31) — **başvuruda bu açıkça belirtilmeli** | ADR-0004, `LICENSES.md` |

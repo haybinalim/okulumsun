@@ -10,5 +10,5 @@ Kaynak karar: [ADR-0014](../ADR/0014-ticari-model-ve-ucuncu-taraf-varliklar.md) 
 
 **Bilinçli olarak yapılmayanlar:** veli aboneliği (hesap ve ödeme kişisel veri ister), reklam, uygulama içi satın alma.
 
-**Lansmandan önce gerekenler:** avukat incelemesi (ADR-0014), ticari kullanıma uygun ses kaynağı (ADR-0004, Adım 31),
-okul/kurum dağıtımı için yazılı izin metni (ADR-0013).
+**Lansmandan önce gerekenler:** avukat incelemesi (ADR-0014), ticari kullanıma uygun ses kaynağı (ADR-0004, Adım 31).
+Okul/kurum dağıtımı MIT lisansıyla serbesttir (ADR-0017).
