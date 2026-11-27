@@ -11,7 +11,7 @@ doğrulanmamış iddia yazılmaz.
 | [meb-uyum-matrisi.md](meb-uyum-matrisi.md) (+ `.csv`) | 19 öğrenme çıktısı × süreç bileşeni × beceri × şablon × düğüm kodu | `npm run uyum-matrisi` (üretilmiş) |
 | [teknik-gereksinimler.md](teknik-gereksinimler.md) | Tarayıcı, ağ, kurulum, gömme | `docs/yayin.md`, `docs/kurulum/okul-agi.md` |
 | [erisilebilirlik-raporu.md](erisilebilirlik-raporu.md) | Otomatik denetimler, kapsayıcılık ayarları, açık maddeler | `docs/TEST-PROTOKOLU.md` |
-| [lisans-envanteri.md](lisans-envanteri.md) | Uygulama lisansı, üçüncü taraf varlıklar, ses kaynağı, banknot | `LICENSES.md`, ADR-0004/0013/0014 |
+| [lisans-envanteri.md](lisans-envanteri.md) | Uygulama lisansı, üçüncü taraf varlıklar, ses kaynağı, banknot | `LICENSES.md`, ADR-0004/0017/0014 |
 | [gizlilik-ozeti.md](gizlilik-ozeti.md) | Sıfır veri, ağ kanıtı, KVKK durumu | `docs/gizlilik/*`, `/gizlilik` |
 | [kanit-ozeti.md](kanit-ozeti.md) | Pilot ve etki kanıtının bugünkü durumu | Adım 32, 33, 41, 53 |
 

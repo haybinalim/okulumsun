@@ -27,12 +27,13 @@ describe('okul paketi', () => {
       `${'ab'.repeat(32)}  okulumsun/index.html\n`,
     );
   });
-  it('OKUBENI: alt klasör, file:// sınırı, yazılı izin, gizlilik', () => {
+  it('OKUBENI: alt klasör, file:// sınırı, MIT lisansı, gizlilik', () => {
     const m = okubeniMetni('9.9.9');
     expect(m).toContain('OKULUMSUN 9.9.9');
     expect(m).toContain('file://');
     expect(m).toMatch(/Alt klasörden açılır/);
-    expect(m).toMatch(/yazılı\s+iznine bağlıdır/);
+    expect(m).toMatch(/MIT Lisansı/);
+    expect(m).toMatch(/serbestçe dağıtılabilir/);
     expect(m).toMatch(/veri göndermez/);
   });
   it('sahte derlemeden zip üretir; içerik listesi ve özetler doğru; aynı girdi → aynı zip', () => {

@@ -1,9 +1,11 @@
 # ADR-0013: Uygulama lisansı
 
-- **Durum:** Kabul
+- **Durum:** Yerine geçti: 0017
 - **Tarih:** 2026-10-12
 - **Karar sahibi:** Kullanıcı · **Kullanıcı onayı:** 12 Eki 2026, sohbette ("ticari niyetim var, tüm hakları saklı yapalım") — plan v2 KG-27
 - **İlgili:** Adım 20, 49, 56, KG-17
+
+> 27 Kas 2026: ADR-0017 ile kod MIT lisansına geçti; bu kayıt tarihsel olarak kalır.
 
 ## Bağlam
 

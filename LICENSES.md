@@ -1,14 +1,13 @@
 # Lisanslar
 
 Bu dosya, "okulumsun" uygulamasının lisansını ve kullandığı tüm üçüncü taraf bileşenlerin
-lisans bilgilerini içerir (plan §8, ADR-0013, ADR-0014).
+lisans bilgilerini içerir (plan §8, ADR-0017, ADR-0014).
 
 ## Uygulama lisansı
 
-Tescilli — **tüm hakları saklıdır** (ADR-0013). Kod için `LICENSE`, `src/content/` metinleri için
-`CONTENT-LICENSE`. Depo herkese açık görüntülenebilir; bu, kullanma, dağıtma veya barındırma
-izni vermez. `package.json` → `"license": "UNLICENSED"`. Aşağıdaki üçüncü taraf bileşenler bu
-lisansın dışındadır ve kendi lisanslarına tabidir.
+MIT (ADR-0017). Kod için `LICENSE`, `src/content/` metinleri için `CONTENT-LICENSE` (içerik tescilli kalır).
+`package.json` → `"license": "MIT"`. Aşağıdaki üçüncü taraf bileşenler bu lisansın dışındadır ve kendi
+lisanslarına tabidir.
 
 ## Üçüncü taraf varlıklar
 

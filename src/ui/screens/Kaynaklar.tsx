@@ -3,7 +3,7 @@
  *
  * İçerik:
  *   - Gizlilik beyanı (KVKK — tek paragraf)
- *   - Uygulama lisansı (ADR-0013)
+ *   - Uygulama lisansı (ADR-0017)
  *   - Üçüncü taraf lisansları (src/content/ucuncuTarafVarliklar.ts'ten)
  *   - TTS sağlayıcı bilgisi
  *
@@ -49,11 +49,11 @@ export function Kaynaklar() {
         </p>
       </section>
 
-      {/* Uygulama lisansı (ADR-0013) */}
+      {/* Uygulama lisansı (ADR-0017) */}
       <section style={{ marginBottom: '2rem' }}>
         <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Uygulama Lisansı</h2>
         <p style={{ fontSize: '0.9rem', lineHeight: 1.6 }}>
-          © 2026 Okulumsun. Tüm hakları saklıdır. Okul veya kurum kullanımı için yazılı izin gerekir.
+          © 2026 Okulumsun. MIT Lisansı — kod serbestçe kullanılabilir, değiştirilebilir ve dağıtılabilir. Ders içeriği ayrı lisans altındadır (CONTENT-LICENSE).
         </p>
       </section>
 

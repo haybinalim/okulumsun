@@ -38,5 +38,4 @@ Yeni sürümde `okulumsun/` klasörünü tümüyle değiştirin (eski dosyaları
 
 ## Lisans
 
-Yazılım tüm hakları saklıdır (ADR-0013). Okul/kurum ağında dağıtım telif hakkı sahibinin **yazılı iznine** bağlıdır;
-izin metni hazırlanana kadar paket yalnız CI artefaktıdır, GitHub Release eki yapılmaz.
+Yazılım MIT lisanslıdır (ADR-0017). Okul/kurum ağında dağıtım serbesttir; paket yalnız CI artefaktıdır, GitHub Release eki yapılmaz.

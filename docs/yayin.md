@@ -72,7 +72,7 @@ bayatlığını yakalamaz; içerik değişikliği PR'larında arşivi yeniden ü
 ## Okul paketi (plan v2 Adım 49, KG-71)
 
 `main` push'unda CI `dist-okul.zip` artefaktını üretir (`npm run okul-paketi`; 30 gün saklanır). GitHub Release eki
-yapılmaz: okul/kurum ağı dağıtımı ADR-0013 gereği yazılı izin ister. Kurulum: `docs/kurulum/okul-agi.md`.
+yapılmaz (paket yalnız CI artefaktıdır — plan ⛔ O5). Kurulum: `docs/kurulum/okul-agi.md`.
 
 ## Gömülü mod (plan v2 Adım 56, KG-74)
 

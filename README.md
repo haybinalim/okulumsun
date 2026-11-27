@@ -53,6 +53,6 @@ npm run e2e
 
 ## Lisanslar ve kaynaklar
 
-**Lisans:** Tescilli, tüm hakları saklıdır (`LICENSE`, `CONTENT-LICENSE`, ADR-0013). Kaynak kod görüntülenebilir; kullanım, dağıtım veya barındırma için yazılı izin gerekir.
+**Lisans:** MIT (`LICENSE`, ADR-0017). Kod serbestçe kullanılabilir, değiştirilebilir ve dağıtılabilir; ders içeriği `CONTENT-LICENSE` altındadır, üçüncü taraf varlıklar `LICENSES.md`'dedir.
 
 Müfredat, banknot görselleri, ses üretimi ve açık kaynak lisanslarına ilişkin ayrıntılar uygulamadaki **Kaynaklar ve Gizlilik** ekranında ve `LICENSES.md` dosyasında bulunur.
